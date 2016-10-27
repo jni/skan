@@ -42,7 +42,7 @@ def _neighbor_distances(ndim):
     return out
 
 
-def skeleton_to_nx(skel):
+def skeleton_to_nx(skel):  # to do: add pixel spacing
     g = nx.Graph()
     distances = _neighbor_distances(skel.ndim)
     skelint = np.zeros(skel.shape, int)
