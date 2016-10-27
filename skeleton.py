@@ -49,10 +49,10 @@ def skeleton_to_nx(skel):  # to do: add pixel spacing
     num_nodes = np.sum(skel)
     g.add_nodes_from(range(1, num_nodes + 1))
     skelint[skel] = np.arange(1, num_nodes + 1)
-    ndi.generic_filter(skelint, function=_add_skeleton_edges,
-                       size=3, mode='constant', cval=0,
-                       extra_arguments=(g, distances))
-    return g
+    counts = ndi.generic_filter(skelint, function=_add_skeleton_edges,
+                                size=3, mode='constant', cval=0,
+                                extra_arguments=(g, distances))
+    return g, counts, skelint
 
 
 def branch_statistics(g):
@@ -97,3 +97,22 @@ def _expand_path(g, source, step, visited):
         d += g[source][step]['weight']
         visited[source] = True
     return source, d, g.node[step]['type']
+
+
+def summarise(skelimage):
+    g, counts, skelimage_labeled = skeleton_to_nx(skelimage)
+    coords = np.nonzero(skelimage)
+    ids = skelimage_labeled[coords]
+    sorted_coords = np.transpose(coords)[np.argsort(ids)]
+    tables = []
+    for i, cc in enumerate(nx.connected_component_subgraphs(g)):
+        stats = branch_statistics(cc)
+        if stats.size == 0:
+            continue
+        coords0 = sorted_coords[stats[:, 0].astype(int)]
+        coords1 = sorted_coords[stats[:, 1].astype(int)]
+        distances = np.sqrt(np.sum((coords0 - coords1)**2, axis=1))
+        skeleton_id = np.full(distances.shape, i, dtype=float)
+        tables.append(np.column_stack((skeleton_id, stats,
+                                       coords0, coords1, distances)))
+    return np.row_stack(tables)
