@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from scipy import sparse, ndimage as ndi
 import networkx as nx
 import numba
@@ -100,6 +101,7 @@ def _expand_path(g, source, step, visited):
 
 
 def summarise(skelimage):
+    ndim = skelimage.ndim
     g, counts, skelimage_labeled = skeleton_to_nx(skelimage)
     coords = np.nonzero(skelimage)
     ids = skelimage_labeled[coords]
@@ -115,4 +117,14 @@ def summarise(skelimage):
         skeleton_id = np.full(distances.shape, i, dtype=float)
         tables.append(np.column_stack((skeleton_id, stats,
                                        coords0, coords1, distances)))
-    return np.row_stack(tables)
+    columns = (['skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
+                'branch-type'] +
+               ['coord-0-%i' % i for i in range(ndim)] +
+               ['coord-1-%i' % i for i in range(ndim)] +
+               ['euclidean-distance'])
+    column_types = [int, int, int, float, int] + 2*ndim*[int] + [float]
+    arr = np.row_stack(tables).T
+    data_dict = {col: dat.astype(dtype)
+                 for col, dat, dtype in zip(columns, arr, column_types)}
+    df = pd.DataFrame(data_dict)
+    return df
