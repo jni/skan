@@ -53,3 +53,47 @@ def skeleton_to_nx(skel):  # to do: add pixel spacing
                        size=3, mode='constant', cval=0,
                        extra_arguments=(g, distances))
     return g
+
+
+def branch_statistics(g):
+    """Compute the length and type of each branch in a skeleton graph.
+
+    Parameters
+    ----------
+    g : nx.Graph
+        A skeleton graph. Its nodes must be marked as 'tip', 'path', or
+        'junction'.
+
+    Returns
+    -------
+    branches : array of float, shape (N, 4, 2)
+        An array containing branch endpoint IDs, length, and branch type.
+        The types are:
+        - tip-tip (0)
+        - tip-junction (1)
+        - junction-junction (2)
+    """
+    visited = np.zeros(max(g) + 1, dtype=bool)
+    type_dict = {'tiptip': 0, 'tipjunction': 1, 'junctiontip': 1,
+                 'junctionjunction': 2}
+    result = []
+    for node, data in g.nodes_iter(data=True):
+        if data['type'] == 'path' and not visited[node]:
+            # we expand the path in either direction
+            visited[node] = True
+            left, right = g.neighbors(node)
+            id0, d0, kind0 = _expand_path(g, node, left, visited)
+            id1, d1, kind1 = _expand_path(g, node, right, visited)
+            result.append([id0, id1, d0 + d1, type_dict[kind0 + kind1]])
+    return np.array(result)
+
+
+def _expand_path(g, source, step, visited):
+    d = g[source][step]['weight']
+    while g.node[step]['type'] == 'path':
+        n1, n2 = g.neighbors(step)
+        nextstep = n1 if n1 != source else n2
+        source, step = step, nextstep
+        d += g[source][step]['weight']
+        visited[source] = True
+    return source, d, g.node[step]['type']
