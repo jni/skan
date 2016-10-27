@@ -50,5 +50,6 @@ def skeleton_to_nx(skel):  # to do: add pixel spacing
     g.add_nodes_from(range(1, num_nodes + 1))
     skelint[skel] = np.arange(1, num_nodes + 1)
     ndi.generic_filter(skelint, function=_add_skeleton_edges,
-                       size=3, mode='nearest', extra_arguments=(g, distances))
+                       size=3, mode='constant', cval=0,
+                       extra_arguments=(g, distances))
     return g
