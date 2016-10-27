@@ -109,8 +109,8 @@ def summarise(skelimage):
         stats = branch_statistics(cc)
         if stats.size == 0:
             continue
-        coords0 = sorted_coords[stats[:, 0].astype(int)]
-        coords1 = sorted_coords[stats[:, 1].astype(int)]
+        coords0 = sorted_coords[stats[:, 0].astype(int) - 1]
+        coords1 = sorted_coords[stats[:, 1].astype(int) - 1]
         distances = np.sqrt(np.sum((coords0 - coords1)**2, axis=1))
         skeleton_id = np.full(distances.shape, i, dtype=float)
         tables.append(np.column_stack((skeleton_id, stats,
