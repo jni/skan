@@ -76,7 +76,7 @@ def branch_statistics(g):
     """
     visited = np.zeros(max(g) + 1, dtype=bool)
     type_dict = {'tiptip': 0, 'tipjunction': 1, 'junctiontip': 1,
-                 'junctionjunction': 2}
+                 'junctionjunction': 2, 'pathpath': 3}
     result = []
     for node, data in g.nodes_iter(data=True):
         if data['type'] == 'path' and not visited[node]:
@@ -91,7 +91,7 @@ def branch_statistics(g):
 
 def _expand_path(g, source, step, visited):
     d = g[source][step]['weight']
-    while g.node[step]['type'] == 'path':
+    while g.node[step]['type'] == 'path' and not visited[step]:
         n1, n2 = g.neighbors(step)
         nextstep = n1 if n1 != source else n2
         source, step = step, nextstep
