@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -5,14 +6,67 @@ import networkx as nx
 import numba
 
 
-@numba.jit
-def get_nz_neighbors(arr, idx, steps, out):
-    pass
+## CSGraph and Numba-based implementation
+
+
+def raveled_steps_to_neighbors(shape, connectivity=1, order='C',
+                               return_distances=True):
+    if order == 'C':
+        dims = shape[-1:0:-1]
+    else:
+        dims = shape[:-1]
+    stepsizes = np.cumprod((1,) + dims)[::-1]
+    steps = [stepsizes, -stepsizes]
+    distances = [1] * 2 * stepsizes.size
+    for nhops in range(2, connectivity + 1):
+        prod = np.array(list(itertools.product(*[[1, -1]] * nhops)))
+        multisteps = np.array(list(itertools.combinations(stepsizes, nhops))).T
+        steps.append((prod @ multisteps).ravel())
+        distances.extend([np.sqrt(nhops)] * steps[-1].size)
+    if return_distances:
+        return np.concatenate(steps).astype(int), np.array(distances)
+    else:
+        return np.concatenate(steps).astype(int)
+
+
+@numba.jit(nopython=True)
+def write_pixel_graph(image, steps, distances, row, col, data):
+    image = image.ravel()
+    n = data.size
+    n_neighbors = steps.size
+    start_idx = np.max(steps)
+    end_idx = image.size + np.min(steps)
+    neighbors = np.empty_like(steps)
+    k = 0
+    for i in range(start_idx, end_idx + 1):
+        if image[i] != 0:
+            neighbors[:] = i + steps
+            for j in range(n_neighbors):
+                if image[neighbors[j]] != 0:
+                    row[k] = image[i]
+                    col[k] = image[neighbors[j]]
+                    data[k] = distances[j]
+                    k += 1
 
 
 def skeleton_to_csgraph(skel):
+    ndim = skel.ndim
     skelint = np.zeros(skel.shape, int)
     skelint[skel] = np.arange(1, np.sum(skel) + 1)
+    skelint = np.pad(skelint, pad_width=1, mode='constant', constant_values=0)
+    # first, figure out how many edges the graph will have
+    # Every nonzero pixel has as many edges as nonzero neighbors, so
+    # the total number of edges is the sum of a sum kernel convolution
+    num_local_edges = ndi.convolve(skel, np.ones((3,) * ndim), mode='constant')
+    num_edges = np.sum(num_local_edges)
+    row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
+    data = np.zeros(num_edges, dtype=float)
+    steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
+    write_pixel_graph(skelint, steps, distances, row, col, data)
+    return sparse.coo_matrix((data, (row, col))).tocsr()
+
+
+## NetworkX-based implementation
 
 
 def _add_skeleton_edges(values, graph, distances):
