@@ -97,15 +97,14 @@ def write_pixel_graph(image, steps, distances, row, col, data):
     n_neighbors = steps.size
     start_idx = np.max(steps)
     end_idx = image.size + np.min(steps)
-    neighbors = np.empty_like(steps)
     k = 0
     for i in range(start_idx, end_idx + 1):
         if image[i] != 0:
-            neighbors[:] = i + steps
             for j in range(n_neighbors):
-                if image[neighbors[j]] != 0:
+                n = steps[j] + i
+                if image[n] != 0:
                     row[k] = image[i]
-                    col[k] = image[neighbors[j]]
+                    col[k] = image[n]
                     data[k] = distances[j]
                     k += 1
 
