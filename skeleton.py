@@ -57,8 +57,12 @@ def skeleton_to_csgraph(skel):
     # first, figure out how many edges the graph will have
     # Every nonzero pixel has as many edges as nonzero neighbors, so
     # the total number of edges is the sum of a sum kernel convolution
-    num_local_edges = ndi.convolve(skel, np.ones((3,) * ndim), mode='constant')
-    num_edges = np.sum(num_local_edges)
+
+    degree_kernel = np.ones((3,) * ndim)
+    degree_kernel.ravel()[3**ndim // 2] = 0  # remove centre pix
+    degree_image = ndi.convolve(skel.astype(int), degree_kernel,
+                                mode='constant')
+    num_edges = np.sum(degree_image)  # *2, which is how many we need to store
     row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
     data = np.zeros(num_edges, dtype=float)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
