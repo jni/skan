@@ -91,10 +91,9 @@ def raveled_steps_to_neighbors(shape, connectivity=1, order='C',
         return np.concatenate(steps).astype(int)
 
 
-@numba.jit(nopython=True)
+@numba.jit(nopython=True, cache=True, nogil=True)
 def write_pixel_graph(image, steps, distances, row, col, data):
     image = image.ravel()
-    n = data.size
     n_neighbors = steps.size
     start_idx = np.max(steps)
     end_idx = image.size + np.min(steps)
