@@ -50,6 +50,8 @@ def write_pixel_graph(image, steps, distances, row, col, data):
 
 
 def skeleton_to_csgraph(skel):
+    skel = skel.astype(bool)  # ensure we have a bool image
+                              # since we later use it for bool indexing
     ndim = skel.ndim
     skelint = np.zeros(skel.shape, int)
     skelint[skel] = np.arange(1, np.sum(skel) + 1)
