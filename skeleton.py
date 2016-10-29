@@ -92,13 +92,13 @@ def raveled_steps_to_neighbors(shape, connectivity=1, order='C',
 
 
 @numba.jit(nopython=True, cache=True, nogil=True)
-def write_pixel_graph(image, steps, distances, row, col, data):
+def write_pixel_graph(image, indices, steps, distances, row, col, data):
     image = image.ravel()
     n_neighbors = steps.size
-    start_idx = np.max(steps)
-    end_idx = image.size + np.min(steps)
+    n_nodes = indices.size
     k = 0
-    for i in range(start_idx, end_idx + 1):
+    for h in range(n_nodes):
+        i = image[h]
         if image[i] != 0:
             for j in range(n_neighbors):
                 n = steps[j] + i
@@ -125,7 +125,8 @@ def skeleton_to_csgraph(skel):
     row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
     data = np.zeros(num_edges, dtype=float)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
-    write_pixel_graph(skelint, steps, distances, row, col, data)
+    write_pixel_graph(skelint, np.flatnonzero(skelint),
+                      steps, distances, row, col, data)
     return sparse.coo_matrix((data, (row, col))).tocsr()
 
 
