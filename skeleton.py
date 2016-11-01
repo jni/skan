@@ -93,6 +93,37 @@ def raveled_steps_to_neighbors(shape, connectivity=1, order='C',
 
 @numba.jit(nopython=True, cache=True, nogil=True)
 def write_pixel_graph(image, indices, steps, distances, row, col, data):
+    """Step over `image` to build a graph of nonzero pixel neighbors.
+
+    Parameters
+    ----------
+    image : int array
+        The input image.
+    indices : int array
+        The raveled indices into `image` containing nonzero entries.
+    steps : int array, shape (N,)
+        The raveled index steps to find a pixel's neighbors in `image`.
+    distances : float array, shape (N,)
+        The euclidean distance from a pixel to its corresponding
+        neighbor in `steps`.
+    row : int array
+        Output array to be filled with the "center" pixel IDs.
+    col : int array
+        Output array to be filled with the "neighbor" pixel IDs.
+    data : float array
+        Output array to be filled with the distances from center to
+        neighbor pixels.
+
+    Notes
+    -----
+    No size or bounds checking is performed. Users should ensure that
+    - No index in `indices` falls on any edge of `image` (or the
+      neighbor computation will fail or segfault).
+    - The `steps` and `distances` arrays have the same shape.
+    - The `row`, `col`, `data` are long enough to hold all of the
+      edges.
+
+    """
     image = image.ravel()
     n_neighbors = steps.size
     n_nodes = indices.size
