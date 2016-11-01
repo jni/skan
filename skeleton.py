@@ -158,12 +158,16 @@ def skeleton_to_csgraph(skel):
     degree_image : array of int, same shape as skel
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
+    pixel_indices : array of int
+        An array of shape (Nnz + 1,), mapping indices in `graph` to
+        raveled indices in `degree_image` or `skel`.
     """
     skel = skel.astype(bool)  # ensure we have a bool image
                               # since we later use it for bool indexing
     ndim = skel.ndim
+    pixel_indices = np.nonzero(skel)
     skelint = np.zeros(skel.shape, int)
-    skelint[skel] = np.arange(1, np.sum(skel) + 1)
+    skelint.ravel()[pixel_indices] = np.arange(1, pixel_indices.size + 1)
     skelint = pad(skelint, 0)
 
     degree_kernel = np.ones((3,) * ndim)
@@ -176,7 +180,7 @@ def skeleton_to_csgraph(skel):
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
     write_pixel_graph(skelint, steps, distances, row, col, data)
     graph = sparse.coo_matrix((data, (row, col))).tocsr()
-    return graph, degree_image
+    return graph, degree_image, pixel_indices
 
 
 ## NetworkX-based implementation
