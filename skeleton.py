@@ -126,9 +126,8 @@ def write_pixel_graph(image, indices, steps, distances, row, col, data):
     """
     image = image.ravel()
     n_neighbors = steps.size
-    n_nodes = indices.size
     k = 0
-    for h in range(n_nodes):
+    for h in indices:
         i = image[h]
         if image[i] != 0:
             for j in range(n_neighbors):
