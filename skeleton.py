@@ -138,6 +138,27 @@ def write_pixel_graph(image, steps, distances, row, col, data):
 
 
 def skeleton_to_csgraph(skel):
+    """Convert a skeleton image of thin lines to a graph of neighbor pixels.
+
+    Parameters
+    ----------
+    skel : array
+        An input image in which every nonzero pixel is considered part of
+        the skeleton, and links between pixels are determined by a full
+        n-dimensional neighborhood.
+
+    Returns
+    -------
+    graph : sparse.csr_matrix
+        A graph of shape (Nnz + 1, Nnz + 1), where Nnz is the number of
+        nonzero pixels in `skel`. The value graph[i, j] is the distance
+        between adjacent pixels i and j. In a 2D image, that would be
+        1 for immediately adjacent pixels and sqrt(2) for diagonally
+        adjacent ones.
+    degree_image : array of int, same shape as skel
+        An image where each pixel value contains the degree of its
+        corresponding node in `graph`. This is useful to classify nodes.
+    """
     skel = skel.astype(bool)  # ensure we have a bool image
                               # since we later use it for bool indexing
     ndim = skel.ndim
@@ -154,7 +175,8 @@ def skeleton_to_csgraph(skel):
     data = np.zeros(num_edges, dtype=float)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
     write_pixel_graph(skelint, steps, distances, row, col, data)
-    return sparse.coo_matrix((data, (row, col))).tocsr()
+    graph = sparse.coo_matrix((data, (row, col))).tocsr()
+    return graph, degree_image
 
 
 ## NetworkX-based implementation
