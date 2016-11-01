@@ -92,15 +92,13 @@ def raveled_steps_to_neighbors(shape, connectivity=1, order='C',
 
 
 @numba.jit(nopython=True, cache=True, nogil=True)
-def write_pixel_graph(image, indices, steps, distances, row, col, data):
+def write_pixel_graph(image, steps, distances, row, col, data):
     """Step over `image` to build a graph of nonzero pixel neighbors.
 
     Parameters
     ----------
     image : int array
         The input image.
-    indices : int array
-        The raveled indices into `image` containing nonzero entries.
     steps : int array, shape (N,)
         The raveled index steps to find a pixel's neighbors in `image`.
     distances : float array, shape (N,)
@@ -122,19 +120,21 @@ def write_pixel_graph(image, indices, steps, distances, row, col, data):
     - The `steps` and `distances` arrays have the same shape.
     - The `row`, `col`, `data` are long enough to hold all of the
       edges.
-
     """
     image = image.ravel()
     n_neighbors = steps.size
+    start_idx = steps.size
+    end_idx = image.size + np.min(steps)
     k = 0
-    for h in indices:
-        for j in range(n_neighbors):
-            n = steps[j] + h
-            if image[n] != 0:
-                row[k] = image[h]
-                col[k] = image[n]
-                data[k] = distances[j]
-                k += 1
+    for i in range(start_idx, end_idx + 1):
+        if image[i] != 0:
+            for j in range(n_neighbors):
+                n = steps[j] + i
+                if image[n] != 0:
+                    row[k] = image[i]
+                    col[k] = image[n]
+                    data[k] = distances[j]
+                    k += 1
 
 
 def skeleton_to_csgraph(skel):
@@ -153,9 +153,7 @@ def skeleton_to_csgraph(skel):
     row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
     data = np.zeros(num_edges, dtype=float)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
-    indices = np.flatnonzero(skelint)
-    write_pixel_graph(skelint, indices,
-                      steps, distances, row, col, data)
+    write_pixel_graph(skelint, steps, distances, row, col, data)
     return sparse.coo_matrix((data, (row, col))).tocsr()
 
 
