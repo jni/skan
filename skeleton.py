@@ -128,15 +128,13 @@ def write_pixel_graph(image, indices, steps, distances, row, col, data):
     n_neighbors = steps.size
     k = 0
     for h in indices:
-        i = image[h]
-        if image[i] != 0:
-            for j in range(n_neighbors):
-                n = steps[j] + i
-                if image[n] != 0:
-                    row[k] = image[i]
-                    col[k] = image[n]
-                    data[k] = distances[j]
-                    k += 1
+        for j in range(n_neighbors):
+            n = steps[j] + h
+            if image[n] != 0:
+                row[k] = image[h]
+                col[k] = image[n]
+                data[k] = distances[j]
+                k += 1
 
 
 def skeleton_to_csgraph(skel):
