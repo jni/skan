@@ -183,6 +183,18 @@ def skeleton_to_csgraph(skel):
     return graph, pixel_indices, degree_image
 
 
+def _expand_path_csr(graph, source, step, visited, degrees):
+        d = graph[source, step]
+        while degrees[step] == 2 and not visited[step]:
+            loc = graph.indptr[source]
+            n1, n2 = graph.indices[loc:loc+2]
+            nextstep = n1 if n1 != source else n2
+            source, step = step, nextstep
+            d += graph[source, step]
+            visited[source] = True
+        return source, d, degrees[step]
+
+
 def branch_statistics_csr(graph, pixel_indices, degree_image):
     """Compute the length and type of each branch in a skeleton graph.
 
@@ -198,26 +210,44 @@ def branch_statistics_csr(graph, pixel_indices, degree_image):
 
     Returns
     -------
-    branches : array of float, shape (N, 4, 2)
+    branches : array of float, shape (N, 4)
         An array containing branch endpoint IDs, length, and branch type.
         The types are:
         - tip-tip (0)
         - tip-junction (1)
         - junction-junction (2)
     """
+    degree_image = degree_image.ravel()
+    degrees = degree_image[pixel_indices]
     visited = np.zeros(pixel_indices.shape, dtype=bool)
-    type_dict = {'tiptip': 0, 'tipjunction': 1, 'junctiontip': 1,
-                 'junctionjunction': 2, 'pathpath': 3}
-    result = []
-    for node, data in g.nodes_iter(data=True):
-        if data['type'] == 'path' and not visited[node]:
-            # we expand the path in either direction
+    endpoints = (degrees != 2)
+    num_paths = np.sum(degrees[endpoints])
+    result = np.zeros((num_paths, 4), dtype=float)
+    num_results = 0
+    num_cycles = 0
+    for node in range(1, graph.shape[0]):
+        pixel = pixel_indices[node]
+        if degree_image[pixel] == 2 and not visited[node]:
             visited[node] = True
-            left, right = g.neighbors(node)
-            id0, d0, kind0 = _expand_path(g, node, left, visited)
-            id1, d1, kind1 = _expand_path(g, node, right, visited)
-            result.append([id0, id1, d0 + d1, type_dict[kind0 + kind1]])
-    return np.array(result)
+            loc = graph.indptr[node]
+            left, right = graph.indices[loc:loc+2]
+            id0, d0, deg0 = _expand_path_csr(graph, node, left,
+                                             visited, degrees)
+            id1, d1, deg1 = _expand_path_csr(graph, node, left,
+                                             visited, degrees)
+            kind = 2  # default: junction-to-junction
+            if deg0 == 1 and deg1 == 1:  # tip-tip
+                kind = 0
+            elif deg0 == 1 or deg1 == 1:  # tip-junction, tip-path impossible
+                kind = 1
+            elif deg0 == 2:  # must be a cycle
+                num_cycles += 1
+                continue
+            result[num_results, :] = id0, id1, d0 + d1, kind
+            num_results += 1
+    return result[:num_results]
+
+
 ## NetworkX-based implementation
 
 
