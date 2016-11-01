@@ -165,9 +165,9 @@ def skeleton_to_csgraph(skel):
     skel = skel.astype(bool)  # ensure we have a bool image
                               # since we later use it for bool indexing
     ndim = skel.ndim
-    pixel_indices = np.nonzero(skel)
+    pixel_indices = np.concatenate(([0], np.flatnonzero(skel)))
     skelint = np.zeros(skel.shape, int)
-    skelint.ravel()[pixel_indices] = np.arange(1, pixel_indices.size + 1)
+    skelint.ravel()[pixel_indices] = np.arange(pixel_indices.size + 1)
     skelint = pad(skelint, 0)
 
     degree_kernel = np.ones((3,) * ndim)
