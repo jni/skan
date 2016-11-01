@@ -155,12 +155,12 @@ def skeleton_to_csgraph(skel):
         between adjacent pixels i and j. In a 2D image, that would be
         1 for immediately adjacent pixels and sqrt(2) for diagonally
         adjacent ones.
-    degree_image : array of int, same shape as skel
-        An image where each pixel value contains the degree of its
-        corresponding node in `graph`. This is useful to classify nodes.
     pixel_indices : array of int
         An array of shape (Nnz + 1,), mapping indices in `graph` to
         raveled indices in `degree_image` or `skel`.
+    degree_image : array of int, same shape as skel
+        An image where each pixel value contains the degree of its
+        corresponding node in `graph`. This is useful to classify nodes.
     """
     skel = skel.astype(bool)  # ensure we have a bool image
                               # since we later use it for bool indexing
@@ -180,9 +180,44 @@ def skeleton_to_csgraph(skel):
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
     write_pixel_graph(skelint, steps, distances, row, col, data)
     graph = sparse.coo_matrix((data, (row, col))).tocsr()
-    return graph, degree_image, pixel_indices
+    return graph, pixel_indices, degree_image
 
 
+def branch_statistics_csr(graph, pixel_indices, degree_image):
+    """Compute the length and type of each branch in a skeleton graph.
+
+    Parameters
+    ----------
+    graph : sparse.csr_matrix, shape (N, N)
+        A skeleton graph.
+    pixel_indices : array of int, shape (N,)
+        A map from rows/cols of `graph` to image coordinates.
+    degree_image : array of int, shape (P, Q, ...)
+        The image corresponding to the skeleton, where each value is
+        its degree in `graph`.
+
+    Returns
+    -------
+    branches : array of float, shape (N, 4, 2)
+        An array containing branch endpoint IDs, length, and branch type.
+        The types are:
+        - tip-tip (0)
+        - tip-junction (1)
+        - junction-junction (2)
+    """
+    visited = np.zeros(pixel_indices.shape, dtype=bool)
+    type_dict = {'tiptip': 0, 'tipjunction': 1, 'junctiontip': 1,
+                 'junctionjunction': 2, 'pathpath': 3}
+    result = []
+    for node, data in g.nodes_iter(data=True):
+        if data['type'] == 'path' and not visited[node]:
+            # we expand the path in either direction
+            visited[node] = True
+            left, right = g.neighbors(node)
+            id0, d0, kind0 = _expand_path(g, node, left, visited)
+            id1, d1, kind1 = _expand_path(g, node, right, visited)
+            result.append([id0, id1, d0 + d1, type_dict[kind0 + kind1]])
+    return np.array(result)
 ## NetworkX-based implementation
 
 
