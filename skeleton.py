@@ -333,7 +333,7 @@ def _expand_path(g, source, step, visited):
         source, step = step, nextstep
         d += g[source][step]['weight']
         visited[source] = True
-    return source, d, g.node[step]['type']
+    return step, d, g.node[step]['type']
 
 
 def summarise(skelimage):
