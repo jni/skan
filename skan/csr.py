@@ -43,7 +43,7 @@ def _write_pixel_graph(image, steps, distances, row, col, data):
     """
     image = image.ravel()
     n_neighbors = steps.size
-    start_idx = steps.size
+    start_idx = np.max(steps)
     end_idx = image.size + np.min(steps)
     k = 0
     for i in range(start_idx, end_idx + 1):
