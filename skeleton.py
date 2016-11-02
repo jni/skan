@@ -292,31 +292,23 @@ def summarise_csr(skelimage):
     ndim = skelimage.ndim
     g, pixels, degrees = skeleton_to_csgraph(skelimage)
     coords = np.transpose(np.unravel_index(pixels, skelimage.shape))
-    tables = []
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
-    for cc in range(num_skeletons):
-        ccidxs = np.flatnonzero(skeleton_ids == cc)
-        ccgraph = submatrix(g, ccidxs)
-        ccpixels = pixels[ccidxs]
-        stats = branch_statistics_csr(ccgraph, ccpixels, degree_image=degrees)
-        if stats.size == 0:
-            continue
-        coords0 = coords[stats[:, 0].astype(int)]
-        coords1 = coords[stats[:, 1].astype(int)]
-        distances = np.sqrt(np.sum((coords0 - coords1)**2, axis=1))
-        skeleton_id = np.full(distances.shape, cc, dtype=float)
-        tables.append(np.column_stack((skeleton_id, stats,
-                                       coords0, coords1, distances)))
+    stats = branch_statistics_csr(g, pixels, degree_image=degrees)
+    coords0 = coords[stats[:, 0].astype(int)]
+    coords1 = coords[stats[:, 1].astype(int)]
+    distances = np.sqrt(np.sum((coords0 - coords1)**2, axis=1))
+    skeleton_id = skeleton_ids[stats[:, 0].astype(int)]
+    table = np.column_stack((skeleton_id, stats,
+                             coords0, coords1, distances))
     columns = (['skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
                 'branch-type'] +
                ['coord-0-%i' % i for i in range(ndim)] +
                ['coord-1-%i' % i for i in range(ndim)] +
                ['euclidean-distance'])
     column_types = [int, int, int, float, int] + 2*ndim*[int] + [float]
-    arr = np.row_stack(tables).T
     data_dict = {col: dat.astype(dtype)
-                 for col, dat, dtype in zip(columns, arr, column_types)}
+                 for col, dat, dtype in zip(columns, table.T, column_types)}
     df = pd.DataFrame(data_dict)
     return df
 
