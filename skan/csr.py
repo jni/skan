@@ -93,7 +93,7 @@ def skeleton_to_csgraph(skel):
     degree_kernel = np.ones((3,) * ndim)
     degree_kernel.ravel()[3**ndim // 2] = 0  # remove centre pix
     degree_image = ndi.convolve(skel.astype(int), degree_kernel,
-                                mode='constant')
+                                mode='constant') * skel
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
     row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
     data = np.zeros(num_edges, dtype=float)
