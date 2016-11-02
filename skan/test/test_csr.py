@@ -36,7 +36,7 @@ def test_skeleton1_stats():
     assert (8, 13) in ids2dist
     d0, d1 = sorted((ids2dist[(13, 8)], ids2dist[(8, 13)]))
     assert_almost_equal(d0, 1 + np.sqrt(2))
-    assert_almost_equal(d1, 5*d1)
+    assert_almost_equal(d1, 5*d0)
     assert_equal(np.bincount(types), [0, 2, 2])
     assert_almost_equal(np.unique(dists), [d0, 2 + np.sqrt(2), d1])
 
