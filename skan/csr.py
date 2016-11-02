@@ -12,7 +12,7 @@ from .nputil import pad, raveled_steps_to_neighbors
 
 
 @numba.jit(nopython=True, cache=True, nogil=True)
-def write_pixel_graph(image, steps, distances, row, col, data):
+def _write_pixel_graph(image, steps, distances, row, col, data):
     """Step over `image` to build a graph of nonzero pixel neighbors.
 
     Parameters
@@ -98,7 +98,7 @@ def skeleton_to_csgraph(skel):
     row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
     data = np.zeros(num_edges, dtype=float)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
-    write_pixel_graph(skelint, steps, distances, row, col, data)
+    _write_pixel_graph(skelint, steps, distances, row, col, data)
     graph = sparse.coo_matrix((data, (row, col))).tocsr()
     return graph, pixel_indices, degree_image
 
