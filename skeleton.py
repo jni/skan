@@ -184,15 +184,15 @@ def skeleton_to_csgraph(skel):
 
 
 def _expand_path_csr(graph, source, step, visited, degrees):
-        d = graph[source, step]
-        while degrees[step] == 2 and not visited[step]:
-            loc = graph.indptr[source]
-            n1, n2 = graph.indices[loc:loc+2]
-            nextstep = n1 if n1 != source else n2
-            source, step = step, nextstep
-            d += graph[source, step]
-            visited[source] = True
-        return source, d, degrees[step]
+    d = graph[source, step]
+    while degrees[step] == 2 and not visited[step]:
+        loc = graph.indptr[step]
+        n1, n2 = graph.indices[loc:loc+2]
+        nextstep = n1 if n1 != source else n2
+        source, step = step, nextstep
+        d += graph[source, step]
+        visited[source] = True
+    return step, d, degrees[step]
 
 
 def branch_statistics_csr(graph, pixel_indices, degree_image):
