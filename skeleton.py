@@ -183,14 +183,24 @@ def skeleton_to_csgraph(skel):
     return graph, pixel_indices, degree_image
 
 
-def _expand_path_csr(graph, source, step, visited, degrees):
-    d = graph[source, step]
+@numba.jit(nopython=True, cache=True)
+def _csrget(indices, indptr, data, row, col):
+    start, end = indptr[row], indptr[row+1]
+    for i in range(start, end):
+        if indices[i] == col:
+            return data[i]
+    return 0.
+
+
+@numba.jit(nopython=True, cache=True)
+def _expand_path_csr(indices, indptr, data, source, step, visited, degrees):
+    d = _csrget(indices, indptr, data, source, step)
     while degrees[step] == 2 and not visited[step]:
-        loc = graph.indptr[step]
-        n1, n2 = graph.indices[loc:loc+2]
+        loc = indptr[step]
+        n1, n2 = indices[loc], indices[loc+1]
         nextstep = n1 if n1 != source else n2
         source, step = step, nextstep
-        d += graph[source, step]
+        d += _csrget(indices, indptr, data, source, step)
         visited[source] = True
     return step, d, degrees[step]
 
@@ -226,14 +236,15 @@ def branch_statistics_csr(graph, pixel_indices, degree_image):
     num_results = 0
     num_cycles = 0
     for node in range(1, graph.shape[0]):
-        pixel = pixel_indices[node]
-        if degree_image[pixel] == 2 and not visited[node]:
+        if degrees[node] == 2 and not visited[node]:
             visited[node] = True
             loc = graph.indptr[node]
             left, right = graph.indices[loc:loc+2]
-            id0, d0, deg0 = _expand_path_csr(graph, node, left,
+            id0, d0, deg0 = _expand_path_csr(graph.indices, graph.indptr,
+                                             graph.data, node, left,
                                              visited, degrees)
-            id1, d1, deg1 = _expand_path_csr(graph, node, right,
+            id1, d1, deg1 = _expand_path_csr(graph.indices, graph.indptr,
+                                             graph.data, node, right,
                                              visited, degrees)
             kind = 2  # default: junction-to-junction
             if deg0 == 1 and deg1 == 1:  # tip-tip
