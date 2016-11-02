@@ -233,7 +233,7 @@ def branch_statistics_csr(graph, pixel_indices, degree_image):
             left, right = graph.indices[loc:loc+2]
             id0, d0, deg0 = _expand_path_csr(graph, node, left,
                                              visited, degrees)
-            id1, d1, deg1 = _expand_path_csr(graph, node, left,
+            id1, d1, deg1 = _expand_path_csr(graph, node, right,
                                              visited, degrees)
             kind = 2  # default: junction-to-junction
             if deg0 == 1 and deg1 == 1:  # tip-tip
