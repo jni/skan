@@ -131,7 +131,7 @@ def pad(ar, vals, *, axes=None):
     return ar2
 
 
-def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C',
+def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C', spacing=1,
                                return_distances=True):
     """Return raveled coordinate steps for given array shape and neighborhood.
 
@@ -144,6 +144,8 @@ def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C',
         `scipy.ndimage.generate_binary_structure` for more.
     order : {'C', 'F'}, optional
         The ordering of the array, either C or Fortran.
+    spacing : float, or array-like of float, shape `len(shape)`
+        The spacing of the pixels along each dimension.
     return_distances : bool, optional
         If True (default), return also the Euclidean distance to each
         neighbor.
@@ -160,26 +162,35 @@ def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C',
     Examples
     --------
     >>> raveled_steps_to_neighbors((5,), 1)
-    (array([ 1, -1]), array([1, 1]))
+    (array([ 1, -1]), array([ 1.,  1.]))
     >>> raveled_steps_to_neighbors((2, 3), 2, return_distances=False)
     array([ 3,  1, -3, -1,  4,  2, -2, -4])
     >>> raveled_steps_to_neighbors((2, 3), 1, order='F')[0]
     array([ 2,  1, -2, -1])
+
+    Using `spacing` we can obtain different distance values along different
+    axes:
+
+    >>> raveled_steps_to_neighbors((3, 4, 5), spacing=[5, 1, 1])
+    (array([ 20,   5,   1, -20,  -5,  -1]), array([ 5.,  1.,  1.,  5.,  1.,  1.]))
     """
+    spacing = np.ones(len(shape), dtype=float) * spacing
     if order == 'C':
         dims = shape[-1:0:-1]
     else:
         dims = shape[:-1]
     stepsizes = np.cumprod((1,) + dims)[::-1]
     steps = [stepsizes, -stepsizes]
-    distances = [1] * 2 * stepsizes.size
+    distances = [spacing, spacing]
     for nhops in range(2, connectivity + 1):
         prod = np.array(list(itertools.product(*[[1, -1]] * nhops)))
         multisteps = np.array(list(itertools.combinations(stepsizes, nhops))).T
+        dhopsq = np.array(list(itertools.combinations(spacing ** 2, nhops))).T
         steps.append((prod @ multisteps).ravel())
-        distances.extend([np.sqrt(nhops)] * steps[-1].size)
+        distances.append(np.sqrt(np.abs(prod) @ dhopsq).ravel())
     if return_distances:
-        return np.concatenate(steps).astype(int), np.array(distances)
+        return (np.concatenate(steps).astype(int),
+                np.concatenate(distances))
     else:
         return np.concatenate(steps).astype(int)
 

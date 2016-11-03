@@ -57,7 +57,7 @@ def _write_pixel_graph(image, steps, distances, row, col, data):
                     k += 1
 
 
-def skeleton_to_csgraph(skel):
+def skeleton_to_csgraph(skel, *, spacing=1):
     """Convert a skeleton image of thin lines to a graph of neighbor pixels.
 
     Parameters
@@ -66,6 +66,11 @@ def skeleton_to_csgraph(skel):
         An input image in which every nonzero pixel is considered part of
         the skeleton, and links between pixels are determined by a full
         n-dimensional neighborhood.
+    spacing : float, or array-like of float, shape `(skel.ndim,)`
+        A value indicating the distance between adjacent pixels. This can
+        either be a single value if the data has the same resolution along
+        all axes, or it can be an array of the same shape as `skel` to
+        indicate spacing along each axis.
 
     Returns
     -------
@@ -83,7 +88,9 @@ def skeleton_to_csgraph(skel):
         corresponding node in `graph`. This is useful to classify nodes.
     """
     skel = skel.astype(bool)  # ensure we have a bool image
-    # since we later use it for bool indexing
+                              # since we later use it for bool indexing
+    spacing = np.ones(skel.ndim, dtype=float) * spacing
+
     ndim = skel.ndim
     pixel_indices = np.concatenate(([0], np.flatnonzero(skel)))
     skelint = np.zeros(skel.shape, int)
