@@ -6,7 +6,8 @@ from skan import csr
 rundir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rundir)
 
-from skan._testdata import tinycycle, tinyline, skeleton1, skeleton2
+from skan._testdata import (tinycycle, tinyline, skeleton1, skeleton2,
+                            skeleton3d)
 
 
 def test_tiny_cycle():
@@ -61,3 +62,11 @@ def test_cycle_stats():
     stats = csr.branch_statistics(*csr.skeleton_to_csgraph(tinycycle),
                                   buffer_size_offset=1)
     assert_almost_equal(stats, [[1, 1, 4*np.sqrt(2), 3]])
+
+
+def test_3d_spacing():
+    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
+    stats = csr.branch_statistics(g, idxs, degimg)
+    assert_equal(stats.shape, (5, 4))
+    assert_almost_equal(stats[0], [1, 11, 2 * np.sqrt(27), 1])
+    assert_equal(np.unique(stats[:, 3].astype(int)), [1, 2, 3])
