@@ -1,0 +1,44 @@
+language: python
+sudo: false
+python:
+  - "3.5"
+virtualenv:
+  system_site_packages: false
+install:
+  - export CONDA=$HOME/miniconda
+  - export PATH="$CONDA/bin:$PATH"
+  # install conda, but only if it doesn't already exist
+  - command -v conda > /dev/null || {
+        wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+        bash miniconda.sh -b -f -p $CONDA; }
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+
+  # try to create env, but ignore if it fails -- probably cached.
+  - conda env create -q -f test-environment.yml || true
+  - source activate skantest
+  - conda info -a
+
+  # install coveralls for reporting
+  - pip install coveralls
+
+  # Install gala
+  - printenv PWD
+  # Build locally, pytest confuses local and global installs
+  - pip install -e .
+
+script:
+  # Run tests
+  - py.test
+
+after_success:
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then {
+        make numba-clean;
+        py.test;
+        coveralls;
+        fi}
+
+cache:
+    directories:
+        - $HOME/miniconda
+        - $HOME/.matplotlib
