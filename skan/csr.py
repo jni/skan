@@ -104,7 +104,8 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
     row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
     data = np.zeros(num_edges, dtype=float)
-    steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim)
+    steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim,
+                                                  spacing=spacing)
     _write_pixel_graph(skelint, steps, distances, row, col, data)
     graph = sparse.coo_matrix((data, (row, col))).tocsr()
     return graph, pixel_indices, degree_image
