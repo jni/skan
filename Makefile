@@ -1,2 +1,3 @@
-clean-numba:
-	 find -X . -name "*.nb{c,i}" | xargs rm
+numba-clean:
+	 find -X . -name "*.nbc" | xargs rm
+	 find -X . -name "*.nbi" | xargs rm
