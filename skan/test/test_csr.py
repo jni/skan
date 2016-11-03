@@ -6,7 +6,7 @@ from skan import csr
 rundir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rundir)
 
-from skan._testdata import tinycycle, skeleton1, skeleton2
+from skan._testdata import tinycycle, tinyline, skeleton1, skeleton2
 
 
 def test_tiny_cycle():
@@ -47,3 +47,11 @@ def test_3skeletons():
                         np.sqrt([5, 10]))
     assert_equal(np.unique(df['skeleton-id']), [1, 2])
     assert_equal(np.bincount(df['branch-type']), [0, 4, 4])
+
+
+def test_line():
+    g, idxs, degimg = csr.skeleton_to_csgraph(tinyline)
+    assert_equal(idxs, [0, 1, 2, 3])
+    assert_equal(degimg, [0, 1, 2, 1, 0])
+    assert_equal(g.shape, (4, 4))
+    assert_equal(csr.branch_statistics(g, idxs, degimg), [[1, 3, 2, 0]])
