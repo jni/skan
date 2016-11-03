@@ -55,3 +55,9 @@ def test_line():
     assert_equal(degimg, [0, 1, 2, 1, 0])
     assert_equal(g.shape, (4, 4))
     assert_equal(csr.branch_statistics(g, idxs, degimg), [[1, 3, 2, 0]])
+
+
+def test_cycle_stats():
+    stats = csr.branch_statistics(*csr.skeleton_to_csgraph(tinycycle),
+                                  buffer_size_offset=1)
+    assert_almost_equal(stats, [[1, 1, 4*np.sqrt(2), 3]])

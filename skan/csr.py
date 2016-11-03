@@ -125,7 +125,8 @@ def _expand_path(indices, indptr, data, source, step, visited, degrees):
     return step, d, degrees[step]
 
 
-def branch_statistics(graph, pixel_indices, degree_image):
+def branch_statistics(graph, pixel_indices, degree_image, *,
+                      buffer_size_offset=0):
     """Compute the length and type of each branch in a skeleton graph.
 
     Parameters
@@ -137,6 +138,14 @@ def branch_statistics(graph, pixel_indices, degree_image):
     degree_image : array of int, shape (P, Q, ...)
         The image corresponding to the skeleton, where each value is
         its degree in `graph`.
+    buffer_size_offset : int, optional
+        The buffer size is given by the sum of the degrees of non-path
+        nodes. This is usually 2x the amount needed, allowing room for
+        extra cycles of path-only nodes. However, if the image consists
+        *only* of such cycles, the buffer size will be 0, resulting in
+        an error. Until a more sophisticated, expandable-buffer
+        solution is implemented, you can manually set a bigger buffer
+        size using this parameter.
 
     Returns
     -------
@@ -146,15 +155,15 @@ def branch_statistics(graph, pixel_indices, degree_image):
         - tip-tip (0)
         - tip-junction (1)
         - junction-junction (2)
+        - path-path (3) (This can only be a standalone cycle)
     """
     degree_image = degree_image.ravel()
     degrees = degree_image[pixel_indices]
     visited = np.zeros(pixel_indices.shape, dtype=bool)
     endpoints = (degrees != 2)
     num_paths = np.sum(degrees[endpoints])
-    result = np.zeros((num_paths, 4), dtype=float)
+    result = np.zeros((num_paths + buffer_size_offset, 4), dtype=float)
     num_results = 0
-    num_cycles = 0
     for node in range(1, graph.shape[0]):
         if degrees[node] == 2 and not visited[node]:
             visited[node] = True
@@ -163,17 +172,18 @@ def branch_statistics(graph, pixel_indices, degree_image):
             id0, d0, deg0 = _expand_path(graph.indices, graph.indptr,
                                          graph.data, node, left, visited,
                                          degrees)
-            id1, d1, deg1 = _expand_path(graph.indices, graph.indptr,
-                                         graph.data, node, right, visited,
-                                         degrees)
-            kind = 2  # default: junction-to-junction
-            if deg0 == 1 and deg1 == 1:  # tip-tip
-                kind = 0
-            elif deg0 == 1 or deg1 == 1:  # tip-junction, tip-path impossible
-                kind = 1
-            elif deg0 == 2:  # must be a cycle
-                num_cycles += 1
-                continue
+            if id0 == node:  # standalone cycle
+                id1, d1, deg1 = node, 0., 2
+                kind = 3
+            else:
+                id1, d1, deg1 = _expand_path(graph.indices, graph.indptr,
+                                             graph.data, node, right, visited,
+                                             degrees)
+                kind = 2  # default: junction-to-junction
+                if deg0 == 1 and deg1 == 1:  # tip-tip
+                    kind = 0
+                elif deg0 == 1 or deg1 == 1:  # tip-junct, tip-path impossible
+                    kind = 1
             result[num_results, :] = id0, id1, d0 + d1, kind
             num_results += 1
     return result[:num_results]
