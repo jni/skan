@@ -145,7 +145,7 @@ def _csrget(indices, indptr, data, row, col):
     return 0.
 
 
-@numba.jit(nopython=True, cache=True)
+@numba.jit(nopython=True)
 def _expand_path(graph, source, step, visited, degrees):
     d = graph.edge(source, step)
     while degrees[step] == 2 and not visited[step]:
