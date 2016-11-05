@@ -40,7 +40,7 @@ def print_bench_results(times=None, memory=None):
     if times is not None:
         print('Timing results:')
         for key in times:
-            print('--- ', key, times[key])
+            print('--- ', key, '%.3f s' % times[key])
     if memory is not None:
         print('Memory results:')
         for key in memory:
