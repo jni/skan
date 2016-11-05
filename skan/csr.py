@@ -9,6 +9,31 @@ from .nputil import pad, raveled_steps_to_neighbors
 
 ## CSGraph and Numba-based implementation
 
+csr_spec = [
+    ('indptr', numba.int32[:]),
+    ('indices', numba.int32[:]),
+    ('data', numba.float64[:]),
+    ('shape', numba.int32[:])
+]
+
+@numba.jitclass(csr_spec)
+class CSGraph:
+    def __init__(self, indptr, indices, data, shape):
+        self.indptr = indptr
+        self.indices = indices
+        self.data = data
+        self.shape = shape
+
+    @property
+    def ndim(self):
+        return self.shape.size
+
+    def edge(self, i, j):
+        return _csrget(self.indices, self.indptr, self.data, i, j)
+
+    def neighbors(self, row):
+        loc, stop = self.indptr[row], self.indptr[row+1]
+        return self.indices[loc:stop]
 
 
 @numba.jit(nopython=True, cache=True, nogil=True)
@@ -120,15 +145,14 @@ def _csrget(indices, indptr, data, row, col):
     return 0.
 
 
-@numba.jit(nopython=True, cache=True)
-def _expand_path(indices, indptr, data, source, step, visited, degrees):
-    d = _csrget(indices, indptr, data, source, step)
+@numba.jit(nopython=True)
+def _expand_path(graph, source, step, visited, degrees):
+    d = graph.edge(source, step)
     while degrees[step] == 2 and not visited[step]:
-        loc = indptr[step]
-        n1, n2 = indices[loc], indices[loc+1]
+        n1, n2 = graph.neighbors(step)
         nextstep = n1 if n1 != source else n2
         source, step = step, nextstep
-        d += _csrget(indices, indptr, data, source, step)
+        d += graph.edge(source, step)
         visited[source] = True
     return step, d, degrees[step]
 
@@ -165,6 +189,8 @@ def branch_statistics(graph, pixel_indices, degree_image, *,
         - junction-junction (2)
         - path-path (3) (This can only be a standalone cycle)
     """
+    jgraph = CSGraph(graph.indptr, graph.indices, graph.data,
+                     np.array(graph.shape, np.int32))
     degree_image = degree_image.ravel()
     degrees = degree_image[pixel_indices]
     visited = np.zeros(pixel_indices.shape, dtype=bool)
@@ -175,17 +201,13 @@ def branch_statistics(graph, pixel_indices, degree_image, *,
     for node in range(1, graph.shape[0]):
         if degrees[node] == 2 and not visited[node]:
             visited[node] = True
-            loc = graph.indptr[node]
-            left, right = graph.indices[loc:loc+2]
-            id0, d0, deg0 = _expand_path(graph.indices, graph.indptr,
-                                         graph.data, node, left, visited,
-                                         degrees)
+            left, right = jgraph.neighbors(node)
+            id0, d0, deg0 = _expand_path(jgraph, node, left, visited, degrees)
             if id0 == node:  # standalone cycle
                 id1, d1, deg1 = node, 0., 2
                 kind = 3
             else:
-                id1, d1, deg1 = _expand_path(graph.indices, graph.indptr,
-                                             graph.data, node, right, visited,
+                id1, d1, deg1 = _expand_path(jgraph, node, right, visited,
                                              degrees)
                 kind = 2  # default: junction-to-junction
                 if deg0 == 1 and deg1 == 1:  # tip-tip

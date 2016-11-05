@@ -26,8 +26,8 @@ def test_tiny_cycle():
 
 
 def test_skeleton1_stats():
-    args = csr.skeleton_to_csgraph(skeleton1)
-    stats = csr.branch_statistics(*args)
+    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton1)
+    stats = csr.branch_statistics(g, idxs, degimg)
     assert_equal(stats.shape, (4, 4))
     keys = map(tuple, stats[:, :2].astype(int))
     dists = stats[:, 2]
