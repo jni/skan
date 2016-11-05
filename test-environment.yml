@@ -9,3 +9,4 @@ dependencies:
 - pytest>=3*
 - coverage>=4.0
 - pytest-cov>=2.2
+- pandas>=0.18*
