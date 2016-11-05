@@ -30,6 +30,9 @@ def bench_suite():
     with timer() as t_stats:
         stats = csr.branch_statistics(g, indices, degrees)
     times['compute statistics'] = t_stats[0]
+    with timer() as t_stats2:
+        stats = csr.branch_statistics(g, indices, degrees)
+    times['compute statistics again'] = t_stats2[0]
     with timer() as t_summary:
         summary = csr.summarise(skeleton)
     times['compute per-skeleton statistics'] = t_summary[0]
