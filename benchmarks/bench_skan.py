@@ -48,5 +48,5 @@ def print_bench_results(times=None, memory=None):
 
 
 if __name__ == '__main__':
-    times, memory = bench_suite()
-    print_bench_results(times, memory)
+    times = bench_suite()
+    print_bench_results(times)
