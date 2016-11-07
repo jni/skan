@@ -32,11 +32,7 @@ script:
   - py.test
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then {
-        make numba-clean;
-        py.test --cov-report term-missing --cov .;
-        coveralls;
-        fi}
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then make numba-clean; py.test --cov-report term-missing --cov .; coveralls; fi
 
 cache:
     directories:
