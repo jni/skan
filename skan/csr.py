@@ -277,10 +277,24 @@ def submatrix(M, idxs):
     return Msub
 
 
-def summarise(skelimage):
-    ndim = skelimage.ndim
-    g, pixels, degrees = skeleton_to_csgraph(skelimage)
-    coords = np.transpose(np.unravel_index(pixels, skelimage.shape))
+def summarise(image):
+    """Compute statistics for every disjoint skeleton in `image`.
+
+    Parameters
+    ----------
+    image : array, shape (M, N, ..., P)
+        N-dimensional array, where nonzero entries correspond to an
+        object's single-pixel-wide skeleton.
+
+    Returns
+    -------
+    df : pandas DataFrame
+        A data frame summarising the statistics of the skeletons in
+        `image`.
+    """
+    ndim = image.ndim
+    g, pixels, degrees = skeleton_to_csgraph(image)
+    coords = np.transpose(np.unravel_index(pixels, image.shape))
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
     stats = branch_statistics(g, pixels, degree_image=degrees)
