@@ -147,6 +147,36 @@ def _csrget(indices, indptr, data, row, col):
 
 @numba.jit(nopython=True)
 def _expand_path(graph, source, step, visited, degrees):
+    """Walk a path on a graph until reaching a tip or junction.
+
+    A path is a sequence of degree-2 nodes.
+
+    Parameters
+    ----------
+    graph : CSGraph
+        A graph encoded identically to a SciPy sparse compressed sparse
+        row matrix. See the documentation of `CSGraph` for details.
+    source : int
+        The starting point of the walk. This must be a path node, or
+        the function's behaviour is undefined.
+    step : int
+        The initial direction of the walk. Must be a neighbor of
+        `source`.
+    visited : array of bool
+        An array mapping node ids to `False` (unvisited node) or `True`
+        (previously visited node).
+    degrees : array of int
+        An array mapping node ids to their degrees in `graph`.
+
+    Returns
+    -------
+    dest : int
+        The tip or junction node at the end of the path.
+    d : float
+        The distance travelled from `source` to `dest`.
+    deg : int
+        The degree of `dest`.
+    """
     d = graph.edge(source, step)
     while degrees[step] == 2 and not visited[step]:
         n1, n2 = graph.neighbors(step)
