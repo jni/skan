@@ -138,6 +138,20 @@ def skeleton_to_csgraph(skel, *, spacing=1):
 
 @numba.jit(nopython=True, cache=True)
 def _csrget(indices, indptr, data, row, col):
+    """Fast lookup of value in a scipy.sparse.csr_matrix format table.
+
+    Parameters
+    ----------
+    indices, indptr, data : numpy arrays of int, int, float
+        The CSR format data.
+    row, col : int
+        The matrix coordinates of the desired value.
+
+    Returns
+    -------
+    dat: float
+        The data value in the matrix.
+    """
     start, end = indptr[row], indptr[row+1]
     for i in range(start, end):
         if indices[i] == col:
