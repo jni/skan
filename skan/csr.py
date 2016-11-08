@@ -283,9 +283,9 @@ def submatrix(M, idxs):
     --------
     >>> Md = np.arange(16).reshape((4, 4))
     >>> M = sparse.csr_matrix(Md)
-    >>> submatrix(M, [0, 2]).toarray()
-    array([[ 0,  2],
-           [ 8, 10]], dtype=int64)
+    >>> print(submatrix(M, [0, 2]).toarray())
+    [[ 0  2]
+     [ 8 10]]
     """
     Msub = M[idxs, :][:, idxs]
     return Msub
