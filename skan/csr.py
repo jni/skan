@@ -37,8 +37,8 @@ class CSGraph:
 
 
 def _pixel_graph(image, steps, distances, num_edges, height=None):
-    row = np.empty(num_edges, dtype=np.int32)
-    col = np.empty(num_edges, dtype=np.int32)
+    row = np.empty(num_edges, dtype=int)
+    col = np.empty(num_edges, dtype=int)
     data = np.empty(num_edges, dtype=float)
     if height is None:
         _write_pixel_graph(image, steps, distances, row, col, data)
