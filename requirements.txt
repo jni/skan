@@ -1,5 +1,5 @@
 numpy>=1.11
-scipy>=1.18
+scipy>=0.18
 networkx>=1.11
 numba>=0.29
 pandas>=0.18
