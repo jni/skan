@@ -41,11 +41,10 @@ def _pixel_graph(image, steps, distances, num_edges, height=None):
     col = np.empty(num_edges, dtype=np.int32)
     data = np.empty(num_edges, dtype=float)
     if height is None:
-        k = _write_pixel_graph(image, steps, distances, row, col, data)
+        _write_pixel_graph(image, steps, distances, row, col, data)
     else:
-        k = _write_pixel_graph_height(image, height, steps, distances,
-                                      row, col, data)
-    assert k == num_edges
+        _write_pixel_graph_height(image, height, steps, distances,
+                                  row, col, data)
     return row, col, data
 
 
@@ -93,7 +92,6 @@ def _write_pixel_graph(image, steps, distances, row, col, data):
                     col[k] = image[n]
                     data[k] = distances[j]
                     k += 1
-    return k
 
 @numba.jit(nopython=True, cache=True, nogil=True)
 def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
@@ -148,7 +146,6 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     data[k] = np.sqrt(distances[j] ** 2 +
                                       (height[i] - height[n]) ** 2)
                     k += 1
-    return k
 
 
 def skeleton_to_csgraph(skel, *, spacing=1):
