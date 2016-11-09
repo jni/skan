@@ -36,6 +36,19 @@ class CSGraph:
         return self.indices[loc:stop]
 
 
+def _pixel_graph(image, steps, distances, num_edges, height=None):
+    row = np.empty(num_edges, dtype=np.int32)
+    col = np.empty(num_edges, dtype=np.int32)
+    data = np.empty(num_edges, dtype=float)
+    if height is None:
+        k = _write_pixel_graph(image, steps, distances, row, col, data)
+    else:
+        k = _write_pixel_graph_height(image, height, steps, distances,
+                                      row, col, data)
+    assert k == num_edges
+    return row, col, data
+
+
 @numba.jit(nopython=True, cache=True, nogil=True)
 def _write_pixel_graph(image, steps, distances, row, col, data):
     """Step over `image` to build a graph of nonzero pixel neighbors.
@@ -80,6 +93,62 @@ def _write_pixel_graph(image, steps, distances, row, col, data):
                     col[k] = image[n]
                     data[k] = distances[j]
                     k += 1
+    return k
+
+@numba.jit(nopython=True, cache=True, nogil=True)
+def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
+    """Step over `image` to build a graph of nonzero pixel neighbors.
+
+    Parameters
+    ----------
+    image : int array
+        The input image.
+    height : float array, same shape as `image`
+        This is taken to be a height map along an additional
+        dimension (in addition to the image dimensions), so the distance
+        between two neighbors `i` and `n` separated by `j` is given by:
+
+             `np.sqrt(distances[j]**2 + (height[i] - height[n])**2)`
+
+    steps : int array, shape (N,)
+        The raveled index steps to find a pixel's neighbors in `image`.
+    distances : float array, shape (N,)
+        The euclidean distance from a pixel to its corresponding
+        neighbor in `steps`.
+    row : int array
+        Output array to be filled with the "center" pixel IDs.
+    col : int array
+        Output array to be filled with the "neighbor" pixel IDs.
+    data : float array
+        Output array to be filled with the distances from center to
+        neighbor pixels.
+
+    Notes
+    -----
+    No size or bounds checking is performed. Users should ensure that
+    - No index in `indices` falls on any edge of `image` (or the
+      neighbor computation will fail or segfault).
+    - The `steps` and `distances` arrays have the same shape.
+    - The `row`, `col`, `data` are long enough to hold all of the
+      edges.
+    """
+    image = image.ravel()
+    height = height.ravel()
+    n_neighbors = steps.size
+    start_idx = np.max(steps)
+    end_idx = image.size + np.min(steps)
+    k = 0
+    for i in range(start_idx, end_idx + 1):
+        if image[i] != 0:
+            for j in range(n_neighbors):
+                n = steps[j] + i
+                if image[n] != 0:
+                    row[k] = image[i]
+                    col[k] = image[n]
+                    data[k] = np.sqrt(distances[j] ** 2 +
+                                      (height[i] - height[n]) ** 2)
+                    k += 1
+    return k
 
 
 def skeleton_to_csgraph(skel, *, spacing=1):
@@ -112,6 +181,10 @@ def skeleton_to_csgraph(skel, *, spacing=1):
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
     """
+    if np.issubdtype(skel.dtype, float):  # interpret float skels as height
+        height = skel
+    else:
+        height = np.zeros(skel.shape, float)
     skel = skel.astype(bool)  # ensure we have a bool image
                               # since we later use it for bool indexing
     spacing = np.ones(skel.ndim, dtype=float) * spacing
@@ -127,11 +200,9 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     degree_image = ndi.convolve(skel.astype(int), degree_kernel,
                                 mode='constant') * skel
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
-    row, col = np.zeros(num_edges, dtype=int), np.zeros(num_edges, dtype=int)
-    data = np.zeros(num_edges, dtype=float)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim,
                                                   spacing=spacing)
-    _write_pixel_graph(skelint, steps, distances, row, col, data)
+    row, col, data = _pixel_graph(skelint, steps, distances, num_edges, height)
     graph = sparse.coo_matrix((data, (row, col))).tocsr()
     return graph, pixel_indices, degree_image
 
