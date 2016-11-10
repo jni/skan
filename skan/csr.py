@@ -180,9 +180,9 @@ def skeleton_to_csgraph(skel, *, spacing=1):
         corresponding node in `graph`. This is useful to classify nodes.
     """
     if np.issubdtype(skel.dtype, float):  # interpret float skels as height
-        height = skel
+        height = pad(skel, 0.)
     else:
-        height = np.zeros(skel.shape, float)
+        height = None
     skel = skel.astype(bool)  # ensure we have a bool image
                               # since we later use it for bool indexing
     spacing = np.ones(skel.ndim, dtype=float) * spacing
