@@ -45,7 +45,8 @@ def _pixel_graph(image, steps, distances, num_edges, height=None):
     else:
         _write_pixel_graph_height(image, height, steps, distances,
                                   row, col, data)
-    return row, col, data
+    graph = sparse.coo_matrix((data, (row, col))).tocsr()
+    return graph
 
 
 @numba.jit(nopython=True, cache=True, nogil=True)
@@ -199,8 +200,7 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim,
                                                   spacing=spacing)
-    row, col, data = _pixel_graph(skelint, steps, distances, num_edges, height)
-    graph = sparse.coo_matrix((data, (row, col))).tocsr()
+    graph = _pixel_graph(skelint, steps, distances, num_edges, height)
     return graph, pixel_indices, degree_image
 
 
