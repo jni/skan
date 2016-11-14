@@ -7,7 +7,7 @@ rundir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rundir)
 
 from skan._testdata import (tinycycle, tinyline, skeleton1, skeleton2,
-                            skeleton3d)
+                            skeleton3d, topograph1d)
 
 
 def test_tiny_cycle():
@@ -80,3 +80,10 @@ def test_3d_spacing():
     assert_equal(stats.shape, (5, 4))
     assert_almost_equal(stats[0], [1, 11, 2 * np.sqrt(27), 1])
     assert_equal(np.unique(stats[:, 3].astype(int)), [1, 2, 3])
+
+
+def test_topograph():
+    g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d)
+    stats = csr.branch_statistics(g, idxs, degimg)
+    assert stats.shape == (1, 4)
+    assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])

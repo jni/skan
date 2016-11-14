@@ -11,10 +11,10 @@ DESCRIPTION         = 'Analysis of object skeletons'
 LONG_DESCRIPTION    = descr
 MAINTAINER          = 'Juan Nunez-Iglesias'
 MAINTAINER_EMAIL    = 'juan.n@unimelb.edu.au'
-URL                 = 'https://github.com/jni/skeleton-analysis'
+URL                 = 'https://github.com/jni/skan'
 LICENSE             = 'BSD 3-clause'
-DOWNLOAD_URL        = 'https://github.com/jni/skeleton-analysis'
-VERSION             = '0.1-dev'
+DOWNLOAD_URL        = 'https://github.com/jni/skan'
+VERSION             = '0.2.0-dev'
 PYTHON_VERSION      = (3, 5)
 INST_DEPENDENCIES   = {} 
 

@@ -45,3 +45,5 @@ skeleton3d = np.array([[[1, 0, 0, 0, 0],
                         [0, 1, 0, 0, 1],
                         [1, 0, 1, 0, 1],
                         [0, 0, 0, 0, 1]]], dtype=bool)
+
+topograph1d = np.array([3., 2., 3.])
