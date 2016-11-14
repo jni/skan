@@ -50,6 +50,16 @@ def test_3skeletons():
     assert_equal(np.bincount(df['branch-type']), [0, 4, 4])
 
 
+def test_summarise_spacing():
+    df = csr.summarise(skeleton2)
+    df2 = csr.summarise(skeleton2, spacing=2)
+    assert_equal(np.array(df['node-id-0']), np.array(df2['node-id-0']))
+    assert_almost_equal(np.array(df2['euclidean-distance']),
+                        np.array(2 * df['euclidean-distance']))
+    assert_almost_equal(np.array(df2['branch-distance']),
+                        np.array(2 * df['branch-distance']))
+
+
 def test_line():
     g, idxs, degimg = csr.skeleton_to_csgraph(tinyline)
     assert_equal(idxs, [0, 1, 2, 3])
