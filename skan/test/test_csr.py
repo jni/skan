@@ -87,3 +87,11 @@ def test_topograph():
     stats = csr.branch_statistics(g, idxs, degimg)
     assert stats.shape == (1, 4)
     assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])
+
+
+def test_topograph_summary():
+    stats = csr.summarise(topograph1d, spacing=2.5)
+    assert stats.loc[0, 'euclidean-distance'] == 5.0
+    assert_almost_equal(stats.loc[0, ['coord-0-0', 'coord-0-1',
+                                      'coord-1-0', 'coord-1-1']],
+                        [3, 0, 3, 5])
