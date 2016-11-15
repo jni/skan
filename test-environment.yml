@@ -7,7 +7,9 @@ dependencies:
 - numpydoc>=0.5*
 - scipy>=0.18*
 - networkx>=1.11*
+- matplotlib>=1.5*
+- scikit-image>=0.12*
+- pandas>=0.18*
 - pytest>=3*
 - coverage>=4.0
 - pytest-cov>=2.2
-- pandas>=0.18*

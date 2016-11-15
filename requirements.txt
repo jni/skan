@@ -3,3 +3,5 @@ scipy>=0.18
 networkx>=1.11
 numba>=0.29
 pandas>=0.18
+matplotlib>=1.5
+scikit-image>=0.12
