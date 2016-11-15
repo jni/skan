@@ -366,7 +366,9 @@ def summarise(image, *, spacing=1):
     ----------
     image : array, shape (M, N, ..., P)
         N-dimensional array, where nonzero entries correspond to an
-        object's single-pixel-wide skeleton.
+        object's single-pixel-wide skeleton. If the image is of type 'float',
+        the values are taken to be the height at that pixel, which is used
+        to compute the skeleton distances.
     spacing : float, or array-like of float, shape `(skel.ndim,)`
         A value indicating the distance between adjacent pixels. This can
         either be a single value if the data has the same resolution along
@@ -380,24 +382,40 @@ def summarise(image, *, spacing=1):
         `image`.
     """
     ndim = image.ndim
+    using_height = np.issubdtype(image.dtype, float)
     spacing = np.ones(ndim, dtype=float) * spacing
     g, pixels, degrees = skeleton_to_csgraph(image, spacing=spacing)
-    coords = np.transpose(np.unravel_index(pixels, image.shape)) * spacing
+    coords_img = np.transpose(np.unravel_index(pixels, image.shape))
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
     stats = branch_statistics(g, pixels, degree_image=degrees)
-    coords0 = coords[stats[:, 0].astype(int)]
-    coords1 = coords[stats[:, 1].astype(int)]
-    distances = np.sqrt(np.sum((coords0 - coords1)**2, axis=1))
+    indices0 = stats[:, 0].astype(int)
+    indices1 = stats[:, 1].astype(int)
+    coords_img0 = coords_img[indices0]
+    coords_img1 = coords_img[indices1]
+    coords_real0 = coords_img0 * spacing
+    coords_real1 = coords_img1 * spacing
+    if using_height:
+        coords_real0 = np.column_stack((image.ravel()[pixels][indices0],
+                                        coords_real0))
+        coords_real1 = np.column_stack((image.ravel()[pixels][indices1],
+                                        coords_real1))
+    distances = np.sqrt(np.sum((coords_real0 - coords_real1)**2, axis=1))
     skeleton_id = skeleton_ids[stats[:, 0].astype(int)]
-    table = np.column_stack((skeleton_id, stats,
-                             coords0, coords1, distances))
+    table = np.column_stack((skeleton_id, stats, coords_img0, coords_img1,
+                             coords_real0, coords_real1, distances))
+    height_ndim = ndim if not using_height else (ndim + 1)
     columns = (['skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
                 'branch-type'] +
-               ['coord-0-%i' % i for i in range(ndim)] +
-               ['coord-1-%i' % i for i in range(ndim)] +
+               ['img-coord-0-%i' % i for i in range(ndim)] +
+               ['img-coord-1-%i' % i for i in range(ndim)] +
+               ['coord-0-%i' % i for i in range(height_ndim)] +
+               ['coord-1-%i' % i for i in range(height_ndim)] +
                ['euclidean-distance'])
-    column_types = [int, int, int, float, int] + 2*ndim*[int] + [float]
+    column_types = ([int, int, int, float, int] +
+                    2 * ndim * [int] +
+                    2 * height_ndim * [float] +
+                    [float])
     data_dict = {col: dat.astype(dtype)
                  for col, dat, dtype in zip(columns, table.T, column_types)}
     df = pd.DataFrame(data_dict)
