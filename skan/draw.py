@@ -44,8 +44,9 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
     color_values = summary[skeleton_color_source]
     cmap = plt.get_cmap(skeleton_colormap,
                         min(len(np.unique(color_values)), 256))
-    colormapped = cmap(color_values)
-    for ((r0, c0, r1, c1), color) in zip(coords.iterrows(),
-                                         colormapped):
+    colormapped = cmap((color_values - np.min(color_values)) /
+                       (np.max(color_values) - np.min(color_values)))
+    for ((_, (r0, c0, r1, c1)), color) in zip(coords.iterrows(),
+                                              colormapped):
         axes.plot([c0, c1], [r0, r1], color=color, marker=None)
     return axes
