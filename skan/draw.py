@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage import img_as_float
+from skimage import img_as_float, morphology
 from skimage.color import gray2rgb
 from .csr import summarise
+from .pre import threshold
 
 
 def _normalise_image(image, *, image_cmap=None):
@@ -109,3 +110,47 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
                                               colormapped):
         axes.plot([c0, c1], [r0, r1], color=color, marker=None)
     return axes
+
+
+def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
+                  figsize=(9, 9)):
+    """Draw the image, the thresholded version, and its skeleton.
+
+    Parameters
+    ----------
+    image : array, shape (M, N, ...[, 3])
+        Input image, conformant with scikit-image data type
+        specification [1]_.
+    sigma : float, optional
+        If positive, use Gaussian filtering to smooth the image before
+        thresholding.
+    radius : int, optional
+        If given, use local median thresholding instead of global.
+    offset : float, optional
+        If given, reduce the threshold by this amount. Higher values
+        result in more pixels above the threshold.
+    figsize : 2-tuple of float, optional
+        The width and height of the figure.
+
+    Returns
+    -------
+    fig : matplotlib Figure
+        The Figure containing all the plots
+    axes : array of matplotlib Axes
+        The four axes containing the drawn images.
+    """
+    fig, axes = plt.subplots(2, 2, figsize=figsize)
+    axes = np.ravel(axes)
+    axes[0].imshow(image)
+    axes[0].axis('off')
+
+    thresholded = threshold(image, sigma=sigma, radius=radius, offset=offset)
+    axes[1].imshow(thresholded)
+    axes[1].axis('off')
+
+    skeleton = morphology.skeletonize(thresholded)
+    overlay_skeleton_2d(image, skeleton, axes=axes[2])
+
+    overlay_euclidean_skeleton_2d(image, skeleton, axes=axes[3])
+
+    return fig, axes
