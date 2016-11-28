@@ -32,6 +32,39 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
                                   skeleton_color_source='branch-type',
                                   skeleton_colormap='viridis',
                                   axes=None):
+    """Plot the image, and overlay the straight-line skeleton over it.
+
+    Parameters
+    ----------
+    image : array, shape (M, N)
+        The input image.
+    skeleton : array, shape (M, N)
+        A 1-pixel thick skeleton to overlay over `image`.
+
+    Other Parameters
+    ----------------
+    image_cmap : matplotlib colormap name or object, optional
+        The colormap to use for the input image. Defaults to grayscale.
+    skeleton_color_source : string, optional
+        The name of the column to use for the skeleton edge color. See the
+        output of `skan.summarise` for valid choices. Most common choices
+        would be:
+        - skeleton-id: each individual skeleton (connected component) will
+          have a different colour.
+        - branch-type: each branch type (tip-tip, tip-junction,
+          junction-junction, path-path). This is the default.
+        - branch-distance: the curved length of the skeleton branch.
+        - euclidean-distance: the straight-line length of the skeleton branch.
+    skeleton_colormap : matplotlib colormap name or object, optional
+        The colormap for the skeleton values.
+    axes : matplotlib Axes object, optional
+        An Axes object on which to draw. If `None`, a new one is created.
+
+    Returns
+    -------
+    axes : matplotlib Axes object
+        The Axes on which the plot is drawn.
+    """
     image = _normalise_image(image, image_cmap=image_cmap)
     summary = summarise(skeleton)
     coords_cols = (['img-coord-0-%i' % i for i in range(2)] +
