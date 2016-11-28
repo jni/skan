@@ -17,6 +17,32 @@ def _normalise_image(image, *, image_cmap=None):
 
 def overlay_skeleton_2d(image, skeleton, *,
                         image_cmap=None, color=(1, 0, 0), alpha=1, axes=None):
+    """Overlay the skeleton pixels on the input image.
+
+    Parameters
+    ----------
+    image : array, shape (M, N[, 3])
+        The input image. Can be grayscale or RGB.
+    skeleton : array, shape (M, N)
+        The input 1-pixel-wide skeleton.
+
+    Other Parameters
+    ----------------
+    image_cmap : matplotlib colormap name or object, optional
+        If the input image is grayscale, colormap it with this colormap.
+        The default is grayscale.
+    color : tuple of float in [0, 1], optional
+        The RGB color for the skeleton pixels.
+    alpha : float, optional
+        Blend the skeleton pixels with the given alpha.
+    axes : matplotlib Axes
+        The Axes on which to plot the image. If None, new ones are created.
+
+    Returns
+    -------
+    axes : matplotlib Axes
+        The Axis on which the image is drawn.
+    """
     image = _normalise_image(image, image_cmap=image_cmap)
     skeleton = skeleton.astype(bool)
     if axes is None:
