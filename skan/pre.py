@@ -60,6 +60,8 @@ def threshold(image, *, sigma=0., radius=0, offset=0.):
     if sigma > 0:
         image = filters.gaussian(image, sigma=sigma)
     image = img_as_ubyte(image)
+    if len(np.unique(image)) == 1:
+        return np.zeros(image.shape, dtype=bool)
     if radius > 0:
         footprint = hyperball(image.ndim, radius=radius)
         t = ndi.median_filter(image, footprint=footprint) - offset
