@@ -29,6 +29,8 @@ install:
 
 script:
   # Run tests
+  - export MPLBACKEND="tkagg"
+  - python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
   - py.test
 
 after_success:
