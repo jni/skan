@@ -50,7 +50,7 @@ def threshold(image, *, sigma=0., radius=0, offset=0.):
 
     Returns
     -------
-    thersholded : image of bool, same shape as `image`
+    thresholded : image of bool, same shape as `image`
         The thresholded image.
 
     References
