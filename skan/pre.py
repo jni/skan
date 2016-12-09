@@ -64,8 +64,8 @@ def threshold(image, *, sigma=0., radius=0, offset=0.):
         return np.zeros(image.shape, dtype=bool)
     if radius > 0:
         footprint = hyperball(image.ndim, radius=radius)
-        t = ndi.median_filter(image, footprint=footprint) - offset
+        t = ndi.median_filter(image, footprint=footprint) + offset
     else:
-        t = filters.threshold_otsu(image) - offset
+        t = filters.threshold_otsu(image) + offset
     thresholded = image > t
     return thresholded
