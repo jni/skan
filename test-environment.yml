@@ -13,5 +13,5 @@ dependencies:
 - pytest>=3*
 - coverage>=4.0
 - pytest-cov>=2.2
-pip:
+- pip:
   - hypothesis>=3.6
