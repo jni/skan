@@ -7,7 +7,7 @@ rundir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rundir)
 
 from skan._testdata import (tinycycle, tinyline, skeleton1, skeleton2,
-                            skeleton3d)
+                            skeleton3d, topograph1d)
 
 
 def test_tiny_cycle():
@@ -50,6 +50,16 @@ def test_3skeletons():
     assert_equal(np.bincount(df['branch-type']), [0, 4, 4])
 
 
+def test_summarise_spacing():
+    df = csr.summarise(skeleton2)
+    df2 = csr.summarise(skeleton2, spacing=2)
+    assert_equal(np.array(df['node-id-0']), np.array(df2['node-id-0']))
+    assert_almost_equal(np.array(df2['euclidean-distance']),
+                        np.array(2 * df['euclidean-distance']))
+    assert_almost_equal(np.array(df2['branch-distance']),
+                        np.array(2 * df['branch-distance']))
+
+
 def test_line():
     g, idxs, degimg = csr.skeleton_to_csgraph(tinyline)
     assert_equal(idxs, [0, 1, 2, 3])
@@ -70,3 +80,18 @@ def test_3d_spacing():
     assert_equal(stats.shape, (5, 4))
     assert_almost_equal(stats[0], [1, 11, 2 * np.sqrt(27), 1])
     assert_equal(np.unique(stats[:, 3].astype(int)), [1, 2, 3])
+
+
+def test_topograph():
+    g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d)
+    stats = csr.branch_statistics(g, idxs, degimg)
+    assert stats.shape == (1, 4)
+    assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])
+
+
+def test_topograph_summary():
+    stats = csr.summarise(topograph1d, spacing=2.5)
+    assert stats.loc[0, 'euclidean-distance'] == 5.0
+    assert_almost_equal(stats.loc[0, ['coord-0-0', 'coord-0-1',
+                                      'coord-1-0', 'coord-1-1']],
+                        [3, 0, 3, 5])

@@ -27,6 +27,10 @@ def bench_suite():
         g, indices, degrees = csr.skeleton_to_csgraph(skeleton,
                                                       spacing=2.24826)
     times['build graph'] = t_build_graph[0]
+    with timer() as t_build_graph2:
+        g, indices, degrees = csr.skeleton_to_csgraph(skeleton,
+                                                      spacing=2.24826)
+    times['build graph again'] = t_build_graph2[0]
     with timer() as t_stats:
         stats = csr.branch_statistics(g, indices, degrees)
     times['compute statistics'] = t_stats[0]
