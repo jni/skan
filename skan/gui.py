@@ -36,6 +36,13 @@ class Launch(tk.Tk):
         smooth_label.grid(column=0, row=cur_row, sticky='nsew')
         smooth = ttk.Entry(parameters, textvariable=self.smooth_radius)
         smooth.grid(column=1, row=cur_row, sticky='nsew')
+        cur_row += 1
+
+        threshold_label = ttk.Label(parameters, text='Threshold radius')
+        threshold_label.grid(row=cur_row, column=0, sticky='nsew')
+        threshold = ttk.Entry(parameters, textvariable=self.threshold_radius)
+        threshold.grid(row=cur_row, column=1, sticky='nsew')
+        cur_row += 1
 
         main.pack()
 
