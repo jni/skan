@@ -8,6 +8,7 @@ STANDARD_MARGIN = (3, 3, 12, 12)
 class Launch(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.title('Skeleton analysis tool')
         self.smooth_radius = tk.DoubleVar(value=0.1, name='foo')
         self.threshold_radius = tk.DoubleVar(value=50e-9, name='bar')
         self.brightness_offset = tk.DoubleVar(value=-10, name='baz')
