@@ -92,14 +92,14 @@ class Launch(tk.Tk):
             p = param.get()
             print('  ', param, type(p), p)
         print('Output:', self.output_folder)
-        image_format = (None if self.image_format == 'auto'
-                        else self.image_format)
+        image_format = (None if self.image_format.get() == 'auto'
+                        else self.image_format.get())
         results = []
         from skan import pre, csr
         for file in tqdm(self.input_files):
             image = imageio.imread(file, format=image_format)
             if self.scale_metadata_path is not None:
-                md_path = str.split(self.scale_metadata_path, sep=',')
+                md_path = self.scale_metadata_path.get().split(sep=',')
                 meta = image.meta
                 for key in md_path:
                     meta = meta[key]
