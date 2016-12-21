@@ -45,6 +45,12 @@ class Launch(tk.Tk):
         threshold.grid(row=cur_row, column=1, sticky='nsew')
         cur_row += 1
 
+        brightness_label = ttk.Label(parameters, text='Brightness offset')
+        brightness_label.grid(row=cur_row, column=0, sticky='nsew')
+        brightness = ttk.Entry(parameters, textvariable=self.brightness_offset)
+        brightness.grid(row=cur_row, column=1, sticky='nsew')
+        cur_row += 1
+
         main.pack()
 
 
