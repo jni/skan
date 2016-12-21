@@ -1,4 +1,6 @@
+import os
 import tkinter as tk
+import tkinter.filedialog
 from tkinter import ttk
 
 
@@ -23,6 +25,9 @@ class Launch(tk.Tk):
             self.scale_metadata_path
         ]
 
+        self.input_files = []
+        self.output_folder = os.path.expanduser('~/Desktop')
+
         # allow resizing
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -32,24 +37,48 @@ class Launch(tk.Tk):
     def create_main_frame(self):
         main = ttk.Frame(master=self, padding=STANDARD_MARGIN)
         main.grid(row=0, column=0, sticky='nsew')
-        parameters = ttk.Frame(master=main, padding=STANDARD_MARGIN)
-        parameters.grid(sticky='nsew')
-
-        cur_row = 0
-
-        heading = ttk.Label(parameters, text='Analysis parameters')
-        heading.grid(column=0, row=cur_row, sticky='n')
-        cur_row += 1
-
-        for i, param in enumerate(self.parameters):
-            param_label = ttk.Label(parameters, text=param._name)
-            param_label.grid(row=cur_row + i, column=0, sticky='nsew')
-            param_entry = ttk.Entry(parameters, textvariable=param)
-            param_entry.grid(row=cur_row + i, column=1, sticky='nsew')
-        cur_row += i
-
+        self.create_parameters_frame(main)
+        self.create_buttons_frame(main)
         main.pack()
 
+    def create_parameters_frame(self, parent):
+        parameters = ttk.Frame(master=parent, padding=STANDARD_MARGIN)
+        parameters.grid(sticky='nsew')
+
+        heading = ttk.Label(parameters, text='Analysis parameters')
+        heading.grid(column=0, row=0, sticky='n')
+
+        for i, param in enumerate(self.parameters, start=1):
+            param_label = ttk.Label(parameters, text=param._name)
+            param_label.grid(row=i, column=0, sticky='nsew')
+            param_entry = ttk.Entry(parameters, textvariable=param)
+            param_entry.grid(row=i, column=1, sticky='nsew')
+
+    def create_buttons_frame(self, parent):
+        buttons = ttk.Frame(master=parent, padding=STANDARD_MARGIN)
+        buttons.grid(sticky='nsew')
+        actions = [
+            ('Choose files', self.choose_input_files),
+            ('Choose output folder', self.choose_output_folder),
+            ('Run', self.run)
+        ]
+        for col, (action_name, action) in enumerate(actions):
+            button = ttk.Button(buttons, text=action_name,
+                                command=action)
+            button.grid(row=0, column=col)
+
+    def choose_input_files(self):
+        self.input_files = tk.filedialog.askopenfilenames()
+
+    def choose_output_folder(self):
+        self.output_folder = \
+                tk.filedialog.askdirectory(initialdir=self.output_folder)
+
+    def run(self):
+        from skan import pre, csr
+        print('In:', self.input_files)
+        print('Out:', self.output_folder)
+        print('running!')
 
 if __name__ == '__main__':
     app = Launch()
