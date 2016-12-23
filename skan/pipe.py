@@ -1,6 +1,6 @@
 from . import pre, csr
 import imageio
-import tqdm
+from tqdm import tqdm
 import numpy as np
 from skimage import morphology
 import pandas as pd

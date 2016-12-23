@@ -3,11 +3,8 @@ import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
 
-from tqdm import tqdm
-import imageio
-import numpy as np
-from skimage import morphology
-import pandas as pd
+
+from . import pipe
 
 
 STANDARD_MARGIN = (3, 3, 12, 12)
@@ -92,35 +89,12 @@ class Launch(tk.Tk):
             p = param.get()
             print('  ', param, type(p), p)
         print('Output:', self.output_folder)
-        image_format = (None if self.image_format.get() == 'auto'
-                        else self.image_format.get())
-        results = []
-        from skan import pre, csr
-        for file in tqdm(self.input_files):
-            image = imageio.imread(file, format=image_format)
-            if self.scale_metadata_path is not None:
-                md_path = self.scale_metadata_path.get().split(sep=',')
-                meta = image.meta
-                for key in md_path:
-                    meta = meta[key]
-                scale = float(meta)
-            else:
-                scale = 1  # measurements will be in pixel units
-            pixel_threshold_radius = int(np.ceil(self.threshold_radius.get() /
-                                                 scale))
-            pixel_smoothing_radius = (self.smooth_radius.get() *
-                                      pixel_threshold_radius)
-            thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
-                                        radius=pixel_threshold_radius,
-                                        offset=self.brightness_offset.get())
-            skeleton = morphology.skeletonize(thresholded)
-            framedata = csr.summarise(skeleton, spacing=scale)
-            framedata['squiggle'] = np.log2(framedata['branch-distance'] /
-                                            framedata['euclidean-distance'])
-            framedata['filename'] = [file] * len(framedata)
-            results.append(framedata)
-        results = pd.concat(results)
-        results.to_csv(os.path.join(self.output_folder, 'skeletons.csv'))
+        result = pipe.process_images(self.input_files, self.image_format.get(),
+                                     self.threshold_radius.get(),
+                                     self.smooth_radius.get(),
+                                     self.brightness_offset.get(),
+                                     self.scale_metadata_path.get())
+        result.to_csv(os.path.join(self.output_folder, 'skeletons.csv'))
 
 
 if __name__ == '__main__':
