@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import spatial, ndimage as ndi
 from skimage import filters, img_as_ubyte
+from skimage._shared._warnings import expected_warnings
 
 
 def hyperball(ndim, radius):
@@ -28,7 +29,6 @@ def hyperball(ndim, radius):
     ball = np.zeros((size,) * ndim, dtype=bool)
     ball.ravel()[selector] = True
     return ball
-
 
 
 def threshold(image, *, sigma=0., radius=0, offset=0.):
@@ -59,7 +59,8 @@ def threshold(image, *, sigma=0., radius=0, offset=0.):
     """
     if sigma > 0:
         image = filters.gaussian(image, sigma=sigma)
-    image = img_as_ubyte(image)
+    with expected_warnings(['precision loss|\A\Z']):  # ignore prec loss warn
+        image = img_as_ubyte(image)
     if len(np.unique(image)) == 1:
         return np.zeros(image.shape, dtype=bool)
     if radius > 0:
