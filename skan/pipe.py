@@ -13,7 +13,7 @@ def process_images(filenames, image_format, threshold_radius,
     for file in tqdm(filenames):
         image = imageio.imread(file, format=image_format)
         if scale_metadata_path is not None:
-            md_path = scale_metadata_path.split(sep=',')
+            md_path = scale_metadata_path.split(sep='/')
             meta = image.meta
             for key in md_path:
                 meta = meta[key]

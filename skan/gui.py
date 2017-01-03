@@ -21,7 +21,7 @@ class Launch(tk.Tk):
                                               name='Brightness offset')
         self.image_format = tk.StringVar(value='auto',
                                          name='Image format')
-        self.scale_metadata_path = tk.StringVar(value='Scan,PixelHeight',
+        self.scale_metadata_path = tk.StringVar(value='Scan/PixelHeight',
                                                 name='Scale metadata path')
         self.parameters = [
             self.smooth_radius,
