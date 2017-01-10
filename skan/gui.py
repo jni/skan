@@ -1,4 +1,5 @@
 import os
+import argparse
 import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
@@ -97,6 +98,6 @@ class Launch(tk.Tk):
         result.to_csv(os.path.join(self.output_folder, 'skeletons.csv'))
 
 
-if __name__ == '__main__':
+def launch():
     app = Launch()
     app.mainloop()
