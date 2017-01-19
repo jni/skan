@@ -1,7 +1,8 @@
+import os
+import imageio
 from scipy import special
 import numpy as np
 from hypothesis import given, strategies
-from hypothesis.extra.numpy import arrays
 import pytest
 
 from skan import pre
@@ -23,33 +24,22 @@ def test_hyperball_volume(ndim, radius):
                                rtol=0.5)
 
 
-uint8s = strategies.integers(min_value=0, max_value=255)
-methods = [strategies.just(v) for v in ['sauvola', 'niblack', 'median']]
-
-
-@pytest.mark.skip
-@given(image=arrays(dtype=np.uint8, shape=(15, 15)),
-       sigma=strategies.integers(min_value=0, max_value=3),
-       radius=strategies.integers(min_value=0, max_value=6),
-       method=strategies.one_of(methods))
-def test_threshold2d(image, sigma, radius, method):
-    if np.all(image == image[0, 0]):
-        return
-    radius = max(radius, 2 * sigma)
+def test_threshold2d():
+    rundir = os.path.abspath(os.path.dirname(__file__))
+    datadir = os.path.join(rundir, 'data')
+    image = imageio.imread(os.path.join(datadir, 'retic.tif'), format='fei')
+    res = image.meta['Scan']['PixelHeight'] * 1e9  # nm/pixel
+    radius = int(50 / res)  # radius of 50nm in pixels
+    sigma = 0.1 * radius
     thresholded0 = pre.threshold(image, sigma=sigma, radius=radius,
-                                 method=method)
+                                 method='sauvola', offset=0.2)
     assert thresholded0.dtype == bool
     assert thresholded0.shape == image.shape
-    offset = 0.025 + np.random.rand()
     thresholded1 = pre.threshold(image, sigma=sigma, radius=radius,
-                                 method=method, offset=offset)
-    if method == 'median':
-        if offset > 0:
-            assert np.all(thresholded1 <= thresholded0)
-        else:
-            assert np.all(thresholded1 >= thresholded0)
-    else:
-        if offset > 0.2:
-            assert np.all(thresholded1 >= thresholded0)
-        else:
-            assert np.all(thresholded1 <= thresholded0)
+                                 method='sauvola', offset=0.075)
+    assert np.all(thresholded1 <= thresholded0)
+
+    thresholded2 = pre.threshold(image, sigma=sigma, radius=radius,
+                                 method='niblack')
+    thresholded3 = pre.threshold(image[:250, :250], sigma=sigma,
+                                 radius=radius, method='median')
