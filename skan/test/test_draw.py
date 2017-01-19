@@ -20,7 +20,7 @@ def test_image():
 
 @pytest.fixture
 def test_skeleton(test_image):
-    thresholded = pre.threshold(test_image, sigma=2, radius=31, offset=-7)
+    thresholded = pre.threshold(test_image, sigma=2, radius=31, offset=0.075)
     skeleton = morphology.skeletonize(thresholded)
     return skeleton
 
@@ -38,4 +38,4 @@ def test_overlay_euclidean_skeleton(test_image, test_skeleton):
 
 
 def test_pipeline_plot(test_image):
-    draw.pipeline_plot(test_image, sigma=2, radius=31, offset=-7)
+    draw.pipeline_plot(test_image, sigma=2, radius=31, offset=0.075)
