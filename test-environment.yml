@@ -16,3 +16,4 @@ dependencies:
 - pip:
   - hypothesis>=3.6
   - imageio>=2.0
+  - tqdm>=4.11
