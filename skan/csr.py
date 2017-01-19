@@ -149,6 +149,54 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
+@numba.jit(nopython=True, cache=True, nogil=True)
+def _zero_csr_rows(indptr, data, rows):
+    for row in rows:
+        for i in range(indptr[row], indptr[row+1]):
+            data[i] = 0
+
+
+def _uniquify_junctions(csmat, pixel_indices, degree_image, *, spacing=1):
+    """Replace clustered pixels with degree > 2 by a single "floating" pixel.
+
+    Parameters
+    ----------
+    csmat : CSGraph
+        The input graph.
+    shape : tuple of int
+        The shape of the original image from which the graph was generated.
+    spacing : float, or array-like of float, shape `len(shape)`, optional
+        The spacing between pixels in the source image along each dimension.
+
+    Returns
+    -------
+    final_graph : CSGraph
+        The output csmat.
+    """
+    graph_j2o = csmat.tocoo()
+    graph_o2j = graph_j2o.copy()
+    degrees = np.ravel(degree_image)[pixel_indices]
+    junctions = degrees > 2
+    other = ~junctions
+    graph_j2o.data[other[graph_j2o.row]] = 0
+    graph_j2o.data[junctions[graph_j2o.col]] = 0
+    graph_o2j.data[junctions[graph_o2j.row]] = 0
+    graph_o2j.data[other[graph_o2j.col]] = 0
+    graph_join = (graph_j2o + graph_o2j).tocsr()
+
+    # find the csmat of only junctions
+    graph_junctions = csmat.copy()
+    _zero_csr_rows(graph_junctions.indptr, graph_junctions.data,
+                   np.flatnonzero(other))
+    # pointwise multiply by the transpose to zero-out the columns
+    graph_junctions = graph_junctions.multiply(graph_junctions.T)
+
+    # find the connected components in that graph
+    ccs = csgraph.connected_components(csmat, return_labels=True)
+    return graph_junctions
+
+
+
 def skeleton_to_csgraph(skel, *, spacing=1):
     """Convert a skeleton image of thin lines to a graph of neighbor pixels.
 
