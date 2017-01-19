@@ -6,6 +6,7 @@ dependencies:
 - numpy>=1.11*
 - numpydoc>=0.5*
 - scipy>=0.18*
+- scikit-image>=0.12*
 - networkx>=1.11*
 - matplotlib>=1.5*
 - pandas>=0.18*
@@ -13,7 +14,7 @@ dependencies:
 - coverage>=4.0
 - pytest-cov>=2.2
 - pip:
-  - git+http://github.com/scikit-image/scikit-image.git
   - hypothesis>=3.6
   - imageio>=2.0
   - tqdm>=4.11
+  - nose>=1.3
