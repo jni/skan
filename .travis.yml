@@ -34,7 +34,7 @@ install:
   - pip install -e .
 
 before_script:
-  - git lfs fetch
+  - git lfs pull
 
 script:
   # Run tests
