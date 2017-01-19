@@ -31,7 +31,8 @@ def hyperball(ndim, radius):
     return ball
 
 
-def threshold(image, *, sigma=0., radius=0, offset=0.):
+def threshold(image, *, sigma=0., radius=0, offset=0.,
+              method='sauvola'):
     """Use scikit-image filters to "intelligently" threshold an image.
 
     Parameters
@@ -46,7 +47,10 @@ def threshold(image, *, sigma=0., radius=0, offset=0.):
         If given, use local median thresholding instead of global.
     offset : float, optional
         If given, reduce the threshold by this amount. Higher values
-        result in more pixels above the threshold.
+        result in fewer pixels above the threshold.
+    method: {'sauvola', 'niblack', 'median'}
+        Which method to use for thresholding. Sauvola is 100x faster, but
+        median might be more accurate.
 
     Returns
     -------
@@ -59,14 +63,22 @@ def threshold(image, *, sigma=0., radius=0, offset=0.):
     """
     if sigma > 0:
         image = filters.gaussian(image, sigma=sigma)
-    with expected_warnings(['precision loss|\A\Z']):  # ignore prec loss warn
-        image = img_as_ubyte(image)
     if len(np.unique(image)) == 1:
         return np.zeros(image.shape, dtype=bool)
-    if radius > 0:
-        footprint = hyperball(image.ndim, radius=radius)
-        t = ndi.median_filter(image, footprint=footprint) + offset
-    else:
+    if radius == 0:
         t = filters.threshold_otsu(image) + offset
+    else:
+        if method == 'median':
+            footprint = hyperball(image.ndim, radius=radius)
+            t = ndi.median_filter(image, footprint=footprint) + offset
+        elif method == 'sauvola':
+            w = 2 * radius + 1
+            t = filters.threshold_sauvola(image, window_size=w, k=offset)
+        elif method == 'niblack':
+            w = 2 * radius + 1
+            t = filters.threshold_niblack(image, window_size=w, k=offset)
+        else:
+            raise ValueError('Unknown method %s. Valid methods are median,'
+                             'niblack, and sauvola.' % method)
     thresholded = image > t
     return thresholded
