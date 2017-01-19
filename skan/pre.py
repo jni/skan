@@ -2,6 +2,8 @@ import numpy as np
 from scipy import spatial, ndimage as ndi
 from skimage import filters
 
+# Temporary until skimage 0.13 is out
+from .vendored.thresholding import threshold_sauvola, threshold_niblack
 
 def hyperball(ndim, radius):
     """Return a binary morphological filter containing pixels within `radius`.
@@ -70,10 +72,10 @@ def threshold(image, *, sigma=0., radius=0, offset=0.,
             t = ndi.median_filter(image, footprint=footprint) + offset
         elif method == 'sauvola':
             w = 2 * radius + 1
-            t = filters.threshold_sauvola(image, window_size=w, k=offset)
+            t = threshold_sauvola(image, window_size=w, k=offset)
         elif method == 'niblack':
             w = 2 * radius + 1
-            t = filters.threshold_niblack(image, window_size=w, k=offset)
+            t = threshold_niblack(image, window_size=w, k=offset)
         else:
             raise ValueError('Unknown method %s. Valid methods are median,'
                              'niblack, and sauvola.' % method)
