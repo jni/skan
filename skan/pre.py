@@ -1,7 +1,6 @@
 import numpy as np
 from scipy import spatial, ndimage as ndi
-from skimage import filters, img_as_ubyte
-from skimage._shared._warnings import expected_warnings
+from skimage import filters
 
 
 def hyperball(ndim, radius):
