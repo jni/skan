@@ -18,7 +18,7 @@ class Launch(tk.Tk):
         self.smooth_radius = tk.DoubleVar(value=0.1, name='Smoothing radius')
         self.threshold_radius = tk.DoubleVar(value=50e-9,
                                              name='Threshold radius')
-        self.brightness_offset = tk.DoubleVar(value=-10,
+        self.brightness_offset = tk.DoubleVar(value=0.075,
                                               name='Brightness offset')
         self.image_format = tk.StringVar(value='auto',
                                          name='Image format')
