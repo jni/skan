@@ -42,7 +42,7 @@ if __name__ == '__main__':
             'Operating System :: Unix',
             'Operating System :: MacOS',
         ],
-        packages=['skan'],
+        packages=['skan', 'skan.vendored'],
         package_data={},
         install_requires=INST_DEPENDENCIES,
         entry_points = {
