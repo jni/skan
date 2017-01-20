@@ -1,2 +1,3 @@
 include LICENSE
 recursive-include skan/test *.py
+recursive-include skan/test/data *.tif
