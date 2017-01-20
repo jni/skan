@@ -45,6 +45,8 @@ if __name__ == '__main__':
         packages=['skan'],
         package_data={},
         install_requires=INST_DEPENDENCIES,
-        scripts=[]
+        entry_points = {
+            'console_scripts': ['skan-gui=skan.gui:launch']
+        }
     )
 
