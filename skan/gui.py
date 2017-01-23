@@ -1,5 +1,6 @@
 import os
-import argparse
+import matplotlib
+matplotlib.use('TkAgg')
 import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
@@ -24,12 +25,15 @@ class Launch(tk.Tk):
                                          name='Image format')
         self.scale_metadata_path = tk.StringVar(value='Scan/PixelHeight',
                                                 name='Scale metadata path')
+        self.save_skeleton_plots = tk.BooleanVar(value=True,
+                                                 name='Save skeleton plot?')
         self.parameters = [
             self.smooth_radius,
             self.threshold_radius,
             self.brightness_offset,
             self.image_format,
-            self.scale_metadata_path
+            self.scale_metadata_path,
+            self.save_skeleton_plots
         ]
 
         self.input_files = []
@@ -58,7 +62,10 @@ class Launch(tk.Tk):
         for i, param in enumerate(self.parameters, start=1):
             param_label = ttk.Label(parameters, text=param._name)
             param_label.grid(row=i, column=0, sticky='nsew')
-            param_entry = ttk.Entry(parameters, textvariable=param)
+            if type(param) == tk.BooleanVar:
+                param_entry = ttk.Checkbutton(parameters, variable=param)
+            else:
+                param_entry = ttk.Entry(parameters, textvariable=param)
             param_entry.grid(row=i, column=1, sticky='nsew')
 
     def create_buttons_frame(self, parent):
@@ -94,7 +101,9 @@ class Launch(tk.Tk):
                                      self.threshold_radius.get(),
                                      self.smooth_radius.get(),
                                      self.brightness_offset.get(),
-                                     self.scale_metadata_path.get())
+                                     self.scale_metadata_path.get(),
+                                     self.save_skeleton_plots.get(),
+                                     self.output_folder)
         result.to_csv(os.path.join(self.output_folder, 'skeletons.csv'))
 
 
