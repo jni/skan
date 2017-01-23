@@ -1,13 +1,16 @@
+import os
 from . import pre, csr
 import imageio
 from tqdm import tqdm
 import numpy as np
 from skimage import morphology
 import pandas as pd
+from . import draw
 
 
 def process_images(filenames, image_format, threshold_radius,
-                   smooth_radius, brightness_offset, scale_metadata_path):
+                   smooth_radius, brightness_offset, scale_metadata_path,
+                   save_skeleton=False, output_folder=None):
     """Full pipeline from images to skeleton stats with local median threshold.
 
     Parameters
@@ -29,6 +32,8 @@ def process_images(filenames, image_format, threshold_radius,
     scale_metadata_path : string
         The path in the image dictionary to find the metadata on pixel scale,
         separated by forward slashes ('/').
+    save_skeleton : bool, optional
+        If True, save a skeleton figure to given output path.
 
     Returns
     -------
@@ -59,4 +64,14 @@ def process_images(filenames, image_format, threshold_radius,
                                         framedata['euclidean-distance'])
         framedata['filename'] = [file] * len(framedata)
         results.append(framedata)
+        if save_skeleton:
+            fig, axes = draw.pipeline_plot(image, sigma=pixel_smoothing_radius,
+                                           radius=pixel_threshold_radius,
+                                           offset=brightness_offset)
+            output_basename = ('skeleton-plot-' +
+                               os.path.basename(os.path.splitext(file)[0]) +
+                               '.png')
+            output_filename = os.path.join(output_folder, output_basename)
+            fig.savefig(output_filename, dpi=300)
+
     return pd.concat(results)
