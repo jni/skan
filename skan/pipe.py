@@ -6,6 +6,7 @@ import numpy as np
 from skimage import morphology
 import pandas as pd
 from . import draw
+import matplotlib.pyplot as plt
 
 
 def process_images(filenames, image_format, threshold_radius,
@@ -73,5 +74,6 @@ def process_images(filenames, image_format, threshold_radius,
                                '.png')
             output_filename = os.path.join(output_folder, output_basename)
             fig.savefig(output_filename, dpi=300)
+            plt.close(fig)
 
     return pd.concat(results)
