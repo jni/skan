@@ -141,11 +141,11 @@ def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
     """
     fig, axes = plt.subplots(2, 2, figsize=figsize)
     axes = np.ravel(axes)
-    axes[0].imshow(image)
+    axes[0].imshow(image, cmap='gray')
     axes[0].axis('off')
 
     thresholded = threshold(image, sigma=sigma, radius=radius, offset=offset)
-    axes[1].imshow(thresholded)
+    axes[1].imshow(thresholded, cmap='gray')
     axes[1].axis('off')
 
     skeleton = morphology.skeletonize(thresholded)
