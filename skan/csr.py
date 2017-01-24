@@ -468,3 +468,16 @@ def summarise(image, *, spacing=1):
                  for col, dat, dtype in zip(columns, table.T, column_types)}
     df = pd.DataFrame(data_dict)
     return df
+
+
+def centroids(image):
+    labelled_image = ndi.label(image)[0]
+    nz = np.nonzero(labelled_image)
+    nzpix = labelled_image[nz]
+    sizes = np.bincount(nzpix)
+    coords = np.transpose(nz)
+    grouping = np.argsort(nzpix)
+    labels = np.unique(nzpix)
+    sums = np.add.reduceat(coords[grouping], np.cumsum(sizes)[:-1])
+    means = sums / sizes[1:, np.newaxis]
+    return labels, means
