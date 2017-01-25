@@ -35,6 +35,12 @@ class CSGraph:
         loc, stop = self.indptr[row], self.indptr[row+1]
         return self.indices[loc:stop]
 
+    def tocoo(self):
+        return sparse.csr_matrix((self.data, self.indices, self.indptr),
+                                 shape=tuple(self.shape)).tocoo()
+
+    def set_row_data(self, i, js, values):
+        _csrset(self.indices, self.indptr, self.data, i, js, values)
 
 def _pixel_graph(image, steps, distances, num_edges, height=None):
     row = np.empty(num_edges, dtype=int)
@@ -273,6 +279,18 @@ def _csrget(indices, indptr, data, row, col):
         if indices[i] == col:
             return data[i]
     return 0.
+
+
+@numba.jit(nopython=True, cache=True)
+def _csrset(indices, indptr, data, row, cols, values):
+    start, end = indptr[row], indptr[row+1]
+    k = 0
+    for i in range(start, end):
+        if indices[i] == cols[k]:
+            data[i] = values[k]
+            k += 1
+        elif indices[i] == row:
+            data[i] = 0
 
 
 @numba.jit(nopython=True)
