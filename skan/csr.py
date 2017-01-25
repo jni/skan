@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
+from scipy import spatial
 import numba
 
 from .nputil import pad, raveled_steps_to_neighbors
@@ -162,7 +163,8 @@ def _zero_csr_rows(indptr, data, rows):
             data[i] = 0
 
 
-def _uniquify_junctions(csmat, pixel_indices, degree_image, *, spacing=1):
+def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
+                        junction_centroids, *, spacing=1):
     """Replace clustered pixels with degree > 2 by a single "floating" pixel.
 
     Parameters
@@ -171,6 +173,8 @@ def _uniquify_junctions(csmat, pixel_indices, degree_image, *, spacing=1):
         The input graph.
     shape : tuple of int
         The shape of the original image from which the graph was generated.
+    pixel_indices : array of int
+        The raveled index in the image of every pixel represented in csmat.
     spacing : float, or array-like of float, shape `len(shape)`, optional
         The spacing between pixels in the source image along each dimension.
 
@@ -179,28 +183,18 @@ def _uniquify_junctions(csmat, pixel_indices, degree_image, *, spacing=1):
     final_graph : CSGraph
         The output csmat.
     """
-    graph_j2o = csmat.tocoo()
-    graph_o2j = graph_j2o.copy()
-    degrees = np.ravel(degree_image)[pixel_indices]
-    junctions = degrees > 2
-    other = ~junctions
-    graph_j2o.data[other[graph_j2o.row]] = 0
-    graph_j2o.data[junctions[graph_j2o.col]] = 0
-    graph_o2j.data[junctions[graph_o2j.row]] = 0
-    graph_o2j.data[other[graph_o2j.col]] = 0
-    graph_join = (graph_j2o + graph_o2j).tocsr()
-
-    # find the csmat of only junctions
-    graph_junctions = csmat.copy()
-    _zero_csr_rows(graph_junctions.indptr, graph_junctions.data,
-                   np.flatnonzero(other))
-    # pointwise multiply by the transpose to zero-out the columns
-    graph_junctions = graph_junctions.multiply(graph_junctions.T)
-
-    # find the connected components in that graph
-    ccs = csgraph.connected_components(csmat, return_labels=True)
-    return graph_junctions
-
+    junctions = np.unique(junction_labels)[1:]  # discard 0, background
+    for j, jloc in zip(junctions, junction_centroids):
+        loc, stop = csmat.indptr[j], csmat.indptr[j+1]
+        neighbors = csmat.indices[loc:stop]
+        neighbor_locations = np.array(np.unravel_index(
+                            pixel_indices[neighbors], shape), dtype=float).T
+        neighbor_locations *= spacing
+        distances = np.ravel(spatial.distance_matrix(neighbor_locations,
+                                                     np.atleast_2d(jloc)))
+        csmat.data[loc:stop] = distances
+    tdata = csmat.T.tocsr().data
+    csmat.data = np.maximum(csmat.data, tdata)
 
 
 def skeleton_to_csgraph(skel, *, spacing=1):
@@ -245,16 +239,28 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     pixel_indices = np.concatenate(([0], np.flatnonzero(skel)))
     skelint = np.zeros(skel.shape, int)
     skelint.ravel()[pixel_indices] = np.arange(pixel_indices.size + 1)
-    skelint = pad(skelint, 0)
 
     degree_kernel = np.ones((3,) * ndim)
     degree_kernel.ravel()[3**ndim // 2] = 0  # remove centre pix
     degree_image = ndi.convolve(skel.astype(int), degree_kernel,
                                 mode='constant') * skel
+
+    # group all connected junction nodes into "meganodes".
+    junctions = degree_image > 2
+    junction_ids = skelint[junctions]
+    labeled_junctions, centroids = compute_centroids(junctions)
+    centroids *= spacing
+    labeled_junctions[junctions] = junction_ids[labeled_junctions[junctions]]
+    skelint[junctions] = labeled_junctions[junctions]
+
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
+    skelint = pad(skelint, 0)  # pad image to prevent looparound errors
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim,
                                                   spacing=spacing)
     graph = _pixel_graph(skelint, steps, distances, num_edges, height)
+
+    _uniquify_junctions(graph, skel.shape, pixel_indices,
+                        labeled_junctions, centroids, spacing=spacing)
     return graph, pixel_indices, degree_image
 
 
