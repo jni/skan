@@ -470,14 +470,40 @@ def summarise(image, *, spacing=1):
     return df
 
 
-def centroids(image):
-    labelled_image = ndi.label(image)[0]
-    nz = np.nonzero(labelled_image)
-    nzpix = labelled_image[nz]
+def compute_centroids(image):
+    """Find the centroids of all nonzero connected blobs in `image`.
+
+    Parameters
+    ----------
+    image : ndarray
+        The input image.
+
+    Returns
+    -------
+    label_image : ndarray of int
+        The input image, with each connected region containing a different
+        integer label.
+
+    Examples
+    --------
+    >>> image = np.array([[1, 0, 1, 0, 0, 1, 1],
+    ...                   [1, 0, 0, 1, 0, 0, 0]])
+    >>> labels, centroids = compute_centroids(image)
+    >>> labels
+    array([[1, 0, 2, 0, 0, 3, 3],
+           [1, 0, 0, 2, 0, 0, 0]], dtype=int32)
+    >>> centroids
+    array([[ 0.5,  0. ],
+           [ 0.5,  2.5],
+           [ 0. ,  5.5]])
+    """
+    connectivity = np.ones((3,) * image.ndim)
+    labeled_image = ndi.label(image, connectivity)[0]
+    nz = np.nonzero(labeled_image)
+    nzpix = labeled_image[nz]
     sizes = np.bincount(nzpix)
     coords = np.transpose(nz)
     grouping = np.argsort(nzpix)
-    labels = np.unique(nzpix)
     sums = np.add.reduceat(coords[grouping], np.cumsum(sizes)[:-1])
     means = sums / sizes[1:, np.newaxis]
-    return labels, means
+    return labeled_image, means
