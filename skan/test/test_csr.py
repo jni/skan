@@ -6,8 +6,8 @@ from skan import csr
 rundir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rundir)
 
-from skan._testdata import (tinycycle, tinyline, skeleton1, skeleton2,
-                            skeleton3d, topograph1d)
+from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
+                            skeleton2, skeleton3d, topograph1d)
 
 
 def test_tiny_cycle():
@@ -95,3 +95,9 @@ def test_topograph_summary():
     assert_almost_equal(stats.loc[0, ['coord-0-0', 'coord-0-1',
                                       'coord-1-0', 'coord-1-1']],
                         [3, 0, 3, 5])
+
+
+def test_junction_multiplicity():
+    """Test correct distances when a junction has more than one pixel."""
+    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton0)
+    assert_almost_equal(g[3, 4], 2.0155644)
