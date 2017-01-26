@@ -78,7 +78,7 @@ def test_3d_spacing():
     g, idxs, degimg = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
     stats = csr.branch_statistics(g, idxs, degimg)
     assert_equal(stats.shape, (5, 4))
-    assert_almost_equal(stats[0], [1, 11, 2 * np.sqrt(27), 1])
+    assert_almost_equal(stats[0], [1, 11, 10.467, 1], decimal=3)
     assert_equal(np.unique(stats[:, 3].astype(int)), [1, 2, 3])
 
 
