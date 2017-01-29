@@ -250,7 +250,8 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     junction_ids = skelint[junctions]
     labeled_junctions, centroids = compute_centroids(junctions)
     centroids *= spacing
-    labeled_junctions[junctions] = junction_ids[labeled_junctions[junctions]]
+    labeled_junctions[junctions] = junction_ids[labeled_junctions[junctions]
+                                                - 1]
     skelint[junctions] = labeled_junctions[junctions]
 
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
