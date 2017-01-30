@@ -187,8 +187,7 @@ def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
     for j, jloc in zip(junctions, junction_centroids):
         loc, stop = csmat.indptr[j], csmat.indptr[j+1]
         neighbors = csmat.indices[loc:stop]
-        neighbor_locations = np.array(np.unravel_index(
-                            pixel_indices[neighbors], shape), dtype=float).T
+        neighbor_locations = pixel_indices[neighbors]
         neighbor_locations *= spacing
         distances = np.ravel(spatial.distance_matrix(neighbor_locations,
                                                      np.atleast_2d(jloc)))
@@ -236,9 +235,11 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     spacing = np.ones(skel.ndim, dtype=float) * spacing
 
     ndim = skel.ndim
-    pixel_indices = np.concatenate(([0], np.flatnonzero(skel)))
+    pixel_indices = np.concatenate(([[0.] * skel.ndim],
+                                    np.transpose(np.nonzero(skel))), axis=0)
     skelint = np.zeros(skel.shape, int)
-    skelint.ravel()[pixel_indices] = np.arange(pixel_indices.size + 1)
+    skelint[tuple(pixel_indices.T.astype(int))] = \
+        np.arange(pixel_indices.shape[0])
 
     degree_kernel = np.ones((3,) * ndim)
     degree_kernel.ravel()[3**ndim // 2] = 0  # remove centre pix
@@ -342,7 +343,7 @@ def _expand_path(graph, source, step, visited, degrees):
     return step, d, degrees[step]
 
 
-def branch_statistics(graph, pixel_indices, degree_image, *,
+def branch_statistics(graph, *,
                       buffer_size_offset=0):
     """Compute the length and type of each branch in a skeleton graph.
 
@@ -350,11 +351,6 @@ def branch_statistics(graph, pixel_indices, degree_image, *,
     ----------
     graph : sparse.csr_matrix, shape (N, N)
         A skeleton graph.
-    pixel_indices : array of int, shape (N,)
-        A map from rows/cols of `graph` to image coordinates.
-    degree_image : array of int, shape (P, Q, ...)
-        The image corresponding to the skeleton, where each value is
-        its degree in `graph`.
     buffer_size_offset : int, optional
         The buffer size is given by the sum of the degrees of non-path
         nodes. This is usually 2x the amount needed, allowing room for
@@ -376,9 +372,11 @@ def branch_statistics(graph, pixel_indices, degree_image, *,
     """
     jgraph = CSGraph(graph.indptr, graph.indices, graph.data,
                      np.array(graph.shape, np.int32))
-    degree_image = degree_image.ravel()
-    degrees = degree_image[pixel_indices]
-    visited = np.zeros(pixel_indices.shape, dtype=bool)
+    tmp_data = graph.data
+    graph.data = np.broadcast_to(1, tmp_data.shape)
+    degrees = np.ravel(graph.sum(axis=1).A)
+    graph.data = tmp_data
+    visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
     num_paths = np.sum(degrees[endpoints])
     result = np.zeros((num_paths + buffer_size_offset, 4), dtype=float)
@@ -457,11 +455,10 @@ def summarise(image, *, spacing=1):
     ndim = image.ndim
     using_height = np.issubdtype(image.dtype, float)
     spacing = np.ones(ndim, dtype=float) * spacing
-    g, pixels, degrees = skeleton_to_csgraph(image, spacing=spacing)
-    coords_img = np.transpose(np.unravel_index(pixels, image.shape))
+    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
-    stats = branch_statistics(g, pixels, degree_image=degrees)
+    stats = branch_statistics(g)
     indices0 = stats[:, 0].astype(int)
     indices1 = stats[:, 1].astype(int)
     coords_img0 = coords_img[indices0]
@@ -469,10 +466,12 @@ def summarise(image, *, spacing=1):
     coords_real0 = coords_img0 * spacing
     coords_real1 = coords_img1 * spacing
     if using_height:
-        coords_real0 = np.column_stack((image.ravel()[pixels][indices0],
-                                        coords_real0))
-        coords_real1 = np.column_stack((image.ravel()[pixels][indices1],
-                                        coords_real1))
+        height_coords0 = ndi.map_coordinates(image, coords_img[indices0].T,
+                                             order=3)
+        coords_real0 = np.column_stack((height_coords0, coords_real0))
+        height_coords1 = ndi.map_coordinates(image, coords_img[indices1].T,
+                                             order=3)
+        coords_real1 = np.column_stack((height_coords1, coords_real1))
     distances = np.sqrt(np.sum((coords_real0 - coords_real1)**2, axis=1))
     skeleton_id = skeleton_ids[stats[:, 0].astype(int)]
     table = np.column_stack((skeleton_id, stats, coords_img0, coords_img1,
