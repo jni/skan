@@ -46,14 +46,20 @@ def process_images(filenames, image_format, threshold_radius,
     results = []
     for file in tqdm(filenames):
         image = imageio.imread(file, format=image_format)
-        if scale_metadata_path is not None:
+        scale = None
+        try:
+            scale = float(scale_metadata_path)
+        except ValueError:
+            pass
+        if scale_metadata_path is not None and scale is None:
             md_path = scale_metadata_path.split(sep='/')
             meta = image.meta
             for key in md_path:
                 meta = meta[key]
             scale = float(meta)
         else:
-            scale = 1  # measurements will be in pixel units
+            if scale is None:
+                scale = 1  # measurements will be in pixel units
         pixel_threshold_radius = int(np.ceil(threshold_radius / scale))
         pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
         thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
