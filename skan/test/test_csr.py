@@ -22,12 +22,13 @@ def test_tiny_cycle():
 
     expected_degrees = np.array([[0, 2, 0], [2, 0, 2], [0, 2, 0]])
     assert_equal(degimg, expected_degrees)
-    assert_equal(idxs, [0, 1, 3, 5, 7])
+    assert_equal(np.ravel_multi_index(idxs.astype(int).T, tinycycle.shape),
+                 [0, 1, 3, 5, 7])
 
 
 def test_skeleton1_stats():
     g, idxs, degimg = csr.skeleton_to_csgraph(skeleton1)
-    stats = csr.branch_statistics(g, idxs, degimg)
+    stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (4, 4))
     keys = map(tuple, stats[:, :2].astype(int))
     dists = stats[:, 2]
@@ -62,21 +63,21 @@ def test_summarise_spacing():
 
 def test_line():
     g, idxs, degimg = csr.skeleton_to_csgraph(tinyline)
-    assert_equal(idxs, [0, 1, 2, 3])
+    assert_equal(np.ravel(idxs), [0, 1, 2, 3])
     assert_equal(degimg, [0, 1, 2, 1, 0])
     assert_equal(g.shape, (4, 4))
-    assert_equal(csr.branch_statistics(g, idxs, degimg), [[1, 3, 2, 0]])
+    assert_equal(csr.branch_statistics(g), [[1, 3, 2, 0]])
 
 
 def test_cycle_stats():
-    stats = csr.branch_statistics(*csr.skeleton_to_csgraph(tinycycle),
+    stats = csr.branch_statistics(csr.skeleton_to_csgraph(tinycycle)[0],
                                   buffer_size_offset=1)
     assert_almost_equal(stats, [[1, 1, 4*np.sqrt(2), 3]])
 
 
 def test_3d_spacing():
     g, idxs, degimg = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
-    stats = csr.branch_statistics(g, idxs, degimg)
+    stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (5, 4))
     assert_almost_equal(stats[0], [1, 5, 10.467, 1], decimal=3)
     assert_equal(np.unique(stats[:, 3].astype(int)), [1, 2, 3])
@@ -84,7 +85,7 @@ def test_3d_spacing():
 
 def test_topograph():
     g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d)
-    stats = csr.branch_statistics(g, idxs, degimg)
+    stats = csr.branch_statistics(g)
     assert stats.shape == (1, 4)
     assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])
 
