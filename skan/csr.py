@@ -220,12 +220,12 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     ndim = skel.ndim
     pixel_indices = np.concatenate(([[0.] * skel.ndim],
                                     np.transpose(np.nonzero(skel))), axis=0)
-    skelint = np.zeros(skel.shape, int)
+    skelint = np.zeros(skel.shape, dtype=int)
     skelint[tuple(pixel_indices.T.astype(int))] = \
-        np.arange(pixel_indices.shape[0])
+                                            np.arange(pixel_indices.shape[0])
 
     degree_kernel = np.ones((3,) * ndim)
-    degree_kernel.ravel()[3**ndim // 2] = 0  # remove centre pix
+    degree_kernel[(1,) * ndim] = 0  # remove centre pixel
     degree_image = ndi.convolve(skel.astype(int), degree_kernel,
                                 mode='constant') * skel
 
