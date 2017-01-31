@@ -25,10 +25,6 @@ class CSGraph:
         self.data = data
         self.shape = shape
 
-    @property
-    def ndim(self):
-        return self.shape.size
-
     def edge(self, i, j):
         return _csrget(self.indices, self.indptr, self.data, i, j)
 
@@ -36,12 +32,6 @@ class CSGraph:
         loc, stop = self.indptr[row], self.indptr[row+1]
         return self.indices[loc:stop]
 
-    def tocoo(self):
-        return sparse.csr_matrix((self.data, self.indices, self.indptr),
-                                 shape=tuple(self.shape)).tocoo()
-
-    def set_row_data(self, i, js, values):
-        _csrset(self.indices, self.indptr, self.data, i, js, values)
 
 def _pixel_graph(image, steps, distances, num_edges, height=None):
     row = np.empty(num_edges, dtype=int)
@@ -154,13 +144,6 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     data[k] = np.sqrt(distances[j] ** 2 +
                                       (height[i] - height[n]) ** 2)
                     k += 1
-
-
-@numba.jit(nopython=True, cache=True, nogil=True)
-def _zero_csr_rows(indptr, data, rows):
-    for row in rows:
-        for i in range(indptr[row], indptr[row+1]):
-            data[i] = 0
 
 
 def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
@@ -288,18 +271,6 @@ def _csrget(indices, indptr, data, row, col):
         if indices[i] == col:
             return data[i]
     return 0.
-
-
-@numba.jit(nopython=True, cache=True)
-def _csrset(indices, indptr, data, row, cols, values):
-    start, end = indptr[row], indptr[row+1]
-    k = 0
-    for i in range(start, end):
-        if indices[i] == cols[k]:
-            data[i] = values[k]
-            k += 1
-        elif indices[i] == row:
-            data[i] = 0
 
 
 @numba.jit(nopython=True)
