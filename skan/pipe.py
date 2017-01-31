@@ -9,6 +9,25 @@ from . import draw
 import matplotlib.pyplot as plt
 
 
+def _get_scale(image, md_path_or_scale):
+    """Get a valid scale from an image and a metadata path or scale."""
+    scale = None
+    try:
+        scale = float(md_path_or_scale)
+    except ValueError:
+        pass
+    if md_path_or_scale is not None and scale is None:
+        md_path = md_path_or_scale.split(sep='/')
+        meta = image.meta
+        for key in md_path:
+            meta = meta[key]
+        scale = float(meta)
+    else:
+        if scale is None:
+            scale = 1  # measurements will be in pixel units
+    return scale
+
+
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
                    save_skeleton='', output_folder=None):
@@ -47,20 +66,7 @@ def process_images(filenames, image_format, threshold_radius,
     results = []
     for file in tqdm(filenames):
         image = imageio.imread(file, format=image_format)
-        scale = None
-        try:
-            scale = float(scale_metadata_path)
-        except ValueError:
-            pass
-        if scale_metadata_path is not None and scale is None:
-            md_path = scale_metadata_path.split(sep='/')
-            meta = image.meta
-            for key in md_path:
-                meta = meta[key]
-            scale = float(meta)
-        else:
-            if scale is None:
-                scale = 1  # measurements will be in pixel units
+        scale = _get_scale(image, scale_metadata_path)
         pixel_threshold_radius = int(np.ceil(threshold_radius / scale))
         pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
         thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
