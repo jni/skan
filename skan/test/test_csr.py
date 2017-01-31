@@ -101,4 +101,13 @@ def test_topograph_summary():
 def test_junction_multiplicity():
     """Test correct distances when a junction has more than one pixel."""
     g, idxs, degimg = csr.skeleton_to_csgraph(skeleton0)
-    assert_almost_equal(g[3, 2], 2.0155644)
+    assert_almost_equal(g[3, 5], 2.0155644)
+
+
+def test_multiplicity_stats():
+    stats1 = csr.summarise(skeleton0)
+    stats2 = csr.summarise(skeleton0, spacing=2)
+    assert_almost_equal(2 * stats1['branch-distance'].values,
+                        stats2['branch-distance'].values)
+    assert_almost_equal(2 * stats1['euclidean-distance'].values,
+                        stats2['euclidean-distance'].values)
