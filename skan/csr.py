@@ -373,10 +373,7 @@ def branch_statistics(graph, *,
     """
     jgraph = CSGraph(graph.indptr, graph.indices, graph.data,
                      np.array(graph.shape, np.int32))
-    tmp_data = graph.data
-    graph.data = np.broadcast_to(1, tmp_data.shape)
-    degrees = np.ravel(graph.sum(axis=1).A)
-    graph.data = tmp_data
+    degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
     num_paths = np.sum(degrees[endpoints])
