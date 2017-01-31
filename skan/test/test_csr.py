@@ -6,8 +6,8 @@ from skan import csr
 rundir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rundir)
 
-from skan._testdata import (tinycycle, tinyline, skeleton1, skeleton2,
-                            skeleton3d, topograph1d)
+from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
+                            skeleton2, skeleton3d, topograph1d)
 
 
 def test_tiny_cycle():
@@ -22,12 +22,13 @@ def test_tiny_cycle():
 
     expected_degrees = np.array([[0, 2, 0], [2, 0, 2], [0, 2, 0]])
     assert_equal(degimg, expected_degrees)
-    assert_equal(idxs, [0, 1, 3, 5, 7])
+    assert_equal(np.ravel_multi_index(idxs.astype(int).T, tinycycle.shape),
+                 [0, 1, 3, 5, 7])
 
 
 def test_skeleton1_stats():
     g, idxs, degimg = csr.skeleton_to_csgraph(skeleton1)
-    stats = csr.branch_statistics(g, idxs, degimg)
+    stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (4, 4))
     keys = map(tuple, stats[:, :2].astype(int))
     dists = stats[:, 2]
@@ -62,29 +63,29 @@ def test_summarise_spacing():
 
 def test_line():
     g, idxs, degimg = csr.skeleton_to_csgraph(tinyline)
-    assert_equal(idxs, [0, 1, 2, 3])
+    assert_equal(np.ravel(idxs), [0, 1, 2, 3])
     assert_equal(degimg, [0, 1, 2, 1, 0])
     assert_equal(g.shape, (4, 4))
-    assert_equal(csr.branch_statistics(g, idxs, degimg), [[1, 3, 2, 0]])
+    assert_equal(csr.branch_statistics(g), [[1, 3, 2, 0]])
 
 
 def test_cycle_stats():
-    stats = csr.branch_statistics(*csr.skeleton_to_csgraph(tinycycle),
+    stats = csr.branch_statistics(csr.skeleton_to_csgraph(tinycycle)[0],
                                   buffer_size_offset=1)
     assert_almost_equal(stats, [[1, 1, 4*np.sqrt(2), 3]])
 
 
 def test_3d_spacing():
     g, idxs, degimg = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
-    stats = csr.branch_statistics(g, idxs, degimg)
+    stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (5, 4))
-    assert_almost_equal(stats[0], [1, 11, 2 * np.sqrt(27), 1])
+    assert_almost_equal(stats[0], [1, 5, 10.467, 1], decimal=3)
     assert_equal(np.unique(stats[:, 3].astype(int)), [1, 2, 3])
 
 
 def test_topograph():
     g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d)
-    stats = csr.branch_statistics(g, idxs, degimg)
+    stats = csr.branch_statistics(g)
     assert stats.shape == (1, 4)
     assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])
 
@@ -95,3 +96,18 @@ def test_topograph_summary():
     assert_almost_equal(stats.loc[0, ['coord-0-0', 'coord-0-1',
                                       'coord-1-0', 'coord-1-1']],
                         [3, 0, 3, 5])
+
+
+def test_junction_multiplicity():
+    """Test correct distances when a junction has more than one pixel."""
+    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton0)
+    assert_almost_equal(g[3, 5], 2.0155644)
+
+
+def test_multiplicity_stats():
+    stats1 = csr.summarise(skeleton0)
+    stats2 = csr.summarise(skeleton0, spacing=2)
+    assert_almost_equal(2 * stats1['branch-distance'].values,
+                        stats2['branch-distance'].values)
+    assert_almost_equal(2 * stats1['euclidean-distance'].values,
+                        stats2['euclidean-distance'].values)

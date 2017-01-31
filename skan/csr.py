@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
+from scipy import spatial
 import numba
 
 from .nputil import pad, raveled_steps_to_neighbors
@@ -23,10 +24,6 @@ class CSGraph:
         self.indices = indices
         self.data = data
         self.shape = shape
-
-    @property
-    def ndim(self):
-        return self.shape.size
 
     def edge(self, i, j):
         return _csrget(self.indices, self.indptr, self.data, i, j)
@@ -149,6 +146,39 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
+def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
+                        junction_centroids, *, spacing=1):
+    """Replace clustered pixels with degree > 2 by a single "floating" pixel.
+
+    Parameters
+    ----------
+    csmat : CSGraph
+        The input graph.
+    shape : tuple of int
+        The shape of the original image from which the graph was generated.
+    pixel_indices : array of int
+        The raveled index in the image of every pixel represented in csmat.
+    spacing : float, or array-like of float, shape `len(shape)`, optional
+        The spacing between pixels in the source image along each dimension.
+
+    Returns
+    -------
+    final_graph : CSGraph
+        The output csmat.
+    """
+    junctions = np.unique(junction_labels)[1:]  # discard 0, background
+    junction_centroids_real = junction_centroids * spacing
+    for j, jloc in zip(junctions, junction_centroids_real):
+        loc, stop = csmat.indptr[j], csmat.indptr[j+1]
+        neighbors = csmat.indices[loc:stop]
+        neighbor_locations = pixel_indices[neighbors]
+        neighbor_locations *= spacing
+        distances = np.sqrt(np.sum((neighbor_locations - jloc)**2, axis=1))
+        csmat.data[loc:stop] = distances
+    tdata = csmat.T.tocsr().data
+    csmat.data = np.maximum(csmat.data, tdata)
+
+
 def skeleton_to_csgraph(skel, *, spacing=1):
     """Convert a skeleton image of thin lines to a graph of neighbor pixels.
 
@@ -188,19 +218,34 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     spacing = np.ones(skel.ndim, dtype=float) * spacing
 
     ndim = skel.ndim
-    pixel_indices = np.concatenate(([0], np.flatnonzero(skel)))
-    skelint = np.zeros(skel.shape, int)
-    skelint.ravel()[pixel_indices] = np.arange(pixel_indices.size + 1)
-    skelint = pad(skelint, 0)
+    pixel_indices = np.concatenate(([[0.] * skel.ndim],
+                                    np.transpose(np.nonzero(skel))), axis=0)
+    skelint = np.zeros(skel.shape, dtype=int)
+    skelint[tuple(pixel_indices.T.astype(int))] = \
+                                            np.arange(pixel_indices.shape[0])
 
     degree_kernel = np.ones((3,) * ndim)
-    degree_kernel.ravel()[3**ndim // 2] = 0  # remove centre pix
+    degree_kernel[(1,) * ndim] = 0  # remove centre pixel
     degree_image = ndi.convolve(skel.astype(int), degree_kernel,
                                 mode='constant') * skel
+
+    # group all connected junction nodes into "meganodes".
+    junctions = degree_image > 2
+    junction_ids = skelint[junctions]
+    labeled_junctions, centroids = compute_centroids(junctions)
+    labeled_junctions[junctions] = junction_ids[labeled_junctions[junctions]
+                                                - 1]
+    skelint[junctions] = labeled_junctions[junctions]
+    pixel_indices[np.unique(labeled_junctions)[1:]] = centroids
+
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
+    skelint = pad(skelint, 0)  # pad image to prevent looparound errors
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim,
                                                   spacing=spacing)
     graph = _pixel_graph(skelint, steps, distances, num_edges, height)
+
+    _uniquify_junctions(graph, skel.shape, pixel_indices,
+                        labeled_junctions, centroids, spacing=spacing)
     return graph, pixel_indices, degree_image
 
 
@@ -269,7 +314,7 @@ def _expand_path(graph, source, step, visited, degrees):
     return step, d, degrees[step]
 
 
-def branch_statistics(graph, pixel_indices, degree_image, *,
+def branch_statistics(graph, *,
                       buffer_size_offset=0):
     """Compute the length and type of each branch in a skeleton graph.
 
@@ -277,11 +322,6 @@ def branch_statistics(graph, pixel_indices, degree_image, *,
     ----------
     graph : sparse.csr_matrix, shape (N, N)
         A skeleton graph.
-    pixel_indices : array of int, shape (N,)
-        A map from rows/cols of `graph` to image coordinates.
-    degree_image : array of int, shape (P, Q, ...)
-        The image corresponding to the skeleton, where each value is
-        its degree in `graph`.
     buffer_size_offset : int, optional
         The buffer size is given by the sum of the degrees of non-path
         nodes. This is usually 2x the amount needed, allowing room for
@@ -303,9 +343,8 @@ def branch_statistics(graph, pixel_indices, degree_image, *,
     """
     jgraph = CSGraph(graph.indptr, graph.indices, graph.data,
                      np.array(graph.shape, np.int32))
-    degree_image = degree_image.ravel()
-    degrees = degree_image[pixel_indices]
-    visited = np.zeros(pixel_indices.shape, dtype=bool)
+    degrees = np.diff(graph.indptr)
+    visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
     num_paths = np.sum(degrees[endpoints])
     result = np.zeros((num_paths + buffer_size_offset, 4), dtype=float)
@@ -384,11 +423,10 @@ def summarise(image, *, spacing=1):
     ndim = image.ndim
     using_height = np.issubdtype(image.dtype, float)
     spacing = np.ones(ndim, dtype=float) * spacing
-    g, pixels, degrees = skeleton_to_csgraph(image, spacing=spacing)
-    coords_img = np.transpose(np.unravel_index(pixels, image.shape))
+    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
-    stats = branch_statistics(g, pixels, degree_image=degrees)
+    stats = branch_statistics(g)
     indices0 = stats[:, 0].astype(int)
     indices1 = stats[:, 1].astype(int)
     coords_img0 = coords_img[indices0]
@@ -396,10 +434,12 @@ def summarise(image, *, spacing=1):
     coords_real0 = coords_img0 * spacing
     coords_real1 = coords_img1 * spacing
     if using_height:
-        coords_real0 = np.column_stack((image.ravel()[pixels][indices0],
-                                        coords_real0))
-        coords_real1 = np.column_stack((image.ravel()[pixels][indices1],
-                                        coords_real1))
+        height_coords0 = ndi.map_coordinates(image, coords_img[indices0].T,
+                                             order=3)
+        coords_real0 = np.column_stack((height_coords0, coords_real0))
+        height_coords1 = ndi.map_coordinates(image, coords_img[indices1].T,
+                                             order=3)
+        coords_real1 = np.column_stack((height_coords1, coords_real1))
     distances = np.sqrt(np.sum((coords_real0 - coords_real1)**2, axis=1))
     skeleton_id = skeleton_ids[stats[:, 0].astype(int)]
     table = np.column_stack((skeleton_id, stats, coords_img0, coords_img1,
@@ -420,3 +460,42 @@ def summarise(image, *, spacing=1):
                  for col, dat, dtype in zip(columns, table.T, column_types)}
     df = pd.DataFrame(data_dict)
     return df
+
+
+def compute_centroids(image):
+    """Find the centroids of all nonzero connected blobs in `image`.
+
+    Parameters
+    ----------
+    image : ndarray
+        The input image.
+
+    Returns
+    -------
+    label_image : ndarray of int
+        The input image, with each connected region containing a different
+        integer label.
+
+    Examples
+    --------
+    >>> image = np.array([[1, 0, 1, 0, 0, 1, 1],
+    ...                   [1, 0, 0, 1, 0, 0, 0]])
+    >>> labels, centroids = compute_centroids(image)
+    >>> labels
+    array([[1, 0, 2, 0, 0, 3, 3],
+           [1, 0, 0, 2, 0, 0, 0]], dtype=int32)
+    >>> centroids
+    array([[ 0.5,  0. ],
+           [ 0.5,  2.5],
+           [ 0. ,  5.5]])
+    """
+    connectivity = np.ones((3,) * image.ndim)
+    labeled_image = ndi.label(image, connectivity)[0]
+    nz = np.nonzero(labeled_image)
+    nzpix = labeled_image[nz]
+    sizes = np.bincount(nzpix)
+    coords = np.transpose(nz)
+    grouping = np.argsort(nzpix)
+    sums = np.add.reduceat(coords[grouping], np.cumsum(sizes)[:-1])
+    means = sums / sizes[1:, np.newaxis]
+    return labeled_image, means
