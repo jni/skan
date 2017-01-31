@@ -70,7 +70,7 @@ def process_images(filenames, image_format, threshold_radius,
         framedata = csr.summarise(skeleton, spacing=scale)
         framedata['squiggle'] = np.log2(framedata['branch-distance'] /
                                         framedata['euclidean-distance'])
-        framedata['filename'] = [file] * len(framedata)
+        framedata['filename'] = file
         results.append(framedata)
         if save_skeleton:
             fig, axes = draw.pipeline_plot(image, sigma=pixel_smoothing_radius,
