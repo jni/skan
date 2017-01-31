@@ -173,8 +173,7 @@ def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
         neighbors = csmat.indices[loc:stop]
         neighbor_locations = pixel_indices[neighbors]
         neighbor_locations *= spacing
-        distances = np.ravel(spatial.distance_matrix(neighbor_locations,
-                                                     np.atleast_2d(jloc)))
+        distances = np.sqrt(np.sum((neighbor_locations - jloc)**2, axis=1))
         csmat.data[loc:stop] = distances
     tdata = csmat.T.tocsr().data
     csmat.data = np.maximum(csmat.data, tdata)
