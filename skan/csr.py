@@ -184,7 +184,8 @@ def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
         The output csmat.
     """
     junctions = np.unique(junction_labels)[1:]  # discard 0, background
-    for j, jloc in zip(junctions, junction_centroids):
+    junction_centroids_real = junction_centroids * spacing
+    for j, jloc in zip(junctions, junction_centroids_real):
         loc, stop = csmat.indptr[j], csmat.indptr[j+1]
         neighbors = csmat.indices[loc:stop]
         neighbor_locations = pixel_indices[neighbors]
@@ -250,10 +251,10 @@ def skeleton_to_csgraph(skel, *, spacing=1):
     junctions = degree_image > 2
     junction_ids = skelint[junctions]
     labeled_junctions, centroids = compute_centroids(junctions)
-    centroids *= spacing
     labeled_junctions[junctions] = junction_ids[labeled_junctions[junctions]
                                                 - 1]
     skelint[junctions] = labeled_junctions[junctions]
+    pixel_indices[np.unique(labeled_junctions)[1:]] = centroids
 
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
     skelint = pad(skelint, 0)  # pad image to prevent looparound errors
