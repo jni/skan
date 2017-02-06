@@ -27,7 +27,7 @@ def test_pipe_figure(image_filename):
                                    output_folder=tempdir)
         assert type(data) == pandas.DataFrame
         assert data.shape[0] > 0
-        assert os.path.exists(os.path.join(tempdir,
-                                           'skeleton-plot-' +
-                                           image_filename[:-4] +
-                                           '.png'))
+        expected_output = os.path.join(tempdir, 'skeleton-plot-' +
+                                       os.path.basename(image_filename)[:-4] +
+                                       '.png')
+        assert os.path.exists(expected_output)
