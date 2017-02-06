@@ -27,13 +27,18 @@ class Launch(tk.Tk):
                                                 name='Scale metadata path')
         self.save_skeleton_plots = tk.BooleanVar(value=True,
                                                  name='Save skeleton plot?')
+        self.skeleton_plot_prefix = tk.StringVar(value='skeleton-plot-')
+        self.full_output_filename = tk.StringVar(value='skeleton.csv',
+                                                 name='Full stats filename')
         self.parameters = [
             self.smooth_radius,
             self.threshold_radius,
             self.brightness_offset,
             self.image_format,
             self.scale_metadata_path,
-            self.save_skeleton_plots
+            self.save_skeleton_plots,
+            self.skeleton_plot_prefix,
+            self.full_output_filename,
         ]
 
         self.input_files = []
@@ -99,14 +104,17 @@ class Launch(tk.Tk):
             p = param.get()
             print('  ', param, type(p), p)
         print('Output:', self.output_folder)
+        save_skeleton = ('' if not self.save_skeleton_plots.get() else
+                         self.skeleton_plot_prefix.get())
         result = pipe.process_images(self.input_files, self.image_format.get(),
                                      self.threshold_radius.get(),
                                      self.smooth_radius.get(),
                                      self.brightness_offset.get(),
                                      self.scale_metadata_path.get(),
-                                     self.save_skeleton_plots.get(),
+                                     save_skeleton,
                                      self.output_folder)
-        result.to_csv(os.path.join(self.output_folder, 'skeletons.csv'))
+        result.to_csv(os.path.join(self.output_folder,
+                                   self.full_output_filename.get()))
 
 
 def launch():
