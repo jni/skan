@@ -6,6 +6,7 @@ import numpy as np
 from skimage import morphology
 import pandas as pd
 from . import draw
+from .image_stats import image_summary
 import matplotlib.pyplot as plt
 
 
@@ -64,6 +65,7 @@ def process_images(filenames, image_format, threshold_radius,
     """
     image_format = None if image_format == 'auto' else image_format
     results = []
+    image_results = []
     for file in tqdm(filenames):
         image = imageio.imread(file, format=image_format)
         scale = _get_scale(image, scale_metadata_path)
@@ -89,5 +91,10 @@ def process_images(filenames, image_format, threshold_radius,
             output_filename = os.path.join(output_folder, output_basename)
             fig.savefig(output_filename, dpi=300)
             plt.close(fig)
+        image_stats = image_summary(skeleton, spacing=scale)
+        image_stats['filename'] = file
+        image_stats['branch density'] = (framedata.shape[0] /
+                                         image_stats['area'])
+        image_results.append(image_stats)
 
-    return pd.concat(results)
+    return pd.concat(results), pd.concat(image_results)
