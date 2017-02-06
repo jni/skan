@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
-                   save_skeleton=False, output_folder=None):
+                   save_skeleton='', output_folder=None):
     """Full pipeline from images to skeleton stats with local median threshold.
 
     Parameters
@@ -33,8 +33,9 @@ def process_images(filenames, image_format, threshold_radius,
     scale_metadata_path : string
         The path in the image dictionary to find the metadata on pixel scale,
         separated by forward slashes ('/').
-    save_skeleton : bool, optional
-        If True, save a skeleton figure to given output path.
+    save_skeleton : string, optional
+        If this is not an empty string, skeleton plots will be saved with
+        the given prefix, one per input filename.
 
     Returns
     -------
@@ -75,7 +76,7 @@ def process_images(filenames, image_format, threshold_radius,
             fig, axes = draw.pipeline_plot(image, sigma=pixel_smoothing_radius,
                                            radius=pixel_threshold_radius,
                                            offset=brightness_offset)
-            output_basename = ('skeleton-plot-' +
+            output_basename = (save_skeleton +
                                os.path.basename(os.path.splitext(file)[0]) +
                                '.png')
             output_filename = os.path.join(output_folder, output_basename)
