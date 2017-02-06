@@ -37,7 +37,7 @@ class Launch(tk.Tk):
         ]
 
         self.input_files = []
-        self.output_folder = os.path.expanduser('~/Desktop')
+        self.output_folder = None
 
         # allow resizing
         self.rowconfigure(0, weight=1)
@@ -83,6 +83,8 @@ class Launch(tk.Tk):
 
     def choose_input_files(self):
         self.input_files = tk.filedialog.askopenfilenames()
+        if len(self.input_files > 0) and self.output_folder is None:
+            self.output_folder = os.path.dirname(self.input_files[0])
 
     def choose_output_folder(self):
         self.output_folder = \
