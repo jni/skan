@@ -6,7 +6,27 @@ import numpy as np
 from skimage import morphology
 import pandas as pd
 from . import draw
+from .image_stats import image_summary
 import matplotlib.pyplot as plt
+
+
+def _get_scale(image, md_path_or_scale):
+    """Get a valid scale from an image and a metadata path or scale."""
+    scale = None
+    try:
+        scale = float(md_path_or_scale)
+    except ValueError:
+        pass
+    if md_path_or_scale is not None and scale is None:
+        md_path = md_path_or_scale.split(sep='/')
+        meta = image.meta
+        for key in md_path:
+            meta = meta[key]
+        scale = float(meta)
+    else:
+        if scale is None:
+            scale = 1  # measurements will be in pixel units
+    return scale
 
 
 def process_images(filenames, image_format, threshold_radius,
@@ -45,22 +65,10 @@ def process_images(filenames, image_format, threshold_radius,
     """
     image_format = None if image_format == 'auto' else image_format
     results = []
+    image_results = []
     for file in tqdm(filenames):
         image = imageio.imread(file, format=image_format)
-        scale = None
-        try:
-            scale = float(scale_metadata_path)
-        except ValueError:
-            pass
-        if scale_metadata_path is not None and scale is None:
-            md_path = scale_metadata_path.split(sep='/')
-            meta = image.meta
-            for key in md_path:
-                meta = meta[key]
-            scale = float(meta)
-        else:
-            if scale is None:
-                scale = 1  # measurements will be in pixel units
+        scale = _get_scale(image, scale_metadata_path)
         pixel_threshold_radius = int(np.ceil(threshold_radius / scale))
         pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
         thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
@@ -70,7 +78,8 @@ def process_images(filenames, image_format, threshold_radius,
         framedata = csr.summarise(skeleton, spacing=scale)
         framedata['squiggle'] = np.log2(framedata['branch-distance'] /
                                         framedata['euclidean-distance'])
-        framedata['filename'] = [file] * len(framedata)
+        framedata['filename'] = file
+        framedata['scale'] = scale
         results.append(framedata)
         if save_skeleton:
             fig, axes = draw.pipeline_plot(image, sigma=pixel_smoothing_radius,
@@ -82,5 +91,10 @@ def process_images(filenames, image_format, threshold_radius,
             output_filename = os.path.join(output_folder, output_basename)
             fig.savefig(output_filename, dpi=300)
             plt.close(fig)
+        image_stats = image_summary(skeleton, spacing=scale)
+        image_stats['filename'] = file
+        image_stats['branch density'] = (framedata.shape[0] /
+                                         image_stats['area'])
+        image_results.append(image_stats)
 
-    return pd.concat(results)
+    return pd.concat(results), pd.concat(image_results)

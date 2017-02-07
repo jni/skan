@@ -27,9 +27,12 @@ class Launch(tk.Tk):
                                                 name='Scale metadata path')
         self.save_skeleton_plots = tk.BooleanVar(value=True,
                                                  name='Save skeleton plot?')
-        self.skeleton_plot_prefix = tk.StringVar(value='skeleton-plot-')
+        self.skeleton_plot_prefix = tk.StringVar(value='skeleton-plot-',
+                                         name='Prefix for skeleton plots')
         self.full_output_filename = tk.StringVar(value='skeleton.csv',
                                                  name='Full stats filename')
+        self.image_output_filename = tk.StringVar(value='images-stats.csv',
+                                                  name='Image stats filename')
         self.parameters = [
             self.smooth_radius,
             self.threshold_radius,
@@ -39,6 +42,7 @@ class Launch(tk.Tk):
             self.save_skeleton_plots,
             self.skeleton_plot_prefix,
             self.full_output_filename,
+            self.image_output_filename,
         ]
 
         self.input_files = []
@@ -88,7 +92,7 @@ class Launch(tk.Tk):
 
     def choose_input_files(self):
         self.input_files = tk.filedialog.askopenfilenames()
-        if len(self.input_files > 0) and self.output_folder is None:
+        if len(self.input_files) > 0 and self.output_folder is None:
             self.output_folder = os.path.dirname(self.input_files[0])
 
     def choose_output_folder(self):
@@ -106,15 +110,18 @@ class Launch(tk.Tk):
         print('Output:', self.output_folder)
         save_skeleton = ('' if not self.save_skeleton_plots.get() else
                          self.skeleton_plot_prefix.get())
-        result = pipe.process_images(self.input_files, self.image_format.get(),
-                                     self.threshold_radius.get(),
-                                     self.smooth_radius.get(),
-                                     self.brightness_offset.get(),
-                                     self.scale_metadata_path.get(),
-                                     save_skeleton,
-                                     self.output_folder)
-        result.to_csv(os.path.join(self.output_folder,
-                                   self.full_output_filename.get()))
+        result_full, result_image = pipe.process_images(
+                self.input_files, self.image_format.get(),
+                self.threshold_radius.get(),
+                self.smooth_radius.get(),
+                self.brightness_offset.get(),
+                self.scale_metadata_path.get(),
+                save_skeleton,
+                self.output_folder)
+        result_full.to_csv(os.path.join(self.output_folder,
+                                        self.full_output_filename.get()))
+        result_image.to_csv(os.path.join(self.output_folder,
+                                         self.image_output_filename.get()))
 
 
 def launch():
