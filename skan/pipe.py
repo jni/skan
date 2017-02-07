@@ -95,6 +95,8 @@ def process_images(filenames, image_format, threshold_radius,
         image_stats['filename'] = file
         image_stats['branch density'] = (framedata.shape[0] /
                                          image_stats['area'])
+        j2j = framedata[framedata['branch-type'] == 2]
+        image_stats['mean J2J branch distance'] = j2j['branch-distance'].mean()
         image_results.append(image_stats)
 
     return pd.concat(results), pd.concat(image_results)
