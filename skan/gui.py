@@ -1,5 +1,7 @@
 import os
 import json
+import asyncio
+import concurrent.futures
 import matplotlib
 matplotlib.use('TkAgg')
 import tkinter as tk
@@ -10,6 +12,12 @@ import click
 
 from . import pre, pipe, io, __version__
 from . import pipe, io, __version__
+
+
+@asyncio.coroutine
+def _async(coroutine, *args):
+    loop = asyncio.get_event_loop()
+    return (yield from loop.run_in_executor(None, coroutine, *args))
 
 
 STANDARD_MARGIN = (3, 3, 12, 12)
@@ -137,7 +145,7 @@ class Launch(tk.Tk):
             ('Choose config', self.choose_config_file),
             ('Choose files', self.choose_input_files),
             ('Choose output folder', self.choose_output_folder),
-            ('Run', self.run)
+            ('Run', lambda: asyncio.ensure_future(self.run()))
         ]
         for col, (action_name, action) in enumerate(actions):
             button = ttk.Button(buttons, text=action_name,
@@ -157,6 +165,7 @@ class Launch(tk.Tk):
         self.output_folder = \
                 tk.filedialog.askdirectory(initialdir=self.output_folder)
 
+    @asyncio.coroutine
     def run(self):
         print('Input files:')
         for file in self.input_files:
@@ -186,10 +195,21 @@ class Launch(tk.Tk):
                                           'skan-config.json'))
 
 
+def tk_update(loop, app):
+    try:
+        app.update()
+    except tkinter.TclError:
+        loop.stop()
+        return
+    loop.call_later(.01, tk_update, loop, app)
+
+
 @click.command()
 @click.option('-c', '--config', default='',
               help='JSON configuration file.')
 def launch(config):
     params = json.load(open(config)) if config else None
     app = Launch(params)
-    app.mainloop()
+    loop = asyncio.get_event_loop()
+    tk_update(loop, app)
+    loop.run_forever()
