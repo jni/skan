@@ -177,7 +177,7 @@ class Launch(tk.Tk):
         print('Output:', self.output_folder)
         save_skeleton = ('' if not self.save_skeleton_plots.get() else
                          self.skeleton_plot_prefix.get())
-        result_full, result_image = pipe.process_images(
+        result_full, result_image = yield from _async(pipe.process_images,
                 self.input_files, self.image_format.get(),
                 self.threshold_radius.get(),
                 self.smooth_radius.get(),
