@@ -165,8 +165,7 @@ class Launch(tk.Tk):
         self.output_folder = \
                 tk.filedialog.askdirectory(initialdir=self.output_folder)
 
-    @asyncio.coroutine
-    def run(self):
+    async def run(self):
         print('Input files:')
         for file in self.input_files:
             print('  ', file)
@@ -177,7 +176,7 @@ class Launch(tk.Tk):
         print('Output:', self.output_folder)
         save_skeleton = ('' if not self.save_skeleton_plots.get() else
                          self.skeleton_plot_prefix.get())
-        result_full, result_image = yield from _async(pipe.process_images,
+        result_full, result_image = await _async(pipe.process_images,
                 self.input_files, self.image_format.get(),
                 self.threshold_radius.get(),
                 self.smooth_radius.get(),
