@@ -55,7 +55,7 @@ def overlay_skeleton_2d(image, skeleton, *,
     return axes
 
 
-def overlay_euclidean_skeleton_2d(image, skeleton, *,
+def overlay_euclidean_skeleton_2d(image, stats, *,
                                   image_cmap=None,
                                   skeleton_color_source='branch-type',
                                   skeleton_colormap='viridis',
@@ -66,8 +66,8 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
     ----------
     image : array, shape (M, N)
         The input image.
-    skeleton : array, shape (M, N)
-        A 1-pixel thick skeleton to overlay over `image`.
+    stats : array, shape (M, N)
+        Skeleton statistics.
 
     Other Parameters
     ----------------
@@ -94,12 +94,11 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
         The Axes on which the plot is drawn.
     """
     image = _normalise_image(image, image_cmap=image_cmap)
-    summary = summarise(skeleton)
+    summary = stats
     # transforming from row, col to x, y
     coords_cols = (['img-coord-0-%i' % i for i in [1, 0]] +
                    ['img-coord-1-%i' % i for i in [1, 0]])
     coords = summary[coords_cols].values.reshape((-1, 2, 2))
-    print(f'drawing {coords.shape[0]} lines')
     if axes is None:
         fig, axes = plt.subplots()
     axes.imshow(image)
@@ -114,8 +113,8 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
     return axes
 
 
-def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
-                  figsize=(9, 9), smooth_method='Gaussian'):
+def pipeline_plot(image, thresholded, skeleton, stats, *,
+                  figure=None, figsize=(9, 9)):
     """Draw the image, the thresholded version, and its skeleton.
 
     Parameters
@@ -123,14 +122,17 @@ def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
     image : array, shape (M, N, ...[, 3])
         Input image, conformant with scikit-image data type
         specification [1]_.
-    sigma : float, optional
-        If positive, use Gaussian filtering to smooth the image before
-        thresholding.
-    radius : int, optional
-        If given, use local median thresholding instead of global.
-    offset : float, optional
-        If given, reduce the threshold by this amount. Higher values
-        result in more pixels above the threshold.
+    thresholded : array, same shape as image
+        Binarized version of the input image.
+    skeleton : array, same shape as image
+        Skeletonized version of the input image.
+    stats : pandas DataFrame
+        Skeleton statistics from the input image/skeleton.
+
+    Other Parameters
+    ----------------
+    figure : matplotlib Figure, optional
+        If given, where to make the plots.
     figsize : 2-tuple of float, optional
         The width and height of the figure.
     smooth_method : {'Gaussian', 'TV', 'NL'}, optional
@@ -143,19 +145,25 @@ def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
     axes : array of matplotlib Axes
         The four axes containing the drawn images.
     """
-    fig, axes = plt.subplots(2, 2, figsize=figsize)
+    if figure is None:
+        fig, axes = plt.subplots(2, 2, figsize=figsize,
+                                 sharex=True, sharey=True)
+        axes = np.ravel(axes)
+    else:
+        fig = figure
+        ax0 = plt.add_subplot(2, 2, 1)
+        axes = [plt.add_subplot(2, 2, i, sharex=ax0, sharey=ax0)
+                for i in range(2, 5)]
+
     axes = np.ravel(axes)
     axes[0].imshow(image, cmap='gray')
     axes[0].axis('off')
 
-    thresholded = threshold(image, sigma=sigma, radius=radius, offset=offset,
-                            smooth_method=smooth_method)
     axes[1].imshow(thresholded, cmap='gray')
     axes[1].axis('off')
 
-    skeleton = morphology.skeletonize(thresholded)
     overlay_skeleton_2d(image, skeleton, axes=axes[2])
 
-    overlay_euclidean_skeleton_2d(image, skeleton, axes=axes[3])
+    overlay_euclidean_skeleton_2d(image, stats, axes=axes[3])
 
     return fig, axes
