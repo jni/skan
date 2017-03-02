@@ -30,6 +30,29 @@ def _get_scale(image, md_path_or_scale):
     return scale
 
 
+def process_single_image(image, scale, threshold_radius, smooth_radius,
+                         brightness_offset, crop_radius, smooth_method):
+    if crop_radius > 0:
+        c = crop_radius
+        image = image[c:-c, c:-c]
+    pixel_threshold_radius = int(np.ceil(threshold_radius / scale))
+    pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
+    thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
+                                radius=pixel_threshold_radius,
+                                offset=brightness_offset,
+                                smooth_method=smooth_method)
+    quality = shape_index(image, sigma=pixel_smoothing_radius,
+                          mode='reflect')
+    skeleton = morphology.skeletonize(thresholded) * quality
+    framedata = csr.summarise(skeleton, spacing=scale)
+    framedata['squiggle'] = np.log2(framedata['branch-distance'] /
+                                    framedata['euclidean-distance'])
+    framedata['scale'] = scale
+    framedata.rename(columns={'mean pixel value': 'mean shape index'},
+                     inplace=True)
+    return image, thresholded, skeleton, framedata
+
+
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
                    save_skeleton='', output_folder=None, crop_radius=0,
@@ -76,25 +99,11 @@ def process_images(filenames, image_format, threshold_radius,
     for file in tqdm(filenames):
         image = imageio.imread(file, format=image_format)
         scale = _get_scale(image, scale_metadata_path)
-        if crop_radius > 0:
-            c = crop_radius
-            image = image[c:-c, c:-c]
-        pixel_threshold_radius = int(np.ceil(threshold_radius / scale))
-        pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
-        thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
-                                    radius=pixel_threshold_radius,
-                                    offset=brightness_offset,
-                                    smooth_method=smooth_method)
-        quality = shape_index(image, sigma=pixel_smoothing_radius,
-                              mode='reflect')
-        skeleton = morphology.skeletonize(thresholded) * quality
-        framedata = csr.summarise(skeleton, spacing=scale)
-        framedata['squiggle'] = np.log2(framedata['branch-distance'] /
-                                        framedata['euclidean-distance'])
+        result = process_single_image(image, scale, threshold_radius,
+                                      smooth_radius, brightness_offset,
+                                      crop_radius, smooth_method)
+        image, thresholded, skeleton, framedata = result
         framedata['filename'] = file
-        framedata['scale'] = scale
-        framedata.rename(columns={'mean pixel value': 'mean shape index'},
-                         inplace=True)
         results.append(framedata)
         if save_skeleton:
             fig, axes = draw.pipeline_plot(image, thresholded, skeleton,
