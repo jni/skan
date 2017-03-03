@@ -1,17 +1,17 @@
 import os
 import json
 import asyncio
-import concurrent.futures
+from pathlib import Path
 import matplotlib
 matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
 import click
 
 
-from . import pre, pipe, io, __version__
-from . import pipe, io, __version__
+from . import pre, pipe, draw, io, __version__
 
 
 @asyncio.coroutine
@@ -159,11 +159,11 @@ class Launch(tk.Tk):
     def choose_input_files(self):
         self.input_files = tk.filedialog.askopenfilenames()
         if len(self.input_files) > 0 and self.output_folder is None:
-            self.output_folder = os.path.dirname(self.input_files[0])
+            self.output_folder = Path(os.path.dirname(self.input_files[0]))
 
     def choose_output_folder(self):
-        self.output_folder = \
-                tk.filedialog.askdirectory(initialdir=self.output_folder)
+        self.output_folder = Path(
+                tk.filedialog.askdirectory(initialdir=self.output_folder))
 
     async def run(self):
         print('Input files:')
@@ -176,7 +176,7 @@ class Launch(tk.Tk):
         print('Output:', self.output_folder)
         save_skeleton = ('' if not self.save_skeleton_plots.get() else
                          self.skeleton_plot_prefix.get())
-        result_full, result_image = await _async(pipe.process_images,
+        images_iterator = pipe.process_images(
                 self.input_files, self.image_format.get(),
                 self.threshold_radius.get(),
                 self.smooth_radius.get(),
@@ -186,12 +186,27 @@ class Launch(tk.Tk):
                 self.output_folder,
                 crop_radius=self.crop_radius.get(),
                 smooth_method=self.smooth_method.get())
-        io.write_excel(self.output_filename.get(),
-                       branches=result_full,
-                       images=result_image,
-                       parameters=json.loads(self.save_parameters()))
-        self.save_parameters(os.path.join(self.output_folder,
-                                          'skan-config.json'))
+        for i, result in enumerate(images_iterator):
+            if i < len(self.input_files):
+                filename, image, thresholded, skeleton, framedata = result
+                if save_skeleton:
+                    fig, axes = draw.pipeline_plot(image, thresholded,
+                                                   skeleton, framedata)
+                    output_basename = (save_skeleton +
+                                       os.path.basename(
+                                           os.path.splitext(filename)[0]) +
+                                       '.png')
+                    output_filename = str(self.output_folder / output_basename)
+                    fig.savefig(output_filename, dpi=300)
+                    plt.close(fig)
+            else:
+                result_full, result_image = result
+                io.write_excel(self.output_filename.get(),
+                               branches=result_full,
+                               images=result_image,
+                               parameters=json.loads(self.save_parameters()))
+                self.save_parameters(os.path.join(self.output_folder,
+                                                  'skan-config.json'))
 
 
 def tk_update(loop, app):

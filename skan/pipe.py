@@ -5,10 +5,11 @@ from tqdm import tqdm
 import numpy as np
 from skimage import morphology
 import pandas as pd
-from . import draw
 from .image_stats import image_summary
 from .vendored.shape import shape_index
 import matplotlib.pyplot as plt
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import multiprocessing as mp
 
 
 def _get_scale(image, md_path_or_scale):
@@ -30,12 +31,16 @@ def _get_scale(image, md_path_or_scale):
     return scale
 
 
-def process_single_image(image, scale, threshold_radius, smooth_radius,
+def process_single_image(filename, image_format, scale_metadata_path,
+                         threshold_radius, smooth_radius,
                          brightness_offset, crop_radius, smooth_method):
+    image = imageio.imread(filename, format=image_format)
+    scale = _get_scale(image, scale_metadata_path)
     if crop_radius > 0:
         c = crop_radius
         image = image[c:-c, c:-c]
     pixel_threshold_radius = int(np.ceil(threshold_radius / scale))
+
     pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
     thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
                                 radius=pixel_threshold_radius,
@@ -50,6 +55,7 @@ def process_single_image(image, scale, threshold_radius, smooth_radius,
     framedata['scale'] = scale
     framedata.rename(columns={'mean pixel value': 'mean shape index'},
                      inplace=True)
+    framedata['filename'] = filename
     return image, thresholded, skeleton, framedata
 
 
@@ -96,30 +102,25 @@ def process_images(filenames, image_format, threshold_radius,
     image_format = None if image_format == 'auto' else image_format
     results = []
     image_results = []
-    for file in tqdm(filenames):
-        image = imageio.imread(file, format=image_format)
-        scale = _get_scale(image, scale_metadata_path)
-        result = process_single_image(image, scale, threshold_radius,
-                                      smooth_radius, brightness_offset,
-                                      crop_radius, smooth_method)
-        image, thresholded, skeleton, framedata = result
-        framedata['filename'] = file
-        results.append(framedata)
-        if save_skeleton:
-            fig, axes = draw.pipeline_plot(image, thresholded, skeleton,
-                                           framedata)
-            output_basename = (save_skeleton +
-                               os.path.basename(os.path.splitext(file)[0]) +
-                               '.png')
-            output_filename = os.path.join(output_folder, output_basename)
-            fig.savefig(output_filename, dpi=300)
-            plt.close(fig)
-        image_stats = image_summary(skeleton, spacing=scale)
-        image_stats['filename'] = file
-        image_stats['branch density'] = (framedata.shape[0] /
-                                         image_stats['area'])
-        j2j = framedata[framedata['branch-type'] == 2]
-        image_stats['mean J2J branch distance'] = j2j['branch-distance'].mean()
-        image_results.append(image_stats)
-
-    return pd.concat(results), pd.concat(image_results)
+    with ThreadPoolExecutor(max_workers=mp.cpu_count()) as ex:
+        future_data = {ex.submit(process_single_image, filename,
+                                 image_format, scale_metadata_path,
+                                 threshold_radius, smooth_radius,
+                                 brightness_offset, crop_radius,
+                                 smooth_method): filename
+                       for filename in filenames}
+        for completed_data in tqdm(as_completed(future_data)):
+            image, thresholded, skeleton, framedata = completed_data.result()
+            filename = future_data[completed_data]
+            results.append(framedata)
+            image_stats = image_summary(skeleton,
+                                        spacing=framedata['scale'][0])
+            image_stats['filename'] = filename
+            image_stats['branch density'] = (framedata.shape[0] /
+                                             image_stats['area'])
+            j2j = framedata[framedata['branch-type'] == 2]
+            image_stats['mean J2J branch distance'] = (
+                                            j2j['branch-distance'].mean())
+            image_results.append(image_stats)
+            yield filename, image, thresholded, skeleton, framedata
+    yield pd.concat(results), pd.concat(image_results)
