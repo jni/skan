@@ -73,9 +73,9 @@ def _mean_std(image, w):
         kern[indices] = (-1) ** (image.ndim % 2 != np.sum(indices) % 2)
 
     sum_full = correlate_nonzeros(integral, kern)
-    m = util.crop(sum_full, (left_pad, right_pad)) / (w ** image.ndim)
+    m = sum_full / (w ** image.ndim)
     sum_sq_full = correlate_nonzeros(integral_sq, kern)
-    g2 = util.crop(sum_sq_full, (left_pad, right_pad)) / (w ** image.ndim)
+    g2 = sum_sq_full / (w ** image.ndim)
     s = np.sqrt(g2 - m * m)
     return m, s
 
