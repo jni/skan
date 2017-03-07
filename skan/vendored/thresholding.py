@@ -10,16 +10,43 @@ import numba
 @numba.jit(nopython=True, cache=True, nogil=True)
 def _correlate_nonzeros_offset(input, indices, offsets, values, output):
     for off, val in zip(offsets, values):
+        # this loop order optimises cache access, gives 10x speedup
         for i, j in enumerate(indices):
             output[i] += input[j + off] * val
 
 
 def correlate_nonzeros(padded_array, kernel):
+    """Compute valid cross-correlation of `padded_array` and `kernel`.
+
+    This function is *fast* when `kernel` is large with many zeros.
+
+    See `scipy.ndimage.correlate` for a description of cross-correlation.
+
+    Parameters
+    ----------
+    padded_array : array of float, shape (M, N,[ ...,] P)
+        The input array. It should be already padded, as a margin of the
+        same shape as kernel (-1) will be stripped off.
+    kernel : array of float, shape (Q, R,[ ...,] S)
+        The kernel to be correlated. Must have the same number of
+        dimensions as `padded_array`. For high performance, it should
+        be sparse (few nonzero entries).
+
+    Returns
+    -------
+    result : array of float, shape (M-Q+1, N-R+1,[ ...,] P-S+1)
+        The result of cross-correlating `padded_array` with `kernel`.
+
+    See Also
+    --------
+    `scipy.ndimage.correlate`.
+    """
     indices = np.nonzero(kernel)
     offsets = np.ravel_multi_index(indices, padded_array.shape)
     values = kernel[indices]
     result = np.zeros(np.array(padded_array.shape) - np.array(kernel.shape)
                       + 1)
+    # note: np.mgrid takes up a lot of time. Prioritise finding alternative
     corner_multi_indices = np.mgrid[[slice(None, i) for i in result.shape]]
     corner_indices = np.ravel_multi_index(corner_multi_indices,
                                           padded_array.shape).ravel()
