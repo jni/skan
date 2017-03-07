@@ -9,8 +9,8 @@ import numba
 
 @numba.jit(nopython=True, cache=True, nogil=True)
 def _correlate_nonzeros_offset(input, indices, offsets, values, output):
-    for i, j in enumerate(indices):
-        for off, val in zip(offsets, values):
+    for off, val in zip(offsets, values):
+        for i, j in enumerate(indices):
             output[i] += input[j + off] * val
 
 
