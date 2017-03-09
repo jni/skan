@@ -32,7 +32,7 @@ def test_fast_sauvola():
 
 def test_reference_correlation():
     ndim = 4
-    shape = np.random.randint(0, 20, size=ndim)
+    shape = np.random.randint(2, 20, size=ndim)
     x = np.random.random(shape)
     kern = reduce(np.outer, [[-1, 0, 0, 1]] * ndim).reshape((4,) * ndim)
     px = np.pad(x, (2, 1), mode='reflect')
