@@ -314,6 +314,31 @@ def _expand_path(graph, source, step, visited, degrees):
     return step, d, degrees[step]
 
 
+@numba.jit(nopython=True, nogil=True)
+def _branch_statistics_loop(jgraph, degrees, visited, result):
+    num_results = 0
+    for node in range(1, jgraph.shape[0]):
+        if degrees[node] == 2 and not visited[node]:
+            visited[node] = True
+            left, right = jgraph.neighbors(node)
+            id0, d0, deg0 = _expand_path(jgraph, node, left, visited, degrees)
+            if id0 == node:  # standalone cycle
+                id1, d1, deg1 = node, 0., 2
+                kind = 3
+            else:
+                id1, d1, deg1 = _expand_path(jgraph, node, right, visited,
+                                             degrees)
+                kind = 2  # default: junction-to-junction
+                if deg0 == 1 and deg1 == 1:  # tip-tip
+                    kind = 0
+                elif deg0 == 1 or deg1 == 1:  # tip-junct, tip-path impossible
+                    kind = 1
+            result[num_results, :] = (float(id0), float(id1),
+                                      d0 + d1, float(kind))
+            num_results += 1
+    return num_results
+
+
 def branch_statistics(graph, *,
                       buffer_size_offset=0):
     """Compute the length and type of each branch in a skeleton graph.
@@ -348,25 +373,7 @@ def branch_statistics(graph, *,
     endpoints = (degrees != 2)
     num_paths = np.sum(degrees[endpoints])
     result = np.zeros((num_paths + buffer_size_offset, 4), dtype=float)
-    num_results = 0
-    for node in range(1, graph.shape[0]):
-        if degrees[node] == 2 and not visited[node]:
-            visited[node] = True
-            left, right = jgraph.neighbors(node)
-            id0, d0, deg0 = _expand_path(jgraph, node, left, visited, degrees)
-            if id0 == node:  # standalone cycle
-                id1, d1, deg1 = node, 0., 2
-                kind = 3
-            else:
-                id1, d1, deg1 = _expand_path(jgraph, node, right, visited,
-                                             degrees)
-                kind = 2  # default: junction-to-junction
-                if deg0 == 1 and deg1 == 1:  # tip-tip
-                    kind = 0
-                elif deg0 == 1 or deg1 == 1:  # tip-junct, tip-path impossible
-                    kind = 1
-            result[num_results, :] = id0, id1, d0 + d1, kind
-            num_results += 1
+    num_results = _branch_statistics_loop(jgraph, degrees, visited, result)
     return result[:num_results]
 
 

@@ -32,10 +32,10 @@ def bench_suite():
                                                       spacing=2.24826)
     times['build graph again'] = t_build_graph2[0]
     with timer() as t_stats:
-        stats = csr.branch_statistics(g, indices, degrees)
+        stats = csr.branch_statistics(g)
     times['compute statistics'] = t_stats[0]
     with timer() as t_stats2:
-        stats = csr.branch_statistics(g, indices, degrees)
+        stats = csr.branch_statistics(g)
     times['compute statistics again'] = t_stats2[0]
     with timer() as t_summary:
         summary = csr.summarise(skeleton)
