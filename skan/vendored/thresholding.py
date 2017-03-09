@@ -7,6 +7,17 @@ from skimage.util import dtype_limits
 import numba
 
 
+def broadcast_mgrid(arrays):
+    shape = tuple(map(len, arrays))
+    ndim = len(shape)
+    result = []
+    for i, arr in enumerate(arrays, start=1):
+        reshaped = np.broadcast_to(arr[[...] + [np.newaxis] * (ndim - i)],
+                                   shape)
+        result.append(reshaped)
+    return result
+
+
 @numba.jit(nopython=True, cache=True, nogil=True)
 def _correlate_nonzeros_offset(input, indices, offsets, values, output):
     for off, val in zip(offsets, values):
@@ -47,7 +58,8 @@ def correlate_nonzeros(padded_array, kernel):
     result = np.zeros(np.array(padded_array.shape) - np.array(kernel.shape)
                       + 1)
     # note: np.mgrid takes up a lot of time. Prioritise finding alternative
-    corner_multi_indices = np.mgrid[[slice(None, i) for i in result.shape]]
+    corner_multi_indices = broadcast_mgrid([np.arange(i)
+                                            for i in result.shape])
     corner_indices = np.ravel_multi_index(corner_multi_indices,
                                           padded_array.shape).ravel()
     _correlate_nonzeros_offset(padded_array.ravel(), corner_indices,
