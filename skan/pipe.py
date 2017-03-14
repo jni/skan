@@ -32,7 +32,7 @@ def _get_scale(image, md_path_or_scale):
 
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
-                   save_skeleton='', output_folder=None):
+                   save_skeleton='', output_folder=None, crop_radius=0):
     """Full pipeline from images to skeleton stats with local median threshold.
 
     Parameters
@@ -57,6 +57,9 @@ def process_images(filenames, image_format, threshold_radius,
     save_skeleton : string, optional
         If this is not an empty string, skeleton plots will be saved with
         the given prefix, one per input filename.
+    crop_radius : int, optional
+        Crop `crop_radius` pixels from each margin of the image before
+        processing.
 
     Returns
     -------
@@ -70,6 +73,9 @@ def process_images(filenames, image_format, threshold_radius,
     for file in tqdm(filenames):
         image = imageio.imread(file, format=image_format)
         scale = _get_scale(image, scale_metadata_path)
+        if crop_radius > 0:
+            c = crop_radius
+            image = image[c:-c, c:-c]
         pixel_threshold_radius = int(np.ceil(threshold_radius / scale))
         pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
         thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
