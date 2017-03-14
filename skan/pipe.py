@@ -7,6 +7,7 @@ from skimage import morphology
 import pandas as pd
 from . import draw
 from .image_stats import image_summary
+from .vendored.shape import shape_index
 import matplotlib.pyplot as plt
 
 
@@ -74,7 +75,9 @@ def process_images(filenames, image_format, threshold_radius,
         thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
                                     radius=pixel_threshold_radius,
                                     offset=brightness_offset)
-        skeleton = morphology.skeletonize(thresholded)
+        quality = shape_index(image, sigma=pixel_smoothing_radius,
+                              mode='reflect')
+        skeleton = morphology.skeletonize(thresholded) * quality
         framedata = csr.summarise(skeleton, spacing=scale)
         framedata['squiggle'] = np.log2(framedata['branch-distance'] /
                                         framedata['euclidean-distance'])
