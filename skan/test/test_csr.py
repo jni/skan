@@ -84,7 +84,8 @@ def test_3d_spacing():
 
 
 def test_topograph():
-    g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d)
+    g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d,
+                                              value_is_height=True)
     stats = csr.branch_statistics(g)
     assert stats.shape == (1, 4)
     assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])
