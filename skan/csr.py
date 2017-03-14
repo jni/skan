@@ -532,9 +532,9 @@ def compute_centroids(image):
     >>> image = np.array([[1, 0, 1, 0, 0, 1, 1],
     ...                   [1, 0, 0, 1, 0, 0, 0]])
     >>> labels, centroids = compute_centroids(image)
-    >>> labels
-    array([[1, 0, 2, 0, 0, 3, 3],
-           [1, 0, 0, 2, 0, 0, 0]], dtype=int32)
+    >>> print(labels)
+    [[1 0 2 0 0 3 3]
+     [1 0 0 2 0 0 0]]
     >>> centroids
     array([[ 0.5,  0. ],
            [ 0.5,  2.5],
