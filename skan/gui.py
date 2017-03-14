@@ -16,6 +16,7 @@ class Launch(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title('Skeleton analysis tool')
+        self.crop_radius = tk.IntVar(value=0, name='Crop radius')
         self.smooth_radius = tk.DoubleVar(value=0.1, name='Smoothing radius')
         self.threshold_radius = tk.DoubleVar(value=50e-9,
                                              name='Threshold radius')
@@ -34,6 +35,7 @@ class Launch(tk.Tk):
         self.image_output_filename = tk.StringVar(value='images-stats.csv',
                                                   name='Image stats filename')
         self.parameters = [
+            self.crop_radius,
             self.smooth_radius,
             self.threshold_radius,
             self.brightness_offset,
@@ -117,7 +119,8 @@ class Launch(tk.Tk):
                 self.brightness_offset.get(),
                 self.scale_metadata_path.get(),
                 save_skeleton,
-                self.output_folder)
+                self.output_folder,
+                crop_radius=self.crop_radius.get())
         result_full.to_csv(os.path.join(self.output_folder,
                                         self.full_output_filename.get()))
         result_image.to_csv(os.path.join(self.output_folder,
