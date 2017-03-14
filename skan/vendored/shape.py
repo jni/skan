@@ -45,10 +45,9 @@ def hessian_matrix(image, sigma=1, mode='constant', cval=0, order='rc'):
 
     Examples
     --------
-    >>> from skimage.feature import hessian_matrix
     >>> square = np.zeros((5, 5))
     >>> square[2, 2] = 4
-    >>> Hrr, Hrc, Hcc = hessian_matrix(square, sigma=0.1, order = 'rc')
+    >>> Hrr, Hrc, Hcc = hessian_matrix(square, sigma=0.1)
     >>> Hrc
     array([[ 0.,  0.,  0.,  0.,  0.],
            [ 0.,  1.,  0., -1.,  0.],
@@ -128,7 +127,6 @@ def shape_index(image, sigma=1, mode='constant', cval=0):
 
     Examples
     --------
-    >>> from skimage.feature import shape_index
     >>> square = np.zeros((5, 5))
     >>> square[2, 2] = 4
     >>> s = shape_index(square, sigma=0.1)
