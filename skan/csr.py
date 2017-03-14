@@ -14,16 +14,18 @@ csr_spec = [
     ('indptr', numba.int32[:]),
     ('indices', numba.int32[:]),
     ('data', numba.float64[:]),
-    ('shape', numba.int32[:])
+    ('shape', numba.int32[:]),
+    ('node_properties', numba.float64[:, :])
 ]
 
 @numba.jitclass(csr_spec)
 class CSGraph:
-    def __init__(self, indptr, indices, data, shape):
+    def __init__(self, indptr, indices, data, shape, node_props):
         self.indptr = indptr
         self.indices = indices
         self.data = data
         self.shape = shape
+        self.node_properties = node_props
 
     def edge(self, i, j):
         return _csrget(self.indices, self.indptr, self.data, i, j)
@@ -31,6 +33,14 @@ class CSGraph:
     def neighbors(self, row):
         loc, stop = self.indptr[row], self.indptr[row+1]
         return self.indices[loc:stop]
+
+
+def numba_csgraph(csr, node_props=None):
+    if node_props is None:
+        node_props = np.broadcast_to(1., (csr.shape[0], 1))
+        node_props.flags.writeable = True
+    return CSGraph(csr.indptr, csr.indices, csr.data,
+                   np.array(csr.shape, dtype=np.int32), node_props)
 
 
 def _pixel_graph(image, steps, distances, num_edges, height=None):
@@ -366,8 +376,7 @@ def branch_statistics(graph, *,
         - junction-junction (2)
         - path-path (3) (This can only be a standalone cycle)
     """
-    jgraph = CSGraph(graph.indptr, graph.indices, graph.data,
-                     np.array(graph.shape, np.int32))
+    jgraph = numba_csgraph(graph)
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
