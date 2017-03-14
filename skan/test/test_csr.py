@@ -112,3 +112,10 @@ def test_multiplicity_stats():
                         stats2['branch-distance'].values)
     assert_almost_equal(2 * stats1['euclidean-distance'].values,
                         stats2['euclidean-distance'].values)
+
+
+def test_pixel_values():
+    image = np.random.random((45,))
+    expected = np.mean(image[1:-1])
+    stats = csr.summarise(image)
+    assert_almost_equal(stats.loc[0, 'mean pixel value'], expected)
