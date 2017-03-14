@@ -84,14 +84,15 @@ def test_3d_spacing():
 
 
 def test_topograph():
-    g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d)
+    g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d,
+                                              value_is_height=True)
     stats = csr.branch_statistics(g)
     assert stats.shape == (1, 4)
     assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])
 
 
 def test_topograph_summary():
-    stats = csr.summarise(topograph1d, spacing=2.5)
+    stats = csr.summarise(topograph1d, spacing=2.5, using_height=True)
     assert stats.loc[0, 'euclidean-distance'] == 5.0
     assert_almost_equal(stats.loc[0, ['coord-0-0', 'coord-0-1',
                                       'coord-1-0', 'coord-1-1']],
@@ -111,3 +112,10 @@ def test_multiplicity_stats():
                         stats2['branch-distance'].values)
     assert_almost_equal(2 * stats1['euclidean-distance'].values,
                         stats2['euclidean-distance'].values)
+
+
+def test_pixel_values():
+    image = np.random.random((45,))
+    expected = np.mean(image[1:-1])
+    stats = csr.summarise(image)
+    assert_almost_equal(stats.loc[0, 'mean pixel value'], expected)

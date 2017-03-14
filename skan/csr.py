@@ -14,16 +14,18 @@ csr_spec = [
     ('indptr', numba.int32[:]),
     ('indices', numba.int32[:]),
     ('data', numba.float64[:]),
-    ('shape', numba.int32[:])
+    ('shape', numba.int32[:]),
+    ('node_properties', numba.float64[:])
 ]
 
 @numba.jitclass(csr_spec)
 class CSGraph:
-    def __init__(self, indptr, indices, data, shape):
+    def __init__(self, indptr, indices, data, shape, node_props):
         self.indptr = indptr
         self.indices = indices
         self.data = data
         self.shape = shape
+        self.node_properties = node_props
 
     def edge(self, i, j):
         return _csrget(self.indices, self.indptr, self.data, i, j)
@@ -31,6 +33,18 @@ class CSGraph:
     def neighbors(self, row):
         loc, stop = self.indptr[row], self.indptr[row+1]
         return self.indices[loc:stop]
+
+    @property
+    def has_node_props(self):
+        return self.node_properties.strides != (0,)
+
+
+def numba_csgraph(csr, node_props=None):
+    if node_props is None:
+        node_props = np.broadcast_to(1., csr.shape[0])
+        node_props.flags.writeable = True
+    return CSGraph(csr.indptr, csr.indices, csr.data,
+                   np.array(csr.shape, dtype=np.int32), node_props)
 
 
 def _pixel_graph(image, steps, distances, num_edges, height=None):
@@ -146,7 +160,7 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
-def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
+def _uniquify_junctions(csmat, pixel_indices, junction_labels,
                         junction_centroids, *, spacing=1):
     """Replace clustered pixels with degree > 2 by a single "floating" pixel.
 
@@ -154,8 +168,6 @@ def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
     ----------
     csmat : CSGraph
         The input graph.
-    shape : tuple of int
-        The shape of the original image from which the graph was generated.
     pixel_indices : array of int
         The raveled index in the image of every pixel represented in csmat.
     spacing : float, or array-like of float, shape `len(shape)`, optional
@@ -179,7 +191,7 @@ def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
     csmat.data = np.maximum(csmat.data, tdata)
 
 
-def skeleton_to_csgraph(skel, *, spacing=1):
+def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False):
     """Convert a skeleton image of thin lines to a graph of neighbor pixels.
 
     Parameters
@@ -193,6 +205,11 @@ def skeleton_to_csgraph(skel, *, spacing=1):
         either be a single value if the data has the same resolution along
         all axes, or it can be an array of the same shape as `skel` to
         indicate spacing along each axis.
+    value_is_height : bool, optional
+        If `True`, the pixel value at each point of the skeleton will be
+        considered to be a height measurement, and this height will be
+        incorporated into skeleton branch lengths. Used for analysis of
+        atomic force microscopy (AFM) images.
 
     Returns
     -------
@@ -209,16 +226,13 @@ def skeleton_to_csgraph(skel, *, spacing=1):
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
     """
-    if np.issubdtype(skel.dtype, float):  # interpret float skels as height
-        height = pad(skel, 0.)
-    else:
-        height = None
-    skel = skel.astype(bool)  # ensure we have a bool image
-                              # since we later use it for bool indexing
-    spacing = np.ones(skel.ndim, dtype=float) * spacing
-
+    height = pad(skel, 0.) if value_is_height else None
+    # ensure we have a bool image, since we later use it for bool indexing
+    skel = skel.astype(bool)
     ndim = skel.ndim
-    pixel_indices = np.concatenate(([[0.] * skel.ndim],
+    spacing = np.ones(ndim, dtype=float) * spacing
+
+    pixel_indices = np.concatenate(([[0.] * ndim],
                                     np.transpose(np.nonzero(skel))), axis=0)
     skelint = np.zeros(skel.shape, dtype=int)
     skelint[tuple(pixel_indices.T.astype(int))] = \
@@ -244,7 +258,7 @@ def skeleton_to_csgraph(skel, *, spacing=1):
                                                   spacing=spacing)
     graph = _pixel_graph(skelint, steps, distances, num_edges, height)
 
-    _uniquify_junctions(graph, skel.shape, pixel_indices,
+    _uniquify_junctions(graph, pixel_indices,
                         labeled_junctions, centroids, spacing=spacing)
     return graph, pixel_indices, degree_image
 
@@ -301,17 +315,26 @@ def _expand_path(graph, source, step, visited, degrees):
         The tip or junction node at the end of the path.
     d : float
         The distance travelled from `source` to `dest`.
+    n : int
+        The number of pixels along the path followed (excluding the source).
+    s : float
+        The sum of the pixel values along the path followed (also excluding
+        the source).
     deg : int
         The degree of `dest`.
     """
     d = graph.edge(source, step)
+    s = 0.
+    n = 0
     while degrees[step] == 2 and not visited[step]:
         n1, n2 = graph.neighbors(step)
         nextstep = n1 if n1 != source else n2
         source, step = step, nextstep
         d += graph.edge(source, step)
         visited[source] = True
-    return step, d, degrees[step]
+        s += graph.node_properties[source]
+        n += 1
+    return step, d, n, s, degrees[step]
 
 
 @numba.jit(nopython=True, nogil=True)
@@ -321,25 +344,28 @@ def _branch_statistics_loop(jgraph, degrees, visited, result):
         if degrees[node] == 2 and not visited[node]:
             visited[node] = True
             left, right = jgraph.neighbors(node)
-            id0, d0, deg0 = _expand_path(jgraph, node, left, visited, degrees)
+            id0, d0, n0, s0, deg0 = _expand_path(jgraph, node, left,
+                                                 visited, degrees)
             if id0 == node:  # standalone cycle
-                id1, d1, deg1 = node, 0., 2
+                id1, d1, n1, s1, deg1 = node, 0, 0, 0., 2
                 kind = 3
             else:
-                id1, d1, deg1 = _expand_path(jgraph, node, right, visited,
-                                             degrees)
+                id1, d1, n1, s1, deg1 = _expand_path(jgraph, node, right,
+                                                     visited, degrees)
                 kind = 2  # default: junction-to-junction
                 if deg0 == 1 and deg1 == 1:  # tip-tip
                     kind = 0
                 elif deg0 == 1 or deg1 == 1:  # tip-junct, tip-path impossible
                     kind = 1
-            result[num_results, :] = (float(id0), float(id1),
-                                      d0 + d1, float(kind))
+            counts = n0 + n1 + 1
+            values = s0 + s1 + jgraph.node_properties[node]
+            result[num_results, :] = (float(id0), float(id1), d0 + d1,
+                                      float(kind), values / counts)
             num_results += 1
     return num_results
 
 
-def branch_statistics(graph, *,
+def branch_statistics(graph, pixel_values=None, *,
                       buffer_size_offset=0):
     """Compute the length and type of each branch in a skeleton graph.
 
@@ -347,6 +373,9 @@ def branch_statistics(graph, *,
     ----------
     graph : sparse.csr_matrix, shape (N, N)
         A skeleton graph.
+    pixel_values : array of float, shape (N,)
+        A value for each pixel in the graph. Used to compute total
+        intensity statistics along each branch.
     buffer_size_offset : int, optional
         The buffer size is given by the sum of the degrees of non-path
         nodes. This is usually 2x the amount needed, allowing room for
@@ -358,23 +387,25 @@ def branch_statistics(graph, *,
 
     Returns
     -------
-    branches : array of float, shape (N, 4)
+    branches : array of float, shape (N, {4, 5})
         An array containing branch endpoint IDs, length, and branch type.
         The types are:
         - tip-tip (0)
         - tip-junction (1)
         - junction-junction (2)
         - path-path (3) (This can only be a standalone cycle)
+        Optionally, the last column contains the average pixel value
+        along each branch (not including the endpoints).
     """
-    jgraph = CSGraph(graph.indptr, graph.indices, graph.data,
-                     np.array(graph.shape, np.int32))
+    jgraph = numba_csgraph(graph, pixel_values)
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
     num_paths = np.sum(degrees[endpoints])
-    result = np.zeros((num_paths + buffer_size_offset, 4), dtype=float)
+    result = np.zeros((num_paths + buffer_size_offset, 5), dtype=float)
     num_results = _branch_statistics_loop(jgraph, degrees, visited, result)
-    return result[:num_results]
+    num_columns = 5 if jgraph.has_node_props else 4
+    return result[:num_results, :num_columns]
 
 
 def submatrix(M, idxs):
@@ -405,7 +436,7 @@ def submatrix(M, idxs):
     return Msub
 
 
-def summarise(image, *, spacing=1):
+def summarise(image, *, spacing=1, using_height=False):
     """Compute statistics for every disjoint skeleton in `image`.
 
     Parameters
@@ -420,6 +451,12 @@ def summarise(image, *, spacing=1):
         either be a single value if the data has the same resolution along
         all axes, or it can be an array of the same shape as `skel` to
         indicate spacing along each axis.
+    using_height : bool, optional
+        If `True`, the pixel value at each point of the skeleton will be
+        considered to be a height measurement, and this height will be
+        incorporated into skeleton branch lengths, endpoint coordinates,
+        and euclidean distances. Used for analysis of atomic force
+        microscopy (AFM) images.
 
     Returns
     -------
@@ -428,12 +465,20 @@ def summarise(image, *, spacing=1):
         `image`.
     """
     ndim = image.ndim
-    using_height = np.issubdtype(image.dtype, float)
     spacing = np.ones(ndim, dtype=float) * spacing
-    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing)
+    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing,
+                                                 value_is_height=using_height)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
-    stats = branch_statistics(g)
+    if np.issubdtype(image.dtype, 'float') and not using_height:
+        pixel_values = ndi.map_coordinates(image, coords_img.T, order=3)
+        value_columns = ['mean pixel value']
+        value_column_types = [float]
+    else:
+        pixel_values = None
+        value_columns = []
+        value_column_types = []
+    stats = branch_statistics(g, pixel_values)
     indices0 = stats[:, 0].astype(int)
     indices1 = stats[:, 1].astype(int)
     coords_img0 = coords_img[indices0]
@@ -441,11 +486,9 @@ def summarise(image, *, spacing=1):
     coords_real0 = coords_img0 * spacing
     coords_real1 = coords_img1 * spacing
     if using_height:
-        height_coords0 = ndi.map_coordinates(image, coords_img[indices0].T,
-                                             order=3)
+        height_coords0 = ndi.map_coordinates(image, coords_img0.T, order=3)
         coords_real0 = np.column_stack((height_coords0, coords_real0))
-        height_coords1 = ndi.map_coordinates(image, coords_img[indices1].T,
-                                             order=3)
+        height_coords1 = ndi.map_coordinates(image, coords_img1.T, order=3)
         coords_real1 = np.column_stack((height_coords1, coords_real1))
     distances = np.sqrt(np.sum((coords_real0 - coords_real1)**2, axis=1))
     skeleton_id = skeleton_ids[stats[:, 0].astype(int)]
@@ -454,12 +497,13 @@ def summarise(image, *, spacing=1):
     height_ndim = ndim if not using_height else (ndim + 1)
     columns = (['skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
                 'branch-type'] +
+               value_columns +
                ['img-coord-0-%i' % i for i in range(ndim)] +
                ['img-coord-1-%i' % i for i in range(ndim)] +
                ['coord-0-%i' % i for i in range(height_ndim)] +
                ['coord-1-%i' % i for i in range(height_ndim)] +
                ['euclidean-distance'])
-    column_types = ([int, int, int, float, int] +
+    column_types = ([int, int, int, float, int] + value_column_types +
                     2 * ndim * [int] +
                     2 * height_ndim * [float] +
                     [float])
