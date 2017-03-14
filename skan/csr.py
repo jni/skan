@@ -177,7 +177,7 @@ def _uniquify_junctions(csmat, pixel_indices, junction_labels,
     csmat.data = np.maximum(csmat.data, tdata)
 
 
-def skeleton_to_csgraph(skel, *, spacing=1):
+def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False):
     """Convert a skeleton image of thin lines to a graph of neighbor pixels.
 
     Parameters
@@ -191,6 +191,11 @@ def skeleton_to_csgraph(skel, *, spacing=1):
         either be a single value if the data has the same resolution along
         all axes, or it can be an array of the same shape as `skel` to
         indicate spacing along each axis.
+    value_is_height : bool, optional
+        If `True`, the pixel value at each point of the skeleton will be
+        considered to be a height measurement, and this height will be
+        incorporated into skeleton branch lengths. Used for analysis of
+        atomic force microscopy (AFM) images.
 
     Returns
     -------
@@ -207,7 +212,7 @@ def skeleton_to_csgraph(skel, *, spacing=1):
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
     """
-    if np.issubdtype(skel.dtype, float):  # interpret float skels as height
+    if value_is_height:  # interpret float skeleton as height
         height = pad(skel, 0.)
     else:
         height = None
