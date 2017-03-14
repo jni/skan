@@ -456,11 +456,9 @@ def summarise(image, *, spacing=1, using_height=False):
     coords_real0 = coords_img0 * spacing
     coords_real1 = coords_img1 * spacing
     if using_height:
-        height_coords0 = ndi.map_coordinates(image, coords_img[indices0].T,
-                                             order=3)
+        height_coords0 = ndi.map_coordinates(image, coords_img0.T, order=3)
         coords_real0 = np.column_stack((height_coords0, coords_real0))
-        height_coords1 = ndi.map_coordinates(image, coords_img[indices1].T,
-                                             order=3)
+        height_coords1 = ndi.map_coordinates(image, coords_img1.T, order=3)
         coords_real1 = np.column_stack((height_coords1, coords_real1))
     distances = np.sqrt(np.sum((coords_real0 - coords_real1)**2, axis=1))
     skeleton_id = skeleton_ids[stats[:, 0].astype(int)]
