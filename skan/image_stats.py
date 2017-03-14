@@ -27,8 +27,8 @@ def mesh_sizes(skeleton):
     ...                   [0, 0, 1, 1, 1],
     ...                   [0, 0, 1, 0, 0],
     ...                   [0, 1, 0, 1, 0]])
-    >>> mesh_sizes(image)
-    array([], dtype=int64)
+    >>> print(mesh_sizes(image))
+    []
     >>> from skan.nputil import pad
     >>> image2 = pad(image, 1)  # make sure mesh not touching border
     >>> mesh_sizes(image2)  # sizes in row order of first pixel in space
