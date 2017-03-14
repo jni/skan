@@ -18,6 +18,10 @@ def test_pipe(image_filename):
     assert type(data[0]) == pandas.DataFrame
     assert data[0].shape[0] > 0
 
+    data2 = pipe.process_images([image_filename], 'fei', 5e-8, 0.1, 0.075,
+                                'Scan/PixelHeight', crop_radius=75)[0]
+    assert data2.shape[0] < data[0].shape[0]
+
 
 def test_pipe_figure(image_filename):
     with tempfile.TemporaryDirectory() as tempdir:
