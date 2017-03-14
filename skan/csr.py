@@ -414,7 +414,7 @@ def submatrix(M, idxs):
     return Msub
 
 
-def summarise(image, *, spacing=1):
+def summarise(image, *, spacing=1, using_height=False):
     """Compute statistics for every disjoint skeleton in `image`.
 
     Parameters
@@ -429,6 +429,12 @@ def summarise(image, *, spacing=1):
         either be a single value if the data has the same resolution along
         all axes, or it can be an array of the same shape as `skel` to
         indicate spacing along each axis.
+    using_height : bool, optional
+        If `True`, the pixel value at each point of the skeleton will be
+        considered to be a height measurement, and this height will be
+        incorporated into skeleton branch lengths, endpoint coordinates,
+        and euclidean distances. Used for analysis of atomic force
+        microscopy (AFM) images.
 
     Returns
     -------
@@ -437,9 +443,9 @@ def summarise(image, *, spacing=1):
         `image`.
     """
     ndim = image.ndim
-    using_height = np.issubdtype(image.dtype, float)
     spacing = np.ones(ndim, dtype=float) * spacing
-    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing)
+    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing,
+                                                 value_is_height=using_height)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
     stats = branch_statistics(g)
