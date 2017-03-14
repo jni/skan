@@ -15,7 +15,7 @@ csr_spec = [
     ('indices', numba.int32[:]),
     ('data', numba.float64[:]),
     ('shape', numba.int32[:]),
-    ('node_properties', numba.float64[:, :])
+    ('node_properties', numba.float64[:])
 ]
 
 @numba.jitclass(csr_spec)
@@ -34,10 +34,14 @@ class CSGraph:
         loc, stop = self.indptr[row], self.indptr[row+1]
         return self.indices[loc:stop]
 
+    @property
+    def has_node_props(self):
+        return self.node_properties.strides != (0,)
+
 
 def numba_csgraph(csr, node_props=None):
     if node_props is None:
-        node_props = np.broadcast_to(1., (csr.shape[0], 1))
+        node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
     return CSGraph(csr.indptr, csr.indices, csr.data,
                    np.array(csr.shape, dtype=np.int32), node_props)
