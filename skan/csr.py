@@ -315,17 +315,26 @@ def _expand_path(graph, source, step, visited, degrees):
         The tip or junction node at the end of the path.
     d : float
         The distance travelled from `source` to `dest`.
+    n : int
+        The number of pixels along the path followed (excluding the source).
+    s : float
+        The sum of the pixel values along the path followed (also excluding
+        the source).
     deg : int
         The degree of `dest`.
     """
     d = graph.edge(source, step)
+    s = 0.
+    n = 0
     while degrees[step] == 2 and not visited[step]:
         n1, n2 = graph.neighbors(step)
         nextstep = n1 if n1 != source else n2
         source, step = step, nextstep
         d += graph.edge(source, step)
         visited[source] = True
-    return step, d, degrees[step]
+        s += graph.node_properties[source]
+        n += 1
+    return step, d, n, s, degrees[step]
 
 
 @numba.jit(nopython=True, nogil=True)
@@ -335,25 +344,28 @@ def _branch_statistics_loop(jgraph, degrees, visited, result):
         if degrees[node] == 2 and not visited[node]:
             visited[node] = True
             left, right = jgraph.neighbors(node)
-            id0, d0, deg0 = _expand_path(jgraph, node, left, visited, degrees)
+            id0, d0, n0, s0, deg0 = _expand_path(jgraph, node, left,
+                                                 visited, degrees)
             if id0 == node:  # standalone cycle
-                id1, d1, deg1 = node, 0., 2
+                id1, d1, n1, s1, deg1 = node, 0, 0, 0., 2
                 kind = 3
             else:
-                id1, d1, deg1 = _expand_path(jgraph, node, right, visited,
-                                             degrees)
+                id1, d1, n1, s1, deg1 = _expand_path(jgraph, node, right,
+                                                     visited, degrees)
                 kind = 2  # default: junction-to-junction
                 if deg0 == 1 and deg1 == 1:  # tip-tip
                     kind = 0
                 elif deg0 == 1 or deg1 == 1:  # tip-junct, tip-path impossible
                     kind = 1
-            result[num_results, :] = (float(id0), float(id1),
-                                      d0 + d1, float(kind))
+            counts = n0 + n1 + 1
+            values = s0 + s1 + jgraph.node_properties[node]
+            result[num_results, :] = (float(id0), float(id1), d0 + d1,
+                                      float(kind), values / counts)
             num_results += 1
     return num_results
 
 
-def branch_statistics(graph, *,
+def branch_statistics(graph, pixel_values=None, *,
                       buffer_size_offset=0):
     """Compute the length and type of each branch in a skeleton graph.
 
@@ -361,6 +373,9 @@ def branch_statistics(graph, *,
     ----------
     graph : sparse.csr_matrix, shape (N, N)
         A skeleton graph.
+    pixel_values : array of float, shape (N,)
+        A value for each pixel in the graph. Used to compute total
+        intensity statistics along each branch.
     buffer_size_offset : int, optional
         The buffer size is given by the sum of the degrees of non-path
         nodes. This is usually 2x the amount needed, allowing room for
@@ -372,22 +387,25 @@ def branch_statistics(graph, *,
 
     Returns
     -------
-    branches : array of float, shape (N, 4)
+    branches : array of float, shape (N, {4, 5})
         An array containing branch endpoint IDs, length, and branch type.
         The types are:
         - tip-tip (0)
         - tip-junction (1)
         - junction-junction (2)
         - path-path (3) (This can only be a standalone cycle)
+        Optionally, the last column contains the average pixel value
+        along each branch (not including the endpoints).
     """
-    jgraph = numba_csgraph(graph)
+    jgraph = numba_csgraph(graph, pixel_values)
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
     num_paths = np.sum(degrees[endpoints])
-    result = np.zeros((num_paths + buffer_size_offset, 4), dtype=float)
+    result = np.zeros((num_paths + buffer_size_offset, 5), dtype=float)
     num_results = _branch_statistics_loop(jgraph, degrees, visited, result)
-    return result[:num_results]
+    num_columns = 5 if jgraph.has_node_props else 4
+    return result[:num_results, :num_columns]
 
 
 def submatrix(M, idxs):
@@ -452,7 +470,15 @@ def summarise(image, *, spacing=1, using_height=False):
                                                  value_is_height=using_height)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
-    stats = branch_statistics(g)
+    if np.issubdtype(image.dtype, 'float') and not using_height:
+        pixel_values = ndi.map_coordinates(image, coords_img.T, order=3)
+        value_columns = ['mean pixel value']
+        value_column_types = [float]
+    else:
+        pixel_values = None
+        value_columns = []
+        value_column_types = []
+    stats = branch_statistics(g, pixel_values)
     indices0 = stats[:, 0].astype(int)
     indices1 = stats[:, 1].astype(int)
     coords_img0 = coords_img[indices0]
@@ -471,12 +497,13 @@ def summarise(image, *, spacing=1, using_height=False):
     height_ndim = ndim if not using_height else (ndim + 1)
     columns = (['skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
                 'branch-type'] +
+               value_columns +
                ['img-coord-0-%i' % i for i in range(ndim)] +
                ['img-coord-1-%i' % i for i in range(ndim)] +
                ['coord-0-%i' % i for i in range(height_ndim)] +
                ['coord-1-%i' % i for i in range(height_ndim)] +
                ['euclidean-distance'])
-    column_types = ([int, int, int, float, int] +
+    column_types = ([int, int, int, float, int] + value_column_types +
                     2 * ndim * [int] +
                     2 * height_ndim * [float] +
                     [float])
