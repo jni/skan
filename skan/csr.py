@@ -212,16 +212,13 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False):
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
     """
-    if value_is_height:  # interpret float skeleton as height
-        height = pad(skel, 0.)
-    else:
-        height = None
-    skel = skel.astype(bool)  # ensure we have a bool image
-                              # since we later use it for bool indexing
-    spacing = np.ones(skel.ndim, dtype=float) * spacing
-
+    height = pad(skel, 0.) if value_is_height else None
+    # ensure we have a bool image, since we later use it for bool indexing
+    skel = skel.astype(bool)
     ndim = skel.ndim
-    pixel_indices = np.concatenate(([[0.] * skel.ndim],
+    spacing = np.ones(ndim, dtype=float) * spacing
+
+    pixel_indices = np.concatenate(([[0.] * ndim],
                                     np.transpose(np.nonzero(skel))), axis=0)
     skelint = np.zeros(skel.shape, dtype=int)
     skelint[tuple(pixel_indices.T.astype(int))] = \
