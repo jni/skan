@@ -83,6 +83,8 @@ def process_images(filenames, image_format, threshold_radius,
                                         framedata['euclidean-distance'])
         framedata['filename'] = file
         framedata['scale'] = scale
+        framedata.rename(columns={'mean pixel value': 'mean shape index'},
+                         inplace=True)
         results.append(framedata)
         if save_skeleton:
             fig, axes = draw.pipeline_plot(image, sigma=pixel_smoothing_radius,
