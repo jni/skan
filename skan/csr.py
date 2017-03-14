@@ -146,7 +146,7 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
-def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
+def _uniquify_junctions(csmat, pixel_indices, junction_labels,
                         junction_centroids, *, spacing=1):
     """Replace clustered pixels with degree > 2 by a single "floating" pixel.
 
@@ -154,8 +154,6 @@ def _uniquify_junctions(csmat, shape, pixel_indices, junction_labels,
     ----------
     csmat : CSGraph
         The input graph.
-    shape : tuple of int
-        The shape of the original image from which the graph was generated.
     pixel_indices : array of int
         The raveled index in the image of every pixel represented in csmat.
     spacing : float, or array-like of float, shape `len(shape)`, optional
@@ -244,7 +242,7 @@ def skeleton_to_csgraph(skel, *, spacing=1):
                                                   spacing=spacing)
     graph = _pixel_graph(skelint, steps, distances, num_edges, height)
 
-    _uniquify_junctions(graph, skel.shape, pixel_indices,
+    _uniquify_junctions(graph, pixel_indices,
                         labeled_junctions, centroids, spacing=spacing)
     return graph, pixel_indices, degree_image
 
