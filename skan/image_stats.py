@@ -32,7 +32,7 @@ def mesh_sizes(skeleton):
     >>> from skan.nputil import pad
     >>> image2 = pad(image, 1)  # make sure mesh not touching border
     >>> print(mesh_sizes(image2))  # sizes in row order of first pixel in space
-    [7, 2, 3, 1]
+    [7 2 3 1]
     """
     spaces = ~skeleton.astype(bool)
     labeled = ndi.label(spaces)[0]
