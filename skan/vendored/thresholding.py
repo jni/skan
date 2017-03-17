@@ -19,14 +19,14 @@ def broadcast_mgrid(arrays):
 
 
 @numba.jit(nopython=True, cache=True, nogil=True)
-def _correlate_nonzeros_offset(input, indices, offsets, values, output):
+def _correlate_sparse_offsets(input, indices, offsets, values, output):
     for off, val in zip(offsets, values):
         # this loop order optimises cache access, gives 10x speedup
         for i, j in enumerate(indices):
             output[i] += input[j + off] * val
 
 
-def correlate_nonzeros(padded_array, kernel):
+def correlate_sparse(image, kernel, mode='reflect'):
     """Compute valid cross-correlation of `padded_array` and `kernel`.
 
     This function is *fast* when `kernel` is large with many zeros.
@@ -35,35 +35,45 @@ def correlate_nonzeros(padded_array, kernel):
 
     Parameters
     ----------
-    padded_array : array of float, shape (M, N,[ ...,] P)
+    image : array of float, shape (M, N,[ ...,] P)
         The input array. It should be already padded, as a margin of the
         same shape as kernel (-1) will be stripped off.
     kernel : array of float, shape (Q, R,[ ...,] S)
         The kernel to be correlated. Must have the same number of
         dimensions as `padded_array`. For high performance, it should
         be sparse (few nonzero entries).
+    mode : string, optional
+        See `np.pad` for valid modes. Additionally, mode 'valid' is
+        accepted, in which case no padding is applied and the result is
+        the result for the smaller image for which the kernel is entirely
+        inside the original data.
 
     Returns
     -------
-    result : array of float, shape (M-Q+1, N-R+1,[ ...,] P-S+1)
-        The result of cross-correlating `padded_array` with `kernel`.
+    result : array of float, shape (M, N,[ ...,] P)
+        The result of cross-correlating `image` with `kernel`. If mode
+        'valid' is used, the resulting shape is (M-Q+1, N-R+1,[ ...,] P-S+1).
 
     See Also
     --------
     `scipy.ndimage.correlate`.
     """
+    if mode == 'valid':
+        padded_image = image
+    else:
+        w = kernel.shape[0] // 2
+        padded_image = np.pad(image, (w, w-1), mode=mode)
     indices = np.nonzero(kernel)
-    offsets = np.ravel_multi_index(indices, padded_array.shape)
+    offsets = np.ravel_multi_index(indices, padded_image.shape)
     values = kernel[indices]
-    result = np.zeros(np.array(padded_array.shape) - np.array(kernel.shape)
-                      + 1)
-    # note: np.mgrid takes up a lot of time. Prioritise finding alternative
+    result = np.zeros([a + b + 1
+                       for a, b in zip(padded_image.shape, kernel.shape)])
     corner_multi_indices = broadcast_mgrid([np.arange(i)
                                             for i in result.shape])
     corner_indices = np.ravel_multi_index(corner_multi_indices,
-                                          padded_array.shape).ravel()
-    _correlate_nonzeros_offset(padded_array.ravel(), corner_indices,
-                               offsets, values, result.ravel())
+                                          padded_image.shape).ravel()
+    _correlate_sparse_offsets(padded_image.ravel(), corner_indices,
+                              offsets, values, result.ravel())
     return result
 
 
@@ -111,9 +121,9 @@ def _mean_std(image, w):
     for indices in itertools.product(*([[0, -1]] * image.ndim)):
         kern[indices] = (-1) ** (image.ndim % 2 != np.sum(indices) % 2)
 
-    sum_full = correlate_nonzeros(integral, kern)
+    sum_full = correlate_sparse(integral, kern, mode='valid')
     m = sum_full / (w ** image.ndim)
-    sum_sq_full = correlate_nonzeros(integral_sq, kern)
+    sum_sq_full = correlate_sparse(integral_sq, kern, mode='valid')
     g2 = sum_sq_full / (w ** image.ndim)
     s = np.sqrt(g2 - m * m)
     return m, s
