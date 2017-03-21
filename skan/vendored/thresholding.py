@@ -66,7 +66,7 @@ def correlate_sparse(image, kernel, mode='reflect'):
     indices = np.nonzero(kernel)
     offsets = np.ravel_multi_index(indices, padded_image.shape)
     values = kernel[indices]
-    result = np.zeros([a + b + 1
+    result = np.zeros([a - b + 1
                        for a, b in zip(padded_image.shape, kernel.shape)])
     corner_multi_indices = broadcast_mgrid([np.arange(i)
                                             for i in result.shape])
