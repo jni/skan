@@ -82,7 +82,7 @@ class Launch(tk.Tk):
                 self.input_files = value
                 params_dict.pop(param)
             elif param.lower() == 'output folder':
-                self.output_folder = value
+                self.output_folder = os.path.expanduser(value)
                 params_dict.pop(param)
         for param in params_dict:
             print(f'Parameter not recognised: {param}')
