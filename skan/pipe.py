@@ -83,7 +83,8 @@ def process_images(filenames, image_format, threshold_radius,
         pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
         thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
                                     radius=pixel_threshold_radius,
-                                    offset=brightness_offset)
+                                    offset=brightness_offset,
+                                    smooth_method=smooth_method)
         quality = shape_index(image, sigma=pixel_smoothing_radius,
                               mode='reflect')
         skeleton = morphology.skeletonize(thresholded) * quality
