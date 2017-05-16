@@ -8,7 +8,7 @@ from tkinter import ttk
 import click
 
 
-from . import pipe
+from . import pipe, __version__
 
 
 STANDARD_MARGIN = (3, 3, 12, 12)
@@ -84,8 +84,23 @@ class Launch(tk.Tk):
             elif param.lower() == 'output folder':
                 self.output_folder = os.path.expanduser(value)
                 params_dict.pop(param)
+            elif param.lower() == 'version':
+                print(f'Parameter file version: {params_dict.pop(param)}')
         for param in params_dict:
             print(f'Parameter not recognised: {param}')
+
+    def save_parameters(self, filename):
+        out = {p._name.lower(): p.get() for p in self.parameters}
+        out['input files'] = self.input_files
+        out['output folder'] = self.output_folder
+        out['version'] = __version__
+        attempt = 0
+        while os.path.exists(filename):
+            base, ext = os.path.splitext(filename)
+            filename = f'{base} ({attempt}).{ext}'
+            attempt += 1
+        with open(filename, mode='wt') as fout:
+            json.dump(out, fout, indent=0)
 
     def create_main_frame(self):
         main = ttk.Frame(master=self, padding=STANDARD_MARGIN)
@@ -161,6 +176,8 @@ class Launch(tk.Tk):
                                         self.full_output_filename.get()))
         result_image.to_csv(os.path.join(self.output_folder,
                                          self.image_output_filename.get()))
+        self.save_parameters(os.path.join(self.output_folder,
+                                          'skan-config.json'))
 
 @click.command()
 @click.option('-c', '--config', default='',
