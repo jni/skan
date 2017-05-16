@@ -71,3 +71,20 @@ def test_threshold_2d_otsu(image):
 def test_threshold_no_method(image):
     np.testing.assert_raises(ValueError, pre.threshold, image,
                              radius=1, method='no method')
+
+
+def _total_variation(image):
+    return sum(np.sum(np.abs(np.diff(image, axis=i)))
+               for i in range(image.ndim))
+
+
+def test_threshold_denoise(image):
+    denoised_thresholded = pre.threshold(image, sigma=5, radius=15,
+                                         smooth_method='tv')
+    thresholded = pre.threshold(image, sigma=0, radius=15)
+    assert (_total_variation(thresholded) >
+            _total_variation(denoised_thresholded))
+    denoised_thresholded = pre.threshold(image, sigma=4, radius=15,
+                                         smooth_method='nl')
+    assert(_total_variation(thresholded) >
+           _total_variation(denoised_thresholded))
