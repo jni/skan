@@ -99,9 +99,9 @@ class Launch(tk.Tk):
         out['output folder'] = self.output_folder
         out['version'] = __version__
         attempt = 0
+        base, ext = os.path.splitext(filename)
         while os.path.exists(filename):
-            base, ext = os.path.splitext(filename)
-            filename = f'{base} ({attempt}).{ext}'
+            filename = f'{base} ({attempt}){ext}'
             attempt += 1
         with open(filename, mode='wt') as fout:
             json.dump(out, fout, indent=2)
