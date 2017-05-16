@@ -182,6 +182,8 @@ class Launch(tk.Tk):
                        branches=result_full,
                        images=result_image,
                        parameters=json.loads(self.save_parameters()))
+        self.save_parameters(os.path.join(self.output_folder,
+                                          'skan-config.json'))
 
 
 @click.command()
