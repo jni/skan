@@ -114,6 +114,7 @@ class Launch(tk.Tk):
         buttons = ttk.Frame(master=parent, padding=STANDARD_MARGIN)
         buttons.grid(sticky='nsew')
         actions = [
+            ('Choose config', self.choose_config_file),
             ('Choose files', self.choose_input_files),
             ('Choose output folder', self.choose_output_folder),
             ('Run', self.run)
@@ -122,6 +123,10 @@ class Launch(tk.Tk):
             button = ttk.Button(buttons, text=action_name,
                                 command=action)
             button.grid(row=0, column=col)
+
+    def choose_config_file(self):
+        config_file = tk.filedialog.askopenfilename()
+        self.parameter_config(config_file)
 
     def choose_input_files(self):
         self.input_files = tk.filedialog.askopenfilenames()
