@@ -32,7 +32,8 @@ def _get_scale(image, md_path_or_scale):
 
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
-                   save_skeleton='', output_folder=None, crop_radius=0):
+                   save_skeleton='', output_folder=None, crop_radius=0,
+                   smooth_method='Gaussian'):
     """Full pipeline from images to skeleton stats with local median threshold.
 
     Parameters
@@ -60,6 +61,8 @@ def process_images(filenames, image_format, threshold_radius,
     crop_radius : int, optional
         Crop `crop_radius` pixels from each margin of the image before
         processing.
+    smooth_method : {'Gaussian', 'TV', 'NL'}, optional
+        Which method to use for smoothing.
 
     Returns
     -------

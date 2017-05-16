@@ -8,7 +8,7 @@ from tkinter import ttk
 import click
 
 
-from . import pipe, __version__
+from . import pre, pipe, __version__
 
 
 STANDARD_MARGIN = (3, 3, 12, 12)
@@ -19,6 +19,9 @@ class Launch(tk.Tk):
         super().__init__()
         self.title('Skeleton analysis tool')
         self.crop_radius = tk.IntVar(value=0, name='Crop radius')
+        self.smooth_method = tk.StringVar(value='Gaussian',
+                                          name='Smoothing method')
+        self.smooth_method._choices = pre.SMOOTH_METHODS
         self.smooth_radius = tk.DoubleVar(value=0.1, name='Smoothing radius')
         self.threshold_radius = tk.DoubleVar(value=50e-9,
                                              name='Threshold radius')
@@ -121,6 +124,9 @@ class Launch(tk.Tk):
             param_label.grid(row=i, column=0, sticky='nsew')
             if type(param) == tk.BooleanVar:
                 param_entry = ttk.Checkbutton(parameters, variable=param)
+            elif hasattr(param, '_choices'):
+                param_entry = ttk.OptionMenu(parameters, variable=param,
+                                             *param._choices.keys())
             else:
                 param_entry = ttk.Entry(parameters, textvariable=param)
             param_entry.grid(row=i, column=1, sticky='nsew')
@@ -171,7 +177,8 @@ class Launch(tk.Tk):
                 self.scale_metadata_path.get(),
                 save_skeleton,
                 self.output_folder,
-                crop_radius=self.crop_radius.get())
+                crop_radius=self.crop_radius.get(),
+                smooth_method=self.smooth_method.get())
         result_full.to_csv(os.path.join(self.output_folder,
                                         self.full_output_filename.get()))
         result_image.to_csv(os.path.join(self.output_folder,
