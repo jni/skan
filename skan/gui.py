@@ -100,7 +100,7 @@ class Launch(tk.Tk):
             filename = f'{base} ({attempt}).{ext}'
             attempt += 1
         with open(filename, mode='wt') as fout:
-            json.dump(out, fout, indent=0)
+            json.dump(out, fout, indent=2)
 
     def create_main_frame(self):
         main = ttk.Frame(master=self, padding=STANDARD_MARGIN)
