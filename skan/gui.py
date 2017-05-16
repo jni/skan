@@ -41,6 +41,7 @@ class Launch(tk.Tk):
                                                   name='Image stats filename')
         self.parameters = [
             self.crop_radius,
+            self.smooth_method,
             self.smooth_radius,
             self.threshold_radius,
             self.brightness_offset,
@@ -125,7 +126,7 @@ class Launch(tk.Tk):
             if type(param) == tk.BooleanVar:
                 param_entry = ttk.Checkbutton(parameters, variable=param)
             elif hasattr(param, '_choices'):
-                param_entry = ttk.OptionMenu(parameters, variable=param,
+                param_entry = ttk.OptionMenu(parameters, param, param.get(),
                                              *param._choices.keys())
             else:
                 param_entry = ttk.Entry(parameters, textvariable=param)
