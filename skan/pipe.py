@@ -99,7 +99,8 @@ def process_images(filenames, image_format, threshold_radius,
         if save_skeleton:
             fig, axes = draw.pipeline_plot(image, sigma=pixel_smoothing_radius,
                                            radius=pixel_threshold_radius,
-                                           offset=brightness_offset)
+                                           offset=brightness_offset,
+                                           smooth_method=smooth_method)
             output_basename = (save_skeleton +
                                os.path.basename(os.path.splitext(file)[0]) +
                                '.png')

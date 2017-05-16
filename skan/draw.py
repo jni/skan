@@ -115,7 +115,7 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
 
 
 def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
-                  figsize=(9, 9)):
+                  figsize=(9, 9), smooth_method='Gaussian'):
     """Draw the image, the thresholded version, and its skeleton.
 
     Parameters
@@ -133,6 +133,8 @@ def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
         result in more pixels above the threshold.
     figsize : 2-tuple of float, optional
         The width and height of the figure.
+    smooth_method : {'Gaussian', 'TV', 'NL'}, optional
+        Which denoising method to use on the image.
 
     Returns
     -------
@@ -146,7 +148,8 @@ def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
     axes[0].imshow(image, cmap='gray')
     axes[0].axis('off')
 
-    thresholded = threshold(image, sigma=sigma, radius=radius, offset=offset)
+    thresholded = threshold(image, sigma=sigma, radius=radius, offset=offset,
+                            smooth_method=smooth_method)
     axes[1].imshow(thresholded, cmap='gray')
     axes[1].axis('off')
 
