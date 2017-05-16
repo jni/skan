@@ -1,0 +1,14 @@
+{
+"crop radius": 0,
+"smoothing radius": 0.1,
+"threshold radius": 5e-8,
+"brightness offset": 0.075,
+"image format": "fei",
+"scale metadata path": "Scan/PixelHeight",
+"save skeleton plot?": true,
+"prefix for skeleton plots": "skeleton-plot-",
+"full stats filename": "skeleton.csv",
+"image stats filename": "image-stats.csv",
+"input files": ["image0.tif", "image1.tif"],
+"output folder": "~/Desktop"
+}

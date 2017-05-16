@@ -1,19 +1,21 @@
 import os
+import json
 import matplotlib
 matplotlib.use('TkAgg')
 import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
+import click
 
 
-from . import pipe
+from . import pipe, __version__
 
 
 STANDARD_MARGIN = (3, 3, 12, 12)
 
 
 class Launch(tk.Tk):
-    def __init__(self):
+    def __init__(self, params_dict=None):
         super().__init__()
         self.title('Skeleton analysis tool')
         self.crop_radius = tk.IntVar(value=0, name='Crop radius')
@@ -50,11 +52,55 @@ class Launch(tk.Tk):
         self.input_files = []
         self.output_folder = None
 
+        if params_dict is None:
+            params_dict = {}
+        self.params_dict = params_dict.copy()
+        self.parameter_config(params_dict)
+
         # allow resizing
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
         self.create_main_frame()
+
+    def parameter_config(self, params_dict):
+        """Set parameter values from a config dictionary."""
+        if isinstance(params_dict, str):
+            if params_dict.startswith('{'):  # JSON string
+                params_dict = json.loads(params_dict)
+            else:  # config file
+                with open(params_dict) as params_fin:
+                    params_dict = json.load(params_fin)
+            self.params_dict.update(params_dict)
+        name2param = {p._name.lower(): p for p in self.parameters}
+        for param, value in self.params_dict.items():
+            if param.lower() in name2param:
+                name2param[param].set(value)
+                params_dict.pop(param)
+        for param, value in params_dict.copy().items():
+            if param.lower() == 'input files':
+                self.input_files = value
+                params_dict.pop(param)
+            elif param.lower() == 'output folder':
+                self.output_folder = os.path.expanduser(value)
+                params_dict.pop(param)
+            elif param.lower() == 'version':
+                print(f'Parameter file version: {params_dict.pop(param)}')
+        for param in params_dict:
+            print(f'Parameter not recognised: {param}')
+
+    def save_parameters(self, filename):
+        out = {p._name.lower(): p.get() for p in self.parameters}
+        out['input files'] = self.input_files
+        out['output folder'] = self.output_folder
+        out['version'] = __version__
+        attempt = 0
+        while os.path.exists(filename):
+            base, ext = os.path.splitext(filename)
+            filename = f'{base} ({attempt}).{ext}'
+            attempt += 1
+        with open(filename, mode='wt') as fout:
+            json.dump(out, fout, indent=2)
 
     def create_main_frame(self):
         main = ttk.Frame(master=self, padding=STANDARD_MARGIN)
@@ -83,6 +129,7 @@ class Launch(tk.Tk):
         buttons = ttk.Frame(master=parent, padding=STANDARD_MARGIN)
         buttons.grid(sticky='nsew')
         actions = [
+            ('Choose config', self.choose_config_file),
             ('Choose files', self.choose_input_files),
             ('Choose output folder', self.choose_output_folder),
             ('Run', self.run)
@@ -91,6 +138,10 @@ class Launch(tk.Tk):
             button = ttk.Button(buttons, text=action_name,
                                 command=action)
             button.grid(row=0, column=col)
+
+    def choose_config_file(self):
+        config_file = tk.filedialog.askopenfilename()
+        self.parameter_config(config_file)
 
     def choose_input_files(self):
         self.input_files = tk.filedialog.askopenfilenames()
@@ -125,8 +176,13 @@ class Launch(tk.Tk):
                                         self.full_output_filename.get()))
         result_image.to_csv(os.path.join(self.output_folder,
                                          self.image_output_filename.get()))
+        self.save_parameters(os.path.join(self.output_folder,
+                                          'skan-config.json'))
 
-
-def launch():
-    app = Launch()
+@click.command()
+@click.option('-c', '--config', default='',
+              help='JSON configuration file.')
+def launch(config):
+    params = json.load(open(config)) if config else None
+    app = Launch(params)
     app.mainloop()
