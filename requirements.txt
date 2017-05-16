@@ -8,3 +8,4 @@ scikit-image>=0.12
 imageio>=2.0
 tqdm>=4.0
 dask>=0.12
+click>=0.5

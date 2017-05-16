@@ -13,6 +13,7 @@ dependencies:
 - pytest>=3*
 - coverage>=4.0
 - pytest-cov>=2.2
+- click>=0.5
 - pip:
   - hypothesis>=3.6
   - imageio>=2.0
