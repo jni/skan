@@ -1,9 +1,11 @@
 import os
+import json
 import matplotlib
 matplotlib.use('TkAgg')
 import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
+import click
 
 
 from . import pipe
@@ -13,7 +15,7 @@ STANDARD_MARGIN = (3, 3, 12, 12)
 
 
 class Launch(tk.Tk):
-    def __init__(self):
+    def __init__(self, params_dict=None):
         super().__init__()
         self.title('Skeleton analysis tool')
         self.crop_radius = tk.IntVar(value=0, name='Crop radius')
@@ -50,11 +52,40 @@ class Launch(tk.Tk):
         self.input_files = []
         self.output_folder = None
 
+        if params_dict is None:
+            params_dict = {}
+        self.params_dict = params_dict.copy()
+        self.parameter_config(params_dict)
+
         # allow resizing
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
         self.create_main_frame()
+
+    def parameter_config(self, params_dict):
+        """Set parameter values from a config dictionary."""
+        if isinstance(params_dict, str):
+            if params_dict.startswith('{'):  # JSON string
+                params_dict = json.loads(params_dict)
+            else:  # config file
+                with open(params_dict) as params_fin:
+                    params_dict = json.load(params_fin)
+            self.params_dict.update(params_dict)
+        name2param = {p._name.lower(): p for p in self.parameters}
+        for param, value in self.params_dict.items():
+            if param.lower() in name2param:
+                name2param[param].set(value)
+                params_dict.pop(param)
+        for param, value in params_dict.copy().items():
+            if param.lower() == 'input files':
+                self.input_files = value
+                params_dict.pop(param)
+            elif param.lower() == 'output folder':
+                self.output_folder = value
+                params_dict.pop(param)
+        for param in params_dict:
+            print(f'Parameter not recognised: {param}')
 
     def create_main_frame(self):
         main = ttk.Frame(master=self, padding=STANDARD_MARGIN)
@@ -126,7 +157,10 @@ class Launch(tk.Tk):
         result_image.to_csv(os.path.join(self.output_folder,
                                          self.image_output_filename.get()))
 
-
-def launch():
-    app = Launch()
+@click.command()
+@click.option('-c', '--config', default='',
+              help='JSON configuration file.')
+def launch(config):
+    params = json.load(open(config)) if config else None
+    app = Launch(params)
     app.mainloop()
