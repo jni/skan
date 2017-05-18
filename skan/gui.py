@@ -92,7 +92,7 @@ class Launch(tk.Tk):
                 self.input_files = value
                 params_dict.pop(param)
             elif param.lower() == 'output folder':
-                self.output_folder = os.path.expanduser(value)
+                self.output_folder = Path(os.path.expanduser(value))
                 params_dict.pop(param)
             elif param.lower() == 'version':
                 print(f'Parameter file version: {params_dict.pop(param)}')
@@ -203,8 +203,7 @@ class Launch(tk.Tk):
                                branches=result_full,
                                images=result_image,
                                parameters=json.loads(self.save_parameters()))
-                self.save_parameters(os.path.join(self.output_folder,
-                                                  'skan-config.json'))
+                self.save_parameters(self.output_folder / 'skan-config.json')
 
 
 def tk_update(loop, app):
