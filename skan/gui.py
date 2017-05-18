@@ -102,7 +102,7 @@ class Launch(tk.Tk):
     def save_parameters(self, filename=None):
         out = {p._name.lower(): p.get() for p in self.parameters}
         out['input files'] = self.input_files
-        out['output folder'] = self.output_folder
+        out['output folder'] = str(self.output_folder)
         out['version'] = __version__
         if filename is None:
             return json.dumps(out)
