@@ -8,7 +8,8 @@ from tkinter import ttk
 import click
 
 
-from . import pre, pipe, __version__
+from . import pre, pipe, io, __version__
+from . import pipe, io, __version__
 
 
 STANDARD_MARGIN = (3, 3, 12, 12)
@@ -35,10 +36,8 @@ class Launch(tk.Tk):
                                                  name='Save skeleton plot?')
         self.skeleton_plot_prefix = tk.StringVar(value='skeleton-plot-',
                                          name='Prefix for skeleton plots')
-        self.full_output_filename = tk.StringVar(value='skeleton.csv',
-                                                 name='Full stats filename')
-        self.image_output_filename = tk.StringVar(value='images-stats.csv',
-                                                  name='Image stats filename')
+        self.output_filename = tk.StringVar(value='skeleton.xslx',
+                                            name='Output filename')
         self.parameters = [
             self.crop_radius,
             self.smooth_method,
@@ -49,8 +48,7 @@ class Launch(tk.Tk):
             self.scale_metadata_path,
             self.save_skeleton_plots,
             self.skeleton_plot_prefix,
-            self.full_output_filename,
-            self.image_output_filename,
+            self.output_filename,
         ]
 
         self.input_files = []
@@ -180,12 +178,13 @@ class Launch(tk.Tk):
                 self.output_folder,
                 crop_radius=self.crop_radius.get(),
                 smooth_method=self.smooth_method.get())
-        result_full.to_csv(os.path.join(self.output_folder,
-                                        self.full_output_filename.get()))
-        result_image.to_csv(os.path.join(self.output_folder,
-                                         self.image_output_filename.get()))
+        io.write_excel(self.output_filename.get(),
+                       branches=result_full,
+                       images=result_image,
+                       parameters=json.loads(self.save_parameters()))
         self.save_parameters(os.path.join(self.output_folder,
                                           'skan-config.json'))
+
 
 @click.command()
 @click.option('-c', '--config', default='',
