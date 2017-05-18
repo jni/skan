@@ -10,6 +10,7 @@ dependencies:
 - networkx>=1.11*
 - matplotlib>=1.5*
 - pandas>=0.18*
+- openpyxl>=2.4*
 - pytest>=3*
 - coverage>=4.0
 - pytest-cov>=2.2
