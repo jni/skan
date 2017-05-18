@@ -13,8 +13,8 @@ MAINTAINER_EMAIL    = 'juan.n@unimelb.edu.au'
 URL                 = 'https://github.com/jni/skan'
 LICENSE             = 'BSD 3-clause'
 DOWNLOAD_URL        = 'https://github.com/jni/skan'
-PYTHON_VERSION      = (3, 5)
 VERSION             = '0.6.1-dev'
+PYTHON_VERSION      = (3, 6)
 INST_DEPENDENCIES   = {} 
 
 
@@ -36,6 +36,7 @@ if __name__ == '__main__':
             'License :: OSI Approved :: BSD License',
             'Programming Language :: Python',
             'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.6',
             'Topic :: Scientific/Engineering',
             'Operating System :: Microsoft :: Windows',
             'Operating System :: POSIX',
