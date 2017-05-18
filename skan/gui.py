@@ -1,15 +1,27 @@
 import os
 import json
+import asyncio
+from pathlib import Path
+import numpy as np
 import matplotlib
 matplotlib.use('TkAgg')
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+                                               NavigationToolbar2TkAgg)
+import matplotlib.pyplot as plt
 import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
 import click
 
 
-from . import pre, pipe, io, __version__
-from . import pipe, io, __version__
+from . import pre, pipe, draw, io, __version__
+
+
+@asyncio.coroutine
+def _async(coroutine, *args):
+    loop = asyncio.get_event_loop()
+    return (yield from loop.run_in_executor(None, coroutine, *args))
 
 
 STANDARD_MARGIN = (3, 3, 12, 12)
@@ -36,7 +48,7 @@ class Launch(tk.Tk):
                                                  name='Save skeleton plot?')
         self.skeleton_plot_prefix = tk.StringVar(value='skeleton-plot-',
                                          name='Prefix for skeleton plots')
-        self.output_filename = tk.StringVar(value='skeleton.xslx',
+        self.output_filename = tk.StringVar(value='skeleton.xlsx',
                                             name='Output filename')
         self.parameters = [
             self.crop_radius,
@@ -84,18 +96,20 @@ class Launch(tk.Tk):
                 self.input_files = value
                 params_dict.pop(param)
             elif param.lower() == 'output folder':
-                self.output_folder = os.path.expanduser(value)
+                self.output_folder = Path(os.path.expanduser(value))
                 params_dict.pop(param)
             elif param.lower() == 'version':
                 print(f'Parameter file version: {params_dict.pop(param)}')
         for param in params_dict:
             print(f'Parameter not recognised: {param}')
 
-    def save_parameters(self, filename):
+    def save_parameters(self, filename=None):
         out = {p._name.lower(): p.get() for p in self.parameters}
         out['input files'] = self.input_files
-        out['output folder'] = self.output_folder
+        out['output folder'] = str(self.output_folder)
         out['version'] = __version__
+        if filename is None:
+            return json.dumps(out)
         attempt = 0
         base, ext = os.path.splitext(filename)
         while os.path.exists(filename):
@@ -137,7 +151,7 @@ class Launch(tk.Tk):
             ('Choose config', self.choose_config_file),
             ('Choose files', self.choose_input_files),
             ('Choose output folder', self.choose_output_folder),
-            ('Run', self.run)
+            ('Run', lambda: asyncio.ensure_future(self.run()))
         ]
         for col, (action_name, action) in enumerate(actions):
             button = ttk.Button(buttons, text=action_name,
@@ -151,13 +165,33 @@ class Launch(tk.Tk):
     def choose_input_files(self):
         self.input_files = tk.filedialog.askopenfilenames()
         if len(self.input_files) > 0 and self.output_folder is None:
-            self.output_folder = os.path.dirname(self.input_files[0])
+            self.output_folder = Path(os.path.dirname(self.input_files[0]))
 
     def choose_output_folder(self):
-        self.output_folder = \
-                tk.filedialog.askdirectory(initialdir=self.output_folder)
+        self.output_folder = Path(
+                tk.filedialog.askdirectory(initialdir=self.output_folder))
 
-    def run(self):
+    def make_figure_window(self):
+        self.figure_window = tk.Toplevel(self)
+        self.figure_window.wm_title('Preview')
+        screen_dpi = self.figure_window.winfo_fpixels('1i')
+        screen_width = self.figure_window.winfo_screenwidth()  # in pixels
+        figure_width = screen_width / 2 / screen_dpi
+        figure_height = 0.75 * figure_width
+        self.figure = Figure(figsize=(figure_width, figure_height),
+                             dpi=screen_dpi)
+        ax0 = self.figure.add_subplot(221)
+        axes = [self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
+                for i in range(2, 5)]
+        self.axes = np.array([ax0] + axes)
+        canvas = FigureCanvasTkAgg(self.figure, master=self.figure_window)
+        canvas.show()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        toolbar = NavigationToolbar2TkAgg(canvas, self.figure_window)
+        toolbar.update()
+        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+    async def run(self):
         print('Input files:')
         for file in self.input_files:
             print('  ', file)
@@ -168,22 +202,47 @@ class Launch(tk.Tk):
         print('Output:', self.output_folder)
         save_skeleton = ('' if not self.save_skeleton_plots.get() else
                          self.skeleton_plot_prefix.get())
-        result_full, result_image = pipe.process_images(
+        images_iterator = pipe.process_images(
                 self.input_files, self.image_format.get(),
                 self.threshold_radius.get(),
                 self.smooth_radius.get(),
                 self.brightness_offset.get(),
                 self.scale_metadata_path.get(),
-                save_skeleton,
-                self.output_folder,
                 crop_radius=self.crop_radius.get(),
                 smooth_method=self.smooth_method.get())
-        io.write_excel(self.output_filename.get(),
-                       branches=result_full,
-                       images=result_image,
-                       parameters=json.loads(self.save_parameters()))
-        self.save_parameters(os.path.join(self.output_folder,
-                                          'skan-config.json'))
+        if save_skeleton:
+            self.make_figure_window()
+        for i, result in enumerate(images_iterator):
+            if i < len(self.input_files):
+                filename, image, thresholded, skeleton, framedata = result
+                if save_skeleton:
+                    for ax in self.axes:
+                        ax.clear()
+                    draw.pipeline_plot(image, thresholded, skeleton, framedata,
+                                       figure=self.figure, axes=self.axes)
+                    self.figure.canvas.draw()
+                    output_basename = (save_skeleton +
+                                       os.path.basename(
+                                           os.path.splitext(filename)[0]) +
+                                       '.png')
+                    output_filename = str(self.output_folder / output_basename)
+                    self.figure.savefig(output_filename, dpi=300)
+            else:
+                result_full, result_image = result
+                io.write_excel(self.output_filename.get(),
+                               branches=result_full,
+                               images=result_image,
+                               parameters=json.loads(self.save_parameters()))
+                self.save_parameters(self.output_folder / 'skan-config.json')
+
+
+def tk_update(loop, app):
+    try:
+        app.update()
+    except tkinter.TclError:
+        loop.stop()
+        return
+    loop.call_later(.01, tk_update, loop, app)
 
 
 @click.command()
@@ -192,4 +251,6 @@ class Launch(tk.Tk):
 def launch(config):
     params = json.load(open(config)) if config else None
     app = Launch(params)
-    app.mainloop()
+    loop = asyncio.get_event_loop()
+    tk_update(loop, app)
+    loop.run_forever()
