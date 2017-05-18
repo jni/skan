@@ -99,11 +99,13 @@ class Launch(tk.Tk):
         for param in params_dict:
             print(f'Parameter not recognised: {param}')
 
-    def save_parameters(self, filename):
+    def save_parameters(self, filename=None):
         out = {p._name.lower(): p.get() for p in self.parameters}
         out['input files'] = self.input_files
         out['output folder'] = self.output_folder
         out['version'] = __version__
+        if filename is None:
+            return json.dumps(out)
         attempt = 0
         base, ext = os.path.splitext(filename)
         while os.path.exists(filename):
