@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import collections
 from skimage import img_as_float, morphology
 from skimage.color import gray2rgb
 from .csr import summarise
@@ -94,9 +95,11 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
     """
     image = _normalise_image(image, image_cmap=image_cmap)
     summary = summarise(skeleton)
-    coords_cols = (['img-coord-0-%i' % i for i in range(2)] +
-                   ['img-coord-1-%i' % i for i in range(2)])
-    coords = summary[coords_cols]
+    # transforming from row, col to x, y
+    coords_cols = (['img-coord-0-%i' % i for i in [1, 0]] +
+                   ['img-coord-1-%i' % i for i in [1, 0]])
+    coords = summary[coords_cols].values.reshape((-1, 2, 2))
+    print(f'drawing {coords.shape[0]} lines')
     if axes is None:
         fig, axes = plt.subplots()
     axes.imshow(image)
@@ -106,14 +109,13 @@ def overlay_euclidean_skeleton_2d(image, skeleton, *,
                         min(len(np.unique(color_values)), 256))
     colormapped = cmap((color_values - np.min(color_values)) /
                        (np.max(color_values) - np.min(color_values)))
-    for ((_, (r0, c0, r1, c1)), color) in zip(coords.iterrows(),
-                                              colormapped):
-        axes.plot([c0, c1], [r0, r1], color=color, marker=None)
+    linecoll = collections.LineCollection(coords, colors=colormapped)
+    axes.add_collection(linecoll)
     return axes
 
 
 def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
-                  figsize=(9, 9)):
+                  figsize=(9, 9), smooth_method='Gaussian'):
     """Draw the image, the thresholded version, and its skeleton.
 
     Parameters
@@ -131,6 +133,8 @@ def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
         result in more pixels above the threshold.
     figsize : 2-tuple of float, optional
         The width and height of the figure.
+    smooth_method : {'Gaussian', 'TV', 'NL'}, optional
+        Which denoising method to use on the image.
 
     Returns
     -------
@@ -144,7 +148,8 @@ def pipeline_plot(image, *, sigma=0., radius=0, offset=0.,
     axes[0].imshow(image, cmap='gray')
     axes[0].axis('off')
 
-    thresholded = threshold(image, sigma=sigma, radius=radius, offset=offset)
+    thresholded = threshold(image, sigma=sigma, radius=radius, offset=offset,
+                            smooth_method=smooth_method)
     axes[1].imshow(thresholded, cmap='gray')
     axes[1].axis('off')
 

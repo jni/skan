@@ -1,9 +1,17 @@
 import numpy as np
 from scipy import spatial, ndimage as ndi
-from skimage import filters
+from skimage import filters, restoration
 
 # Temporary until skimage 0.13 is out
 from .vendored.thresholding import threshold_sauvola, threshold_niblack
+
+
+SMOOTH_METHODS = {
+    'Gaussian': filters.gaussian,
+    'TV': restoration.denoise_tv_bregman,
+    'NL': restoration.denoise_nl_means
+}
+
 
 def hyperball(ndim, radius):
     """Return a binary morphological filter containing pixels within `radius`.
@@ -33,7 +41,7 @@ def hyperball(ndim, radius):
 
 
 def threshold(image, *, sigma=0., radius=0, offset=0.,
-              method='sauvola'):
+              method='sauvola', smooth_method='Gaussian'):
     """Use scikit-image filters to "intelligently" threshold an image.
 
     Parameters
@@ -52,6 +60,9 @@ def threshold(image, *, sigma=0., radius=0, offset=0.,
     method: {'sauvola', 'niblack', 'median'}
         Which method to use for thresholding. Sauvola is 100x faster, but
         median might be more accurate.
+    smooth_method: {'Gaussian', 'TV', 'NL'}
+        Which method to use for smoothing. Choose from Gaussian smoothing,
+        total variation denoising, and non-local means denoising.
 
     Returns
     -------
@@ -63,7 +74,13 @@ def threshold(image, *, sigma=0., radius=0, offset=0.,
     .. [1] http://scikit-image.org/docs/dev/user_guide/data_types.html
     """
     if sigma > 0:
-        image = filters.gaussian(image, sigma=sigma)
+        if smooth_method.lower() == 'gaussian':
+            image = filters.gaussian(image, sigma=sigma)
+        elif smooth_method.lower() == 'tv':
+            image = restoration.denoise_tv_bregman(image, weight=sigma)
+        elif smooth_method.lower() == 'nl':
+            image = restoration.denoise_nl_means(image,
+                                             patch_size=round(2 * sigma))
     if radius == 0:
         t = filters.threshold_otsu(image) + offset
     else:

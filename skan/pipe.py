@@ -32,7 +32,8 @@ def _get_scale(image, md_path_or_scale):
 
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
-                   save_skeleton='', output_folder=None, crop_radius=0):
+                   save_skeleton='', output_folder=None, crop_radius=0,
+                   smooth_method='Gaussian'):
     """Full pipeline from images to skeleton stats with local median threshold.
 
     Parameters
@@ -60,6 +61,8 @@ def process_images(filenames, image_format, threshold_radius,
     crop_radius : int, optional
         Crop `crop_radius` pixels from each margin of the image before
         processing.
+    smooth_method : {'Gaussian', 'TV', 'NL'}, optional
+        Which method to use for smoothing.
 
     Returns
     -------
@@ -80,7 +83,8 @@ def process_images(filenames, image_format, threshold_radius,
         pixel_smoothing_radius = smooth_radius * pixel_threshold_radius
         thresholded = pre.threshold(image, sigma=pixel_smoothing_radius,
                                     radius=pixel_threshold_radius,
-                                    offset=brightness_offset)
+                                    offset=brightness_offset,
+                                    smooth_method=smooth_method)
         quality = shape_index(image, sigma=pixel_smoothing_radius,
                               mode='reflect')
         skeleton = morphology.skeletonize(thresholded) * quality
@@ -95,7 +99,8 @@ def process_images(filenames, image_format, threshold_radius,
         if save_skeleton:
             fig, axes = draw.pipeline_plot(image, sigma=pixel_smoothing_radius,
                                            radius=pixel_threshold_radius,
-                                           offset=brightness_offset)
+                                           offset=brightness_offset,
+                                           smooth_method=smooth_method)
             output_basename = (save_skeleton +
                                os.path.basename(os.path.splitext(file)[0]) +
                                '.png')
