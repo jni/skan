@@ -3,7 +3,10 @@ Basic testing of the draw module. This just ensures the functions don't crash.
 Testing plotting is hard. ;)
 """
 import os
+import numpy as np
 from skimage import io, morphology
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import pytest
 
 from skan import pre, draw, csr
@@ -52,3 +55,13 @@ def test_pipeline_plot(test_image, test_thresholded, test_skeleton,
                        test_stats):
     draw.pipeline_plot(test_image, test_thresholded, test_skeleton,
                        test_stats)
+
+
+def test_pipeline_plot_existing_fig(test_image, test_thresholded,
+                                    test_skeleton, test_stats):
+    fig = Figure()
+    draw.pipeline_plot(test_image, test_thresholded, test_skeleton, test_stats,
+                       figure=fig)
+    fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
+    draw.pipeline_plot(test_image, test_thresholded, test_skeleton, test_stats,
+                       figure=fig, axes=np.ravel(axes))
