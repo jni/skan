@@ -44,7 +44,7 @@ class Launch(tk.Tk):
                                                  name='Save skeleton plot?')
         self.skeleton_plot_prefix = tk.StringVar(value='skeleton-plot-',
                                          name='Prefix for skeleton plots')
-        self.output_filename = tk.StringVar(value='skeleton.xslx',
+        self.output_filename = tk.StringVar(value='skeleton.xlsx',
                                             name='Output filename')
         self.parameters = [
             self.crop_radius,
