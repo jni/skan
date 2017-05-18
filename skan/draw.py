@@ -114,7 +114,7 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
 
 
 def pipeline_plot(image, thresholded, skeleton, stats, *,
-                  figure=None, figsize=(9, 9)):
+                  figure=None, axes=None, figsize=(9, 9)):
     """Draw the image, the thresholded version, and its skeleton.
 
     Parameters
@@ -133,6 +133,8 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
     ----------------
     figure : matplotlib Figure, optional
         If given, where to make the plots.
+    axes : array of matplotlib Axes, optional
+        If given, use these axes to draw the plots. Should have len 4.
     figsize : 2-tuple of float, optional
         The width and height of the figure.
     smooth_method : {'Gaussian', 'TV', 'NL'}, optional
@@ -151,9 +153,10 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
         axes = np.ravel(axes)
     else:
         fig = figure
-        ax0 = plt.add_subplot(2, 2, 1)
-        axes = [plt.add_subplot(2, 2, i, sharex=ax0, sharey=ax0)
-                for i in range(2, 5)]
+        if axes is None:
+            ax0 = fig.add_subplot(2, 2, 1)
+            axes = [fig.add_subplot(2, 2, i, sharex=ax0, sharey=ax0)
+                    for i in range(2, 5)]
 
     axes = np.ravel(axes)
     axes[0].imshow(image, cmap='gray')

@@ -2,8 +2,12 @@ import os
 import json
 import asyncio
 from pathlib import Path
+import numpy as np
 import matplotlib
 matplotlib.use('TkAgg')
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+                                               NavigationToolbar2TkAgg)
 import matplotlib.pyplot as plt
 import tkinter as tk
 import tkinter.filedialog
@@ -167,6 +171,21 @@ class Launch(tk.Tk):
         self.output_folder = Path(
                 tk.filedialog.askdirectory(initialdir=self.output_folder))
 
+    def make_figure_window(self):
+        figure_window = tk.Toplevel(self)
+        figure_window.wm_title('Preview')
+        self.figure = Figure(dpi=300)
+        ax0 = self.figure.add_subplot(221)
+        axes = [self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
+                for i in range(2, 5)]
+        self.axes = np.array([ax0] + axes)
+        canvas = FigureCanvasTkAgg(self.figure, master=figure_window)
+        canvas.show()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        toolbar = NavigationToolbar2TkAgg(canvas, figure_window)
+        toolbar.update()
+        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
     async def run(self):
         print('Input files:')
         for file in self.input_files:
@@ -186,19 +205,22 @@ class Launch(tk.Tk):
                 self.scale_metadata_path.get(),
                 crop_radius=self.crop_radius.get(),
                 smooth_method=self.smooth_method.get())
+        if save_skeleton:
+            self.make_figure_window()
         for i, result in enumerate(images_iterator):
             if i < len(self.input_files):
                 filename, image, thresholded, skeleton, framedata = result
                 if save_skeleton:
-                    fig, axes = draw.pipeline_plot(image, thresholded,
-                                                   skeleton, framedata)
+                    for ax in self.axes:
+                        ax.clear()
+                    draw.pipeline_plot(image, thresholded, skeleton, framedata,
+                                       figure=self.figure, axes=self.axes)
                     output_basename = (save_skeleton +
                                        os.path.basename(
                                            os.path.splitext(filename)[0]) +
                                        '.png')
                     output_filename = str(self.output_folder / output_basename)
-                    fig.savefig(output_filename, dpi=300)
-                    plt.close(fig)
+                    self.figure.savefig(output_filename, dpi=300)
             else:
                 result_full, result_image = result
                 io.write_excel(self.output_filename.get(),
