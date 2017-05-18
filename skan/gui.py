@@ -182,8 +182,6 @@ class Launch(tk.Tk):
                 self.smooth_radius.get(),
                 self.brightness_offset.get(),
                 self.scale_metadata_path.get(),
-                save_skeleton,
-                self.output_folder,
                 crop_radius=self.crop_radius.get(),
                 smooth_method=self.smooth_method.get())
         for i, result in enumerate(images_iterator):
