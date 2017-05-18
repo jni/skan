@@ -155,8 +155,8 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
         fig = figure
         if axes is None:
             ax0 = fig.add_subplot(2, 2, 1)
-            axes = [fig.add_subplot(2, 2, i, sharex=ax0, sharey=ax0)
-                    for i in range(2, 5)]
+            axes = [ax0] + [fig.add_subplot(2, 2, i, sharex=ax0, sharey=ax0)
+                            for i in range(2, 5)]
 
     axes = np.ravel(axes)
     axes[0].imshow(image, cmap='gray')
