@@ -172,17 +172,22 @@ class Launch(tk.Tk):
                 tk.filedialog.askdirectory(initialdir=self.output_folder))
 
     def make_figure_window(self):
-        figure_window = tk.Toplevel(self)
-        figure_window.wm_title('Preview')
-        self.figure = Figure(dpi=300)
+        self.figure_window = tk.Toplevel(self)
+        self.figure_window.wm_title('Preview')
+        screen_dpi = self.figure_window.winfo_fpixels('1i')
+        screen_width = self.figure_window.winfo_screenwidth()  # in pixels
+        figure_width = screen_width / 2 / screen_dpi
+        figure_height = 0.75 * figure_width
+        self.figure = Figure(figsize=(figure_width, figure_height),
+                             dpi=screen_dpi)
         ax0 = self.figure.add_subplot(221)
         axes = [self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
                 for i in range(2, 5)]
         self.axes = np.array([ax0] + axes)
-        canvas = FigureCanvasTkAgg(self.figure, master=figure_window)
+        canvas = FigureCanvasTkAgg(self.figure, master=self.figure_window)
         canvas.show()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        toolbar = NavigationToolbar2TkAgg(canvas, figure_window)
+        toolbar = NavigationToolbar2TkAgg(canvas, self.figure_window)
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
@@ -215,6 +220,7 @@ class Launch(tk.Tk):
                         ax.clear()
                     draw.pipeline_plot(image, thresholded, skeleton, framedata,
                                        figure=self.figure, axes=self.axes)
+                    self.figure.canvas.draw()
                     output_basename = (save_skeleton +
                                        os.path.basename(
                                            os.path.splitext(filename)[0]) +
