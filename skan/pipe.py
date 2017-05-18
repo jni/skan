@@ -61,8 +61,7 @@ def process_single_image(filename, image_format, scale_metadata_path,
 
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
-                   save_skeleton='', output_folder=None, crop_radius=0,
-                   smooth_method='Gaussian'):
+                   crop_radius=0, smooth_method='Gaussian'):
     """Full pipeline from images to skeleton stats with local median threshold.
 
     Parameters
@@ -84,9 +83,6 @@ def process_images(filenames, image_format, threshold_radius,
     scale_metadata_path : string
         The path in the image dictionary to find the metadata on pixel scale,
         separated by forward slashes ('/').
-    save_skeleton : string, optional
-        If this is not an empty string, skeleton plots will be saved with
-        the given prefix, one per input filename.
     crop_radius : int, optional
         Crop `crop_radius` pixels from each margin of the image before
         processing.
