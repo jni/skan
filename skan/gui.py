@@ -242,10 +242,13 @@ class Launch(tk.Tk):
                     self.figure.canvas.draw_idle()
             else:
                 result_full, result_image = result
+                result_filtered = result_full[result_full['mean shape index']>0.125 &
+                                              result_full['mean shape index']<0.625]
                 io.write_excel(str(self.output_folder /
                                    self.output_filename.get()),
                                branches=result_full,
                                images=result_image,
+                               filtered=result_filtered,
                                parameters=json.loads(self.save_parameters()))
 
 
