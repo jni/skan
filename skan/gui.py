@@ -229,7 +229,7 @@ class Launch(tk.Tk):
                     self.figure.savefig(output_filename, dpi=300)
             else:
                 result_full, result_image = result
-                io.write_excel(self.output_filename.get(),
+                io.write_excel(self.output_folder / self.output_filename.get(),
                                branches=result_full,
                                images=result_image,
                                parameters=json.loads(self.save_parameters()))
