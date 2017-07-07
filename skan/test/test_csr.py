@@ -103,6 +103,10 @@ def test_junction_multiplicity():
     """Test correct distances when a junction has more than one pixel."""
     g, idxs, degimg = csr.skeleton_to_csgraph(skeleton0)
     assert_almost_equal(g[3, 5], 2.0155644)
+    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton0,
+                                              unique_junctions=False)
+    assert_almost_equal(g[2, 3], 1.0)
+    assert_almost_equal(g[3, 6], np.sqrt(2))
 
 
 def test_multiplicity_stats():
