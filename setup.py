@@ -13,7 +13,7 @@ MAINTAINER_EMAIL    = 'juan.n@unimelb.edu.au'
 URL                 = 'https://github.com/jni/skan'
 LICENSE             = 'BSD 3-clause'
 DOWNLOAD_URL        = 'https://github.com/jni/skan'
-VERSION             = '0.6.3-dev'
+VERSION             = '0.6.3'
 PYTHON_VERSION      = (3, 6)
 INST_DEPENDENCIES   = {} 
 
