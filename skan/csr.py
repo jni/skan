@@ -344,6 +344,7 @@ def _expand_path(graph, source, step, visited, degrees):
         visited[source] = True
         s += graph.node_properties[source]
         n += 1
+    visited[step] = True
     return step, d, n, s, degrees[step]
 
 
