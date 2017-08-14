@@ -344,6 +344,7 @@ def _expand_path(graph, source, step, visited, degrees):
         visited[source] = True
         s += graph.node_properties[source]
         n += 1
+    visited[step] = True
     return step, d, n, s, degrees[step]
 
 
@@ -351,27 +352,40 @@ def _expand_path(graph, source, step, visited, degrees):
 def _branch_statistics_loop(jgraph, degrees, visited, result):
     num_results = 0
     for node in range(1, jgraph.shape[0]):
-        if degrees[node] == 2 and not visited[node]:
-            visited[node] = True
-            left, right = jgraph.neighbors(node)
-            id0, d0, n0, s0, deg0 = _expand_path(jgraph, node, left,
-                                                 visited, degrees)
-            if id0 == node:  # standalone cycle
-                id1, d1, n1, s1, deg1 = node, 0, 0, 0., 2
-                kind = 3
-            else:
-                id1, d1, n1, s1, deg1 = _expand_path(jgraph, node, right,
+        if not visited[node]:
+            if degrees[node] == 2:
+                visited[node] = True
+                left, right = jgraph.neighbors(node)
+                id0, d0, n0, s0, deg0 = _expand_path(jgraph, node, left,
                                                      visited, degrees)
-                kind = 2  # default: junction-to-junction
-                if deg0 == 1 and deg1 == 1:  # tip-tip
-                    kind = 0
-                elif deg0 == 1 or deg1 == 1:  # tip-junct, tip-path impossible
-                    kind = 1
-            counts = n0 + n1 + 1
-            values = s0 + s1 + jgraph.node_properties[node]
-            result[num_results, :] = (float(id0), float(id1), d0 + d1,
-                                      float(kind), values / counts)
-            num_results += 1
+                if id0 == node:  # standalone cycle
+                    id1, d1, n1, s1, deg1 = node, 0, 0, 0., 2
+                    kind = 3
+                else:
+                    id1, d1, n1, s1, deg1 = _expand_path(jgraph, node, right,
+                                                         visited, degrees)
+                    kind = 2  # default: junction-to-junction
+                    if deg0 == 1 and deg1 == 1:  # tip-tip
+                        kind = 0
+                    elif deg0 == 1 or deg1 == 1:  # tip-junct, tip-path impossible
+                        kind = 1
+                counts = n0 + n1 + 1
+                values = s0 + s1 + jgraph.node_properties[node]
+                result[num_results, :] = (float(id0), float(id1), d0 + d1,
+                                          float(kind), values / counts)
+                num_results += 1
+            elif degrees[node] == 1:
+                visited[node] = True
+                neighbor = jgraph.neighbors(node)[0]
+                id0, d0, n0, s0, deg0 = _expand_path(jgraph, node, neighbor,
+                                                     visited, degrees)
+                kind = 1 if deg0 > 2 else 0  # tip-junct / tip-tip
+                counts = n0
+                values = s0
+                avg_value = np.nan if counts == 0 else values / counts
+                result[num_results, :] = (float(node), float(id0), d0,
+                                          float(kind), avg_value)
+                num_results += 1
     return num_results
 
 

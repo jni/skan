@@ -7,7 +7,7 @@ rundir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(rundir)
 
 from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
-                            skeleton2, skeleton3d, topograph1d)
+                            skeleton2, skeleton3d, topograph1d, skeleton4)
 
 
 def test_tiny_cycle():
@@ -123,3 +123,8 @@ def test_pixel_values():
     expected = np.mean(image[1:-1])
     stats = csr.summarise(image)
     assert_almost_equal(stats.loc[0, 'mean pixel value'], expected)
+
+
+def test_tip_junction_edges():
+    stats1 = csr.summarise(skeleton4)
+    assert stats1.shape[0] == 3  # ensure all three branches are counted
