@@ -212,6 +212,7 @@ class Launch(tk.Tk):
                 smooth_method=self.smooth_method.get())
         if save_skeleton:
             self.make_figure_window()
+        self.save_parameters(self.output_folder / 'skan-config.json')
         for i, result in enumerate(images_iterator):
             if i < len(self.input_files):
                 filename, image, thresholded, skeleton, framedata = result
@@ -229,11 +230,11 @@ class Launch(tk.Tk):
                     self.figure.savefig(output_filename, dpi=300)
             else:
                 result_full, result_image = result
-                io.write_excel(self.output_folder / self.output_filename.get(),
+                io.write_excel(str(self.output_folder /
+                                   self.output_filename.get()),
                                branches=result_full,
                                images=result_image,
                                parameters=json.loads(self.save_parameters()))
-                self.save_parameters(self.output_folder / 'skan-config.json')
 
 
 def tk_update(loop, app):
