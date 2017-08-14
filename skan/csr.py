@@ -383,6 +383,7 @@ def _branch_statistics_loop(jgraph, degrees, visited, result):
                 values = s0 + jgraph.node_properties[node]
                 result[num_results, :] = (float(node), float(id0), d0,
                                           float(kind), values / counts)
+                num_results += 1
     return num_results
 
 
