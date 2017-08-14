@@ -379,11 +379,12 @@ def _branch_statistics_loop(jgraph, degrees, visited, result):
                 neighbor = jgraph.neighbors(node)[0]
                 id0, d0, n0, s0, deg0 = _expand_path(jgraph, node, neighbor,
                                                      visited, degrees)
-                kind = 1  # tip-junct
-                counts = n0 + 1
-                values = s0 + jgraph.node_properties[node]
+                kind = 1 if deg0 > 2 else 0  # tip-junct / tip-tip
+                counts = n0
+                values = s0
+                avg_value = np.nan if counts == 0 else values / counts
                 result[num_results, :] = (float(node), float(id0), d0,
-                                          float(kind), values / counts)
+                                          float(kind), avg_value)
                 num_results += 1
     return num_results
 
