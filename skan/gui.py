@@ -216,7 +216,7 @@ class Launch(tk.Tk):
         if self.preview_skeleton_plots.get():
             self.make_figure_window()
         elif self.save_skeleton_plots.get():
-            self.figure = plt.figure(figsize=(12, 9), dpi=300)
+            self.figure = plt.figure()
             ax0 = self.figure.add_subplot(221)
             axes = [self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
                     for i in range(2, 5)]
@@ -228,6 +228,8 @@ class Launch(tk.Tk):
                 if save_skeleton:
                     for ax in self.axes:
                         ax.clear()
+                    w, h = draw.pixel_perfect_figsize(image)
+                    self.figure.set_size_inches(4*w, 4*h)
                     draw.pipeline_plot(image, thresholded, skeleton, framedata,
                                        figure=self.figure, axes=self.axes)
                     output_basename = (save_skeleton +
