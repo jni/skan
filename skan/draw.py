@@ -17,6 +17,31 @@ def _normalise_image(image, *, image_cmap=None):
     return image
 
 
+def pixel_perfect_figsize(image, dpi=80):
+    """Return the Matplotlib figure size tuple (w, h) for given image and dpi.
+
+    Parameters
+    ----------
+    image : array, shape (M, N[, 3])
+        The image to be plotted.
+    dpi : int, optional
+        The desired figure dpi.
+
+    Returns
+    -------
+    figsize : tuple of float
+        The desired figure size.
+
+    Examples
+    --------
+    >>> image = np.empty((768, 1024))
+    >>> pixel_perfect_figsize(image)
+    (12.8, 9.6)
+    """
+    hpix, wpix = image.shape[:2]
+    return wpix/dpi, hpix/dpi
+
+
 def overlay_skeleton_2d(image, skeleton, *,
                         image_cmap=None, color=(1, 0, 0), alpha=1, axes=None):
     """Overlay the skeleton pixels on the input image.
@@ -168,5 +193,7 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
     overlay_skeleton_2d(image, skeleton, axes=axes[2])
 
     overlay_euclidean_skeleton_2d(image, stats, axes=axes[3])
+
+    fig.subplots_adjust(0, 0, 1, 1, 0, 0)
 
     return fig, axes
