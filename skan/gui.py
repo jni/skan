@@ -216,7 +216,7 @@ class Launch(tk.Tk):
         if self.preview_skeleton_plots.get():
             self.make_figure_window()
         elif self.save_skeleton_plots.get():
-            self.figure = Figure(figsize=(12, 9), dpi=300)
+            self.figure = plt.figure(figsize=(12, 9), dpi=300)
             ax0 = self.figure.add_subplot(221)
             axes = [self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
                     for i in range(2, 5)]
