@@ -35,7 +35,7 @@ def pixel_perfect_figsize(image, dpi=80):
     Examples
     --------
     >>> image = np.empty((768, 1024))
-    >>> _pixel_perfect_figsize(image)
+    >>> pixel_perfect_figsize(image)
     (12.8, 9.6)
     """
     hpix, wpix = image.shape[:2]
