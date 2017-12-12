@@ -43,7 +43,8 @@ def pixel_perfect_figsize(image, dpi=80):
 
 
 def overlay_skeleton_2d(image, skeleton, *,
-                        image_cmap=None, color=(1, 0, 0), alpha=1, axes=None):
+                        image_cmap=None, color=(1, 0, 0), alpha=1,
+                        dilate=0, axes=None):
     """Overlay the skeleton pixels on the input image.
 
     Parameters
@@ -62,6 +63,10 @@ def overlay_skeleton_2d(image, skeleton, *,
         The RGB color for the skeleton pixels.
     alpha : float, optional
         Blend the skeleton pixels with the given alpha.
+    dilate : int, optional
+        Dilate the skeleton by this amount. This is useful when rendering
+        large images where aliasing may cause some pixels of the skeleton
+        not to be drawn.
     axes : matplotlib Axes
         The Axes on which to plot the image. If None, new ones are created.
 
@@ -72,6 +77,9 @@ def overlay_skeleton_2d(image, skeleton, *,
     """
     image = _normalise_image(image, image_cmap=image_cmap)
     skeleton = skeleton.astype(bool)
+    if dilate > 0:
+        selem = morphology.disk(dilate)
+        skeleton = morphology.binary_dilation(skeleton, selem)
     if axes is None:
         fig, axes = plt.subplots()
     image[skeleton] = alpha * np.array(color) + (1 - alpha) * image[skeleton]
