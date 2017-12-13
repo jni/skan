@@ -208,8 +208,8 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
     return fig, axes
 
 
-def draw_skeleton_networkx(csr_graph, coordinates, *, axis=None,
-                           image=None, cmap=None, **kwargs):
+def overlay_skeleton_networkx(csr_graph, coordinates, *, axis=None,
+                              image=None, cmap=None, **kwargs):
     """Draw the skeleton as a NetworkX graph, optionally overlaid on an image.
 
     Due to the size of NetworkX drawing elements, this is only recommended
