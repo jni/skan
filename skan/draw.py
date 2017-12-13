@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import collections
+import networkx as nx
 from skimage import img_as_float, morphology
 from skimage.color import gray2rgb
 from .csr import summarise
@@ -205,3 +206,41 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
     fig.subplots_adjust(0, 0, 1, 1, 0, 0)
 
     return fig, axes
+
+
+def draw_skeleton_networkx(csr_graph, coordinates, *, axis=None,
+                           image=None, cmap=None, **kwargs):
+    """Draw the skeleton as a NetworkX graph, optionally overlaid on an image.
+
+    Due to the size of NetworkX drawing elements, this is only recommended
+    for very small skeletons.
+
+    Parameters
+    ----------
+    csr_graph : SciPy Sparse matrix
+        The skeleton graph in SciPy CSR format.
+    coordinates : array, shape (N_points, 2)
+        The coordinates of each point in the skeleton. ``coordinates.shape[0]``
+        should be equal to ``csr_graph.shape[0]``.
+
+    Other Parameters
+    ----------------
+    axis : Matplotlib Axes object, optional
+        The Axes on which to plot the data. If None, a new figure and axes will
+        be created.
+    image : array, shape (M, N[, 3])
+        An image on which to overlay the skeleton. ``image.shape`` should be
+        greater than ``np.max(coordinates, axis=0)``.
+    **kwargs : keyword arguments
+        Arguments passed on to `nx.draw_networkx`. Particularly useful ones
+        include ``node_size=`` and ``font_size=``.
+    """
+    if axis is None:
+        _, axis = plt.subplots()
+    if image is not None:
+        cmap = cmap or 'gray'
+        axis.imshow(image, cmap=cmap)
+    gnx = nx.from_scipy_sparse_matrix(csr_graph)
+    positions = dict(zip(range(coordinates.shape[0]), coordinates))
+    nx.draw_networkx(gnx, pos=positions, ax=axis, **kwargs)
+    return axis
