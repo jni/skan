@@ -208,6 +208,14 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
     return fig, axes
 
 
+def _clean_positions_dict(d, g):
+    for k in list(d.keys()):
+        if k not in g:
+            del d[k]
+        elif g.degree(k) == 0:
+            g.remove_node(k)
+
+
 def overlay_skeleton_networkx(csr_graph, coordinates, *, axis=None,
                               image=None, cmap=None, **kwargs):
     """Draw the skeleton as a NetworkX graph, optionally overlaid on an image.
@@ -241,6 +249,9 @@ def overlay_skeleton_networkx(csr_graph, coordinates, *, axis=None,
         cmap = cmap or 'gray'
         axis.imshow(image, cmap=cmap)
     gnx = nx.from_scipy_sparse_matrix(csr_graph)
-    positions = dict(zip(range(coordinates.shape[0]), coordinates))
+    # Note: we invert the positions because Matplotlib uses x/y for
+    # scatterplot, but the coordinates are row/column NumPy indexing
+    positions = dict(zip(range(coordinates.shape[0]), coordinates[:, ::-1]))
+    _clean_positions_dict(positions, gnx)  # remove nodes not in Graph
     nx.draw_networkx(gnx, pos=positions, ax=axis, **kwargs)
     return axis
