@@ -31,7 +31,7 @@ def correlate_sparse(image, kernel, mode='reflect'):
 
     This function is *fast* when `kernel` is large with many zeros.
 
-    See `scipy.ndimage.correlate` for a description of cross-correlation.
+    See ``scipy.ndimage.correlate`` for a description of cross-correlation.
 
     Parameters
     ----------
@@ -56,7 +56,7 @@ def correlate_sparse(image, kernel, mode='reflect'):
 
     See Also
     --------
-    `scipy.ndimage.correlate`.
+    ``scipy.ndimage.correlate``
     """
     if mode == 'valid':
         padded_image = image
