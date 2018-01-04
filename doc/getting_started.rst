@@ -160,11 +160,6 @@ recommended for very small networks.)
 
 .. nbplot::
 
-    >>> reload(draw)
-    <module 'skan.draw' from '/Users/jni/projects/skan/skan/draw.py'>
-
-.. nbplot::
-
     >>> from skan import _testdata
     >>> g0, c0, _ = csr.skeleton_to_csgraph(_testdata.skeleton0)
     >>> g1, c1, _ = csr.skeleton_to_csgraph(_testdata.skeleton1)
@@ -416,6 +411,8 @@ skeleton?
 
 .. nbplot::
 
+    >>> import pandas as pd
+    >>>
     >>> images = [iio.imread(file, format='fei')
     ...           for file in files]
     >>> spacings = [image.meta['Scan']['PixelHeight']
