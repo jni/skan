@@ -129,13 +129,14 @@ branches along that network.
     >>>
     >>> pixel_graph, coordinates, degrees = csr.skeleton_to_csgraph(skeleton0)
 
-The pixel graph is a SciPy `CSR matrix <>`__ in which entry
-:math:`(i, j)` is 0 if pixels :math:`i` and :math:`j` are not connected,
-and otherwise is equal to the distance between pixels :math:`i` and
-:math:`j` in the skeleton. This will normally be 1 between adjacent
-pixels and :math:`\sqrt{2}` between diagonally adjacent pixels, but in
-this can be scaled by a ``spacing=`` keyword argument that sets the
-scale (and this scale can be different for each image axis). In our
+The pixel graph is a SciPy `CSR
+matrix <https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html>`__
+in which entry :math:`(i, j)` is 0 if pixels :math:`i` and :math:`j` are
+not connected, and otherwise is equal to the distance between pixels
+:math:`i` and :math:`j` in the skeleton. This will normally be 1 between
+adjacent pixels and :math:`\sqrt{2}` between diagonally adjacent pixels,
+but in this can be scaled by a ``spacing=`` keyword argument that sets
+the scale (and this scale can be different for each image axis). In our
 case, we know the spacing between pixels, so we can measure our network
 in physical units instead of pixels:
 
