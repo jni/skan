@@ -53,10 +53,6 @@ def correlate_sparse(image, kernel, mode='reflect'):
     result : array of float, shape (M, N,[ ...,] P)
         The result of cross-correlating `image` with `kernel`. If mode
         'valid' is used, the resulting shape is (M-Q+1, N-R+1,[ ...,] P-S+1).
-
-    See Also
-    --------
-    ``scipy.ndimage.correlate``
     """
     if mode == 'valid':
         padded_image = image
