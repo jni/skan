@@ -91,9 +91,11 @@ def process_images(filenames, image_format, threshold_radius,
 
     Returns
     -------
-    result : pandas DataFrame
-        Data frame containing all computed statistics on the skeletons found
-        in the input image.
+    results : generator
+        The pipeline yields individual image results in the form of a tuple
+        of ``(filename, image, thresholded_image, skeleton, data_frame)``.
+        Finally, after all the images have been processed, the pipeline yields
+        a DataFrame containing all the collated branch-level results.
     """
     image_format = None if image_format == 'auto' else image_format
     results = []
