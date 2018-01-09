@@ -29,6 +29,11 @@ contained within it is placed in this notebook’s working directory.
     >>>
     >>>
     >>> schizont_files = glob('schizonts/*.tif')
+    >>> if len(schizont_files) == 0:
+    ...     import os
+    ...     msg = (f'No files found with current directory {os.getcwd()}'
+    ...            f'and contents {os.listdir('.')}')
+    ...     raise RuntimeError(msg)
     >>> # remove files ending with '01.tif', which are low-res overview images
     >>> schizont_files = list(filter(lambda x: not x.endswith('01.tif'),
     ...                              schizont_files))
