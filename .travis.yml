@@ -38,6 +38,7 @@ before_script:
 
 script:
   # Run tests
+  - export CPU_COUNT=2
   - set -e
   - export MPLBACKEND="ps"
   - python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
