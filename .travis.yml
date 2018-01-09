@@ -45,7 +45,7 @@ script:
   - pip install doctr
   - cd doc
   - if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then
-      wget -O s.zip https://osf.io/7vyx3/download && unzip -v s.zip;
+      wget -q -O s.zip https://osf.io/7vyx3/download && unzip s.zip;
     fi
   - ls -l
   - ls -l schizonts/*.tif
