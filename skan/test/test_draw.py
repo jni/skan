@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import pytest
 
-from skan import pre, draw, csr
+from skan import pre, draw, csr, _testdata
 
 rundir = os.path.abspath(os.path.dirname(__file__))
 datadir = os.path.join(rundir, 'data')
@@ -41,8 +41,8 @@ def test_stats(test_skeleton):
 
 def test_overlay_skeleton(test_image, test_skeleton):
     draw.overlay_skeleton_2d(test_image, test_skeleton)
-    draw.overlay_skeleton_2d(test_image, test_skeleton,
-                                     image_cmap='viridis')
+    draw.overlay_skeleton_2d(test_image, test_skeleton, image_cmap='viridis')
+    draw.overlay_skeleton_2d(test_image, test_skeleton, dilate=1)
 
 
 def test_overlay_euclidean_skeleton(test_image, test_stats):
@@ -65,3 +65,16 @@ def test_pipeline_plot_existing_fig(test_image, test_thresholded,
     fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
     draw.pipeline_plot(test_image, test_thresholded, test_skeleton, test_stats,
                        figure=fig, axes=np.ravel(axes))
+
+
+def test_networkx_plot():
+    g0, c0, _ = csr.skeleton_to_csgraph(_testdata.skeleton0)
+    g1, c1, _ = csr.skeleton_to_csgraph(_testdata.skeleton1)
+    fig, axes = plt.subplots(1, 2)
+    draw.overlay_skeleton_networkx(g0, c0, image=_testdata.skeleton0,
+                                   axis=axes[0])
+    draw.overlay_skeleton_networkx(g1, c1, image=_testdata.skeleton1,
+                                   axis=axes[1])
+    # test axis=None and additional coordinates
+    c2 = np.concatenate((c1, np.random.random(c1[:1].shape)), axis=0)
+    draw.overlay_skeleton_networkx(g1, c2, image=_testdata.skeleton1)

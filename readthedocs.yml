@@ -1,0 +1,4 @@
+conda:
+    file: test-environment.yml
+python:
+    version: 3.5
