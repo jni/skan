@@ -47,8 +47,8 @@ script:
   - if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then
       wget -O s.zip https://osf.io/7vyx3/download && unzip -v s.zip;
     fi
-  - ls
-  - ls schizonts
+  - ls -l
+  - ls -l schizonts/*.tif
   - make html
   - cd ..
   - if [[ -z "$TRAVIS_TAG" ]]; then
