@@ -44,7 +44,7 @@ script:
   - py.test
   - export MPLBACKEND="png"
   - pip install doctr
-  - cd docs
+  - cd doc
   - make html
   - cd ..
   - if [[ -z "$TRAVIS_TAG" ]]; then
