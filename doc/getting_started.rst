@@ -471,10 +471,15 @@ We now have a hint that infection by the malaria-causing parasite,
 *Plasmodium falciparum*, might expand the spectrin skeleton on the inner
 surface of the RBC membrane.
 
-This is of course a toy example. For the full dataset and analysis, see
-our paper (submitted to PeerJ) and the
-`skan-scripts <https://github.com/jni/skan-scripts>`__ repository. But
-we hope it will serve for inspiration for your future analysis of
-skeleton images.
+This is of course a toy example. For the full dataset and analysis, see:
+
+-  our paper (submitted to PeerJ),
+-  the `“Complete analysis with skan” <complete_analysis.html>`__ page,
+   and
+-  the `skan-scripts <https://github.com/jni/skan-scripts>`__
+   repository.
+
+But we hope this minimal example will serve for inspiration for your
+future analysis of skeleton images.
 
 .. code-links::
