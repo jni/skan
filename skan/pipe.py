@@ -12,7 +12,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import multiprocessing as mp
 
 
-CPU_COUNT = os.environ.get('CPU_COUNT', mp.cpu_count())
+CPU_COUNT = int(os.environ.get('CPU_COUNT', mp.cpu_count()))
 
 
 def _get_scale(image, md_path_or_scale):
