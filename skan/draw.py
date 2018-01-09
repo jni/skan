@@ -111,12 +111,14 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
         The name of the column to use for the skeleton edge color. See the
         output of `skan.summarise` for valid choices. Most common choices
         would be:
+
         - skeleton-id: each individual skeleton (connected component) will
           have a different colour.
         - branch-type: each branch type (tip-tip, tip-junction,
           junction-junction, path-path). This is the default.
         - branch-distance: the curved length of the skeleton branch.
         - euclidean-distance: the straight-line length of the skeleton branch.
+
     skeleton_colormap : matplotlib colormap name or object, optional
         The colormap for the skeleton values.
     axes : matplotlib Axes object, optional
@@ -180,6 +182,10 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
         The Figure containing all the plots
     axes : array of matplotlib Axes
         The four axes containing the drawn images.
+
+    References
+    ----------
+    .. [1]: http://scikit-image.org/docs/dev/user_guide/data_types.html
     """
     if figure is None:
         fig, axes = plt.subplots(2, 2, figsize=figsize,
