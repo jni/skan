@@ -51,6 +51,8 @@ As an aside, we can extract the pixel spacing in meters from the
 
 .. nbplot::
 
+    >>> import numpy as np
+    >>>
     >>> spacing = image0.meta['Scan']['PixelHeight']
     >>> spacing_nm = spacing * 1e9  # nm per pixel
     >>> dim_nm = np.array(image0.shape) / spacing_nm
