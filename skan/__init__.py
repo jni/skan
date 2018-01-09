@@ -1,6 +1,6 @@
 from .csr import skeleton_to_csgraph, branch_statistics, summarise
 
-__version__ = '0.7.0-dev'
+__version__ = '0.7'
 
 __all__ = ['skeleton_to_csgraph',
            'branch_statistics',
