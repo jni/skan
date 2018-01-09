@@ -37,6 +37,8 @@ We display the images with `Matplotlib <http://matplotlib.org>`__.
 
 .. nbplot::
 
+    >>> import matplotlib.pyplot as plt
+    >>>
     >>>
     >>> fig, ax = plt.subplots()
     >>> ax.imshow(image0, cmap='gray');
