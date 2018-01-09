@@ -44,6 +44,7 @@ script:
   - py.test
   - pip install doctr
   - cd doc
+  - [ -d schizonts ] || wget https://osf.io/7vyx3/download && unzip schizonts.zip
   - make html
   - cd ..
   - if [[ -z "$TRAVIS_TAG" ]]; then
@@ -67,3 +68,4 @@ cache:
     directories:
         - $HOME/miniconda
         - $HOME/.matplotlib
+        - doc/schizonts
