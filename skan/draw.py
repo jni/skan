@@ -185,7 +185,7 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
 
     References
     ----------
-    .. [1]: http://scikit-image.org/docs/dev/user_guide/data_types.html
+    .. [1] http://scikit-image.org/docs/dev/user_guide/data_types.html
     """
     if figure is None:
         fig, axes = plt.subplots(2, 2, figsize=figsize,
