@@ -52,12 +52,12 @@ script:
   - make html
   - cd ..
   - if [[ -z "$TRAVIS_TAG" ]]; then
-      doctr deploy --build-tags latest
-      doctr deploy --build-tags .
+      doctr deploy --build-tags latest;
+      doctr deploy --build-tags .;
     else
       DEPLOY_DIR="version-$TRAVIS_TAG";
-      doctr deploy --build-tags $DEPLOY_DIR
-      doctr deploy --build-tags stable
+      doctr deploy --build-tags $DEPLOY_DIR;
+      doctr deploy --build-tags stable;
     fi
 
 after_success:
