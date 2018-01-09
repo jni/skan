@@ -44,7 +44,9 @@ script:
   - py.test
   - pip install doctr
   - cd doc
-  - [ -d schizonts ] || wget https://osf.io/7vyx3/download && unzip schizonts.zip
+  - if [[ ! -d schizonts ]]; then
+      wget https://osf.io/7vyx3/download && unzip schizonts.zip
+    fi
   - make html
   - cd ..
   - if [[ -z "$TRAVIS_TAG" ]]; then
