@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skan.draw: Skeleton visualisation &mdash; Skan 0.7.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Skan 0.7.0-dev documentation" href="../index.html"/>
+        <link rel="up" title="Skan API Reference" href="api.html"/>
+        <link rel="next" title="skan.pipe:: Pipeline functions for skeleton analysis" href="skan.pipe.html"/>
+        <link rel="prev" title="skan.csr: CSR Graph representation of skeletons" href="skan.csr.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Skan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0-dev
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui.html">Using Skan’s GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Skan API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="skan.csr.html">skan.csr: CSR Graph representation of skeletons</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">skan.draw: Skeleton visualisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.pipe.html">skan.pipe:: Pipeline functions for skeleton analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.pre.html">skan.pre: Image preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.vendored.thresholding.html">skan.vendored.thresholding: Thresholding algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.nx.html">skan.nx: NetworkX respresentation of skeletons</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Skan</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">Skan API Reference</a> &raquo;</li>
+        
+      <li>skan.draw: Skeleton visualisation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/skan.draw.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skan.draw">
+<span id="skan-draw-skeleton-visualisation"></span><h1>skan.draw: Skeleton visualisation<a class="headerlink" href="#module-skan.draw" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="skan.draw.overlay_euclidean_skeleton_2d">
+<code class="descclassname">skan.draw.</code><code class="descname">overlay_euclidean_skeleton_2d</code><span class="sig-paren">(</span><em>image</em>, <em>stats</em>, <em>*</em>, <em>image_cmap=None</em>, <em>skeleton_color_source='branch-type'</em>, <em>skeleton_colormap='viridis'</em>, <em>axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_euclidean_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_euclidean_skeleton_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the image, and overlay the straight-line skeleton over it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : array, shape (M, N)</p>
+<blockquote>
+<div><p>The input image.</p>
+</div></blockquote>
+<p><strong>stats</strong> : array, shape (M, N)</p>
+<blockquote>
+<div><p>Skeleton statistics.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>axes</strong> : matplotlib Axes object</p>
+<blockquote>
+<div><p>The Axes on which the plot is drawn.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first"><strong>image_cmap</strong> : matplotlib colormap name or object, optional</p>
+<blockquote>
+<div><p>The colormap to use for the input image. Defaults to grayscale.</p>
+</div></blockquote>
+<p><strong>skeleton_color_source</strong> : string, optional</p>
+<blockquote>
+<div><p>The name of the column to use for the skeleton edge color. See the
+output of <cite>skan.summarise</cite> for valid choices. Most common choices
+would be:</p>
+<ul class="simple">
+<li>skeleton-id: each individual skeleton (connected component) will
+have a different colour.</li>
+<li>branch-type: each branch type (tip-tip, tip-junction,
+junction-junction, path-path). This is the default.</li>
+<li>branch-distance: the curved length of the skeleton branch.</li>
+<li>euclidean-distance: the straight-line length of the skeleton branch.</li>
+</ul>
+</div></blockquote>
+<p><strong>skeleton_colormap</strong> : matplotlib colormap name or object, optional</p>
+<blockquote>
+<div><p>The colormap for the skeleton values.</p>
+</div></blockquote>
+<p><strong>axes</strong> : matplotlib Axes object, optional</p>
+<blockquote class="last">
+<div><p>An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.draw.overlay_skeleton_2d">
+<code class="descclassname">skan.draw.</code><code class="descname">overlay_skeleton_2d</code><span class="sig-paren">(</span><em>image</em>, <em>skeleton</em>, <em>*</em>, <em>image_cmap=None</em>, <em>color=(1</em>, <em>0</em>, <em>0)</em>, <em>alpha=1</em>, <em>dilate=0</em>, <em>axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlay the skeleton pixels on the input image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : array, shape (M, N[, 3])</p>
+<blockquote>
+<div><p>The input image. Can be grayscale or RGB.</p>
+</div></blockquote>
+<p><strong>skeleton</strong> : array, shape (M, N)</p>
+<blockquote>
+<div><p>The input 1-pixel-wide skeleton.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>axes</strong> : matplotlib Axes</p>
+<blockquote>
+<div><p>The Axis on which the image is drawn.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first"><strong>image_cmap</strong> : matplotlib colormap name or object, optional</p>
+<blockquote>
+<div><p>If the input image is grayscale, colormap it with this colormap.
+The default is grayscale.</p>
+</div></blockquote>
+<p><strong>color</strong> : tuple of float in [0, 1], optional</p>
+<blockquote>
+<div><p>The RGB color for the skeleton pixels.</p>
+</div></blockquote>
+<p><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Blend the skeleton pixels with the given alpha.</p>
+</div></blockquote>
+<p><strong>dilate</strong> : int, optional</p>
+<blockquote>
+<div><p>Dilate the skeleton by this amount. This is useful when rendering
+large images where aliasing may cause some pixels of the skeleton
+not to be drawn.</p>
+</div></blockquote>
+<p><strong>axes</strong> : matplotlib Axes</p>
+<blockquote class="last">
+<div><p>The Axes on which to plot the image. If None, new ones are created.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.draw.overlay_skeleton_networkx">
+<code class="descclassname">skan.draw.</code><code class="descname">overlay_skeleton_networkx</code><span class="sig-paren">(</span><em>csr_graph</em>, <em>coordinates</em>, <em>*</em>, <em>axis=None</em>, <em>image=None</em>, <em>cmap=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_networkx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the skeleton as a NetworkX graph, optionally overlaid on an image.</p>
+<p>Due to the size of NetworkX drawing elements, this is only recommended
+for very small skeletons.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>csr_graph</strong> : SciPy Sparse matrix</p>
+<blockquote>
+<div><p>The skeleton graph in SciPy CSR format.</p>
+</div></blockquote>
+<p><strong>coordinates</strong> : array, shape (N_points, 2)</p>
+<blockquote>
+<div><p>The coordinates of each point in the skeleton. <code class="docutils literal"><span class="pre">coordinates.shape[0]</span></code>
+should be equal to <code class="docutils literal"><span class="pre">csr_graph.shape[0]</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>axis</strong> : Matplotlib Axes object, optional</p>
+<blockquote>
+<div><p>The Axes on which to plot the data. If None, a new figure and axes will
+be created.</p>
+</div></blockquote>
+<p><strong>image</strong> : array, shape (M, N[, 3])</p>
+<blockquote>
+<div><p>An image on which to overlay the skeleton. <code class="docutils literal"><span class="pre">image.shape</span></code> should be
+greater than <code class="docutils literal"><span class="pre">np.max(coordinates,</span> <span class="pre">axis=0)</span></code>.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong> : keyword arguments</p>
+<blockquote class="last">
+<div><p>Arguments passed on to <cite>nx.draw_networkx</cite>. Particularly useful ones
+include <code class="docutils literal"><span class="pre">node_size=</span></code> and <code class="docutils literal"><span class="pre">font_size=</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.draw.pipeline_plot">
+<code class="descclassname">skan.draw.</code><code class="descname">pipeline_plot</code><span class="sig-paren">(</span><em>image</em>, <em>thresholded</em>, <em>skeleton</em>, <em>stats</em>, <em>*</em>, <em>figure=None</em>, <em>axes=None</em>, <em>figsize=(9</em>, <em>9)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pipeline_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pipeline_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the image, the thresholded version, and its skeleton.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : array, shape (M, N, …[, 3])</p>
+<blockquote>
+<div><p>Input image, conformant with scikit-image data type
+specification [R11].</p>
+</div></blockquote>
+<p><strong>thresholded</strong> : array, same shape as image</p>
+<blockquote>
+<div><p>Binarized version of the input image.</p>
+</div></blockquote>
+<p><strong>skeleton</strong> : array, same shape as image</p>
+<blockquote>
+<div><p>Skeletonized version of the input image.</p>
+</div></blockquote>
+<p><strong>stats</strong> : pandas DataFrame</p>
+<blockquote>
+<div><p>Skeleton statistics from the input image/skeleton.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> : matplotlib Figure</p>
+<blockquote>
+<div><p>The Figure containing all the plots</p>
+</div></blockquote>
+<p><strong>axes</strong> : array of matplotlib Axes</p>
+<blockquote>
+<div><p>The four axes containing the drawn images.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib Figure, optional</p>
+<blockquote>
+<div><p>If given, where to make the plots.</p>
+</div></blockquote>
+<p><strong>axes</strong> : array of matplotlib Axes, optional</p>
+<blockquote>
+<div><p>If given, use these axes to draw the plots. Should have len 4.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : 2-tuple of float, optional</p>
+<blockquote>
+<div><p>The width and height of the figure.</p>
+</div></blockquote>
+<p><strong>smooth_method</strong> : {‘Gaussian’, ‘TV’, ‘NL’}, optional</p>
+<blockquote class="last">
+<div><p>Which denoising method to use on the image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.draw.pixel_perfect_figsize">
+<code class="descclassname">skan.draw.</code><code class="descname">pixel_perfect_figsize</code><span class="sig-paren">(</span><em>image</em>, <em>dpi=80</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pixel_perfect_figsize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pixel_perfect_figsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the Matplotlib figure size tuple (w, h) for given image and dpi.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : array, shape (M, N[, 3])</p>
+<blockquote>
+<div><p>The image to be plotted.</p>
+</div></blockquote>
+<p><strong>dpi</strong> : int, optional</p>
+<blockquote>
+<div><p>The desired figure dpi.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figsize</strong> : tuple of float</p>
+<blockquote class="last">
+<div><p>The desired figure size.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">768</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_perfect_figsize</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go">(12.8, 9.6)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skan.pipe.html" class="btn btn-neutral float-right" title="skan.pipe:: Pipeline functions for skeleton analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skan.csr.html" class="btn btn-neutral" title="skan.csr: CSR Graph representation of skeletons" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Juan Nunez-Iglesias.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.7.0-dev',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

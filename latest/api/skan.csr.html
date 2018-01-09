@@ -1,0 +1,477 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skan.csr: CSR Graph representation of skeletons &mdash; Skan 0.7.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Skan 0.7.0-dev documentation" href="../index.html"/>
+        <link rel="up" title="Skan API Reference" href="api.html"/>
+        <link rel="next" title="skan.draw: Skeleton visualisation" href="skan.draw.html"/>
+        <link rel="prev" title="Skan API Reference" href="api.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Skan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0-dev
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui.html">Using Skan’s GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Skan API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">skan.csr: CSR Graph representation of skeletons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.draw.html">skan.draw: Skeleton visualisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.pipe.html">skan.pipe:: Pipeline functions for skeleton analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.pre.html">skan.pre: Image preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.vendored.thresholding.html">skan.vendored.thresholding: Thresholding algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.nx.html">skan.nx: NetworkX respresentation of skeletons</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Skan</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">Skan API Reference</a> &raquo;</li>
+        
+      <li>skan.csr: CSR Graph representation of skeletons</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/skan.csr.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skan.csr">
+<span id="skan-csr-csr-graph-representation-of-skeletons"></span><h1>skan.csr: CSR Graph representation of skeletons<a class="headerlink" href="#module-skan.csr" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="skan.csr.branch_statistics">
+<code class="descclassname">skan.csr.</code><code class="descname">branch_statistics</code><span class="sig-paren">(</span><em>graph</em>, <em>pixel_values=None</em>, <em>*</em>, <em>buffer_size_offset=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#branch_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.branch_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the length and type of each branch in a skeleton graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>graph</strong> : sparse.csr_matrix, shape (N, N)</p>
+<blockquote>
+<div><p>A skeleton graph.</p>
+</div></blockquote>
+<p><strong>pixel_values</strong> : array of float, shape (N,)</p>
+<blockquote>
+<div><p>A value for each pixel in the graph. Used to compute total
+intensity statistics along each branch.</p>
+</div></blockquote>
+<p><strong>buffer_size_offset</strong> : int, optional</p>
+<blockquote>
+<div><p>The buffer size is given by the sum of the degrees of non-path
+nodes. This is usually 2x the amount needed, allowing room for
+extra cycles of path-only nodes. However, if the image consists
+<em>only</em> of such cycles, the buffer size will be 0, resulting in
+an error. Until a more sophisticated, expandable-buffer
+solution is implemented, you can manually set a bigger buffer
+size using this parameter.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>branches</strong> : array of float, shape (N, {4, 5})</p>
+<blockquote class="last">
+<div><p>An array containing branch endpoint IDs, length, and branch type.
+The types are:
+- tip-tip (0)
+- tip-junction (1)
+- junction-junction (2)
+- path-path (3) (This can only be a standalone cycle)
+Optionally, the last column contains the average pixel value
+along each branch (not including the endpoints).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.csr.compute_centroids">
+<code class="descclassname">skan.csr.</code><code class="descname">compute_centroids</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#compute_centroids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.compute_centroids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the centroids of all nonzero connected blobs in <cite>image</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : ndarray</p>
+<blockquote>
+<div><p>The input image.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>label_image</strong> : ndarray of int</p>
+<blockquote class="last">
+<div><p>The input image, with each connected region containing a different
+integer label.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">... </span>                  <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">compute_centroids</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="go">[[1 0 2 0 0 3 3]</span>
+<span class="go"> [1 0 0 2 0 0 0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span>
+<span class="go">array([[ 0.5,  0. ],</span>
+<span class="go">       [ 0.5,  2.5],</span>
+<span class="go">       [ 0. ,  5.5]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.csr.skeleton_to_csgraph">
+<code class="descclassname">skan.csr.</code><code class="descname">skeleton_to_csgraph</code><span class="sig-paren">(</span><em>skel</em>, <em>*</em>, <em>spacing=1</em>, <em>value_is_height=False</em>, <em>unique_junctions=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#skeleton_to_csgraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.skeleton_to_csgraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a skeleton image of thin lines to a graph of neighbor pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>skel</strong> : array</p>
+<blockquote>
+<div><p>An input image in which every nonzero pixel is considered part of
+the skeleton, and links between pixels are determined by a full
+n-dimensional neighborhood.</p>
+</div></blockquote>
+<p><strong>spacing</strong> : float, or array-like of float, shape <cite>(skel.ndim,)</cite></p>
+<blockquote>
+<div><p>A value indicating the distance between adjacent pixels. This can
+either be a single value if the data has the same resolution along
+all axes, or it can be an array of the same shape as <cite>skel</cite> to
+indicate spacing along each axis.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>graph</strong> : sparse.csr_matrix</p>
+<blockquote>
+<div><p>A graph of shape (Nnz + 1, Nnz + 1), where Nnz is the number of
+nonzero pixels in <cite>skel</cite>. The value graph[i, j] is the distance
+between adjacent pixels i and j. In a 2D image, that would be
+1 for immediately adjacent pixels and sqrt(2) for diagonally
+adjacent ones.</p>
+</div></blockquote>
+<p><strong>pixel_indices</strong> : array of int</p>
+<blockquote>
+<div><p>An array of shape (Nnz + 1,), mapping indices in <cite>graph</cite> to
+raveled indices in <cite>degree_image</cite> or <cite>skel</cite>.</p>
+</div></blockquote>
+<p><strong>degree_image</strong> : array of int, same shape as skel</p>
+<blockquote>
+<div><p>An image where each pixel value contains the degree of its
+corresponding node in <cite>graph</cite>. This is useful to classify nodes.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first"><strong>value_is_height</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <cite>True</cite>, the pixel value at each point of the skeleton will be
+considered to be a height measurement, and this height will be
+incorporated into skeleton branch lengths. Used for analysis of
+atomic force microscopy (AFM) images.</p>
+</div></blockquote>
+<p><strong>unique_junctions</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If True, adjacent junction nodes get collapsed into a single
+conceptual node, with position at the centroid of all the connected
+initial nodes.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.csr.submatrix">
+<code class="descclassname">skan.csr.</code><code class="descname">submatrix</code><span class="sig-paren">(</span><em>M</em>, <em>idxs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#submatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.submatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the outer-index product submatrix, <cite>M[idxs, :][:, idxs]</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>M</strong> : scipy.sparse.spmatrix</p>
+<blockquote>
+<div><p>Input (square) matrix</p>
+</div></blockquote>
+<p><strong>idxs</strong> : array of int</p>
+<blockquote>
+<div><p>The indices to subset. No index in <cite>idxs</cite> should exceed the
+number of rows of <cite>M</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Msub</strong> : scipy.sparse.spmatrix</p>
+<blockquote class="last">
+<div><p>The subsetted matrix.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Md</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">M</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">Md</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">submatrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+<span class="go">[[ 0  2]</span>
+<span class="go"> [ 8 10]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="skan.csr.summarise">
+<code class="descclassname">skan.csr.</code><code class="descname">summarise</code><span class="sig-paren">(</span><em>image</em>, <em>*</em>, <em>spacing=1</em>, <em>using_height=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.summarise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute statistics for every disjoint skeleton in <cite>image</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : array, shape (M, N, …, P)</p>
+<blockquote>
+<div><p>N-dimensional array, where nonzero entries correspond to an
+object’s single-pixel-wide skeleton. If the image is of type ‘float’,
+the values are taken to be the height at that pixel, which is used
+to compute the skeleton distances.</p>
+</div></blockquote>
+<p><strong>spacing</strong> : float, or array-like of float, shape <cite>(skel.ndim,)</cite></p>
+<blockquote>
+<div><p>A value indicating the distance between adjacent pixels. This can
+either be a single value if the data has the same resolution along
+all axes, or it can be an array of the same shape as <cite>skel</cite> to
+indicate spacing along each axis.</p>
+</div></blockquote>
+<p><strong>using_height</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <cite>True</cite>, the pixel value at each point of the skeleton will be
+considered to be a height measurement, and this height will be
+incorporated into skeleton branch lengths, endpoint coordinates,
+and euclidean distances. Used for analysis of atomic force
+microscopy (AFM) images.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>df</strong> : pandas DataFrame</p>
+<blockquote class="last">
+<div><p>A data frame summarising the statistics of the skeletons in
+<cite>image</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skan.draw.html" class="btn btn-neutral float-right" title="skan.draw: Skeleton visualisation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api.html" class="btn btn-neutral" title="Skan API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Juan Nunez-Iglesias.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.7.0-dev',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
