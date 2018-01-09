@@ -71,7 +71,7 @@ def branch_statistics(g):
     type_dict = {'tiptip': 0, 'tipjunction': 1, 'junctiontip': 1,
                  'junctionjunction': 2, 'pathpath': 3}
     result = []
-    for node, data in g.nodes_iter(data=True):
+    for node, data in g.nodes(data=True):
         if data['type'] == 'path' and not visited[node]:
             # we expand the path in either direction
             visited[node] = True
