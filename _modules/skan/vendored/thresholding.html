@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skan.vendored.thresholding &mdash; Skan 0.7.0-dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="Skan 0.7.0-dev documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Skan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0-dev
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gui.html">Using Skan’s GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api.html">Skan API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Skan</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>skan.vendored.thresholding</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skan.vendored.thresholding</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
+<span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="k">import</span> <span class="n">integral_image</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">skimage.util</span> <span class="k">import</span> <span class="n">dtype_limits</span>
+<span class="kn">import</span> <span class="nn">numba</span>
+
+
+<span class="k">def</span> <span class="nf">broadcast_mgrid</span><span class="p">(</span><span class="n">arrays</span><span class="p">):</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">arrays</span><span class="p">))</span>
+    <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">reshaped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">arr</span><span class="p">[[</span><span class="o">...</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">ndim</span> <span class="o">-</span> <span class="n">i</span><span class="p">)],</span>
+                                   <span class="n">shape</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reshaped</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_correlate_sparse_offsets</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">off</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">offsets</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="c1"># this loop order optimises cache access, gives 10x speedup</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+            <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">input</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="n">off</span><span class="p">]</span> <span class="o">*</span> <span class="n">val</span>
+
+
+<div class="viewcode-block" id="correlate_sparse"><a class="viewcode-back" href="../../../api/skan.vendored.thresholding.html#skan.vendored.thresholding.correlate_sparse">[docs]</a><span class="k">def</span> <span class="nf">correlate_sparse</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;reflect&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute valid cross-correlation of `padded_array` and `kernel`.</span>
+
+<span class="sd">    This function is *fast* when `kernel` is large with many zeros.</span>
+
+<span class="sd">    See ``scipy.ndimage.correlate`` for a description of cross-correlation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : array of float, shape (M, N,[ ...,] P)</span>
+<span class="sd">        The input array. It should be already padded, as a margin of the</span>
+<span class="sd">        same shape as kernel (-1) will be stripped off.</span>
+<span class="sd">    kernel : array of float, shape (Q, R,[ ...,] S)</span>
+<span class="sd">        The kernel to be correlated. Must have the same number of</span>
+<span class="sd">        dimensions as `padded_array`. For high performance, it should</span>
+<span class="sd">        be sparse (few nonzero entries).</span>
+<span class="sd">    mode : string, optional</span>
+<span class="sd">        See `np.pad` for valid modes. Additionally, mode &#39;valid&#39; is</span>
+<span class="sd">        accepted, in which case no padding is applied and the result is</span>
+<span class="sd">        the result for the smaller image for which the kernel is entirely</span>
+<span class="sd">        inside the original data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : array of float, shape (M, N,[ ...,] P)</span>
+<span class="sd">        The result of cross-correlating `image` with `kernel`. If mode</span>
+<span class="sd">        &#39;valid&#39; is used, the resulting shape is (M-Q+1, N-R+1,[ ...,] P-S+1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;valid&#39;</span><span class="p">:</span>
+        <span class="n">padded_image</span> <span class="o">=</span> <span class="n">image</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">padded_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+    <span class="n">offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel_multi_index</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">padded_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span>
+                       <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">padded_image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">)])</span>
+    <span class="n">corner_multi_indices</span> <span class="o">=</span> <span class="n">broadcast_mgrid</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">shape</span><span class="p">])</span>
+    <span class="n">corner_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel_multi_index</span><span class="p">(</span><span class="n">corner_multi_indices</span><span class="p">,</span>
+                                          <span class="n">padded_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">_correlate_sparse_offsets</span><span class="p">(</span><span class="n">padded_image</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">corner_indices</span><span class="p">,</span>
+                              <span class="n">offsets</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="k">def</span> <span class="nf">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return local mean and standard deviation of each pixel using a</span>
+<span class="sd">    neighborhood defined by a rectangular window with size w times w.</span>
+<span class="sd">    The algorithm uses integral images to speedup computation. This is</span>
+<span class="sd">    used by threshold_niblack and threshold_sauvola.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : ndarray</span>
+<span class="sd">        Input image.</span>
+<span class="sd">    w : int</span>
+<span class="sd">        Odd window size (e.g. 3, 5, 7, ..., 21, ...).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    m : 2-D array of same size of image with local mean values.</span>
+<span class="sd">    s : 2-D array of same size of image with local standard</span>
+<span class="sd">        deviation values.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] F. Shafait, D. Keysers, and T. M. Breuel, &quot;Efficient</span>
+<span class="sd">           implementation of local adaptive thresholding techniques</span>
+<span class="sd">           using integral images.&quot; in Document Recognition and</span>
+<span class="sd">           Retrieval XV, (San Jose, USA), Jan. 2008.</span>
+<span class="sd">           DOI:10.1117/12.767755</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">w</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Window size w = </span><span class="si">%s</span><span class="s2"> must be odd and greater than 1.&quot;</span> <span class="o">%</span> <span class="n">w</span><span class="p">)</span>
+
+    <span class="n">left_pad</span> <span class="o">=</span> <span class="n">w</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">right_pad</span> <span class="o">=</span> <span class="n">w</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">left_pad</span><span class="p">,</span> <span class="n">right_pad</span><span class="p">),</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;reflect&#39;</span><span class="p">)</span>
+    <span class="n">padded_sq</span> <span class="o">=</span> <span class="n">padded</span> <span class="o">*</span> <span class="n">padded</span>
+
+    <span class="n">integral</span> <span class="o">=</span> <span class="n">integral_image</span><span class="p">(</span><span class="n">padded</span><span class="p">)</span>
+    <span class="n">integral_sq</span> <span class="o">=</span> <span class="n">integral_image</span><span class="p">(</span><span class="n">padded_sq</span><span class="p">)</span>
+
+    <span class="n">kern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span><span class="p">)):</span>
+        <span class="n">kern</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">sum_full</span> <span class="o">=</span> <span class="n">correlate_sparse</span><span class="p">(</span><span class="n">integral</span><span class="p">,</span> <span class="n">kern</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">sum_full</span> <span class="o">/</span> <span class="p">(</span><span class="n">w</span> <span class="o">**</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+    <span class="n">sum_sq_full</span> <span class="o">=</span> <span class="n">correlate_sparse</span><span class="p">(</span><span class="n">integral_sq</span><span class="p">,</span> <span class="n">kern</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+    <span class="n">g2</span> <span class="o">=</span> <span class="n">sum_sq_full</span> <span class="o">/</span> <span class="p">(</span><span class="n">w</span> <span class="o">**</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">g2</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span>
+
+
+<div class="viewcode-block" id="threshold_niblack"><a class="viewcode-back" href="../../../api/skan.vendored.thresholding.html#skan.vendored.thresholding.threshold_niblack">[docs]</a><span class="k">def</span> <span class="nf">threshold_niblack</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Applies Niblack local threshold to an array.</span>
+
+<span class="sd">    A threshold T is calculated for every pixel in the image using the</span>
+<span class="sd">    following formula:</span>
+
+<span class="sd">    T = m(x,y) - k * s(x,y)</span>
+
+<span class="sd">    where m(x,y) and s(x,y) are the mean and standard deviation of</span>
+<span class="sd">    pixel (x,y) neighborhood defined by a rectangular window with size w</span>
+<span class="sd">    times w centered around the pixel. k is a configurable parameter</span>
+<span class="sd">    that weights the effect of standard deviation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image: (N, M) ndarray</span>
+<span class="sd">        Grayscale input image.</span>
+<span class="sd">    window_size : int, optional</span>
+<span class="sd">        Odd size of pixel neighborhood window (e.g. 3, 5, 7...).</span>
+<span class="sd">    k : float, optional</span>
+<span class="sd">        Value of parameter k in threshold formula.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    threshold : (N, M) ndarray</span>
+<span class="sd">        Threshold mask. All pixels with an intensity higher than</span>
+<span class="sd">        this value are assumed to be foreground.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This algorithm is originally designed for text recognition.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Niblack, W (1986), An introduction to Digital Image</span>
+<span class="sd">           Processing, Prentice-Hall.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from skimage import data</span>
+<span class="sd">    &gt;&gt;&gt; image = data.page()</span>
+<span class="sd">    &gt;&gt;&gt; binary_image = threshold_niblack(image, window_size=7, k=0.1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">m</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="threshold_sauvola"><a class="viewcode-back" href="../../../api/skan.vendored.thresholding.html#skan.vendored.thresholding.threshold_sauvola">[docs]</a><span class="k">def</span> <span class="nf">threshold_sauvola</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Applies Sauvola local threshold to an array. Sauvola is a</span>
+<span class="sd">    modification of Niblack technique.</span>
+
+<span class="sd">    In the original method a threshold T is calculated for every pixel</span>
+<span class="sd">    in the image using the following formula:</span>
+
+<span class="sd">    T = m(x,y) * (1 + k * ((s(x,y) / R) - 1))</span>
+
+<span class="sd">    where m(x,y) and s(x,y) are the mean and standard deviation of</span>
+<span class="sd">    pixel (x,y) neighborhood defined by a rectangular window with size w</span>
+<span class="sd">    times w centered around the pixel. k is a configurable parameter</span>
+<span class="sd">    that weights the effect of standard deviation.</span>
+<span class="sd">    R is the maximum standard deviation of a greyscale image.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image: (N, M) ndarray</span>
+<span class="sd">        Grayscale input image.</span>
+<span class="sd">    window_size : int, optional</span>
+<span class="sd">        Odd size of pixel neighborhood window (e.g. 3, 5, 7...).</span>
+<span class="sd">    k : float, optional</span>
+<span class="sd">        Value of the positive parameter k.</span>
+<span class="sd">    r : float, optional</span>
+<span class="sd">        Value of R, the dynamic range of standard deviation.</span>
+<span class="sd">        If None, set to the half of the image dtype range.</span>
+<span class="sd">    offset : float, optional</span>
+<span class="sd">        Constant subtracted from obtained local thresholds.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    threshold : (N, M) ndarray</span>
+<span class="sd">        Threshold mask. All pixels with an intensity higher than</span>
+<span class="sd">        this value are assumed to be foreground.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This algorithm is originally designed for text recognition.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] J. Sauvola and M. Pietikainen, &quot;Adaptive document image</span>
+<span class="sd">           binarization,&quot; Pattern Recognition 33(2),</span>
+<span class="sd">           pp. 225-236, 2000.</span>
+<span class="sd">           DOI:10.1016/S0031-3203(99)00055-2</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from skimage import data</span>
+<span class="sd">    &gt;&gt;&gt; image = data.page()</span>
+<span class="sd">    &gt;&gt;&gt; binary_sauvola = threshold_sauvola(image,</span>
+<span class="sd">    ...                                    window_size=15, k=0.2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">dtype_limits</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">imax</span> <span class="o">-</span> <span class="n">imin</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="p">((</span><span class="n">s</span> <span class="o">/</span> <span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Juan Nunez-Iglesias.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.0-dev',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
