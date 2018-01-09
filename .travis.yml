@@ -45,7 +45,7 @@ script:
   - pip install doctr
   - cd doc
   - if [[ ! -d schizonts ]]; then
-      wget https://osf.io/7vyx3/download && unzip schizonts.zip
+      wget https://osf.io/7vyx3/download && unzip schizonts.zip;
     fi
   - make html
   - cd ..
