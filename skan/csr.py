@@ -160,6 +160,41 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
+@numba.jit(nopython=True)
+def _build_paths(jgraph, indptr, indices, path_data, visited):
+    indptr_i = 0
+    indices_j = 0
+    for node in range(1, jgraph.shape[0]):
+        if degrees[node] > 2 or degrees[node] == 1 and not visited[node]:
+            for neighbor in jgraph.neighbors(node):
+                if not visited[neighbor]:
+                    visited[node] = True
+                    _walk_path(jgraph, node, neighbor, visited, degrees)
+                    
+
+
+class Skeleton:
+    def __init__(graph, pixel_values=None, _buffer_size_offset=0):
+        self.graph = numba_csgraph(graph, pixel_values)
+        self.degrees = np.diff(graph.indptr)
+        visited = np.zeros(degrees.shape, dtype=bool)
+        endpoints = (self.degrees != 2)
+        endpoint_degrees = self.degrees[endpoints]
+        num_paths = np.sum(degrees[endpoints])
+        path_indptr = np.zeros(num_paths + _buffer_size_offset, dtype=int)
+        # the number of points that we need to save to store all skeleton
+        # paths is equal to the number of pixels plus the sum of endpoint
+        # degrees minus one (since the endpoints will have been counted once
+        # already in the number of pixels).
+        path_indices = np.zeros(graph.indices.size
+                                + np.sum(endpoint_degrees - 1), dtype=int)
+        path_data = np.zeros(path_indices.shape, dtype=float)
+        m, n = _build_paths(self.graph, path_indptr, path_indices, path_data,
+                            visited)
+        self.paths = sparse.csr_matrix((path_data[:n],
+                                        path_indices[:n], path_indptr[:m]))
+
+
 def _uniquify_junctions(csmat, pixel_indices, junction_labels,
                         junction_centroids, *, spacing=1):
     """Replace clustered pixels with degree > 2 by a single "floating" pixel.
