@@ -160,27 +160,52 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
-@numba.jit(nopython=True)
-def _build_paths(jgraph, indptr, indices, path_data, visited):
+@numba.jit(nopython=True, cache=True)
+def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
     indptr_i = 0
     indices_j = 0
     for node in range(1, jgraph.shape[0]):
         if degrees[node] > 2 or degrees[node] == 1 and not visited[node]:
             for neighbor in jgraph.neighbors(node):
                 if not visited[neighbor]:
+                    n_steps = _walk_path(jgraph, node, neighbor, visited,
+                                         degrees, indices, path_data,
+                                         indices_j)
                     visited[node] = True
-                    _walk_path(jgraph, node, neighbor, visited, degrees)
-                    
+                    indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
+                    indptr_i += 1
+                    indices_j += n_steps
+    return indptr_i, indices_j
+
+
+@numba.jit(nopython=True, cache=True)
+def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
+               startj):
+    j = startj
+    while degrees[neighbor] == 2 and not visited[neighbor]:
+        indices[j] = node
+        path_data[j] = jgraph.node_properties[node]
+        j += 1
+        n1, n2 = jgraph.neighbors(neighbor)
+        nextneighbor = n1 if n1 != node else n2
+        node, neighbor = neighbor, nextneighbor
+        visited[node] = True
+    indices[j] = neighbor
+    path_data[j] = jgraph.node_properties[neighbor]
+    return j - startj
+
 
 
 class Skeleton:
-    def __init__(graph, pixel_values=None, _buffer_size_offset=0):
+    def __init__(self, graph, pixel_values=None, pixel_coordinates=None,
+                 _buffer_size_offset=0):
         self.graph = numba_csgraph(graph, pixel_values)
+        self.coordinates = pixel_coordinates
         self.degrees = np.diff(graph.indptr)
-        visited = np.zeros(degrees.shape, dtype=bool)
+        visited = np.zeros(self.degrees.shape, dtype=bool)
         endpoints = (self.degrees != 2)
         endpoint_degrees = self.degrees[endpoints]
-        num_paths = np.sum(degrees[endpoints])
+        num_paths = np.sum(endpoint_degrees)
         path_indptr = np.zeros(num_paths + _buffer_size_offset, dtype=int)
         # the number of points that we need to save to store all skeleton
         # paths is equal to the number of pixels plus the sum of endpoint
@@ -190,7 +215,7 @@ class Skeleton:
                                 + np.sum(endpoint_degrees - 1), dtype=int)
         path_data = np.zeros(path_indices.shape, dtype=float)
         m, n = _build_paths(self.graph, path_indptr, path_indices, path_data,
-                            visited)
+                            visited, self.degrees)
         self.paths = sparse.csr_matrix((path_data[:n],
                                         path_indices[:n], path_indptr[:m]))
 
