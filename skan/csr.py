@@ -175,7 +175,7 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
                     indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                     indptr_i += 1
                     indices_j += n_steps
-    return indptr_i, indices_j
+    return indptr_i + 1, indices_j
 
 
 @numba.jit(nopython=True, cache=True)
@@ -194,6 +194,7 @@ def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
         j += 1
     indices[j] = neighbor
     path_data[j] = jgraph.node_properties[neighbor]
+    visited[neighbor] = True
     return j - startj + 1
 
 
