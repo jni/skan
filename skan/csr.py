@@ -181,18 +181,20 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
 @numba.jit(nopython=True, cache=True)
 def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
                startj):
-    j = startj
+    indices[startj] = node
+    path_data[startj] = jgraph.node_properties[node]
+    j = startj + 1
     while degrees[neighbor] == 2 and not visited[neighbor]:
-        indices[j] = node
-        path_data[j] = jgraph.node_properties[node]
-        j += 1
+        indices[j] = neighbor
+        path_data[j] = jgraph.node_properties[neighbor]
         n1, n2 = jgraph.neighbors(neighbor)
         nextneighbor = n1 if n1 != node else n2
         node, neighbor = neighbor, nextneighbor
         visited[node] = True
+        j += 1
     indices[j] = neighbor
     path_data[j] = jgraph.node_properties[neighbor]
-    return j - startj
+    return j - startj + 1
 
 
 
