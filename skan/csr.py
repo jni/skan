@@ -198,7 +198,6 @@ def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
     return j - startj + 1
 
 
-
 class Skeleton:
     def __init__(self, graph, pixel_values=None, pixel_coordinates=None,
                  _buffer_size_offset=0):
