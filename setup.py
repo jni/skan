@@ -15,7 +15,7 @@ LICENSE             = 'BSD 3-clause'
 DOWNLOAD_URL        = 'https://github.com/jni/skan'
 VERSION             = '0.7.0-dev'
 PYTHON_VERSION      = (3, 6)
-INST_DEPENDENCIES   = {} 
+INST_DEPENDENCIES   = []
 
 
 if __name__ == '__main__':
