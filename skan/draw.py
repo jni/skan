@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import collections
+import networkx as nx
 from skimage import img_as_float, morphology
 from skimage.color import gray2rgb
 from .csr import summarise
@@ -43,7 +44,8 @@ def pixel_perfect_figsize(image, dpi=80):
 
 
 def overlay_skeleton_2d(image, skeleton, *,
-                        image_cmap=None, color=(1, 0, 0), alpha=1, axes=None):
+                        image_cmap=None, color=(1, 0, 0), alpha=1,
+                        dilate=0, axes=None):
     """Overlay the skeleton pixels on the input image.
 
     Parameters
@@ -62,6 +64,10 @@ def overlay_skeleton_2d(image, skeleton, *,
         The RGB color for the skeleton pixels.
     alpha : float, optional
         Blend the skeleton pixels with the given alpha.
+    dilate : int, optional
+        Dilate the skeleton by this amount. This is useful when rendering
+        large images where aliasing may cause some pixels of the skeleton
+        not to be drawn.
     axes : matplotlib Axes
         The Axes on which to plot the image. If None, new ones are created.
 
@@ -72,6 +78,9 @@ def overlay_skeleton_2d(image, skeleton, *,
     """
     image = _normalise_image(image, image_cmap=image_cmap)
     skeleton = skeleton.astype(bool)
+    if dilate > 0:
+        selem = morphology.disk(dilate)
+        skeleton = morphology.binary_dilation(skeleton, selem)
     if axes is None:
         fig, axes = plt.subplots()
     image[skeleton] = alpha * np.array(color) + (1 - alpha) * image[skeleton]
@@ -102,12 +111,14 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
         The name of the column to use for the skeleton edge color. See the
         output of `skan.summarise` for valid choices. Most common choices
         would be:
+
         - skeleton-id: each individual skeleton (connected component) will
           have a different colour.
         - branch-type: each branch type (tip-tip, tip-junction,
           junction-junction, path-path). This is the default.
         - branch-distance: the curved length of the skeleton branch.
         - euclidean-distance: the straight-line length of the skeleton branch.
+
     skeleton_colormap : matplotlib colormap name or object, optional
         The colormap for the skeleton values.
     axes : matplotlib Axes object, optional
@@ -171,6 +182,10 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
         The Figure containing all the plots
     axes : array of matplotlib Axes
         The four axes containing the drawn images.
+
+    References
+    ----------
+    .. [1] http://scikit-image.org/docs/dev/user_guide/data_types.html
     """
     if figure is None:
         fig, axes = plt.subplots(2, 2, figsize=figsize,
@@ -197,3 +212,52 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
     fig.subplots_adjust(0, 0, 1, 1, 0, 0)
 
     return fig, axes
+
+
+def _clean_positions_dict(d, g):
+    for k in list(d.keys()):
+        if k not in g:
+            del d[k]
+        elif g.degree(k) == 0:
+            g.remove_node(k)
+
+
+def overlay_skeleton_networkx(csr_graph, coordinates, *, axis=None,
+                              image=None, cmap=None, **kwargs):
+    """Draw the skeleton as a NetworkX graph, optionally overlaid on an image.
+
+    Due to the size of NetworkX drawing elements, this is only recommended
+    for very small skeletons.
+
+    Parameters
+    ----------
+    csr_graph : SciPy Sparse matrix
+        The skeleton graph in SciPy CSR format.
+    coordinates : array, shape (N_points, 2)
+        The coordinates of each point in the skeleton. ``coordinates.shape[0]``
+        should be equal to ``csr_graph.shape[0]``.
+
+    Other Parameters
+    ----------------
+    axis : Matplotlib Axes object, optional
+        The Axes on which to plot the data. If None, a new figure and axes will
+        be created.
+    image : array, shape (M, N[, 3])
+        An image on which to overlay the skeleton. ``image.shape`` should be
+        greater than ``np.max(coordinates, axis=0)``.
+    **kwargs : keyword arguments
+        Arguments passed on to `nx.draw_networkx`. Particularly useful ones
+        include ``node_size=`` and ``font_size=``.
+    """
+    if axis is None:
+        _, axis = plt.subplots()
+    if image is not None:
+        cmap = cmap or 'gray'
+        axis.imshow(image, cmap=cmap)
+    gnx = nx.from_scipy_sparse_matrix(csr_graph)
+    # Note: we invert the positions because Matplotlib uses x/y for
+    # scatterplot, but the coordinates are row/column NumPy indexing
+    positions = dict(zip(range(coordinates.shape[0]), coordinates[:, ::-1]))
+    _clean_positions_dict(positions, gnx)  # remove nodes not in Graph
+    nx.draw_networkx(gnx, pos=positions, ax=axis, **kwargs)
+    return axis

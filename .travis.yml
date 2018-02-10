@@ -38,14 +38,39 @@ before_script:
 
 script:
   # Run tests
+  - export CPU_COUNT=2
+  - set -e
   - export MPLBACKEND="ps"
   - python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
   - py.test
+  - pip install doctr
+  - cd doc
+  - if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then
+      wget -q -O s.zip https://osf.io/7vyx3/download && unzip s.zip;
+    fi
+  - ls -l
+  - ls -l schizonts/*.tif
+  - make html
+  - cd ..
+  - if [[ -z "$TRAVIS_TAG" ]]; then
+      doctr deploy --build-tags latest;
+      doctr deploy --build-tags .;
+    else
+      DEPLOY_DIR="version-$TRAVIS_TAG";
+      doctr deploy --build-tags $DEPLOY_DIR;
+      doctr deploy --build-tags stable;
+    fi
 
 after_success:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then make numba-clean; export NUMBA_DISABLE_JIT=1; py.test --cov-report term-missing --cov .; coveralls; fi
+
+env:
+  global:
+    # Doctr deploy key for jni/skan
+    - secure: "MZT3VbilSTulgf79I7PNqBNjYSHomje/5uwtGoSJEGsUADISG2Nby0higMgQuun++yrWTOZOBQSlEXsv3K1P+EQkqpDyd4/81QZp2DRpk9VgXWf1IvaUNpw/Tw77FJ/XPvMlVoF/XKGN+jZvYDXxgZJpeKHn8IJYlp8sHEQkMomBVAwBQutuNEdCGSzV1N5h9TnaAa/CAzrL2vP34VUi+9wKu2Zs6YBTF4H8iR/Bal0qXF1qdYg142iAEyTuu3a5Uf9iW4HTyqzNY8orvEy8KMziQ5ajUhD5az6eq3mPLR6V3h/wGDRFJo342SR/gMWW4c4OQqtXXPzh7k0YFQjFdb0a0dI1pzAMWruR402r9B0TJMrMbOANcesorz0IsY4wqQNpas7cNNOoL7yGRdX/7YZvZPkIG8+srQPGT3tD7TlRejcAxbll3hkrLk2K4MmrZxOBGLRf5ctVmHwBNHEXwJztMllJpWolAXyCZHse69KI+w3tscFQJdkDDjGNMWnoiKpkSrkV2ap524K8JUzAQgWFaDy/3a5Sw2uK0k3VKlZNkYdOWuyRWiltbP6597Srh/TR7m9SO2K63uhdkEGmKu8i/AFBK2N+ECB3NKUDrq18QNsrCMp/hIJAgfowbywHrnI22G4pDnbh9RvGbymS/Wzn6FZXjKRLmgfAjqaOtIM="
 
 cache:
     directories:
         - $HOME/miniconda
         - $HOME/.matplotlib
+        - doc/schizonts

@@ -12,6 +12,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import multiprocessing as mp
 
 
+CPU_COUNT = int(os.environ.get('CPU_COUNT', mp.cpu_count()))
+
+
 def _get_scale(image, md_path_or_scale):
     """Get a valid scale from an image and a metadata path or scale."""
     scale = None
@@ -61,7 +64,8 @@ def process_single_image(filename, image_format, scale_metadata_path,
 
 def process_images(filenames, image_format, threshold_radius,
                    smooth_radius, brightness_offset, scale_metadata_path,
-                   crop_radius=0, smooth_method='Gaussian'):
+                   crop_radius=0, smooth_method='Gaussian',
+                   num_threads=CPU_COUNT):
     """Full pipeline from images to skeleton stats with local median threshold.
 
     Parameters
@@ -88,17 +92,22 @@ def process_images(filenames, image_format, threshold_radius,
         processing.
     smooth_method : {'Gaussian', 'TV', 'NL'}, optional
         Which method to use for smoothing.
+    num_threads : int, optional
+        How many threads to use for computation. This should generally be
+        set to the number of CPU cores available to you.
 
     Returns
     -------
-    result : pandas DataFrame
-        Data frame containing all computed statistics on the skeletons found
-        in the input image.
+    results : generator
+        The pipeline yields individual image results in the form of a tuple
+        of ``(filename, image, thresholded_image, skeleton, data_frame)``.
+        Finally, after all the images have been processed, the pipeline yields
+        a DataFrame containing all the collated branch-level results.
     """
     image_format = None if image_format == 'auto' else image_format
     results = []
     image_results = []
-    with ThreadPoolExecutor(max_workers=mp.cpu_count()) as ex:
+    with ThreadPoolExecutor(max_workers=num_threads) as ex:
         future_data = {ex.submit(process_single_image, filename,
                                  image_format, scale_metadata_path,
                                  threshold_radius, smooth_radius,
