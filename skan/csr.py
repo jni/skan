@@ -679,9 +679,9 @@ def compute_centroids(image):
     [[1 0 2 0 0 3 3]
      [1 0 0 2 0 0 0]]
     >>> centroids
-    array([[ 0.5,  0. ],
-           [ 0.5,  2.5],
-           [ 0. ,  5.5]])
+    array([[0.5, 0. ],
+           [0.5, 2.5],
+           [0. , 5.5]])
     """
     connectivity = np.ones((3,) * image.ndim)
     labeled_image = ndi.label(image, connectivity)[0]

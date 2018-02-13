@@ -162,7 +162,7 @@ def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C', spacing=1,
     Examples
     --------
     >>> raveled_steps_to_neighbors((5,), 1)
-    (array([ 1, -1]), array([ 1.,  1.]))
+    (array([ 1, -1]), array([1., 1.]))
     >>> raveled_steps_to_neighbors((2, 3), 2, return_distances=False)
     array([ 3,  1, -3, -1,  4,  2, -2, -4])
     >>> raveled_steps_to_neighbors((2, 3), 1, order='F')[0]
@@ -172,7 +172,7 @@ def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C', spacing=1,
     axes:
 
     >>> raveled_steps_to_neighbors((3, 4, 5), spacing=[5, 1, 1])
-    (array([ 20,   5,   1, -20,  -5,  -1]), array([ 5.,  1.,  1.,  5.,  1.,  1.]))
+    (array([ 20,   5,   1, -20,  -5,  -1]), array([5., 1., 1., 5., 1., 1.]))
     """
     spacing = np.ones(len(shape), dtype=float) * spacing
     if order == 'C':
