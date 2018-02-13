@@ -223,7 +223,7 @@ class Skeleton:
     def __init__(self, skeleton_image, *, scale=1, _buffer_size_offset=0):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
                                                      scale=scale)
-        if np.issubdtype(skeleton_image.dtype, 'float'):
+        if np.issubdtype(skeleton_image.dtype, np.float_):
             pixel_values = ndi.map_coordinates(skeleton_image, coords.T,
                                                order=3)
         else:
@@ -613,7 +613,7 @@ def summarise(image, *, spacing=1, using_height=False):
                                                  value_is_height=using_height)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
-    if np.issubdtype(image.dtype, 'float') and not using_height:
+    if np.issubdtype(image.dtype, np.float_) and not using_height:
         pixel_values = ndi.map_coordinates(image, coords_img.T, order=3)
         value_columns = ['mean pixel value']
         value_column_types = [float]
