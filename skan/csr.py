@@ -160,7 +160,7 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
-@numba.jit(nopython=True, cache=True)
+@numba.jit(nopython=True, cache=False)  # change this to True with Numba 1.0
 def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
     indptr_i = 0
     indices_j = 0
@@ -178,7 +178,7 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
     return indptr_i + 1, indices_j
 
 
-@numba.jit(nopython=True, cache=True)
+@numba.jit(nopython=True, cache=False)  # change this to True with Numba 1.0
 def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
                startj):
     indices[startj] = node
@@ -260,7 +260,8 @@ class Skeleton:
         return self.distances
 
 
-@numba.jit(nopython=True, cache=True, nogil=True):
+
+@numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
 def _compute_distances(graph, path_indptr, path_indices, distances):
     for i in range(len(distances)):
         start, stop = path_indptr[i:i+2]
@@ -268,7 +269,7 @@ def _compute_distances(graph, path_indptr, path_indices, distances):
         distances[i] = _path_distance(graph, path)
 
 
-@numba.jit(nopython=True, cache=True, nogil=True)
+@numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
 def _path_distance(graph, path):
     d = 0.
     n = len(path)
