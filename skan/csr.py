@@ -220,9 +220,9 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
 
 
 class Skeleton:
-    def __init__(self, skeleton_image, *, scale=1, _buffer_size_offset=0):
+    def __init__(self, skeleton_image, *, spacing=1, _buffer_size_offset=0):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
-                                                     scale=scale)
+                                                     spacing=spacing)
         if np.issubdtype(skeleton_image.dtype, np.float_):
             pixel_values = ndi.map_coordinates(skeleton_image, coords.T,
                                                order=3)
