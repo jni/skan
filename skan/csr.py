@@ -212,7 +212,7 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
     path_indices = np.zeros(graph.indices.size
                             + np.sum(endpoint_degrees - 1), dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
-    m, n = _build_paths(self.graph, path_indptr, path_indices, path_data,
+    m, n = _build_paths(graph, path_indptr, path_indices, path_data,
                         visited, degrees)
     paths = sparse.csr_matrix((path_data[:n], path_indices[:n],
                                path_indptr[:m]))
