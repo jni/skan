@@ -263,6 +263,18 @@ class Skeleton:
     def paths_list(self):
         return [list(self.path(i)) for i in range(self.n_paths)]
 
+    def path_means(self):
+        sums = np.add.reduceat(self.paths.data, self.paths.indptr)
+        lengths = np.diff(self.paths.indptr)
+        return sums / lengths
+
+    def path_stdev(self):
+        data = self.paths.data
+        sumsq = np.add.reduceat(data * data, self.paths.indptr)
+        lengths = np.diff(self.paths.indptr)
+        means = self.path_means()
+        return np.sqrt(sumsq/lengths - means*means)
+
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
 def _compute_distances(graph, path_indptr, path_indices, distances):
