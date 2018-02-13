@@ -198,28 +198,43 @@ def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
     return j - startj + 1
 
 
+def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
+    degrees = np.diff(graph.indptr)
+    visited = np.zeros(degrees.shape, dtype=bool)
+    endpoints = (degrees != 2)
+    endpoint_degrees = degrees[endpoints]
+    num_paths = np.sum(endpoint_degrees)
+    path_indptr = np.zeros(num_paths + _buffer_size_offset, dtype=int)
+    # the number of points that we need to save to store all skeleton
+    # paths is equal to the number of pixels plus the sum of endpoint
+    # degrees minus one (since the endpoints will have been counted once
+    # already in the number of pixels).
+    path_indices = np.zeros(graph.indices.size
+                            + np.sum(endpoint_degrees - 1), dtype=int)
+    path_data = np.zeros(path_indices.shape, dtype=float)
+    m, n = _build_paths(self.graph, path_indptr, path_indices, path_data,
+                        visited, degrees)
+    paths = sparse.csr_matrix((path_data[:n], path_indices[:n],
+                               path_indptr[:m]))
+    return paths
+
+
 class Skeleton:
-    def __init__(self, graph, pixel_values=None, pixel_coordinates=None,
-                 _buffer_size_offset=0):
+    def __init__(self, skeleton_image, *, scale=1, _buffer_size_offset=0):
+        graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
+                                                     scale=scale)
+        if np.issubdtype(skeleton_image.dtype, 'float'):
+            pixel_values = ndi.map_coordinates(skeleton_image, coords.T,
+                                               order=3)
+        else:
+            pixel_values = None
         self.graph = numba_csgraph(graph, pixel_values)
-        self.coordinates = pixel_coordinates
-        self.degrees = np.diff(graph.indptr)
-        visited = np.zeros(self.degrees.shape, dtype=bool)
-        endpoints = (self.degrees != 2)
-        endpoint_degrees = self.degrees[endpoints]
-        num_paths = np.sum(endpoint_degrees)
-        path_indptr = np.zeros(num_paths + _buffer_size_offset, dtype=int)
-        # the number of points that we need to save to store all skeleton
-        # paths is equal to the number of pixels plus the sum of endpoint
-        # degrees minus one (since the endpoints will have been counted once
-        # already in the number of pixels).
-        path_indices = np.zeros(graph.indices.size
-                                + np.sum(endpoint_degrees - 1), dtype=int)
-        path_data = np.zeros(path_indices.shape, dtype=float)
-        m, n = _build_paths(self.graph, path_indptr, path_indices, path_data,
-                            visited, self.degrees)
-        self.paths = sparse.csr_matrix((path_data[:n],
-                                        path_indices[:n], path_indptr[:m]))
+        self.coordinates = coords
+        self.paths = _build_skeleton_path_graph(self.graph,
+                                    _buffer_size_offset=_buffer_size_offset)
+        self.n_paths = self.paths.shape[0]
+        self.distances = np.empty(self.n_paths, dtype=float)
+        self._distances_initialized = False
 
     def path(self, index):
         # The below is equivalent to `self.paths[index].indices`, which is much
@@ -239,13 +254,21 @@ class Skeleton:
         return self.paths.indices[start:stop], self.paths.data[start:stop]
 
     def path_lengths(self):
-        if not hasattr(self, 'distances'):
-            self.distances = np.array([_path_distance(self.graph, self.path(i))
-                                       for i in range(self.paths.shape[0])])
+        if not self._distances_initialized:
+            _compute_distances(self.graph, self.paths.indptr,
+                               self.paths.indices, self.distances)
         return self.distances
 
 
-@numba.jit(nopython=True, cache=True)
+@numba.jit(nopython=True, cache=True, nogil=True):
+def _compute_distances(graph, path_indptr, path_indices, distances):
+    for i in range(len(distances)):
+        start, stop = path_indptr[i:i+2]
+        path = path_indices[start:stop]
+        distances[i] = _path_distance(graph, path)
+
+
+@numba.jit(nopython=True, cache=True, nogil=True)
 def _path_distance(graph, path):
     d = 0.
     n = len(path)
@@ -322,9 +345,9 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         between adjacent pixels i and j. In a 2D image, that would be
         1 for immediately adjacent pixels and sqrt(2) for diagonally
         adjacent ones.
-    pixel_indices : array of int
-        An array of shape (Nnz + 1,), mapping indices in `graph` to
-        raveled indices in `degree_image` or `skel`.
+    pixel_coordinates : array of float
+        An array of shape (Nnz + 1, skel.ndim), mapping indices in `graph`
+        to pixel coordinates in `degree_image` or `skel`.
     degree_image : array of int, same shape as skel
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
