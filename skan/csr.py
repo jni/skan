@@ -221,6 +221,39 @@ class Skeleton:
         self.paths = sparse.csr_matrix((path_data[:n],
                                         path_indices[:n], path_indptr[:m]))
 
+    def path(self, index):
+        # The below is equivalent to `self.paths[index].indices`, which is much
+        # more elegant. However the below version is about 25x faster!
+        # In [14]: %timeit mat[1].indices
+        # 128 µs ± 421 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+        # In [16]: %%timeit
+        # ...: start, stop = mat.indptr[1:3]
+        # ...: mat.indices[start:stop]
+        # ...:
+        # 5.05 µs ± 77.2 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+        start, stop = self.paths.indptr[index:index+2]
+        return self.paths.indices[start:stop]
+
+    def path_with_data(self, index):
+        start, stop = self.paths.indptr[index:index+2]
+        return self.paths.indices[start:stop], self.paths.data[start:stop]
+
+    def path_lengths(self):
+        if not hasattr(self, 'distances'):
+            self.distances = np.array([_path_distance(self.graph, self.path(i))
+                                       for i in range(self.paths.shape[0])])
+        return self.distances
+
+
+@numba.jit(nopython=True, cache=True)
+def _path_distance(graph, path):
+    d = 0.
+    n = len(path)
+    for i in range(n - 1):
+        u, v = path[i], path[i+1]
+        d += graph.edge(u, v)
+    return d
+
 
 def _uniquify_junctions(csmat, pixel_indices, junction_labels,
                         junction_centroids, *, spacing=1):
