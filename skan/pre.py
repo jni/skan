@@ -80,7 +80,8 @@ def threshold(image, *, sigma=0., radius=0, offset=0.,
             image = restoration.denoise_tv_bregman(image, weight=sigma)
         elif smooth_method.lower() == 'nl':
             image = restoration.denoise_nl_means(image,
-                                             patch_size=round(2 * sigma))
+                                             patch_size=round(2 * sigma),
+                                             multichannel=False)
     if radius == 0:
         t = filters.threshold_otsu(image) + offset
     else:
