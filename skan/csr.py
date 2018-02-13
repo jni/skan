@@ -257,6 +257,7 @@ class Skeleton:
         if not self._distances_initialized:
             _compute_distances(self.graph, self.paths.indptr,
                                self.paths.indices, self.distances)
+            self._distances_initialized = True
         return self.distances
 
     def paths_list(self):
