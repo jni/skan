@@ -69,8 +69,8 @@ def test_threshold_2d_otsu(image):
 
 
 def test_threshold_no_method(image):
-    np.testing.assert_raises(ValueError, pre.threshold, image,
-                             radius=1, method='no method')
+    with pytest.raises(ValueError):
+        pre.threshold(image, radius=1, method='no method')
 
 
 def _total_variation(image):
