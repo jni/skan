@@ -259,6 +259,8 @@ class Skeleton:
                                self.paths.indices, self.distances)
         return self.distances
 
+    def paths_list(self):
+        return [list(self.path(i)) for i in range(self.n_paths)]
 
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
