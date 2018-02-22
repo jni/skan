@@ -35,6 +35,12 @@ def test_skeleton1_float():
     assert 1.0 < np.mean(data) < 2.0
 
 
+def test_skeleton_coordinates():
+    skeleton = Skeleton(skeleton1)
+    last_path_coordinates = skeleton.path_coordinates(3)
+    assert_allclose(last_path_coordinates, [[3, 3], [4, 4], [4, 5], [4, 6]])
+
+
 def test_path_length_caching():
     skeleton = Skeleton(skeleton3d)
     t0 = process_time()
@@ -53,3 +59,19 @@ def test_tip_junction_edges():
     paths_list = skeleton.paths_list()
     for path in reference_paths:
         assert path in paths_list or path[::-1] in paths_list
+
+
+def test_path_stdev():
+    image = np.zeros(skeleton1.shape, dtype=float)
+    image[skeleton1] = 1 + np.random.random(np.sum(skeleton1))
+    skeleton = Skeleton(image)
+    # longest_path should be 0, but could change.
+    longest_path = np.argmax(skeleton.path_lengths())
+    dev = skeleton.path_stdev()[longest_path]
+    assert 0.09 < dev < 0.44  # chance is < 1/10K that this will fail
+
+    # second check: first principles.
+    skeleton2 = Skeleton(image**2)
+    # (Var = StDev**2 = E(X**2) - (E(X))**2)
+    assert_allclose(skeleton.path_stdev()**2,
+                    skeleton2.path_means() - skeleton.path_means()**2)

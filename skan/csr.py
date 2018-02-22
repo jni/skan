@@ -249,6 +249,10 @@ class Skeleton:
         start, stop = self.paths.indptr[index:index+2]
         return self.paths.indices[start:stop]
 
+    def path_coordinates(self, index):
+        path_indices = self.path(index)
+        return self.coordinates[path_indices]
+
     def path_with_data(self, index):
         start, stop = self.paths.indptr[index:index+2]
         return self.paths.indices[start:stop], self.paths.data[start:stop]
@@ -264,16 +268,16 @@ class Skeleton:
         return [list(self.path(i)) for i in range(self.n_paths)]
 
     def path_means(self):
-        sums = np.add.reduceat(self.paths.data, self.paths.indptr)
+        sums = np.add.reduceat(self.paths.data, self.paths.indptr[:-1])
         lengths = np.diff(self.paths.indptr)
         return sums / lengths
 
     def path_stdev(self):
         data = self.paths.data
-        sumsq = np.add.reduceat(data * data, self.paths.indptr)
+        sumsq = np.add.reduceat(data * data, self.paths.indptr[:-1])
         lengths = np.diff(self.paths.indptr)
         means = self.path_means()
-        return np.sqrt(sumsq/lengths - means*means)
+        return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
 
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
