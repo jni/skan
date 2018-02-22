@@ -8,7 +8,7 @@ import numba
 from .nputil import pad, raveled_steps_to_neighbors
 
 
-## CSGraph and Numba-based implementation
+## NBGraph and Numba-based implementation
 
 csr_spec = [
     ('indptr', numba.int32[:]),
@@ -19,7 +19,7 @@ csr_spec = [
 ]
 
 @numba.jitclass(csr_spec)
-class CSGraph:
+class NBGraph:
     def __init__(self, indptr, indices, data, shape, node_props):
         self.indptr = indptr
         self.indices = indices
@@ -39,11 +39,11 @@ class CSGraph:
         return self.node_properties.strides != (0,)
 
 
-def numba_csgraph(csr, node_props=None):
+def csr_to_nbgraph(csr, node_props=None):
     if node_props is None:
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
-    return CSGraph(csr.indptr, csr.indices, csr.data,
+    return NBGraph(csr.indptr, csr.indices, csr.data,
                    np.array(csr.shape, dtype=np.int32), node_props)
 
 
@@ -228,13 +228,15 @@ class Skeleton:
                                                order=3)
         else:
             pixel_values = None
-        self.graph = numba_csgraph(graph, pixel_values)
+        self.graph = graph
+        self.nbgraph = csr_to_nbgraph(graph, pixel_values)
         self.coordinates = coords
-        self.paths = _build_skeleton_path_graph(self.graph,
+        self.paths = _build_skeleton_path_graph(self.nbgraph,
                                     _buffer_size_offset=_buffer_size_offset)
         self.n_paths = self.paths.shape[0]
         self.distances = np.empty(self.n_paths, dtype=float)
         self._distances_initialized = False
+        self.source_image = source_image
 
     def path(self, index):
         # The below is equivalent to `self.paths[index].indices`, which is much
@@ -259,7 +261,7 @@ class Skeleton:
 
     def path_lengths(self):
         if not self._distances_initialized:
-            _compute_distances(self.graph, self.paths.indptr,
+            _compute_distances(self.nbgraph, self.paths.indptr,
                                self.paths.indices, self.distances)
             self._distances_initialized = True
         return self.distances
@@ -304,7 +306,7 @@ def _uniquify_junctions(csmat, pixel_indices, junction_labels,
 
     Parameters
     ----------
-    csmat : CSGraph
+    csmat : NBGraph
         The input graph.
     pixel_indices : array of int
         The raveled index in the image of every pixel represented in csmat.
@@ -313,7 +315,7 @@ def _uniquify_junctions(csmat, pixel_indices, junction_labels,
 
     Returns
     -------
-    final_graph : CSGraph
+    final_graph : NBGraph
         The output csmat.
     """
     junctions = np.unique(junction_labels)[1:]  # discard 0, background
@@ -442,9 +444,9 @@ def _expand_path(graph, source, step, visited, degrees):
 
     Parameters
     ----------
-    graph : CSGraph
+    graph : NBGraph
         A graph encoded identically to a SciPy sparse compressed sparse
-        row matrix. See the documentation of `CSGraph` for details.
+        row matrix. See the documentation of `NBGraph` for details.
     source : int
         The starting point of the walk. This must be a path node, or
         the function's behaviour is undefined.
@@ -559,7 +561,7 @@ def branch_statistics(graph, pixel_values=None, *,
         Optionally, the last column contains the average pixel value
         along each branch (not including the endpoints).
     """
-    jgraph = numba_csgraph(graph, pixel_values)
+    jgraph = csr_to_nbgraph(graph, pixel_values)
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
