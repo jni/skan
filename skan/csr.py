@@ -220,7 +220,52 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
 
 
 class Skeleton:
-    def __init__(self, skeleton_image, *, spacing=1, _buffer_size_offset=0):
+    """Object to group together all the properties of a skeleton.
+
+    In the text below, we use the following notation:
+
+    - N: the number of points in the pixel skeleton,
+    - ndim: the dimensionality of the skeleton
+    - P: the number of paths in the skeleton (also the number of links in the
+      junction graph).
+    - J: the number of junction nodes
+    - Sd: the sum of the degrees of all the junction nodes
+
+    Parameters
+    ----------
+    skeleton_image : array
+        The input skeleton (1-pixel/voxel thick skeleton, all other values 0).
+
+    Other Parameters
+    ----------------
+    spacing : float or array of float, shape ``(ndim,)``
+        The scale of the pixel spacing along each axis.
+    source_image : array of float, same shape as `skeleton_image`
+        The image that `skeleton_image` represents / summarizes / was generated
+        from. This is used to produce visualizations as well as statistical
+        properties of paths.
+
+    Attributes
+    ----------
+    graph : scipy.sparse.csr_matrix, shape (N + 1, N + 1)
+        The skeleton pixel graph, where each node is a non-zero pixel in the
+        input image, and each edge connects adjacent pixels. The graph is
+        represented as an adjacency matrix in SciPy sparse matrix format. For
+        more information see the ``scipy.sparse`` documentation as well as
+        ``scipy.sparse.csgraph``. Note: pixel numbering starts at 1, so the
+        shape of this matrix is ``(N + 1, N + 1)`` instead of ``(N, N)``.
+    nbgraph : NBGraph
+        A thin Numba wrapper around the ``csr_matrix`` format, this provides
+        faster graph methods. For example, it is much faster to get a list of
+        neighbors, or test for the presence of a specific edge.
+    coordinates : array, shape (N, ndim)
+        The image coordinates of each pixel in the skeleton.
+    paths : scipy.sparse.csr_matrix, shape (P, N + 1)
+        A csr_matrix where element [i, j] is on if node j is in path i. This
+        includes path endpoints.
+    """
+    def __init__(self, skeleton_image, *, spacing=1, source_image=None,
+                 _buffer_size_offset=0):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
                                                      spacing=spacing)
         if np.issubdtype(skeleton_image.dtype, np.float_):
