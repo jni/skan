@@ -230,8 +230,8 @@
     <span class="n">corner_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel_multi_index</span><span class="p">(</span><span class="n">corner_multi_indices</span><span class="p">,</span>
                                           <span class="n">padded_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
     <span class="n">_correlate_sparse_offsets</span><span class="p">(</span><span class="n">padded_image</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">corner_indices</span><span class="p">,</span>
-                              <span class="n">offsets</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">result</span></div>
+                              <span class="n">offsets</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span></div>
+    <span class="k">return</span> <span class="n">result</span>
 
 
 <span class="k">def</span> <span class="nf">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
@@ -329,8 +329,8 @@
 <span class="sd">    &gt;&gt;&gt; image = data.page()</span>
 <span class="sd">    &gt;&gt;&gt; binary_image = threshold_niblack(image, window_size=7, k=0.1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">m</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">s</span></div>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">m</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">s</span>
 
 
 <div class="viewcode-block" id="threshold_sauvola"><a class="viewcode-back" href="../../../api/skan.vendored.thresholding.html#skan.vendored.thresholding.threshold_sauvola">[docs]</a><span class="k">def</span> <span class="nf">threshold_sauvola</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -389,8 +389,8 @@
     <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">dtype_limits</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">imax</span> <span class="o">-</span> <span class="n">imin</span><span class="p">)</span>
-    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="p">((</span><span class="n">s</span> <span class="o">/</span> <span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_mean_std</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="p">((</span><span class="n">s</span> <span class="o">/</span> <span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 
            </div>

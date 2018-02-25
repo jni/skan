@@ -288,8 +288,8 @@
             <span class="n">image_stats</span><span class="p">[</span><span class="s1">&#39;mean J2J branch distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                                             <span class="n">j2j</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
             <span class="n">image_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_stats</span><span class="p">)</span>
-            <span class="k">yield</span> <span class="n">filename</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">thresholded</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">framedata</span>
-    <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">image_results</span><span class="p">)</span></div>
+            <span class="k">yield</span> <span class="n">filename</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">thresholded</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">framedata</span></div>
+    <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">image_results</span><span class="p">)</span>
 </pre></div>
 
            </div>

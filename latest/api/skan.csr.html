@@ -172,6 +172,235 @@
             
   <div class="section" id="module-skan.csr">
 <span id="skan-csr-csr-graph-representation-of-skeletons"></span><h1>skan.csr: CSR Graph representation of skeletons<a class="headerlink" href="#module-skan.csr" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skan.csr.Skeleton">
+<em class="property">class </em><code class="descclassname">skan.csr.</code><code class="descname">Skeleton</code><span class="sig-paren">(</span><em>skeleton_image</em>, <em>*</em>, <em>spacing=1</em>, <em>source_image=None</em>, <em>_buffer_size_offset=0</em>, <em>keep_images=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object to group together all the properties of a skeleton.</p>
+<p>In the text below, we use the following notation:</p>
+<ul class="simple">
+<li>N: the number of points in the pixel skeleton,</li>
+<li>ndim: the dimensionality of the skeleton</li>
+<li>P: the number of paths in the skeleton (also the number of links in the
+junction graph).</li>
+<li>J: the number of junction nodes</li>
+<li>Sd: the sum of the degrees of all the junction nodes</li>
+<li>[Nt], [Np], Nr, Nc: the dimensions of the source image</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>skeleton_image</strong> : array</p>
+<blockquote>
+<div><p>The input skeleton (1-pixel/voxel thick skeleton, all other values 0).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>spacing</strong> : float or array of float, shape <code class="docutils literal notranslate"><span class="pre">(ndim,)</span></code></p>
+<blockquote>
+<div><p>The scale of the pixel spacing along each axis.</p>
+</div></blockquote>
+<p><strong>source_image</strong> : array of float, same shape as <cite>skeleton_image</cite></p>
+<blockquote>
+<div><p>The image that <cite>skeleton_image</cite> represents / summarizes / was generated
+from. This is used to produce visualizations as well as statistical
+properties of paths.</p>
+</div></blockquote>
+<p><strong>keep_images</strong> : bool</p>
+<blockquote class="last">
+<div><p>Whether or not to keep the original input images. These can be useful
+for visualization, but they may take up a lot of memory.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="96%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>graph</strong></td>
+<td>(scipy.sparse.csr_matrix, shape (N + 1, N + 1)) The skeleton pixel graph, where each node is a non-zero pixel in the input image, and each edge connects adjacent pixels. The graph is represented as an adjacency matrix in SciPy sparse matrix format. For more information see the <code class="docutils literal notranslate"><span class="pre">scipy.sparse</span></code> documentation as well as <code class="docutils literal notranslate"><span class="pre">scipy.sparse.csgraph</span></code>. Note: pixel numbering starts at 1, so the shape of this matrix is <code class="docutils literal notranslate"><span class="pre">(N</span> <span class="pre">+</span> <span class="pre">1,</span> <span class="pre">N</span> <span class="pre">+</span> <span class="pre">1)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">N)</span></code>.</td>
+</tr>
+<tr class="row-even"><td><strong>nbgraph</strong></td>
+<td>(NBGraph) A thin Numba wrapper around the <code class="docutils literal notranslate"><span class="pre">csr_matrix</span></code> format, this provides faster graph methods. For example, it is much faster to get a list of neighbors, or test for the presence of a specific edge.</td>
+</tr>
+<tr class="row-odd"><td><strong>coordinates</strong></td>
+<td>(array, shape (N, ndim)) The image coordinates of each pixel in the skeleton.</td>
+</tr>
+<tr class="row-even"><td><strong>paths</strong></td>
+<td>(scipy.sparse.csr_matrix, shape (P, N + 1)) A csr_matrix where element [i, j] is on if node j is in path i. This includes path endpoints. The number of nonzero elements is N - J + Sd.</td>
+</tr>
+<tr class="row-odd"><td><strong>n_paths</strong></td>
+<td>(int) The number of paths, P. This is redundant information given <cite>n_paths</cite>, but it is used often enough that it is worth keeping around.</td>
+</tr>
+<tr class="row-even"><td><strong>distances</strong></td>
+<td>(array of float, shape (P,)) The distance of each path.</td>
+</tr>
+<tr class="row-odd"><td><strong>skeleton_image</strong></td>
+<td>(array or None) The input skeleton image. Only present if <cite>keep_images</cite> is True. Set to False to preserve memory.</td>
+</tr>
+<tr class="row-even"><td><strong>source_image</strong></td>
+<td>(array or None) The image from which the skeleton was derived. Only present if <cite>keep_images</cite> is True. This is useful for visualization.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="skan.csr.Skeleton.path">
+<code class="descname">path</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the pixel indices of path number <cite>index</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote>
+<div><p>The desired path.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>path</strong> : array of int</p>
+<blockquote class="last">
+<div><p>The indices of the pixels belonging to the path, including
+endpoints.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skan.csr.Skeleton.path_coordinates">
+<code class="descname">path_coordinates</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_coordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton.path_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the image coordinates of the pixels in the path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote>
+<div><p>The desired path.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>path_coords</strong> : array of float</p>
+<blockquote class="last">
+<div><p>The (image) coordinates of points on the path, including endpoints.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skan.csr.Skeleton.path_lengths">
+<code class="descname">path_lengths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_lengths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton.path_lengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of each path on the skeleton.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>lengths</strong> : array of float</p>
+<blockquote class="last">
+<div><p>The length of all the paths in the skeleton.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skan.csr.Skeleton.path_means">
+<code class="descname">path_means</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_means"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton.path_means" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mean pixel value along each path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>means</strong> : array of float</p>
+<blockquote class="last">
+<div><p>The average pixel value along each path in the skeleton.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skan.csr.Skeleton.path_stdev">
+<code class="descname">path_stdev</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_stdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton.path_stdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the standard deviation of values along each path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>stdevs</strong> : array of float</p>
+<blockquote class="last">
+<div><p>The standard deviation of pixel values along each path.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skan.csr.Skeleton.path_with_data">
+<code class="descname">path_with_data</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_with_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton.path_with_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return pixel indices and corresponding pixel values on a path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote>
+<div><p>The desired path.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>path</strong> : array of int</p>
+<blockquote>
+<div><p>The indices of pixels on the path, including endpoints.</p>
+</div></blockquote>
+<p><strong>data</strong> : array of float</p>
+<blockquote class="last">
+<div><p>The values of pixels on the path.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skan.csr.Skeleton.paths_list">
+<code class="descname">paths_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.paths_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.Skeleton.paths_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all the paths in the skeleton, including endpoints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>paths</strong> : list of array of int</p>
+<blockquote class="last">
+<div><p>The list containing all the paths in the skeleton.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="skan.csr.branch_statistics">
 <code class="descclassname">skan.csr.</code><code class="descname">branch_statistics</code><span class="sig-paren">(</span><em>graph</em>, <em>pixel_values=None</em>, <em>*</em>, <em>buffer_size_offset=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#branch_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.csr.branch_statistics" title="Permalink to this definition">¶</a></dt>
@@ -242,16 +471,16 @@ integer label.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
 <span class="gp">... </span>                  <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">compute_centroids</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 <span class="go">[[1 0 2 0 0 3 3]</span>
 <span class="go"> [1 0 0 2 0 0 0]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span>
-<span class="go">array([[ 0.5,  0. ],</span>
-<span class="go">       [ 0.5,  2.5],</span>
-<span class="go">       [ 0. ,  5.5]])</span>
+<span class="go">array([[0.5, 0. ],</span>
+<span class="go">       [0.5, 2.5],</span>
+<span class="go">       [0. , 5.5]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -287,10 +516,10 @@ between adjacent pixels i and j. In a 2D image, that would be
 1 for immediately adjacent pixels and sqrt(2) for diagonally
 adjacent ones.</p>
 </div></blockquote>
-<p><strong>pixel_indices</strong> : array of int</p>
+<p><strong>pixel_coordinates</strong> : array of float</p>
 <blockquote>
-<div><p>An array of shape (Nnz + 1,), mapping indices in <cite>graph</cite> to
-raveled indices in <cite>degree_image</cite> or <cite>skel</cite>.</p>
+<div><p>An array of shape (Nnz + 1, skel.ndim), mapping indices in <cite>graph</cite>
+to pixel coordinates in <cite>degree_image</cite> or <cite>skel</cite>.</p>
 </div></blockquote>
 <p><strong>degree_image</strong> : array of int, same shape as skel</p>
 <blockquote>
@@ -347,7 +576,7 @@ number of rows of <cite>M</cite>.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Md</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Md</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">M</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">Md</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">submatrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
 <span class="go">[[ 0  2]</span>

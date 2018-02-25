@@ -284,6 +284,70 @@ not to be drawn.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="skan.draw.overlay_skeleton_2d_class">
+<code class="descclassname">skan.draw.</code><code class="descname">overlay_skeleton_2d_class</code><span class="sig-paren">(</span><em>skeleton</em>, <em>*</em>, <em>image_cmap='gray'</em>, <em>skeleton_color_source='path_means'</em>, <em>skeleton_colormap='viridis'</em>, <em>vmin=None</em>, <em>vmax=None</em>, <em>axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the image, and overlay the skeleton over it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>skeleton</strong> : skan.Skeleton object</p>
+<blockquote>
+<div><p>The input skeleton, which contains both the skeleton and the source
+image.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>axes</strong> : matplotlib Axes object</p>
+<blockquote>
+<div><p>The Axes on which the plot is drawn.</p>
+</div></blockquote>
+<p><strong>mappable</strong> : matplotlib ScalarMappable object</p>
+<blockquote>
+<div><p>The mappable values corresponding to the line colors. This can be used
+to create a colorbar for the plot.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first"><strong>image_cmap</strong> : matplotlib colormap name or object, optional</p>
+<blockquote>
+<div><p>The colormap to use for the input image. Defaults to grayscale.</p>
+</div></blockquote>
+<p><strong>skeleton_color_source</strong> : string or callable, optional</p>
+<blockquote>
+<div><p>The name of the method to use for the skeleton edge color. See the
+documentation of <cite>skan.Skeleton</cite> for valid choices. Most common choices
+would be:</p>
+<ul class="simple">
+<li>path_means: the mean value of the skeleton along each path.</li>
+<li>path_lengths: the length of each path.</li>
+<li>path_stdev: the standard deviation of pixel values along the path.</li>
+</ul>
+<p>Alternatively, a callable can be provided that takes as input a
+Skeleton object and outputs a list of floating point values of the same
+length as the number of paths.</p>
+</div></blockquote>
+<p><strong>skeleton_colormap</strong> : matplotlib colormap name or object, optional</p>
+<blockquote>
+<div><p>The colormap for the skeleton values.</p>
+</div></blockquote>
+<p><strong>vmin, vmax</strong> : float, optional</p>
+<blockquote>
+<div><p>The minimum and maximum values for the colormap. Use this to pin the
+colormapped values to a certain range.</p>
+</div></blockquote>
+<p><strong>axes</strong> : matplotlib Axes object, optional</p>
+<blockquote class="last">
+<div><p>An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="skan.draw.overlay_skeleton_networkx">
 <code class="descclassname">skan.draw.</code><code class="descname">overlay_skeleton_networkx</code><span class="sig-paren">(</span><em>csr_graph</em>, <em>coordinates</em>, <em>*</em>, <em>axis=None</em>, <em>image=None</em>, <em>cmap=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_networkx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the skeleton as a NetworkX graph, optionally overlaid on an image.</p>
@@ -299,8 +363,8 @@ for very small skeletons.</p>
 </div></blockquote>
 <p><strong>coordinates</strong> : array, shape (N_points, 2)</p>
 <blockquote>
-<div><p>The coordinates of each point in the skeleton. <code class="docutils literal"><span class="pre">coordinates.shape[0]</span></code>
-should be equal to <code class="docutils literal"><span class="pre">csr_graph.shape[0]</span></code>.</p>
+<div><p>The coordinates of each point in the skeleton. <code class="docutils literal notranslate"><span class="pre">coordinates.shape[0]</span></code>
+should be equal to <code class="docutils literal notranslate"><span class="pre">csr_graph.shape[0]</span></code>.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -312,13 +376,13 @@ be created.</p>
 </div></blockquote>
 <p><strong>image</strong> : array, shape (M, N[, 3])</p>
 <blockquote>
-<div><p>An image on which to overlay the skeleton. <code class="docutils literal"><span class="pre">image.shape</span></code> should be
-greater than <code class="docutils literal"><span class="pre">np.max(coordinates,</span> <span class="pre">axis=0)</span></code>.</p>
+<div><p>An image on which to overlay the skeleton. <code class="docutils literal notranslate"><span class="pre">image.shape</span></code> should be
+greater than <code class="docutils literal notranslate"><span class="pre">np.max(coordinates,</span> <span class="pre">axis=0)</span></code>.</p>
 </div></blockquote>
 <p><strong>**kwargs</strong> : keyword arguments</p>
 <blockquote class="last">
 <div><p>Arguments passed on to <cite>nx.draw_networkx</cite>. Particularly useful ones
-include <code class="docutils literal"><span class="pre">node_size=</span></code> and <code class="docutils literal"><span class="pre">font_size=</span></code>.</p>
+include <code class="docutils literal notranslate"><span class="pre">node_size=</span></code> and <code class="docutils literal notranslate"><span class="pre">font_size=</span></code>.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -337,7 +401,7 @@ include <code class="docutils literal"><span class="pre">node_size=</span></code
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : array, shape (M, N, …[, 3])</p>
 <blockquote>
 <div><p>Input image, conformant with scikit-image data type
-specification <a class="reference internal" href="#r11" id="id1">[R11]</a>.</p>
+specification <a class="reference internal" href="#r1" id="id1">[R1]</a>.</p>
 </div></blockquote>
 <p><strong>thresholded</strong> : array, same shape as image</p>
 <blockquote>
@@ -385,10 +449,10 @@ specification <a class="reference internal" href="#r11" id="id1">[R11]</a>.</p>
 </tbody>
 </table>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r11" rules="none">
+<table class="docutils citation" frame="void" id="r1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[R11]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></td></tr>
+<tr><td class="label">[R1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></td></tr>
 </tbody>
 </table>
 </dd></dl>
@@ -420,7 +484,7 @@ specification <a class="reference internal" href="#r11" id="id1">[R11]</a>.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">768</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">768</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_perfect_figsize</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 <span class="go">(12.8, 9.6)</span>
 </pre></div>
