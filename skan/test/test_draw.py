@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import pytest
 
-from skan import pre, draw, csr, _testdata
+from skan import pre, draw, csr, _testdata, Skeleton
 
 rundir = os.path.abspath(os.path.dirname(__file__))
 datadir = os.path.join(rundir, 'data')
@@ -65,6 +65,13 @@ def test_pipeline_plot_existing_fig(test_image, test_thresholded,
     fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
     draw.pipeline_plot(test_image, test_thresholded, test_skeleton, test_stats,
                        figure=fig, axes=np.ravel(axes))
+
+
+def test_skeleton_class_overlay(test_image, test_skeleton):
+    fig, axes = plt.subplots()
+    skeleton = Skeleton(test_skeleton, test_image)
+    draw.overlay_skeleton_2d_class(skeleton,
+                                   skeleton_color_source='path_lengths')
 
 
 def test_networkx_plot():
