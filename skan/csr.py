@@ -8,7 +8,7 @@ import numba
 from .nputil import pad, raveled_steps_to_neighbors
 
 
-## CSGraph and Numba-based implementation
+## NBGraph and Numba-based implementation
 
 csr_spec = [
     ('indptr', numba.int32[:]),
@@ -19,7 +19,7 @@ csr_spec = [
 ]
 
 @numba.jitclass(csr_spec)
-class CSGraph:
+class NBGraph:
     def __init__(self, indptr, indices, data, shape, node_props):
         self.indptr = indptr
         self.indices = indices
@@ -39,11 +39,11 @@ class CSGraph:
         return self.node_properties.strides != (0,)
 
 
-def numba_csgraph(csr, node_props=None):
+def csr_to_nbgraph(csr, node_props=None):
     if node_props is None:
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
-    return CSGraph(csr.indptr, csr.indices, csr.data,
+    return NBGraph(csr.indptr, csr.indices, csr.data,
                    np.array(csr.shape, dtype=np.int32), node_props)
 
 
@@ -160,13 +160,284 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
                     k += 1
 
 
+@numba.jit(nopython=True, cache=False)  # change this to True with Numba 1.0
+def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
+    indptr_i = 0
+    indices_j = 0
+    for node in range(1, jgraph.shape[0]):
+        if degrees[node] > 2 or degrees[node] == 1 and not visited[node]:
+            for neighbor in jgraph.neighbors(node):
+                if not visited[neighbor]:
+                    n_steps = _walk_path(jgraph, node, neighbor, visited,
+                                         degrees, indices, path_data,
+                                         indices_j)
+                    visited[node] = True
+                    indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
+                    indptr_i += 1
+                    indices_j += n_steps
+    return indptr_i + 1, indices_j
+
+
+@numba.jit(nopython=True, cache=False)  # change this to True with Numba 1.0
+def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
+               startj):
+    indices[startj] = node
+    path_data[startj] = jgraph.node_properties[node]
+    j = startj + 1
+    while degrees[neighbor] == 2 and not visited[neighbor]:
+        indices[j] = neighbor
+        path_data[j] = jgraph.node_properties[neighbor]
+        n1, n2 = jgraph.neighbors(neighbor)
+        nextneighbor = n1 if n1 != node else n2
+        node, neighbor = neighbor, nextneighbor
+        visited[node] = True
+        j += 1
+    indices[j] = neighbor
+    path_data[j] = jgraph.node_properties[neighbor]
+    visited[neighbor] = True
+    return j - startj + 1
+
+
+def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
+    degrees = np.diff(graph.indptr)
+    visited = np.zeros(degrees.shape, dtype=bool)
+    endpoints = (degrees != 2)
+    endpoint_degrees = degrees[endpoints]
+    num_paths = np.sum(endpoint_degrees)
+    path_indptr = np.zeros(num_paths + _buffer_size_offset, dtype=int)
+    # the number of points that we need to save to store all skeleton
+    # paths is equal to the number of pixels plus the sum of endpoint
+    # degrees minus one (since the endpoints will have been counted once
+    # already in the number of pixels).
+    path_indices = np.zeros(graph.indices.size
+                            + np.sum(endpoint_degrees - 1), dtype=int)
+    path_data = np.zeros(path_indices.shape, dtype=float)
+    m, n = _build_paths(graph, path_indptr, path_indices, path_data,
+                        visited, degrees)
+    paths = sparse.csr_matrix((path_data[:n], path_indices[:n],
+                               path_indptr[:m]))
+    return paths
+
+
+class Skeleton:
+    """Object to group together all the properties of a skeleton.
+
+    In the text below, we use the following notation:
+
+    - N: the number of points in the pixel skeleton,
+    - ndim: the dimensionality of the skeleton
+    - P: the number of paths in the skeleton (also the number of links in the
+      junction graph).
+    - J: the number of junction nodes
+    - Sd: the sum of the degrees of all the junction nodes
+    - [Nt], [Np], Nr, Nc: the dimensions of the source image
+
+    Parameters
+    ----------
+    skeleton_image : array
+        The input skeleton (1-pixel/voxel thick skeleton, all other values 0).
+
+    Other Parameters
+    ----------------
+    spacing : float or array of float, shape ``(ndim,)``
+        The scale of the pixel spacing along each axis.
+    source_image : array of float, same shape as `skeleton_image`
+        The image that `skeleton_image` represents / summarizes / was generated
+        from. This is used to produce visualizations as well as statistical
+        properties of paths.
+    keep_images : bool
+        Whether or not to keep the original input images. These can be useful
+        for visualization, but they may take up a lot of memory.
+
+    Attributes
+    ----------
+    graph : scipy.sparse.csr_matrix, shape (N + 1, N + 1)
+        The skeleton pixel graph, where each node is a non-zero pixel in the
+        input image, and each edge connects adjacent pixels. The graph is
+        represented as an adjacency matrix in SciPy sparse matrix format. For
+        more information see the ``scipy.sparse`` documentation as well as
+        ``scipy.sparse.csgraph``. Note: pixel numbering starts at 1, so the
+        shape of this matrix is ``(N + 1, N + 1)`` instead of ``(N, N)``.
+    nbgraph : NBGraph
+        A thin Numba wrapper around the ``csr_matrix`` format, this provides
+        faster graph methods. For example, it is much faster to get a list of
+        neighbors, or test for the presence of a specific edge.
+    coordinates : array, shape (N, ndim)
+        The image coordinates of each pixel in the skeleton.
+    paths : scipy.sparse.csr_matrix, shape (P, N + 1)
+        A csr_matrix where element [i, j] is on if node j is in path i. This
+        includes path endpoints. The number of nonzero elements is N - J + Sd.
+    n_paths : int
+        The number of paths, P. This is redundant information given `n_paths`,
+        but it is used often enough that it is worth keeping around.
+    distances : array of float, shape (P,)
+        The distance of each path.
+    skeleton_image : array or None
+        The input skeleton image. Only present if `keep_images` is True. Set to
+        False to preserve memory.
+    source_image : array or None
+        The image from which the skeleton was derived. Only present if
+        `keep_images` is True. This is useful for visualization.
+    """
+    def __init__(self, skeleton_image, *, spacing=1, source_image=None,
+                 _buffer_size_offset=0, keep_images=True):
+        graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
+                                                     spacing=spacing)
+        if np.issubdtype(skeleton_image.dtype, np.float_):
+            pixel_values = ndi.map_coordinates(skeleton_image, coords.T,
+                                               order=3)
+        else:
+            pixel_values = None
+        self.graph = graph
+        self.nbgraph = csr_to_nbgraph(graph, pixel_values)
+        self.coordinates = coords
+        self.paths = _build_skeleton_path_graph(self.nbgraph,
+                                    _buffer_size_offset=_buffer_size_offset)
+        self.n_paths = self.paths.shape[0]
+        self.distances = np.empty(self.n_paths, dtype=float)
+        self._distances_initialized = False
+        self.skeleton_image = None
+        self.source_image = None
+        if keep_images:
+            self.skeleton_image = skeleton_image
+            self.source_image = source_image
+
+    def path(self, index):
+        """Return the pixel indices of path number `index`.
+
+        Parameters
+        ----------
+        index : int
+            The desired path.
+
+        Returns
+        -------
+        path : array of int
+            The indices of the pixels belonging to the path, including
+            endpoints.
+        """
+        # The below is equivalent to `self.paths[index].indices`, which is much
+        # more elegant. However the below version is about 25x faster!
+        # In [14]: %timeit mat[1].indices
+        # 128 µs ± 421 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+        # In [16]: %%timeit
+        # ...: start, stop = mat.indptr[1:3]
+        # ...: mat.indices[start:stop]
+        # ...:
+        # 5.05 µs ± 77.2 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+        start, stop = self.paths.indptr[index:index+2]
+        return self.paths.indices[start:stop]
+
+    def path_coordinates(self, index):
+        """Return the image coordinates of the pixels in the path.
+
+        Parameters
+        ----------
+        index : int
+            The desired path.
+
+        Returns
+        -------
+        path_coords : array of float
+            The (image) coordinates of points on the path, including endpoints.
+        """
+        path_indices = self.path(index)
+        return self.coordinates[path_indices]
+
+    def path_with_data(self, index):
+        """Return pixel indices and corresponding pixel values on a path.
+
+        Parameters
+        ----------
+        index : int
+            The desired path.
+
+        Returns
+        -------
+        path : array of int
+            The indices of pixels on the path, including endpoints.
+        data : array of float
+            The values of pixels on the path.
+        """
+        start, stop = self.paths.indptr[index:index+2]
+        return self.paths.indices[start:stop], self.paths.data[start:stop]
+
+    def path_lengths(self):
+        """Return the length of each path on the skeleton.
+
+        Returns
+        -------
+        lengths : array of float
+            The length of all the paths in the skeleton.
+        """
+        if not self._distances_initialized:
+            _compute_distances(self.nbgraph, self.paths.indptr,
+                               self.paths.indices, self.distances)
+            self._distances_initialized = True
+        return self.distances
+
+    def paths_list(self):
+        """List all the paths in the skeleton, including endpoints.
+
+        Returns
+        -------
+        paths : list of array of int
+            The list containing all the paths in the skeleton.
+        """
+        return [list(self.path(i)) for i in range(self.n_paths)]
+
+    def path_means(self):
+        """Compute the mean pixel value along each path.
+
+        Returns
+        -------
+        means : array of float
+            The average pixel value along each path in the skeleton.
+        """
+        sums = np.add.reduceat(self.paths.data, self.paths.indptr[:-1])
+        lengths = np.diff(self.paths.indptr)
+        return sums / lengths
+
+    def path_stdev(self):
+        """Compute the standard deviation of values along each path.
+
+        Returns
+        -------
+        stdevs : array of float
+            The standard deviation of pixel values along each path.
+        """
+        data = self.paths.data
+        sumsq = np.add.reduceat(data * data, self.paths.indptr[:-1])
+        lengths = np.diff(self.paths.indptr)
+        means = self.path_means()
+        return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
+
+
+@numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
+def _compute_distances(graph, path_indptr, path_indices, distances):
+    for i in range(len(distances)):
+        start, stop = path_indptr[i:i+2]
+        path = path_indices[start:stop]
+        distances[i] = _path_distance(graph, path)
+
+
+@numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
+def _path_distance(graph, path):
+    d = 0.
+    n = len(path)
+    for i in range(n - 1):
+        u, v = path[i], path[i+1]
+        d += graph.edge(u, v)
+    return d
+
+
 def _uniquify_junctions(csmat, pixel_indices, junction_labels,
                         junction_centroids, *, spacing=1):
     """Replace clustered pixels with degree > 2 by a single "floating" pixel.
 
     Parameters
     ----------
-    csmat : CSGraph
+    csmat : NBGraph
         The input graph.
     pixel_indices : array of int
         The raveled index in the image of every pixel represented in csmat.
@@ -175,7 +446,7 @@ def _uniquify_junctions(csmat, pixel_indices, junction_labels,
 
     Returns
     -------
-    final_graph : CSGraph
+    final_graph : NBGraph
         The output csmat.
     """
     junctions = np.unique(junction_labels)[1:]  # discard 0, background
@@ -227,9 +498,9 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         between adjacent pixels i and j. In a 2D image, that would be
         1 for immediately adjacent pixels and sqrt(2) for diagonally
         adjacent ones.
-    pixel_indices : array of int
-        An array of shape (Nnz + 1,), mapping indices in `graph` to
-        raveled indices in `degree_image` or `skel`.
+    pixel_coordinates : array of float
+        An array of shape (Nnz + 1, skel.ndim), mapping indices in `graph`
+        to pixel coordinates in `degree_image` or `skel`.
     degree_image : array of int, same shape as skel
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
@@ -304,9 +575,9 @@ def _expand_path(graph, source, step, visited, degrees):
 
     Parameters
     ----------
-    graph : CSGraph
+    graph : NBGraph
         A graph encoded identically to a SciPy sparse compressed sparse
-        row matrix. See the documentation of `CSGraph` for details.
+        row matrix. See the documentation of `NBGraph` for details.
     source : int
         The starting point of the walk. This must be a path node, or
         the function's behaviour is undefined.
@@ -421,7 +692,7 @@ def branch_statistics(graph, pixel_values=None, *,
         Optionally, the last column contains the average pixel value
         along each branch (not including the endpoints).
     """
-    jgraph = numba_csgraph(graph, pixel_values)
+    jgraph = csr_to_nbgraph(graph, pixel_values)
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
@@ -494,7 +765,7 @@ def summarise(image, *, spacing=1, using_height=False):
                                                  value_is_height=using_height)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
-    if np.issubdtype(image.dtype, 'float') and not using_height:
+    if np.issubdtype(image.dtype, np.float_) and not using_height:
         pixel_values = ndi.map_coordinates(image, coords_img.T, order=3)
         value_columns = ['mean pixel value']
         value_column_types = [float]
@@ -560,9 +831,9 @@ def compute_centroids(image):
     [[1 0 2 0 0 3 3]
      [1 0 0 2 0 0 0]]
     >>> centroids
-    array([[ 0.5,  0. ],
-           [ 0.5,  2.5],
-           [ 0. ,  5.5]])
+    array([[0.5, 0. ],
+           [0.5, 2.5],
+           [0. , 5.5]])
     """
     connectivity = np.ones((3,) * image.ndim)
     labeled_image = ndi.label(image, connectivity)[0]
