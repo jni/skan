@@ -72,6 +72,20 @@ def test_skeleton_class_overlay(test_image, test_skeleton):
     skeleton = Skeleton(test_skeleton, source_image=test_image)
     draw.overlay_skeleton_2d_class(skeleton,
                                    skeleton_color_source='path_lengths')
+    def filtered(skeleton):
+        means = skeleton.path_means()
+        low = means < 0.125
+        just_right = (0.125 < means) & (means < 0.625)
+        high = 0.625 < means
+        return 0 * low + 1 * just_right + 2 * high
+    fig, ax = plt.subplots()
+    draw.overlay_skeleton_2d_class(skeleton,
+                                   skeleton_color_source=filtered,
+                                   vmin=0, vmax=2, axes=ax)
+    with pytest.raises(ValueError):
+        draw.overlay_skeleton_2d_class(skeleton,
+                                       skeleton_color_source='filtered')
+
 
 
 def test_networkx_plot():
