@@ -230,6 +230,7 @@ class Skeleton:
       junction graph).
     - J: the number of junction nodes
     - Sd: the sum of the degrees of all the junction nodes
+    - [Nt], [Np], Nr, Nc: the dimensions of the source image
 
     Parameters
     ----------
@@ -244,6 +245,9 @@ class Skeleton:
         The image that `skeleton_image` represents / summarizes / was generated
         from. This is used to produce visualizations as well as statistical
         properties of paths.
+    keep_images : bool
+        Whether or not to keep the original input images. These can be useful
+        for visualization, but they may take up a lot of memory.
 
     Attributes
     ----------
@@ -262,10 +266,21 @@ class Skeleton:
         The image coordinates of each pixel in the skeleton.
     paths : scipy.sparse.csr_matrix, shape (P, N + 1)
         A csr_matrix where element [i, j] is on if node j is in path i. This
-        includes path endpoints.
+        includes path endpoints. The number of nonzero elements is N - J + Sd.
+    n_paths : int
+        The number of paths, P. This is redundant information given `n_paths`,
+        but it is used often enough that it is worth keeping around.
+    distances : array of float, shape (P,)
+        The distance of each path.
+    skeleton_image : array or None
+        The input skeleton image. Only present if `keep_images` is True. Set to
+        False to preserve memory.
+    source_image : array or None
+        The image from which the skeleton was derived. Only present if
+        `keep_images` is True. This is useful for visualization.
     """
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
-                 _buffer_size_offset=0):
+                 _buffer_size_offset=0, keep_images=True):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
                                                      spacing=spacing)
         if np.issubdtype(skeleton_image.dtype, np.float_):
@@ -281,7 +296,11 @@ class Skeleton:
         self.n_paths = self.paths.shape[0]
         self.distances = np.empty(self.n_paths, dtype=float)
         self._distances_initialized = False
-        self.source_image = source_image
+        self.skeleton_image = None
+        self.source_image = None
+        if keep_images:
+            self.skeleton_image = skeleton_image
+            self.source_image = source_image
 
     def path(self, index):
         # The below is equivalent to `self.paths[index].indices`, which is much
