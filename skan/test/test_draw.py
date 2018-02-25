@@ -69,7 +69,7 @@ def test_pipeline_plot_existing_fig(test_image, test_thresholded,
 
 def test_skeleton_class_overlay(test_image, test_skeleton):
     fig, axes = plt.subplots()
-    skeleton = Skeleton(test_skeleton, test_image)
+    skeleton = Skeleton(test_skeleton, source_image=test_image)
     draw.overlay_skeleton_2d_class(skeleton,
                                    skeleton_color_source='path_lengths')
 
