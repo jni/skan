@@ -150,7 +150,7 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
 
 
 def overlay_skeleton_2d_class(skeleton, *,
-                              image_colormap='gray',
+                              image_cmap='gray',
                               skeleton_color_source='path_means',
                               skeleton_colormap='viridis',
                               vmin=None, vmax=None,
@@ -165,7 +165,7 @@ def overlay_skeleton_2d_class(skeleton, *,
 
     Other Parameters
     ----------------
-    image_colormap : matplotlib colormap name or object, optional
+    image_cmap : matplotlib colormap name or object, optional
         The colormap to use for the input image. Defaults to grayscale.
     skeleton_color_source : string or callable, optional
         The name of the method to use for the skeleton edge color. See the
