@@ -149,6 +149,82 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
     return axes
 
 
+def overlay_skeleton_2d_class(skeleton, *,
+                              image_colormap='gray',
+                              skeleton_color_source='path_means',
+                              skeleton_colormap='viridis',
+                              vmin=None, vmax=None,
+                              axes=None):
+    """Plot the image, and overlay the skeleton over it.
+
+    Parameters
+    ----------
+    skeleton : skan.Skeleton object
+        The input skeleton, which contains both the skeleton and the source
+        image.
+
+    Other Parameters
+    ----------------
+    image_colormap : matplotlib colormap name or object, optional
+        The colormap to use for the input image. Defaults to grayscale.
+    skeleton_color_source : string or callable, optional
+        The name of the method to use for the skeleton edge color. See the
+        documentation of `skan.Skeleton` for valid choices. Most common choices
+        would be:
+
+        - path_means: the mean value of the skeleton along each path.
+        - path_lengths: the length of each path.
+        - path_stdev: the standard deviation of pixel values along the path.
+
+        Alternatively, a callable can be provided that takes as input a
+        Skeleton object and outputs a list of floating point values of the same
+        length as the number of paths.
+
+    skeleton_colormap : matplotlib colormap name or object, optional
+        The colormap for the skeleton values.
+    vmin, vmax : float, optional
+        The minimum and maximum values for the colormap. Use this to pin the
+        colormapped values to a certain range.
+    axes : matplotlib Axes object, optional
+        An Axes object on which to draw. If `None`, a new one is created.
+
+    Returns
+    -------
+    axes : matplotlib Axes object
+        The Axes on which the plot is drawn.
+    mappable : matplotlib ScalarMappable object
+        The mappable values corresponding to the line colors. This can be used
+        to create a colorbar for the plot.
+    """
+    image = skeleton.source_image
+    if axes is None:
+        fig, axes = plt.subplots()
+    axes.imshow(image, cmap=image_cmap)
+    if callable(skeleton_color_source):
+        values = skeleton_color_source(skeleton)
+    elif hasattr(skeleton, skeleton_color_source):
+        values = getattr(skeleton, skeleton_color_source)()
+    else:
+        raise ValueError('Unknown skeleton color source: %s. Provide an '
+                         'attribute of skan.csr.Skeleton or a callable.' %
+                         skeleton_color_source)
+    cmap = plt.get_cmap(skeleton_colormap,
+                        min(len(np.unique(values)), 256))
+    if vmin is None:
+        vmin = np.min(values)
+    if vmax is None:
+        vmax = np.max(values)
+    mapping_values = (values - vmin) / (vmax - vmin)
+    mappable = plt.cm.ScalarMappable(plt.Normalize(vmin, vmax), cmap)
+    mappable._A = mapping_values
+    colors = cmap(mapping_values)
+    coordinates = [skeleton.path_coordinates(i)[:, ::-1]
+                   for i in range(skeleton.n_paths)]
+    linecoll = collections.LineCollection(coordinates, colors=colors)
+    axes.add_collection(linecoll)
+    return axes, mappable
+
+
 def pipeline_plot(image, thresholded, skeleton, stats, *,
                   figure=None, axes=None, figsize=(9, 9)):
     """Draw the image, the thresholded version, and its skeleton.
