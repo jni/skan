@@ -303,6 +303,19 @@ class Skeleton:
             self.source_image = source_image
 
     def path(self, index):
+        """Return the pixel indices of path number `index`.
+
+        Parameters
+        ----------
+        index : int
+            The desired path.
+
+        Returns
+        -------
+        path : array of int
+            The indices of the pixels belonging to the path, including
+            endpoints.
+        """
         # The below is equivalent to `self.paths[index].indices`, which is much
         # more elegant. However the below version is about 25x faster!
         # In [14]: %timeit mat[1].indices
@@ -316,14 +329,47 @@ class Skeleton:
         return self.paths.indices[start:stop]
 
     def path_coordinates(self, index):
+        """Return the image coordinates of the pixels in the path.
+
+        Parameters
+        ----------
+        index : int
+            The desired path.
+
+        Returns
+        -------
+        path_coords : array of float
+            The (image) coordinates of points on the path, including endpoints.
+        """
         path_indices = self.path(index)
         return self.coordinates[path_indices]
 
     def path_with_data(self, index):
+        """Return pixel indices and corresponding pixel values on a path.
+
+        Parameters
+        ----------
+        index : int
+            The desired path.
+
+        Returns
+        -------
+        path : array of int
+            The indices of pixels on the path, including endpoints.
+        data : array of float
+            The values of pixels on the path.
+        """
         start, stop = self.paths.indptr[index:index+2]
         return self.paths.indices[start:stop], self.paths.data[start:stop]
 
     def path_lengths(self):
+        """Return the length of each path on the skeleton.
+
+        Returns
+        -------
+        lengths : array of float
+            The length of all the paths in the skeleton.
+        """
         if not self._distances_initialized:
             _compute_distances(self.nbgraph, self.paths.indptr,
                                self.paths.indices, self.distances)
@@ -331,14 +377,35 @@ class Skeleton:
         return self.distances
 
     def paths_list(self):
+        """List all the paths in the skeleton, including endpoints.
+
+        Returns
+        -------
+        paths : list of array of int
+            The list containing all the paths in the skeleton.
+        """
         return [list(self.path(i)) for i in range(self.n_paths)]
 
     def path_means(self):
+        """Compute the mean pixel value along each path.
+
+        Returns
+        -------
+        means : array of float
+            The average pixel value along each path in the skeleton.
+        """
         sums = np.add.reduceat(self.paths.data, self.paths.indptr[:-1])
         lengths = np.diff(self.paths.indptr)
         return sums / lengths
 
     def path_stdev(self):
+        """Compute the standard deviation of values along each path.
+
+        Returns
+        -------
+        stdevs : array of float
+            The standard deviation of pixel values along each path.
+        """
         data = self.paths.data
         sumsq = np.add.reduceat(data * data, self.paths.indptr[:-1])
         lengths = np.diff(self.paths.indptr)
