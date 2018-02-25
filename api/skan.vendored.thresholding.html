@@ -179,7 +179,7 @@ sizes.</p>
 <code class="descclassname">skan.vendored.thresholding.</code><code class="descname">correlate_sparse</code><span class="sig-paren">(</span><em>image</em>, <em>kernel</em>, <em>mode='reflect'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#correlate_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.correlate_sparse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute valid cross-correlation of <cite>padded_array</cite> and <cite>kernel</cite>.</p>
 <p>This function is <em>fast</em> when <cite>kernel</cite> is large with many zeros.</p>
-<p>See <code class="docutils literal"><span class="pre">scipy.ndimage.correlate</span></code> for a description of cross-correlation.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.correlate</span></code> for a description of cross-correlation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -256,15 +256,15 @@ this value are assumed to be foreground.</p>
 <p class="rubric">Notes</p>
 <p>This algorithm is originally designed for text recognition.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r56" rules="none">
+<table class="docutils citation" frame="void" id="r3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[R56]</a></td><td>Niblack, W (1986), An introduction to Digital Image
+<tr><td class="label"><a class="fn-backref" href="#id1">[R3]</a></td><td>Niblack, W (1986), An introduction to Digital Image
 Processing, Prentice-Hall.</td></tr>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">page</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">binary_image</span> <span class="o">=</span> <span class="n">threshold_niblack</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
@@ -323,17 +323,17 @@ this value are assumed to be foreground.</p>
 <p class="rubric">Notes</p>
 <p>This algorithm is originally designed for text recognition.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r67" rules="none">
+<table class="docutils citation" frame="void" id="r4" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[R67]</a></td><td>J. Sauvola and M. Pietikainen, “Adaptive document image
+<tr><td class="label"><a class="fn-backref" href="#id2">[R4]</a></td><td>J. Sauvola and M. Pietikainen, “Adaptive document image
 binarization,” Pattern Recognition 33(2),
 pp. 225-236, 2000.
 DOI:10.1016/S0031-3203(99)00055-2</td></tr>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">page</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">binary_sauvola</span> <span class="o">=</span> <span class="n">threshold_sauvola</span><span class="p">(</span><span class="n">image</span><span class="p">,</span>
 <span class="gp">... </span>                                   <span class="n">window_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>

@@ -169,7 +169,7 @@
 <div class="section" id="launching-the-gui">
 <h2>Launching the GUI<a class="headerlink" href="#launching-the-gui" title="Permalink to this headline">¶</a></h2>
 <p>To launch Skan’s graphical user interface after installation, run the command:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">skan</span><span class="o">-</span><span class="n">gui</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">skan</span><span class="o">-</span><span class="n">gui</span>
 </pre></div>
 </div>
 <p>in your terminal. This will launch the configuration interface, which looks
@@ -178,7 +178,7 @@ like this:</p>
 </div>
 <div class="section" id="interpreting-the-gui">
 <h2>Interpreting the GUI<a class="headerlink" href="#interpreting-the-gui" title="Permalink to this headline">¶</a></h2>
-<p>The GUI is a simple launcher for the <a class="reference internal" href="api/skan.pipe.html#skan.pipe.process_images" title="skan.pipe.process_images"><code class="xref any py py-func docutils literal"><span class="pre">skan.pipe.process_images</span></code></a> function.
+<p>The GUI is a simple launcher for the <a class="reference internal" href="api/skan.pipe.html#skan.pipe.process_images" title="skan.pipe.process_images"><code class="xref any py py-func docutils literal notranslate"><span class="pre">skan.pipe.process_images</span></code></a> function.
 This function runs the following analysis for each image:</p>
 <ul class="simple">
 <li>Crop the image</li>
@@ -208,10 +208,10 @@ set to 0, a global Otsu thresholding method is used. For values greater than
 equation (see [here]()), or to a value subtracted from the Otsu-computed
 threshold before thresholding.</li>
 <li><em>Image format:</em> The file format of the input images. This corresponds to the
-<code class="docutils literal"><span class="pre">format</span></code> keyword argument in the <code class="docutils literal"><span class="pre">imageio.imread</span></code> function.</li>
+<code class="docutils literal notranslate"><span class="pre">format</span></code> keyword argument in the <code class="docutils literal notranslate"><span class="pre">imageio.imread</span></code> function.</li>
 <li><em>Scale metadata path:</em> The location in the metadata hierarchy of the pixel
 scale. The default is correct for FEI electron microscopes
-(<code class="docutils literal"><span class="pre">format='fei'</span></code>).</li>
+(<code class="docutils literal notranslate"><span class="pre">format='fei'</span></code>).</li>
 <li><em>Live preview skeleton plot?:</em> whether to show the skeletonisation process for
 each image as it is processed. This incurs a performance penalty of about 2x
 but can save time in cases where the parameter choice is incorrect and many
@@ -219,7 +219,7 @@ images are being processed.</li>
 <li><em>Save skeleton plot?:</em> Whether to save skeletonisation plots next to the
 output results. There are useful for verifation after a run.</li>
 <li><em>Prefix for skeleton plots:</em> Skeleton plots will be saved as
-<code class="docutils literal"><span class="pre">&lt;prefix&gt;&lt;input-filename-without-extension&gt;.png</span></code>.</li>
+<code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;&lt;input-filename-without-extension&gt;.png</span></code>.</li>
 <li><em>Output filename:</em> self-explanatory.</li>
 <li><em>Choose config:</em> Load parameters from a configuration file. These files are
 saved by Skan with every GUI run. The loaded parameters can be modified
@@ -233,7 +233,7 @@ before starting a new run.</li>
 <h2>Configuration files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h2>
 <p>If you want to repeat a previous analysis, you can point it to an old
 configuration file (which Skan writes automatically after each GUI run):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">skan</span><span class="o">-</span><span class="n">gui</span> <span class="o">-</span><span class="n">c</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">skan</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">json</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">skan</span><span class="o">-</span><span class="n">gui</span> <span class="o">-</span><span class="n">c</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">skan</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">json</span>
 </pre></div>
 </div>
 <p>This will automatically set all the previous parameters of the GUI, including
