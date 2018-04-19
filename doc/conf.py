@@ -185,4 +185,9 @@ texinfo_documents = [
 ]
 
 
+# -- Options for nbplots --------------------------------------------------
+
+# Use high resolution images in the documentation plots
+# See https://github.com/matthew-brett/nb2plots/issues/6
+nbplot_formats = [('png', 150), ('hires.png', 300)]
 
