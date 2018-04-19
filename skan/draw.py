@@ -89,6 +89,19 @@ def overlay_skeleton_2d(image, skeleton, *,
     return axes
 
 
+OVERLAY_TOGGLE_KEYBINDING = ';'
+
+def toggle_overlay(event):
+    """Make matplotlib overlays (line and point collections) invisible."""
+    if event.key != OVERLAY_TOGGLE_KEYBINDING:
+        return
+    fig = event.canvas.figure
+    for ax in fig.axes:
+        for coll in ax.collections:
+            coll.set_visible(not coll._visible)
+    event.canvas.draw_idle()
+
+
 def overlay_euclidean_skeleton_2d(image, stats, *,
                                   image_cmap=None,
                                   skeleton_color_source='branch-type',
@@ -146,6 +159,7 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
                        (np.max(color_values) - np.min(color_values)))
     linecoll = collections.LineCollection(coords, colors=colormapped)
     axes.add_collection(linecoll)
+    axes.figure.canvas.mpl_connect('key_press_event', toggle_overlay)
     return axes
 
 
@@ -222,6 +236,7 @@ def overlay_skeleton_2d_class(skeleton, *,
                    for i in range(skeleton.n_paths)]
     linecoll = collections.LineCollection(coordinates, colors=colors)
     axes.add_collection(linecoll)
+    axes.figure.canvas.mpl_connect('key_press_event', toggle_overlay)
     return axes, mappable
 
 
