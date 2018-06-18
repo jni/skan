@@ -50,6 +50,7 @@ script:
     fi
   - ls -l
   - ls -l schizonts/*.tif
+  - unset MPLBACKEND
   - make html
   - cd ..
   - if [[ -z "$TRAVIS_TAG" ]]; then
