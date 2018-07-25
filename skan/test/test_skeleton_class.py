@@ -6,7 +6,8 @@ from numpy.testing import assert_equal, assert_allclose
 from skan.csr import Skeleton
 
 from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
-                            skeleton2, skeleton3d, topograph1d, skeleton4)
+                            skeleton2, skeleton3d, topograph1d, skeleton4,
+                            junction_first)
 
 
 def test_skeleton1_topo():
@@ -75,3 +76,14 @@ def test_path_stdev():
     # (Var = StDev**2 = E(X**2) - (E(X))**2)
     assert_allclose(skeleton.path_stdev()**2,
                     skeleton2.path_means() - skeleton.path_means()**2)
+
+
+def test_junction_first():
+    """Ensure no self-edges exist in multi-pixel junctions.
+
+    Before commit 64047622, the skeleton class would include self-edges
+    within junctions in its paths list, but only when the junction was visited
+    before any of its adjacent branches. This turns out to be tricky to achieve
+    but not impossible in 2D.
+    """
+    assert [1, 1] not in Skeleton(junction_first).paths_list()
