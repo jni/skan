@@ -52,11 +52,11 @@ def _pixel_graph(image, steps, distances, num_edges, height=None):
     col = np.empty(num_edges, dtype=int)
     data = np.empty(num_edges, dtype=float)
     if height is None:
-        _write_pixel_graph(image, steps, distances, row, col, data)
+        k = _write_pixel_graph(image, steps, distances, row, col, data)
     else:
-        _write_pixel_graph_height(image, height, steps, distances,
-                                  row, col, data)
-    graph = sparse.coo_matrix((data, (row, col))).tocsr()
+        k = _write_pixel_graph_height(image, height, steps, distances,
+                                      row, col, data)
+    graph = sparse.coo_matrix((data[:k], (row[:k], col[:k]))).tocsr()
     return graph
 
 
@@ -81,6 +81,11 @@ def _write_pixel_graph(image, steps, distances, row, col, data):
         Output array to be filled with the distances from center to
         neighbor pixels.
 
+    Returns
+    -------
+    k : int
+        The number of entries written to row, col, and data.
+
     Notes
     -----
     No size or bounds checking is performed. Users should ensure that
@@ -99,11 +104,12 @@ def _write_pixel_graph(image, steps, distances, row, col, data):
         if image[i] != 0:
             for j in range(n_neighbors):
                 n = steps[j] + i
-                if image[n] != 0:
+                if image[n] != 0 and image[n] != image[i]:
                     row[k] = image[i]
                     col[k] = image[n]
                     data[k] = distances[j]
                     k += 1
+    return k
 
 @numba.jit(nopython=True, cache=True, nogil=True)
 def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
@@ -133,6 +139,11 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
         Output array to be filled with the distances from center to
         neighbor pixels.
 
+    Returns
+    -------
+    k : int
+        The number of entries written to row, col, and data.
+
     Notes
     -----
     No size or bounds checking is performed. Users should ensure that
@@ -152,12 +163,13 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
         if image[i] != 0:
             for j in range(n_neighbors):
                 n = steps[j] + i
-                if image[n] != 0:
+                if image[n] != 0 and image[n] != image[i]:
                     row[k] = image[i]
                     col[k] = image[n]
                     data[k] = np.sqrt(distances[j] ** 2 +
                                       (height[i] - height[n]) ** 2)
                     k += 1
+    return k
 
 
 @numba.jit(nopython=True, cache=False)  # change this to True with Numba 1.0
