@@ -9,7 +9,6 @@ from .vendored.thresholding import threshold_sauvola, threshold_niblack
 SMOOTH_METHODS = {
     'Gaussian': filters.gaussian,
     'TV': restoration.denoise_tv_bregman,
-    'NL': restoration.denoise_nl_means
 }
 
 
@@ -60,9 +59,9 @@ def threshold(image, *, sigma=0., radius=0, offset=0.,
     method: {'sauvola', 'niblack', 'median'}
         Which method to use for thresholding. Sauvola is 100x faster, but
         median might be more accurate.
-    smooth_method: {'Gaussian', 'TV', 'NL'}
-        Which method to use for smoothing. Choose from Gaussian smoothing,
-        total variation denoising, and non-local means denoising.
+    smooth_method: {'Gaussian', 'TV'}
+        Which method to use for smoothing. Choose from Gaussian smoothing
+        and total variation denoising.
 
     Returns
     -------
@@ -78,10 +77,6 @@ def threshold(image, *, sigma=0., radius=0, offset=0.,
             image = filters.gaussian(image, sigma=sigma)
         elif smooth_method.lower() == 'tv':
             image = restoration.denoise_tv_bregman(image, weight=sigma)
-        elif smooth_method.lower() == 'nl':
-            image = restoration.denoise_nl_means(image,
-                                             patch_size=round(2 * sigma),
-                                             multichannel=False)
     if radius == 0:
         t = filters.threshold_otsu(image) + offset
     else:

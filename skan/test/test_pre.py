@@ -84,7 +84,3 @@ def test_threshold_denoise(image):
     thresholded = pre.threshold(image, sigma=0, radius=15)
     assert (_total_variation(thresholded) >
             _total_variation(denoised_thresholded))
-    denoised_thresholded = pre.threshold(image, sigma=4, radius=15,
-                                         smooth_method='nl')
-    assert(_total_variation(thresholded) >
-           _total_variation(denoised_thresholded))
