@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
-                                               NavigationToolbar2TkAgg)
+                                               NavigationToolbar2Tk)
 import matplotlib.pyplot as plt
 import tkinter as tk
 import tkinter.filedialog
@@ -190,7 +190,7 @@ class Launch(tk.Tk):
         canvas = FigureCanvasTkAgg(self.figure, master=self.figure_window)
         canvas.show()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        toolbar = NavigationToolbar2TkAgg(canvas, self.figure_window)
+        toolbar = NavigationToolbar2Tk(canvas, self.figure_window)
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
