@@ -24,26 +24,17 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Skan 0.8.0-dev documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -106,7 +97,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">Skan</a>
@@ -114,9 +105,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -145,8 +137,6 @@
     
     
       <li class="wy-breadcrumbs-aside">
-        
-            
         
       </li>
     
@@ -213,11 +203,11 @@
     <span class="n">col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">num_edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">num_edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_write_pixel_graph</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">_write_pixel_graph</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">_write_pixel_graph_height</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span>
-                                  <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-    <span class="n">graph</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)))</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">_write_pixel_graph_height</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span>
+                                      <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">[:</span><span class="n">k</span><span class="p">],</span> <span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="n">k</span><span class="p">],</span> <span class="n">col</span><span class="p">[:</span><span class="n">k</span><span class="p">])))</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">graph</span>
 
 
@@ -242,6 +232,11 @@
 <span class="sd">        Output array to be filled with the distances from center to</span>
 <span class="sd">        neighbor pixels.</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    k : int</span>
+<span class="sd">        The number of entries written to row, col, and data.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    No size or bounds checking is performed. Users should ensure that</span>
@@ -260,11 +255,12 @@
         <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_neighbors</span><span class="p">):</span>
                 <span class="n">n</span> <span class="o">=</span> <span class="n">steps</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span>
-                <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">!=</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                     <span class="n">row</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                     <span class="n">col</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
                     <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">k</span>
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_write_pixel_graph_height</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
@@ -294,6 +290,11 @@
 <span class="sd">        Output array to be filled with the distances from center to</span>
 <span class="sd">        neighbor pixels.</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    k : int</span>
+<span class="sd">        The number of entries written to row, col, and data.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    No size or bounds checking is performed. Users should ensure that</span>
@@ -313,12 +314,13 @@
         <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_neighbors</span><span class="p">):</span>
                 <span class="n">n</span> <span class="o">=</span> <span class="n">steps</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span>
-                <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">!=</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                     <span class="n">row</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                     <span class="n">col</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span>
                                       <span class="p">(</span><span class="n">height</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">height</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
                     <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">k</span>
 
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># change this to True with Numba 1.0</span>
@@ -486,8 +488,8 @@
         <span class="c1"># ...: mat.indices[start:stop]</span>
         <span class="c1"># ...:</span>
         <span class="c1"># 5.05 µs ± 77.2 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)</span>
-        <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span></div>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Skeleton.path_coordinates"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">path_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the image coordinates of the pixels in the path.</span>
@@ -502,8 +504,8 @@
 <span class="sd">        path_coords : array of float</span>
 <span class="sd">            The (image) coordinates of points on the path, including endpoints.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">path_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">path_indices</span><span class="p">]</span>
+        <span class="n">path_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">path_indices</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Skeleton.path_with_data"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_with_data">[docs]</a>    <span class="k">def</span> <span class="nf">path_with_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return pixel indices and corresponding pixel values on a path.</span>
@@ -520,8 +522,8 @@
 <span class="sd">        data : array of float</span>
 <span class="sd">            The values of pixels on the path.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span></div>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Skeleton.path_lengths"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_lengths">[docs]</a>    <span class="k">def</span> <span class="nf">path_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the length of each path on the skeleton.</span>
@@ -534,8 +536,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distances_initialized</span><span class="p">:</span>
             <span class="n">_compute_distances</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span>
                                <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_distances_initialized</span> <span class="o">=</span> <span class="kc">True</span></div>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distances_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span></div>
 
 <div class="viewcode-block" id="Skeleton.paths_list"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.paths_list">[docs]</a>    <span class="k">def</span> <span class="nf">paths_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List all the paths in the skeleton, including endpoints.</span>
@@ -544,8 +546,8 @@
 <span class="sd">        -------</span>
 <span class="sd">        paths : list of array of int</span>
 <span class="sd">            The list containing all the paths in the skeleton.</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
-        <span class="k">return</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_paths</span><span class="p">)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_paths</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="Skeleton.path_means"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_means">[docs]</a>    <span class="k">def</span> <span class="nf">path_means</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the mean pixel value along each path.</span>
@@ -556,8 +558,8 @@
 <span class="sd">            The average pixel value along each path in the skeleton.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span></div>
-        <span class="k">return</span> <span class="n">sums</span> <span class="o">/</span> <span class="n">lengths</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sums</span> <span class="o">/</span> <span class="n">lengths</span></div>
 
 <div class="viewcode-block" id="Skeleton.path_stdev"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_stdev">[docs]</a>    <span class="k">def</span> <span class="nf">path_stdev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the standard deviation of values along each path.</span>
@@ -570,8 +572,8 @@
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">data</span>
         <span class="n">sumsq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span>
-        <span class="n">means</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_means</span><span class="p">()</span></div></div>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">sumsq</span><span class="o">/</span><span class="n">lengths</span> <span class="o">-</span> <span class="n">means</span><span class="o">*</span><span class="n">means</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_means</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">sumsq</span><span class="o">/</span><span class="n">lengths</span> <span class="o">-</span> <span class="n">means</span><span class="o">*</span><span class="n">means</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span></div></div>
 
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># cache with Numba 1.0</span>
@@ -701,8 +703,8 @@
 
     <span class="k">if</span> <span class="n">unique_junctions</span><span class="p">:</span>
         <span class="n">_uniquify_junctions</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">pixel_indices</span><span class="p">,</span>
-                            <span class="n">labeled_junctions</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">pixel_indices</span><span class="p">,</span> <span class="n">degree_image</span>
+                            <span class="n">labeled_junctions</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">pixel_indices</span><span class="p">,</span> <span class="n">degree_image</span></div>
 
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -860,8 +862,8 @@
     <span class="n">num_paths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">degrees</span><span class="p">[</span><span class="n">endpoints</span><span class="p">])</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_paths</span> <span class="o">+</span> <span class="n">buffer_size_offset</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">num_results</span> <span class="o">=</span> <span class="n">_branch_statistics_loop</span><span class="p">(</span><span class="n">jgraph</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-    <span class="n">num_columns</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">jgraph</span><span class="o">.</span><span class="n">has_node_props</span> <span class="k">else</span> <span class="mi">4</span></div>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[:</span><span class="n">num_results</span><span class="p">,</span> <span class="p">:</span><span class="n">num_columns</span><span class="p">]</span>
+    <span class="n">num_columns</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">jgraph</span><span class="o">.</span><span class="n">has_node_props</span> <span class="k">else</span> <span class="mi">4</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[:</span><span class="n">num_results</span><span class="p">,</span> <span class="p">:</span><span class="n">num_columns</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="submatrix"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.submatrix">[docs]</a><span class="k">def</span> <span class="nf">submatrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">idxs</span><span class="p">):</span>
@@ -888,8 +890,8 @@
 <span class="sd">    [[ 0  2]</span>
 <span class="sd">     [ 8 10]]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Msub</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">idxs</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">idxs</span><span class="p">]</span></div>
-    <span class="k">return</span> <span class="n">Msub</span>
+    <span class="n">Msub</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">idxs</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">idxs</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Msub</span></div>
 
 
 <div class="viewcode-block" id="summarise"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.summarise">[docs]</a><span class="k">def</span> <span class="nf">summarise</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">using_height</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -965,8 +967,8 @@
                     <span class="p">[</span><span class="nb">float</span><span class="p">])</span>
     <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">dat</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
                  <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">dat</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">column_types</span><span class="p">)}</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span></div>
-    <span class="k">return</span> <span class="n">df</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 
 <div class="viewcode-block" id="compute_centroids"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.compute_centroids">[docs]</a><span class="k">def</span> <span class="nf">compute_centroids</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
@@ -1004,14 +1006,12 @@
     <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
     <span class="n">grouping</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">nzpix</span><span class="p">)</span>
     <span class="n">sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">grouping</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">sizes</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">means</span> <span class="o">=</span> <span class="n">sums</span> <span class="o">/</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span></div>
-    <span class="k">return</span> <span class="n">labeled_image</span><span class="p">,</span> <span class="n">means</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="n">sums</span> <span class="o">/</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">labeled_image</span><span class="p">,</span> <span class="n">means</span></div>
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -1020,11 +1020,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Juan Nunez-Iglesias.
+        &copy; Copyright 2017, Juan Nunez-Iglesias
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1039,36 +1039,24 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.8.0-dev',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
