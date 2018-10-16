@@ -24,28 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Skan 0.8.0-dev documentation" href="../index.html"/>
-        <link rel="up" title="Skan API Reference" href="api.html"/>
-        <link rel="next" title="skan.vendored.thresholding: Thresholding algorithms" href="skan.vendored.thresholding.html"/>
-        <link rel="prev" title="skan.pipe:: Pipeline functions for skeleton analysis" href="skan.pipe.html"/> 
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skan.vendored.thresholding: Thresholding algorithms" href="skan.vendored.thresholding.html" />
+    <link rel="prev" title="skan.pipe:: Pipeline functions for skeleton analysis" href="skan.pipe.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -116,7 +107,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Skan</a>
@@ -124,9 +115,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -180,20 +172,21 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ndim</strong> : int</p>
-<blockquote>
-<div><p>The number of dimensions of the filter.</p>
-</div></blockquote>
-<p><strong>radius</strong> : int</p>
-<blockquote>
-<div><p>The radius of the filter.</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ndim</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The number of dimensions of the filter.</p>
+</dd>
+<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The radius of the filter.</p>
+</dd>
+</dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ball</strong> : array of bool, shape [2 * radius + 1,] * ndim</p>
-<blockquote class="last">
-<div><p>The required structural element</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>ball</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array of bool, shape [2 * radius + 1,] * ndim</span></dt>
+<dd><p class="first last">The required structural element</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
@@ -208,50 +201,47 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : array, shape (M, N, …[, 3])</p>
-<blockquote>
-<div><p>Input image, conformant with scikit-image data type
-specification <a class="reference internal" href="#r2" id="id1">[R2]</a>.</p>
-</div></blockquote>
-<p><strong>sigma</strong> : float, optional</p>
-<blockquote>
-<div><p>If positive, use Gaussian filtering to smooth the image before
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N, …[, 3])</span></dt>
+<dd><p class="first last">Input image, conformant with scikit-image data type
+specification <a class="reference internal" href="#ra96a3d029c32-1" id="id1">[1]</a>.</p>
+</dd>
+<dt><strong>sigma</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd><p class="first last">If positive, use Gaussian filtering to smooth the image before
 thresholding.</p>
-</div></blockquote>
-<p><strong>radius</strong> : int, optional</p>
-<blockquote>
-<div><p>If given, use local median thresholding instead of global.</p>
-</div></blockquote>
-<p><strong>offset</strong> : float, optional</p>
-<blockquote>
-<div><p>If given, reduce the threshold by this amount. Higher values
+</dd>
+<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd><p class="first last">If given, use local median thresholding instead of global.</p>
+</dd>
+<dt><strong>offset</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd><p class="first last">If given, reduce the threshold by this amount. Higher values
 result in fewer pixels above the threshold.</p>
-</div></blockquote>
-<p><strong>method: {‘sauvola’, ‘niblack’, ‘median’}</strong></p>
-<blockquote>
-<div><p>Which method to use for thresholding. Sauvola is 100x faster, but
+</dd>
+<dt><strong>method: {‘sauvola’, ‘niblack’, ‘median’}</strong></dt>
+<dd><p class="first last">Which method to use for thresholding. Sauvola is 100x faster, but
 median might be more accurate.</p>
-</div></blockquote>
-<p><strong>smooth_method: {‘Gaussian’, ‘TV’, ‘NL’}</strong></p>
-<blockquote>
-<div><p>Which method to use for smoothing. Choose from Gaussian smoothing,
-total variation denoising, and non-local means denoising.</p>
-</div></blockquote>
+</dd>
+<dt><strong>smooth_method: {‘Gaussian’, ‘TV’}</strong></dt>
+<dd><p class="first last">Which method to use for smoothing. Choose from Gaussian smoothing
+and total variation denoising.</p>
+</dd>
+</dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>thresholded</strong> : image of bool, same shape as <cite>image</cite></p>
-<blockquote class="last">
-<div><p>The thresholded image.</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>thresholded</strong> <span class="classifier-delimiter">:</span> <span class="classifier">image of bool, same shape as <cite>image</cite></span></dt>
+<dd><p class="first last">The thresholded image.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r2" rules="none">
+<table class="docutils citation" frame="void" id="ra96a3d029c32-1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[R2]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></td></tr>
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></td></tr>
 </tbody>
 </table>
 </dd></dl>
@@ -260,9 +250,7 @@ total variation denoising, and non-local means denoising.</p>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -280,11 +268,11 @@ total variation denoising, and non-local means denoising.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Juan Nunez-Iglesias.
+        &copy; Copyright 2017, Juan Nunez-Iglesias
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -299,36 +287,24 @@ total variation denoising, and non-local means denoising.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.8.0-dev',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
