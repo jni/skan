@@ -176,6 +176,7 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
 def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
     indptr_i = 0
     indices_j = 0
+    # first, process all nodes in a path to an endpoint or junction
     for node in range(1, jgraph.shape[0]):
         if degrees[node] > 2 or degrees[node] == 1 and not visited[node]:
             for neighbor in jgraph.neighbors(node):
@@ -187,6 +188,16 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
                     indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                     indptr_i += 1
                     indices_j += n_steps
+    # everything else is by definition in isolated cycles
+    for node in range(1, jgraph.shape[0]):
+        if not visited[node]:
+            visited[node] = True
+            neighbor = jgraph.neighbors(node)[0]
+            n_steps = _walk_path(jgraph, node, neighbor, visited, degrees,
+                                 indices, path_data, indices_j)
+            indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
+            indptr_i += 1
+            indices_j += n_steps
     return indptr_i + 1, indices_j
 
 
@@ -220,14 +231,18 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
     # the number of points that we need to save to store all skeleton
     # paths is equal to the number of pixels plus the sum of endpoint
     # degrees minus one (since the endpoints will have been counted once
-    # already in the number of pixels).
-    path_indices = np.zeros(graph.indices.size
-                            + np.sum(endpoint_degrees - 1), dtype=int)
+    # already in the number of pixels) *plus* the number of isolated
+    # cycles (since each cycle has one index repeated). We don't know
+    # the number of cycles ahead of time, but it is bounded by one quarter
+    # of the number of points.
+    n_points = (graph.indices.size + np.sum(endpoint_degrees - 1) +
+                graph.indices.size // 4)
+    path_indices = np.zeros(n_points, dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
     m, n = _build_paths(graph, path_indptr, path_indices, path_data,
                         visited, degrees)
     paths = sparse.csr_matrix((path_data[:n], path_indices[:n],
-                               path_indptr[:m]))
+                               path_indptr[:m]), shape=(m-1, n))
     return paths
 
 
