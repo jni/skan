@@ -10,6 +10,11 @@ from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
                             junction_first)
 
 
+def test_tiny_cycle():
+    skeleton = Skeleton(tinycycle)
+    assert skeleton.paths.shape == (1, 5)
+
+
 def test_skeleton1_topo():
     skeleton = Skeleton(skeleton1)
     assert skeleton.paths.shape == (4, np.sum(skeleton1) + 1)

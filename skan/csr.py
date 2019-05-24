@@ -221,7 +221,10 @@ def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
     return j - startj + 1
 
 
-def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
+def _build_skeleton_path_graph(graph, *, _buffer_size_offset=None):
+    if _buffer_size_offset is None:
+        max_num_cycles = graph.indices.size // 4
+        _buffer_size_offset = max_num_cycles
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
@@ -236,7 +239,7 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
     # the number of cycles ahead of time, but it is bounded by one quarter
     # of the number of points.
     n_points = (graph.indices.size + np.sum(endpoint_degrees - 1) +
-                graph.indices.size // 4)
+                max_num_cycles)
     path_indices = np.zeros(n_points, dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
     m, n = _build_paths(graph, path_indptr, path_indices, path_data,
@@ -307,7 +310,7 @@ class Skeleton:
         `keep_images` is True. This is useful for visualization.
     """
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
-                 _buffer_size_offset=0, keep_images=True):
+                 _buffer_size_offset=None, keep_images=True):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
                                                      spacing=spacing)
         if np.issubdtype(skeleton_image.dtype, np.float_):
