@@ -328,6 +328,9 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.source_image = None
+        self.degrees = degrees
+        self.spacing = (np.asarray(spacing) if not np.isscalar(spacing)
+                        else np.full(skeleton_image.ndim, spacing))
         if keep_images:
             self.skeleton_image = skeleton_image
             self.source_image = source_image
@@ -441,6 +444,44 @@ class Skeleton:
         lengths = np.diff(self.paths.indptr)
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
+
+    def summarize(self):
+        summary = {}
+        value_columns = (['mean-pixel-value', 'stdev-pixel-value']
+                         if self.nbgraph.has_node_props else [])
+        ndim = self.coordinates.shape[1]
+        _, skeleton_ids = csgraph.connected_components(self.paths,
+                                                       directed=False)
+        endpoints_src = self.paths.indices[self.paths.indptr[:-1]]
+        endpoints_dst = self.paths.indices[self.paths.indptr[1:] - 1]
+        summary['skeleton-id'] = skeleton_ids[endpoints_src]
+        summary['node-id-src'] = endpoints_src
+        summary['node-id-dst'] = endpoints_dst
+        summary['branch-distance'] = self.path_lengths()
+        deg_src = self.degrees[endpoints_src]
+        deg_dst = self.degrees[endpoints_dst]
+        kind = np.full(deg_src.shape, 2)  # default: junction-to-junction
+        kind[(deg_src == 1) | (deg_dst == 1)] = 1  # tip-junction
+        kind[(deg_src == 1) & (deg_dst == 1)] = 0  # tip-tip
+        kind[endpoints_src == endpoints_dst] = 3  # cycle
+        summary['branch-type'] = kind
+        summary['mean-pixel-value'] = self.path_means()
+        summary['stdev-pixel-value'] = self.path_stdev()
+        for i in range(ndim):  # keep loops separate for best insertion order
+            summary[f'image-coord-src-{i}'] = self.coordinates[endpoints_src, i]
+        for i in range(ndim):
+            summary[f'image-coord-dst-{i}'] = self.coordinates[endpoints_dst, i]
+        coords_real_src = self.coordinates[endpoints_src] * self.spacing
+        for i in range(ndim):
+            summary[f'image-coord-src-{i}'] = coords_real_src[:, i]
+        coords_real_dst = self.coordinates[endpoints_dst] * self.spacing
+        for i in range(ndim):
+            summary[f'image-coord-dst-{i}'] = coords_real_dst[:, i]
+        summary['euclidean-distance'] = (
+                np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
+        )
+        df = pd.DataFrame(summary)
+        return df
 
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
