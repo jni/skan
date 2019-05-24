@@ -447,8 +447,6 @@ class Skeleton:
 
     def summarize(self):
         summary = {}
-        value_columns = (['mean-pixel-value', 'stdev-pixel-value']
-                         if self.nbgraph.has_node_props else [])
         ndim = self.coordinates.shape[1]
         _, skeleton_ids = csgraph.connected_components(self.paths,
                                                        directed=False)
