@@ -6,8 +6,7 @@ import numpy as np
 from skimage import morphology
 import pandas as pd
 from .image_stats import image_summary
-from .vendored.shape import shape_index
-import matplotlib.pyplot as plt
+from skimage.feature import shape_index
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import multiprocessing as mp
 
