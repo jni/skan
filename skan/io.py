@@ -23,6 +23,6 @@ def write_excel(filename, **kwargs):
         if isinstance(obj, dict):
             obj = _params_dict_to_dataframe(obj)
         if isinstance(obj, pd.DataFrame):
-            obj.to_excel(writer, sheetname=sheet_name)
+            obj.to_excel(writer, sheet_name=sheet_name)
     writer.save()
     writer.close()
