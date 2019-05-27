@@ -17,34 +17,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Using Skan’s GUI" href="gui.html" />
     <link rel="prev" title="Installing Skan" href="install.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -185,8 +188,8 @@ method to read these images, including metadata.</p>
 </div>
 <p>We display the images with <a class="reference external" href="http://matplotlib.org">Matplotlib</a>.</p>
 <div class="admonition hint">
-<p class="first admonition-title">Hint</p>
-<p class="last">If running in the IPython console, consider running <code class="docutils literal notranslate"><span class="pre">%matplotlib</span></code> to enable
+<p class="admonition-title">Hint</p>
+<p>If running in the IPython console, consider running <code class="docutils literal notranslate"><span class="pre">%matplotlib</span></code> to enable
 interactive plots.  If running in the Jupyter Notebook, use <code class="docutils literal notranslate"><span class="pre">%matplotlib</span>
 <span class="pre">inline</span></code>.</p>
 </div>
@@ -198,7 +201,7 @@ interactive plots.  If running in the Jupyter Notebook, use <code class="docutil
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-2.png">png</a>, <a class="reference external" href=".//getting_started-2.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-2.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-2.png" src="_images/getting_started-2.png" />
 </div>
 <p>As an aside, we can extract the pixel spacing in meters from the
@@ -217,17 +220,17 @@ interactive plots.  If running in the Jupyter Notebook, use <code class="docutil
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-3.png">png</a>, <a class="reference external" href=".//getting_started-3.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-3.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-3.png" src="_images/getting_started-3.png" />
 </div>
 <p>This is an image of the inside of the membrane of a red blood cell. We
 want to measure the network of bright regions in this image, which is
 made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
 <ul class="simple">
-<li>smooth the image with Gaussian smoothing</li>
-<li>threshold the image with Sauvola thresholding (Otsu thresholding also
-works)</li>
-<li>skeletonise the resulting binary image</li>
+<li><p>smooth the image with Gaussian smoothing</p></li>
+<li><p>threshold the image with Sauvola thresholding (Otsu thresholding also
+works)</p></li>
+<li><p>skeletonise the resulting binary image</p></li>
 </ul>
 <p>These steps can be performed by a single function in Skan,
 <code class="docutils literal notranslate"><span class="pre">skan.pre.threshold</span></code>. We use parameters derived from the metadata, so
@@ -245,7 +248,7 @@ physical resolutions.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-4.png">png</a>, <a class="reference external" href=".//getting_started-4.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-4.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-4.png" src="_images/getting_started-4.png" />
 </div>
 <p>(There are some thresholding artifacts around the left edge, due to the
@@ -266,7 +269,7 @@ parameter to filter out these regions.)</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-6.png">png</a>, <a class="reference external" href=".//getting_started-6.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-6.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-6.png" src="_images/getting_started-6.png" />
 </div>
 </div>
@@ -319,7 +322,7 @@ recommended for very small networks.)</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-9.png">png</a>, <a class="reference external" href=".//getting_started-9.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-9.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-9.png" src="_images/getting_started-9.png" />
 </div>
 <p>The function <code class="docutils literal notranslate"><span class="pre">skan.csr.summarise</span></code> uses this graph to trace the path
@@ -474,7 +477,7 @@ type:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-11.png">png</a>, <a class="reference external" href=".//getting_started-11.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-11.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-11.png" src="_images/getting_started-11.png" />
 </div>
 <p>We can see that junction-to-junction branches tend to be longer than
@@ -488,7 +491,7 @@ user-selected attribute in the table:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-12.png">png</a>, <a class="reference external" href=".//getting_started-12.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-12.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-12.png" src="_images/getting_started-12.png" />
 </div>
 </div>
@@ -548,7 +551,7 @@ junction-to-junction branches.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-14.png">png</a>, <a class="reference external" href=".//getting_started-14.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-14.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/getting_started-14.png" src="_images/getting_started-14.png" />
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite,
@@ -556,18 +559,18 @@ junction-to-junction branches.</p>
 surface of the RBC membrane.</p>
 <p>This is of course a toy example. For the full dataset and analysis, see:</p>
 <ul class="simple">
-<li>our paper (submitted to PeerJ),</li>
-<li>the <a class="reference external" href="complete_analysis.html">“Complete analysis with skan”</a> page,
-and</li>
-<li>the <a class="reference external" href="https://github.com/jni/skan-scripts">skan-scripts</a>
-repository.</li>
+<li><p>our paper (submitted to PeerJ),</p></li>
+<li><p>the <a class="reference external" href="complete_analysis.html">“Complete analysis with skan”</a> page,
+and</p></li>
+<li><p>the <a class="reference external" href="https://github.com/jni/skan-scripts">skan-scripts</a>
+repository.</p></li>
 </ul>
 <p>But we hope this minimal example will serve for inspiration for your
 future analysis of skeleton images.</p>
 <ul class="simple">
-<li><a class="reference download internal" href="getting_started.py">Download this page as a Python code file</a>;</li>
-<li><a class="reference download internal" href="getting_started.ipynb">Download this page as a Jupyter notebook (no outputs)</a>;</li>
-<li><a class="reference download internal" href="getting_started_full.ipynb">Download this page as a Jupyter notebook (with outputs)</a>.</li>
+<li><p><a class="reference download internal" href="getting_started.py">Download this page as a Python code file</a>;</p></li>
+<li><p><a class="reference download internal" href="getting_started.ipynb">Download this page as a Jupyter notebook (no outputs)</a>;</p></li>
+<li><p><a class="reference download internal" href="getting_started_full.ipynb">Download this page as a Jupyter notebook (with outputs)</a>.</p></li>
 </ul>
 </div>
 </div>
@@ -583,7 +586,7 @@ future analysis of skeleton images.</p>
         <a href="gui.html" class="btn btn-neutral float-right" title="Using Skan’s GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install.html" class="btn btn-neutral" title="Installing Skan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install.html" class="btn btn-neutral float-left" title="Installing Skan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -609,26 +612,16 @@ future analysis of skeleton images.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

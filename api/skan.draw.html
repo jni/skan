@@ -17,33 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="skan.pipe:: Pipeline functions for skeleton analysis" href="skan.pipe.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -167,170 +170,132 @@
 <dt id="skan.draw.overlay_euclidean_skeleton_2d">
 <code class="descclassname">skan.draw.</code><code class="descname">overlay_euclidean_skeleton_2d</code><span class="sig-paren">(</span><em>image</em>, <em>stats</em>, <em>*</em>, <em>image_cmap=None</em>, <em>skeleton_color_source='branch-type'</em>, <em>skeleton_colormap='viridis'</em>, <em>axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_euclidean_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_euclidean_skeleton_2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the image, and overlay the straight-line skeleton over it.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N)</span></dt>
-<dd><p class="first last">The input image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">array, shape (M, N)</span></dt><dd><p>The input image.</p>
 </dd>
-<dt><strong>stats</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N)</span></dt>
-<dd><p class="first last">Skeleton statistics.</p>
+<dt><strong>stats</strong><span class="classifier">array, shape (M, N)</span></dt><dd><p>Skeleton statistics.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Axes object</span></dt>
-<dd><p class="first last">The Axes on which the plot is drawn.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>axes</strong><span class="classifier">matplotlib Axes object</span></dt><dd><p>The Axes on which the plot is drawn.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><dl class="first last docutils">
-<dt><strong>image_cmap</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib colormap name or object, optional</span></dt>
-<dd><p class="first last">The colormap to use for the input image. Defaults to grayscale.</p>
 </dd>
-<dt><strong>skeleton_color_source</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string, optional</span></dt>
-<dd><p class="first">The name of the column to use for the skeleton edge color. See the
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image_cmap</strong><span class="classifier">matplotlib colormap name or object, optional</span></dt><dd><p>The colormap to use for the input image. Defaults to grayscale.</p>
+</dd>
+<dt><strong>skeleton_color_source</strong><span class="classifier">string, optional</span></dt><dd><p>The name of the column to use for the skeleton edge color. See the
 output of <cite>skan.summarise</cite> for valid choices. Most common choices
 would be:</p>
-<ul class="last simple">
-<li>skeleton-id: each individual skeleton (connected component) will
-have a different colour.</li>
-<li>branch-type: each branch type (tip-tip, tip-junction,
-junction-junction, path-path). This is the default.</li>
-<li>branch-distance: the curved length of the skeleton branch.</li>
-<li>euclidean-distance: the straight-line length of the skeleton branch.</li>
+<ul class="simple">
+<li><p>skeleton-id: each individual skeleton (connected component) will
+have a different colour.</p></li>
+<li><p>branch-type: each branch type (tip-tip, tip-junction,
+junction-junction, path-path). This is the default.</p></li>
+<li><p>branch-distance: the curved length of the skeleton branch.</p></li>
+<li><p>euclidean-distance: the straight-line length of the skeleton branch.</p></li>
 </ul>
 </dd>
-<dt><strong>skeleton_colormap</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib colormap name or object, optional</span></dt>
-<dd><p class="first last">The colormap for the skeleton values.</p>
+<dt><strong>skeleton_colormap</strong><span class="classifier">matplotlib colormap name or object, optional</span></dt><dd><p>The colormap for the skeleton values.</p>
 </dd>
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Axes object, optional</span></dt>
-<dd><p class="first last">An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p>
+<dt><strong>axes</strong><span class="classifier">matplotlib Axes object, optional</span></dt><dd><p>An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="skan.draw.overlay_skeleton_2d">
 <code class="descclassname">skan.draw.</code><code class="descname">overlay_skeleton_2d</code><span class="sig-paren">(</span><em>image</em>, <em>skeleton</em>, <em>*</em>, <em>image_cmap=None</em>, <em>color=(1</em>, <em>0</em>, <em>0)</em>, <em>alpha=1</em>, <em>dilate=0</em>, <em>axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overlay the skeleton pixels on the input image.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N[, 3])</span></dt>
-<dd><p class="first last">The input image. Can be grayscale or RGB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">array, shape (M, N[, 3])</span></dt><dd><p>The input image. Can be grayscale or RGB.</p>
 </dd>
-<dt><strong>skeleton</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N)</span></dt>
-<dd><p class="first last">The input 1-pixel-wide skeleton.</p>
+<dt><strong>skeleton</strong><span class="classifier">array, shape (M, N)</span></dt><dd><p>The input 1-pixel-wide skeleton.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Axes</span></dt>
-<dd><p class="first last">The Axis on which the image is drawn.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>axes</strong><span class="classifier">matplotlib Axes</span></dt><dd><p>The Axis on which the image is drawn.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><dl class="first last docutils">
-<dt><strong>image_cmap</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib colormap name or object, optional</span></dt>
-<dd><p class="first last">If the input image is grayscale, colormap it with this colormap.
+</dd>
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image_cmap</strong><span class="classifier">matplotlib colormap name or object, optional</span></dt><dd><p>If the input image is grayscale, colormap it with this colormap.
 The default is grayscale.</p>
 </dd>
-<dt><strong>color</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple of float in [0, 1], optional</span></dt>
-<dd><p class="first last">The RGB color for the skeleton pixels.</p>
+<dt><strong>color</strong><span class="classifier">tuple of float in [0, 1], optional</span></dt><dd><p>The RGB color for the skeleton pixels.</p>
 </dd>
-<dt><strong>alpha</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
-<dd><p class="first last">Blend the skeleton pixels with the given alpha.</p>
+<dt><strong>alpha</strong><span class="classifier">float, optional</span></dt><dd><p>Blend the skeleton pixels with the given alpha.</p>
 </dd>
-<dt><strong>dilate</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd><p class="first last">Dilate the skeleton by this amount. This is useful when rendering
+<dt><strong>dilate</strong><span class="classifier">int, optional</span></dt><dd><p>Dilate the skeleton by this amount. This is useful when rendering
 large images where aliasing may cause some pixels of the skeleton
 not to be drawn.</p>
 </dd>
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Axes</span></dt>
-<dd><p class="first last">The Axes on which to plot the image. If None, new ones are created.</p>
+<dt><strong>axes</strong><span class="classifier">matplotlib Axes</span></dt><dd><p>The Axes on which to plot the image. If None, new ones are created.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="skan.draw.overlay_skeleton_2d_class">
 <code class="descclassname">skan.draw.</code><code class="descname">overlay_skeleton_2d_class</code><span class="sig-paren">(</span><em>skeleton</em>, <em>*</em>, <em>image_cmap='gray'</em>, <em>skeleton_color_source='path_means'</em>, <em>skeleton_colormap='viridis'</em>, <em>vmin=None</em>, <em>vmax=None</em>, <em>axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the image, and overlay the skeleton over it.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>skeleton</strong> <span class="classifier-delimiter">:</span> <span class="classifier">skan.Skeleton object</span></dt>
-<dd><p class="first last">The input skeleton, which contains both the skeleton and the source
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>skeleton</strong><span class="classifier">skan.Skeleton object</span></dt><dd><p>The input skeleton, which contains both the skeleton and the source
 image.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Axes object</span></dt>
-<dd><p class="first last">The Axes on which the plot is drawn.</p>
 </dd>
-<dt><strong>mappable</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib ScalarMappable object</span></dt>
-<dd><p class="first last">The mappable values corresponding to the line colors. This can be used
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>axes</strong><span class="classifier">matplotlib Axes object</span></dt><dd><p>The Axes on which the plot is drawn.</p>
+</dd>
+<dt><strong>mappable</strong><span class="classifier">matplotlib ScalarMappable object</span></dt><dd><p>The mappable values corresponding to the line colors. This can be used
 to create a colorbar for the plot.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><dl class="first last docutils">
-<dt><strong>image_cmap</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib colormap name or object, optional</span></dt>
-<dd><p class="first last">The colormap to use for the input image. Defaults to grayscale.</p>
 </dd>
-<dt><strong>skeleton_color_source</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string or callable, optional</span></dt>
-<dd><p class="first">The name of the method to use for the skeleton edge color. See the
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>image_cmap</strong><span class="classifier">matplotlib colormap name or object, optional</span></dt><dd><p>The colormap to use for the input image. Defaults to grayscale.</p>
+</dd>
+<dt><strong>skeleton_color_source</strong><span class="classifier">string or callable, optional</span></dt><dd><p>The name of the method to use for the skeleton edge color. See the
 documentation of <cite>skan.Skeleton</cite> for valid choices. Most common choices
 would be:</p>
 <ul class="simple">
-<li>path_means: the mean value of the skeleton along each path.</li>
-<li>path_lengths: the length of each path.</li>
-<li>path_stdev: the standard deviation of pixel values along the path.</li>
+<li><p>path_means: the mean value of the skeleton along each path.</p></li>
+<li><p>path_lengths: the length of each path.</p></li>
+<li><p>path_stdev: the standard deviation of pixel values along the path.</p></li>
 </ul>
-<p class="last">Alternatively, a callable can be provided that takes as input a
+<p>Alternatively, a callable can be provided that takes as input a
 Skeleton object and outputs a list of floating point values of the same
 length as the number of paths.</p>
 </dd>
-<dt><strong>skeleton_colormap</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib colormap name or object, optional</span></dt>
-<dd><p class="first last">The colormap for the skeleton values.</p>
+<dt><strong>skeleton_colormap</strong><span class="classifier">matplotlib colormap name or object, optional</span></dt><dd><p>The colormap for the skeleton values.</p>
 </dd>
-<dt><strong>vmin, vmax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
-<dd><p class="first last">The minimum and maximum values for the colormap. Use this to pin the
+<dt><strong>vmin, vmax</strong><span class="classifier">float, optional</span></dt><dd><p>The minimum and maximum values for the colormap. Use this to pin the
 colormapped values to a certain range.</p>
 </dd>
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Axes object, optional</span></dt>
-<dd><p class="first last">An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p>
+<dt><strong>axes</strong><span class="classifier">matplotlib Axes object, optional</span></dt><dd><p>An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -339,132 +304,99 @@ colormapped values to a certain range.</p>
 <dd><p>Draw the skeleton as a NetworkX graph, optionally overlaid on an image.</p>
 <p>Due to the size of NetworkX drawing elements, this is only recommended
 for very small skeletons.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>csr_graph</strong> <span class="classifier-delimiter">:</span> <span class="classifier">SciPy Sparse matrix</span></dt>
-<dd><p class="first last">The skeleton graph in SciPy CSR format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>csr_graph</strong><span class="classifier">SciPy Sparse matrix</span></dt><dd><p>The skeleton graph in SciPy CSR format.</p>
 </dd>
-<dt><strong>coordinates</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (N_points, 2)</span></dt>
-<dd><p class="first last">The coordinates of each point in the skeleton. <code class="docutils literal notranslate"><span class="pre">coordinates.shape[0]</span></code>
+<dt><strong>coordinates</strong><span class="classifier">array, shape (N_points, 2)</span></dt><dd><p>The coordinates of each point in the skeleton. <code class="docutils literal notranslate"><span class="pre">coordinates.shape[0]</span></code>
 should be equal to <code class="docutils literal notranslate"><span class="pre">csr_graph.shape[0]</span></code>.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><dl class="first last docutils">
-<dt><strong>axis</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Matplotlib Axes object, optional</span></dt>
-<dd><p class="first last">The Axes on which to plot the data. If None, a new figure and axes will
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>axis</strong><span class="classifier">Matplotlib Axes object, optional</span></dt><dd><p>The Axes on which to plot the data. If None, a new figure and axes will
 be created.</p>
 </dd>
-<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N[, 3])</span></dt>
-<dd><p class="first last">An image on which to overlay the skeleton. <code class="docutils literal notranslate"><span class="pre">image.shape</span></code> should be
+<dt><strong>image</strong><span class="classifier">array, shape (M, N[, 3])</span></dt><dd><p>An image on which to overlay the skeleton. <code class="docutils literal notranslate"><span class="pre">image.shape</span></code> should be
 greater than <code class="docutils literal notranslate"><span class="pre">np.max(coordinates,</span> <span class="pre">axis=0)</span></code>.</p>
 </dd>
-<dt><strong>**kwargs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">keyword arguments</span></dt>
-<dd><p class="first last">Arguments passed on to <cite>nx.draw_networkx</cite>. Particularly useful ones
+<dt><strong>**kwargs</strong><span class="classifier">keyword arguments</span></dt><dd><p>Arguments passed on to <cite>nx.draw_networkx</cite>. Particularly useful ones
 include <code class="docutils literal notranslate"><span class="pre">node_size=</span></code> and <code class="docutils literal notranslate"><span class="pre">font_size=</span></code>.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="skan.draw.pipeline_plot">
 <code class="descclassname">skan.draw.</code><code class="descname">pipeline_plot</code><span class="sig-paren">(</span><em>image</em>, <em>thresholded</em>, <em>skeleton</em>, <em>stats</em>, <em>*</em>, <em>figure=None</em>, <em>axes=None</em>, <em>figsize=(9</em>, <em>9)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pipeline_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pipeline_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the image, the thresholded version, and its skeleton.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N, …[, 3])</span></dt>
-<dd><p class="first last">Input image, conformant with scikit-image data type
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">array, shape (M, N, …[, 3])</span></dt><dd><p>Input image, conformant with scikit-image data type
 specification <a class="reference internal" href="#r7a877596fed3-1" id="id1">[1]</a>.</p>
 </dd>
-<dt><strong>thresholded</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, same shape as image</span></dt>
-<dd><p class="first last">Binarized version of the input image.</p>
+<dt><strong>thresholded</strong><span class="classifier">array, same shape as image</span></dt><dd><p>Binarized version of the input image.</p>
 </dd>
-<dt><strong>skeleton</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, same shape as image</span></dt>
-<dd><p class="first last">Skeletonized version of the input image.</p>
+<dt><strong>skeleton</strong><span class="classifier">array, same shape as image</span></dt><dd><p>Skeletonized version of the input image.</p>
 </dd>
-<dt><strong>stats</strong> <span class="classifier-delimiter">:</span> <span class="classifier">pandas DataFrame</span></dt>
-<dd><p class="first last">Skeleton statistics from the input image/skeleton.</p>
+<dt><strong>stats</strong><span class="classifier">pandas DataFrame</span></dt><dd><p>Skeleton statistics from the input image/skeleton.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>fig</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Figure</span></dt>
-<dd><p class="first last">The Figure containing all the plots</p>
 </dd>
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array of matplotlib Axes</span></dt>
-<dd><p class="first last">The four axes containing the drawn images.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fig</strong><span class="classifier">matplotlib Figure</span></dt><dd><p>The Figure containing all the plots</p>
+</dd>
+<dt><strong>axes</strong><span class="classifier">array of matplotlib Axes</span></dt><dd><p>The four axes containing the drawn images.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><dl class="first last docutils">
-<dt><strong>figure</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib Figure, optional</span></dt>
-<dd><p class="first last">If given, where to make the plots.</p>
 </dd>
-<dt><strong>axes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array of matplotlib Axes, optional</span></dt>
-<dd><p class="first last">If given, use these axes to draw the plots. Should have len 4.</p>
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>figure</strong><span class="classifier">matplotlib Figure, optional</span></dt><dd><p>If given, where to make the plots.</p>
 </dd>
-<dt><strong>figsize</strong> <span class="classifier-delimiter">:</span> <span class="classifier">2-tuple of float, optional</span></dt>
-<dd><p class="first last">The width and height of the figure.</p>
+<dt><strong>axes</strong><span class="classifier">array of matplotlib Axes, optional</span></dt><dd><p>If given, use these axes to draw the plots. Should have len 4.</p>
 </dd>
-<dt><strong>smooth_method</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘Gaussian’, ‘TV’, ‘NL’}, optional</span></dt>
-<dd><p class="first last">Which denoising method to use on the image.</p>
+<dt><strong>figsize</strong><span class="classifier">2-tuple of float, optional</span></dt><dd><p>The width and height of the figure.</p>
+</dd>
+<dt><strong>smooth_method</strong><span class="classifier">{‘Gaussian’, ‘TV’, ‘NL’}, optional</span></dt><dd><p>Which denoising method to use on the image.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r7a877596fed3-1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></td></tr>
-</tbody>
-</table>
+<dl class="citation">
+<dt class="label" id="r7a877596fed3-1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p><a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="skan.draw.pixel_perfect_figsize">
 <code class="descclassname">skan.draw.</code><code class="descname">pixel_perfect_figsize</code><span class="sig-paren">(</span><em>image</em>, <em>dpi=80</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pixel_perfect_figsize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pixel_perfect_figsize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the Matplotlib figure size tuple (w, h) for given image and dpi.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape (M, N[, 3])</span></dt>
-<dd><p class="first last">The image to be plotted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">array, shape (M, N[, 3])</span></dt><dd><p>The image to be plotted.</p>
 </dd>
-<dt><strong>dpi</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd><p class="first last">The desired figure dpi.</p>
+<dt><strong>dpi</strong><span class="classifier">int, optional</span></dt><dd><p>The desired figure dpi.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>figsize</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple of float</span></dt>
-<dd><p class="first last">The desired figure size.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>figsize</strong><span class="classifier">tuple of float</span></dt><dd><p>The desired figure size.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">768</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_perfect_figsize</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -510,26 +442,16 @@ specification <a class="reference internal" href="#r7a877596fed3-1" id="id1">[1]
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

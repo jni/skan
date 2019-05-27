@@ -17,34 +17,37 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="skan.pre: Image preprocessing" href="skan.pre.html" />
     <link rel="prev" title="skan.draw: Skeleton visualisation" href="skan.draw.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -168,60 +171,46 @@
 <dt id="skan.pipe.process_images">
 <code class="descclassname">skan.pipe.</code><code class="descname">process_images</code><span class="sig-paren">(</span><em>filenames</em>, <em>image_format</em>, <em>threshold_radius</em>, <em>smooth_radius</em>, <em>brightness_offset</em>, <em>scale_metadata_path</em>, <em>crop_radius=0</em>, <em>smooth_method='Gaussian'</em>, <em>num_threads=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pipe.html#process_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pipe.process_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Full pipeline from images to skeleton stats with local median threshold.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>filenames</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of string</span></dt>
-<dd><p class="first last">The list of input filenames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>filenames</strong><span class="classifier">list of string</span></dt><dd><p>The list of input filenames.</p>
 </dd>
-<dt><strong>image_format</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
-<dd><p class="first last">The format of the files. ‘auto’ is automatically determined by the
+<dt><strong>image_format</strong><span class="classifier">string</span></dt><dd><p>The format of the files. ‘auto’ is automatically determined by the
 imageio library. See imageio documentation for valid image formats.</p>
 </dd>
-<dt><strong>threshold_radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The radius for median thresholding,</p>
+<dt><strong>threshold_radius</strong><span class="classifier">float</span></dt><dd><p>The radius for median thresholding,</p>
 </dd>
-<dt><strong>smooth_radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float in [0, 1]</span></dt>
-<dd><p class="first last">The value of sigma with which to Gaussian-smooth the image,
+<dt><strong>smooth_radius</strong><span class="classifier">float in [0, 1]</span></dt><dd><p>The value of sigma with which to Gaussian-smooth the image,
 <strong>relative to `threshold_radius`</strong>.</p>
 </dd>
-<dt><strong>brightness_offset</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The standard brightness value with which to threshold is the local
+<dt><strong>brightness_offset</strong><span class="classifier">float</span></dt><dd><p>The standard brightness value with which to threshold is the local
 median, <cite>m(x, y)</cite>. Use this value to offset from there: the threshold
 used will be <cite>m(x, y) + brightness_offset</cite>.</p>
 </dd>
-<dt><strong>scale_metadata_path</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
-<dd><p class="first last">The path in the image dictionary to find the metadata on pixel scale,
+<dt><strong>scale_metadata_path</strong><span class="classifier">string</span></dt><dd><p>The path in the image dictionary to find the metadata on pixel scale,
 separated by forward slashes (‘/’).</p>
 </dd>
-<dt><strong>crop_radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd><p class="first last">Crop <cite>crop_radius</cite> pixels from each margin of the image before
+<dt><strong>crop_radius</strong><span class="classifier">int, optional</span></dt><dd><p>Crop <cite>crop_radius</cite> pixels from each margin of the image before
 processing.</p>
 </dd>
-<dt><strong>smooth_method</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘Gaussian’, ‘TV’, ‘NL’}, optional</span></dt>
-<dd><p class="first last">Which method to use for smoothing.</p>
+<dt><strong>smooth_method</strong><span class="classifier">{‘Gaussian’, ‘TV’, ‘NL’}, optional</span></dt><dd><p>Which method to use for smoothing.</p>
 </dd>
-<dt><strong>num_threads</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd><p class="first last">How many threads to use for computation. This should generally be
+<dt><strong>num_threads</strong><span class="classifier">int, optional</span></dt><dd><p>How many threads to use for computation. This should generally be
 set to the number of CPU cores available to you.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>results</strong> <span class="classifier-delimiter">:</span> <span class="classifier">generator</span></dt>
-<dd><p class="first last">The pipeline yields individual image results in the form of a tuple
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>results</strong><span class="classifier">generator</span></dt><dd><p>The pipeline yields individual image results in the form of a tuple
 of <code class="docutils literal notranslate"><span class="pre">(filename,</span> <span class="pre">image,</span> <span class="pre">thresholded_image,</span> <span class="pre">skeleton,</span> <span class="pre">data_frame)</span></code>.
 Finally, after all the images have been processed, the pipeline yields
 a DataFrame containing all the collated branch-level results.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -237,7 +226,7 @@ a DataFrame containing all the collated branch-level results.</p>
         <a href="skan.pre.html" class="btn btn-neutral float-right" title="skan.pre: Image preprocessing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="skan.draw.html" class="btn btn-neutral" title="skan.draw: Skeleton visualisation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="skan.draw.html" class="btn btn-neutral float-left" title="skan.draw: Skeleton visualisation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -263,26 +252,16 @@ a DataFrame containing all the collated branch-level results.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

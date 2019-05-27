@@ -17,34 +17,37 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="skan.nx: NetworkX respresentation of skeletons" href="skan.nx.html" />
     <link rel="prev" title="skan.pre: Image preprocessing" href="skan.pre.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -172,39 +175,31 @@ sizes.</p>
 <dd><p>Compute valid cross-correlation of <cite>padded_array</cite> and <cite>kernel</cite>.</p>
 <p>This function is <em>fast</em> when <cite>kernel</cite> is large with many zeros.</p>
 <p>See <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.correlate</span></code> for a description of cross-correlation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array of float, shape (M, N,[ …,] P)</span></dt>
-<dd><p class="first last">The input array. It should be already padded, as a margin of the
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image</strong><span class="classifier">array of float, shape (M, N,[ …,] P)</span></dt><dd><p>The input array. It should be already padded, as a margin of the
 same shape as kernel (-1) will be stripped off.</p>
 </dd>
-<dt><strong>kernel</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array of float, shape (Q, R,[ …,] S)</span></dt>
-<dd><p class="first last">The kernel to be correlated. Must have the same number of
+<dt><strong>kernel</strong><span class="classifier">array of float, shape (Q, R,[ …,] S)</span></dt><dd><p>The kernel to be correlated. Must have the same number of
 dimensions as <cite>padded_array</cite>. For high performance, it should
 be sparse (few nonzero entries).</p>
 </dd>
-<dt><strong>mode</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string, optional</span></dt>
-<dd><p class="first last">See <cite>np.pad</cite> for valid modes. Additionally, mode ‘valid’ is
+<dt><strong>mode</strong><span class="classifier">string, optional</span></dt><dd><p>See <cite>np.pad</cite> for valid modes. Additionally, mode ‘valid’ is
 accepted, in which case no padding is applied and the result is
 the result for the smaller image for which the kernel is entirely
 inside the original data.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>result</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array of float, shape (M, N,[ …,] P)</span></dt>
-<dd><p class="first last">The result of cross-correlating <cite>image</cite> with <cite>kernel</cite>. If mode
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>result</strong><span class="classifier">array of float, shape (M, N,[ …,] P)</span></dt><dd><p>The result of cross-correlating <cite>image</cite> with <cite>kernel</cite>. If mode
 ‘valid’ is used, the resulting shape is (M-Q+1, N-R+1,[ …,] P-S+1).</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -218,43 +213,34 @@ following formula:</p>
 pixel (x,y) neighborhood defined by a rectangular window with size w
 times w centered around the pixel. k is a configurable parameter
 that weights the effect of standard deviation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image: (N, M) ndarray</strong></dt>
-<dd><p class="first last">Grayscale input image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image: (N, M) ndarray</strong></dt><dd><p>Grayscale input image.</p>
 </dd>
-<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd><p class="first last">Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p>
+<dt><strong>window_size</strong><span class="classifier">int, optional</span></dt><dd><p>Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p>
 </dd>
-<dt><strong>k</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
-<dd><p class="first last">Value of parameter k in threshold formula.</p>
+<dt><strong>k</strong><span class="classifier">float, optional</span></dt><dd><p>Value of parameter k in threshold formula.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>threshold</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(N, M) ndarray</span></dt>
-<dd><p class="first last">Threshold mask. All pixels with an intensity higher than
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>threshold</strong><span class="classifier">(N, M) ndarray</span></dt><dd><p>Threshold mask. All pixels with an intensity higher than
 this value are assumed to be foreground.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>This algorithm is originally designed for text recognition.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r57e62cd248fd-1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Niblack, W (1986), An introduction to Digital Image
-Processing, Prentice-Hall.</td></tr>
-</tbody>
-</table>
+<dl class="citation">
+<dt class="label" id="r57e62cd248fd-1"><span class="brackets">1</span></dt>
+<dd><p>Niblack, W (1986), An introduction to Digital Image
+Processing, Prentice-Hall.</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">page</span><span class="p">()</span>
@@ -276,52 +262,41 @@ pixel (x,y) neighborhood defined by a rectangular window with size w
 times w centered around the pixel. k is a configurable parameter
 that weights the effect of standard deviation.
 R is the maximum standard deviation of a greyscale image.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image: (N, M) ndarray</strong></dt>
-<dd><p class="first last">Grayscale input image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>image: (N, M) ndarray</strong></dt><dd><p>Grayscale input image.</p>
 </dd>
-<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd><p class="first last">Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p>
+<dt><strong>window_size</strong><span class="classifier">int, optional</span></dt><dd><p>Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p>
 </dd>
-<dt><strong>k</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
-<dd><p class="first last">Value of the positive parameter k.</p>
+<dt><strong>k</strong><span class="classifier">float, optional</span></dt><dd><p>Value of the positive parameter k.</p>
 </dd>
-<dt><strong>r</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
-<dd><p class="first last">Value of R, the dynamic range of standard deviation.
+<dt><strong>r</strong><span class="classifier">float, optional</span></dt><dd><p>Value of R, the dynamic range of standard deviation.
 If None, set to the half of the image dtype range.</p>
 </dd>
-<dt><strong>offset</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
-<dd><p class="first last">Constant subtracted from obtained local thresholds.</p>
+<dt><strong>offset</strong><span class="classifier">float, optional</span></dt><dd><p>Constant subtracted from obtained local thresholds.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>threshold</strong> <span class="classifier-delimiter">:</span> <span class="classifier">(N, M) ndarray</span></dt>
-<dd><p class="first last">Threshold mask. All pixels with an intensity higher than
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>threshold</strong><span class="classifier">(N, M) ndarray</span></dt><dd><p>Threshold mask. All pixels with an intensity higher than
 this value are assumed to be foreground.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>This algorithm is originally designed for text recognition.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r4f87676385ca-1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>J. Sauvola and M. Pietikainen, “Adaptive document image
+<dl class="citation">
+<dt class="label" id="r4f87676385ca-1"><span class="brackets">1</span></dt>
+<dd><p>J. Sauvola and M. Pietikainen, “Adaptive document image
 binarization,” Pattern Recognition 33(2),
 pp. 225-236, 2000.
-DOI:10.1016/S0031-3203(99)00055-2</td></tr>
-</tbody>
-</table>
+DOI:10.1016/S0031-3203(99)00055-2</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">page</span><span class="p">()</span>
@@ -344,7 +319,7 @@ DOI:10.1016/S0031-3203(99)00055-2</td></tr>
         <a href="skan.nx.html" class="btn btn-neutral float-right" title="skan.nx: NetworkX respresentation of skeletons" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="skan.pre.html" class="btn btn-neutral" title="skan.pre: Image preprocessing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="skan.pre.html" class="btn btn-neutral float-left" title="skan.pre: Image preprocessing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -370,26 +345,16 @@ DOI:10.1016/S0031-3203(99)00055-2</td></tr>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
