@@ -92,3 +92,13 @@ def test_junction_first():
     but not impossible in 2D.
     """
     assert [1, 1] not in Skeleton(junction_first).paths_list()
+
+
+def test_skeleton_summarize():
+    image = np.zeros(skeleton2.shape, dtype=float)
+    image[skeleton2] = 1 + np.random.random(np.sum(skeleton2))
+    skeleton = Skeleton(image)
+    summary = skeleton.summarize()
+    assert set(summary['skeleton-id']) == {1, 2}
+    assert np.corrcoef(abs(summary['mean-pixel-value'] - 1),
+                       summary['branch-distance'])[0, 1] < 0
