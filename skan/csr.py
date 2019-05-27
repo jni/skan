@@ -329,7 +329,8 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.source_image = None
-        self.degrees = degrees
+        self.degrees_image = degrees
+        self.degrees = np.diff(self.graph.indptr)
         self.spacing = (np.asarray(spacing) if not np.isscalar(spacing)
                         else np.full(skeleton_image.ndim, spacing))
         if keep_images:
@@ -449,7 +450,7 @@ class Skeleton:
     def summarize(self):
         summary = {}
         ndim = self.coordinates.shape[1]
-        _, skeleton_ids = csgraph.connected_components(self.paths,
+        _, skeleton_ids = csgraph.connected_components(self.graph,
                                                        directed=False)
         endpoints_src = self.paths.indices[self.paths.indptr[:-1]]
         endpoints_dst = self.paths.indices[self.paths.indptr[1:] - 1]
