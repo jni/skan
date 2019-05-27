@@ -42,7 +42,7 @@ script:
   - set -e
   - export MPLBACKEND="ps"
   - python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
-  - py.test
+  - pytest --ignore skan/gui.py
   - pip install doctr
   - cd doc
   - if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then
