@@ -190,14 +190,15 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
                     indices_j += n_steps
     # everything else is by definition in isolated cycles
     for node in range(1, jgraph.shape[0]):
-        if not visited[node]:
-            visited[node] = True
-            neighbor = jgraph.neighbors(node)[0]
-            n_steps = _walk_path(jgraph, node, neighbor, visited, degrees,
-                                 indices, path_data, indices_j)
-            indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
-            indptr_i += 1
-            indices_j += n_steps
+        if degrees[node] > 0:
+            if not visited[node]:
+                visited[node] = True
+                neighbor = jgraph.neighbors(node)[0]
+                n_steps = _walk_path(jgraph, node, neighbor, visited, degrees,
+                                     indices, path_data, indices_j)
+                indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
+                indptr_i += 1
+                indices_j += n_steps
     return indptr_i + 1, indices_j
 
 
