@@ -100,5 +100,5 @@ def test_skeleton_summarize():
     skeleton = Skeleton(image)
     summary = summarize(skeleton)
     assert set(summary['skeleton-id']) == {1, 2}
-    assert np.corrcoef(abs(summary['mean-pixel-value'] - 1),
-                       summary['branch-distance'])[0, 1] < 0
+    assert (np.all(summary['mean-pixel-value'] < 2)
+            and np.all(summary['mean-pixel-value'] > 1))
