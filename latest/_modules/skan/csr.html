@@ -17,32 +17,35 @@
   
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -327,6 +330,7 @@
 <span class="k">def</span> <span class="nf">_build_paths</span><span class="p">(</span><span class="n">jgraph</span><span class="p">,</span> <span class="n">indptr</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">path_data</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">degrees</span><span class="p">):</span>
     <span class="n">indptr_i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">indices_j</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># first, process all nodes in a path to an endpoint or junction</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">jgraph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="k">if</span> <span class="n">degrees</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">degrees</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">visited</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
             <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">jgraph</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -338,6 +342,17 @@
                     <span class="n">indptr</span><span class="p">[</span><span class="n">indptr_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">indptr</span><span class="p">[</span><span class="n">indptr_i</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span>
                     <span class="n">indptr_i</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">indices_j</span> <span class="o">+=</span> <span class="n">n_steps</span>
+    <span class="c1"># everything else is by definition in isolated cycles</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">jgraph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">degrees</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">visited</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                <span class="n">visited</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">neighbor</span> <span class="o">=</span> <span class="n">jgraph</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">n_steps</span> <span class="o">=</span> <span class="n">_walk_path</span><span class="p">(</span><span class="n">jgraph</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span>
+                                     <span class="n">indices</span><span class="p">,</span> <span class="n">path_data</span><span class="p">,</span> <span class="n">indices_j</span><span class="p">)</span>
+                <span class="n">indptr</span><span class="p">[</span><span class="n">indptr_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">indptr</span><span class="p">[</span><span class="n">indptr_i</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span>
+                <span class="n">indptr_i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">indices_j</span> <span class="o">+=</span> <span class="n">n_steps</span>
     <span class="k">return</span> <span class="n">indptr_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">indices_j</span>
 
 
@@ -361,7 +376,10 @@
     <span class="k">return</span> <span class="n">j</span> <span class="o">-</span> <span class="n">startj</span> <span class="o">+</span> <span class="mi">1</span>
 
 
-<span class="k">def</span> <span class="nf">_build_skeleton_path_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_build_skeleton_path_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_buffer_size_offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_num_cycles</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">4</span>
+        <span class="n">_buffer_size_offset</span> <span class="o">=</span> <span class="n">max_num_cycles</span>
     <span class="n">degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">degrees</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="n">endpoints</span> <span class="o">=</span> <span class="p">(</span><span class="n">degrees</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
@@ -371,14 +389,18 @@
     <span class="c1"># the number of points that we need to save to store all skeleton</span>
     <span class="c1"># paths is equal to the number of pixels plus the sum of endpoint</span>
     <span class="c1"># degrees minus one (since the endpoints will have been counted once</span>
-    <span class="c1"># already in the number of pixels).</span>
-    <span class="n">path_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">size</span>
-                            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">endpoint_degrees</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="c1"># already in the number of pixels) *plus* the number of isolated</span>
+    <span class="c1"># cycles (since each cycle has one index repeated). We don&#39;t know</span>
+    <span class="c1"># the number of cycles ahead of time, but it is bounded by one quarter</span>
+    <span class="c1"># of the number of points.</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">endpoint_degrees</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
+                <span class="n">max_num_cycles</span><span class="p">)</span>
+    <span class="n">path_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">path_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">path_indices</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">_build_paths</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">path_indptr</span><span class="p">,</span> <span class="n">path_indices</span><span class="p">,</span> <span class="n">path_data</span><span class="p">,</span>
                         <span class="n">visited</span><span class="p">,</span> <span class="n">degrees</span><span class="p">)</span>
     <span class="n">paths</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">path_data</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="n">path_indices</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span>
-                               <span class="n">path_indptr</span><span class="p">[:</span><span class="n">m</span><span class="p">]))</span>
+                               <span class="n">path_indptr</span><span class="p">[:</span><span class="n">m</span><span class="p">]),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">paths</span>
 
 
@@ -443,7 +465,7 @@
 <span class="sd">        `keep_images` is True. This is useful for visualization.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skeleton_image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">source_image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keep_images</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_images</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">graph</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">degrees</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton_image</span><span class="p">,</span>
                                                      <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">):</span>
@@ -461,6 +483,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_distances_initialized</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">skeleton_image</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">degrees_image</span> <span class="o">=</span> <span class="n">degrees</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spacing</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spacing</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">spacing</span><span class="p">)</span>
+                        <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">spacing</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">keep_images</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">skeleton_image</span> <span class="o">=</span> <span class="n">skeleton_image</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="o">=</span> <span class="n">source_image</span>
@@ -574,6 +600,56 @@
         <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span>
         <span class="n">means</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_means</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">sumsq</span><span class="o">/</span><span class="n">lengths</span> <span class="o">-</span> <span class="n">means</span><span class="o">*</span><span class="n">means</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">skel</span><span class="p">:</span> <span class="n">Skeleton</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute statistics for every skeleton and branch in ``skel``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skel : skan.csr.Skeleton</span>
+<span class="sd">        A Skeleton object.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    summary : pandas.DataFrame</span>
+<span class="sd">        A summary of the branches including branch length, mean branch value,</span>
+<span class="sd">        branch euclidean distance, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ndim</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">skeleton_ids</span> <span class="o">=</span> <span class="n">csgraph</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">skel</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+                                                   <span class="n">directed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">endpoints_src</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">skel</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">endpoints_dst</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">skel</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;skeleton-id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skeleton_ids</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">]</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;node-id-src&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">endpoints_src</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;node-id-dst&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">endpoints_dst</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">path_lengths</span><span class="p">()</span>
+    <span class="n">deg_src</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">degrees</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">]</span>
+    <span class="n">deg_dst</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">degrees</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">]</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">deg_src</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># default: junction-to-junction</span>
+    <span class="n">kind</span><span class="p">[(</span><span class="n">deg_src</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">deg_dst</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># tip-junction</span>
+    <span class="n">kind</span><span class="p">[(</span><span class="n">deg_src</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">deg_dst</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># tip-tip</span>
+    <span class="n">kind</span><span class="p">[</span><span class="n">endpoints_src</span> <span class="o">==</span> <span class="n">endpoints_dst</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># cycle</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kind</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;mean-pixel-value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">path_means</span><span class="p">()</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;stdev-pixel-value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">path_stdev</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>  <span class="c1"># keep loops separate for best insertion order</span>
+        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;image-coord-src-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;image-coord-dst-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+    <span class="n">coords_real_src</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">]</span> <span class="o">*</span> <span class="n">skel</span><span class="o">.</span><span class="n">spacing</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;image-coord-src-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_src</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+    <span class="n">coords_real_dst</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">]</span> <span class="o">*</span> <span class="n">skel</span><span class="o">.</span><span class="n">spacing</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;image-coord-dst-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_dst</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+    <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;euclidean-distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">coords_real_dst</span> <span class="o">-</span> <span class="n">coords_real_src</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ndim</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># cache with Numba 1.0</span>
@@ -1037,26 +1113,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -17,34 +17,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Complete analysis with Skan" href="complete_analysis.html" />
     <link rel="prev" title="Getting started: Skeleton analysis with Skan" href="getting_started.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -174,52 +177,52 @@ like this:</p>
 <p>The GUI is a simple launcher for the <a class="reference internal" href="api/skan.pipe.html#skan.pipe.process_images" title="skan.pipe.process_images"><code class="xref any py py-func docutils literal notranslate"><span class="pre">skan.pipe.process_images</span></code></a> function.
 This function runs the following analysis for each image:</p>
 <ul class="simple">
-<li>Crop the image</li>
-<li>Smooth/denoise it</li>
-<li>Threshold it</li>
-<li>Skeletonise it</li>
-<li>Compute statistics for the resulting skeleton</li>
-<li>Compile the statistics for all the images into a single table</li>
-<li>Save the results to an Excel file</li>
+<li><p>Crop the image</p></li>
+<li><p>Smooth/denoise it</p></li>
+<li><p>Threshold it</p></li>
+<li><p>Skeletonise it</p></li>
+<li><p>Compute statistics for the resulting skeleton</p></li>
+<li><p>Compile the statistics for all the images into a single table</p></li>
+<li><p>Save the results to an Excel file</p></li>
 </ul>
 <p>The parameters relate to this pipeline.</p>
 <ul class="simple">
-<li><em>Crop radius:</em> the number of pixels to remove on each side of the input image
-before analysis.</li>
-<li><em>Smoothing method:</em> the denoising method to apply to the image before
+<li><p><em>Crop radius:</em> the number of pixels to remove on each side of the input image
+before analysis.</p></li>
+<li><p><em>Smoothing method:</em> the denoising method to apply to the image before
 thresholding. Defaults to Gaussian smoothing, but total variation and
-non-local means denoising are also available.</li>
-<li><em>Smoothing radius:</em> the radius for smoothing <em>as a proportion of the
-threshold radius (below)</em>.</li>
-<li><em>Threshold radius:</em> the radius for thresholding the smoothed image, in real
+non-local means denoising are also available.</p></li>
+<li><p><em>Smoothing radius:</em> the radius for smoothing <em>as a proportion of the
+threshold radius (below)</em>.</p></li>
+<li><p><em>Threshold radius:</em> the radius for thresholding the smoothed image, in real
 units. (i.e. in the shown, this is 50nm, a reasonable radius to encompass the
 width of a spectrin molecule). This should be chosen as the radius of the
 smallest area containing both foreground and background pixels. If this is
 set to 0, a global Otsu thresholding method is used. For values greater than
-0, Sauvola thresholding is used.</li>
-<li><em>Brightness offset:</em> This corresponds to the <em>k</em> parameter in the Sauvola
+0, Sauvola thresholding is used.</p></li>
+<li><p><em>Brightness offset:</em> This corresponds to the <em>k</em> parameter in the Sauvola
 equation (see [here]()), or to a value subtracted from the Otsu-computed
-threshold before thresholding.</li>
-<li><em>Image format:</em> The file format of the input images. This corresponds to the
-<code class="docutils literal notranslate"><span class="pre">format</span></code> keyword argument in the <code class="docutils literal notranslate"><span class="pre">imageio.imread</span></code> function.</li>
-<li><em>Scale metadata path:</em> The location in the metadata hierarchy of the pixel
+threshold before thresholding.</p></li>
+<li><p><em>Image format:</em> The file format of the input images. This corresponds to the
+<code class="docutils literal notranslate"><span class="pre">format</span></code> keyword argument in the <code class="docutils literal notranslate"><span class="pre">imageio.imread</span></code> function.</p></li>
+<li><p><em>Scale metadata path:</em> The location in the metadata hierarchy of the pixel
 scale. The default is correct for FEI electron microscopes
-(<code class="docutils literal notranslate"><span class="pre">format='fei'</span></code>).</li>
-<li><em>Live preview skeleton plot?:</em> whether to show the skeletonisation process for
+(<code class="docutils literal notranslate"><span class="pre">format='fei'</span></code>).</p></li>
+<li><p><em>Live preview skeleton plot?:</em> whether to show the skeletonisation process for
 each image as it is processed. This incurs a performance penalty of about 2x
 but can save time in cases where the parameter choice is incorrect and many
-images are being processed.</li>
-<li><em>Save skeleton plot?:</em> Whether to save skeletonisation plots next to the
-output results. There are useful for verifation after a run.</li>
-<li><em>Prefix for skeleton plots:</em> Skeleton plots will be saved as
-<code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;&lt;input-filename-without-extension&gt;.png</span></code>.</li>
-<li><em>Output filename:</em> self-explanatory.</li>
-<li><em>Choose config:</em> Load parameters from a configuration file. These files are
+images are being processed.</p></li>
+<li><p><em>Save skeleton plot?:</em> Whether to save skeletonisation plots next to the
+output results. There are useful for verifation after a run.</p></li>
+<li><p><em>Prefix for skeleton plots:</em> Skeleton plots will be saved as
+<code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;&lt;input-filename-without-extension&gt;.png</span></code>.</p></li>
+<li><p><em>Output filename:</em> self-explanatory.</p></li>
+<li><p><em>Choose config:</em> Load parameters from a configuration file. These files are
 saved by Skan with every GUI run. The loaded parameters can be modified
-before starting a new run.</li>
-<li><em>Choose files:</em> Choose the input files.</li>
-<li><em>Choose output folder:</em> Select where the output files will be saved.</li>
-<li><em>Run:</em> Start the pipeline run.</li>
+before starting a new run.</p></li>
+<li><p><em>Choose files:</em> Choose the input files.</p></li>
+<li><p><em>Choose output folder:</em> Select where the output files will be saved.</p></li>
+<li><p><em>Run:</em> Start the pipeline run.</p></li>
 </ul>
 </div>
 <div class="section" id="configuration-files">
@@ -249,7 +252,7 @@ parameters but different input files.</p>
         <a href="complete_analysis.html" class="btn btn-neutral float-right" title="Complete analysis with Skan" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="getting_started.html" class="btn btn-neutral" title="Getting started: Skeleton analysis with Skan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting started: Skeleton analysis with Skan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -275,26 +278,16 @@ parameters but different input files.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
