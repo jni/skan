@@ -17,7 +17,7 @@ def test_tiny_cycle():
 
 def test_skeleton1_topo():
     skeleton = Skeleton(skeleton1)
-    assert skeleton.paths.shape == (4, np.sum(skeleton1) + 1)
+    assert skeleton.paths.shape == (4, 21)
     paths_list = skeleton.paths_list()
     reference_paths = [
         [8, 6, 1, 2, 3, 4, 5, 7, 11, 10, 13],
