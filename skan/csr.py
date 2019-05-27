@@ -447,41 +447,55 @@ class Skeleton:
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
 
-    def summarize(self):
-        summary = {}
-        ndim = self.coordinates.shape[1]
-        _, skeleton_ids = csgraph.connected_components(self.graph,
-                                                       directed=False)
-        endpoints_src = self.paths.indices[self.paths.indptr[:-1]]
-        endpoints_dst = self.paths.indices[self.paths.indptr[1:] - 1]
-        summary['skeleton-id'] = skeleton_ids[endpoints_src]
-        summary['node-id-src'] = endpoints_src
-        summary['node-id-dst'] = endpoints_dst
-        summary['branch-distance'] = self.path_lengths()
-        deg_src = self.degrees[endpoints_src]
-        deg_dst = self.degrees[endpoints_dst]
-        kind = np.full(deg_src.shape, 2)  # default: junction-to-junction
-        kind[(deg_src == 1) | (deg_dst == 1)] = 1  # tip-junction
-        kind[(deg_src == 1) & (deg_dst == 1)] = 0  # tip-tip
-        kind[endpoints_src == endpoints_dst] = 3  # cycle
-        summary['branch-type'] = kind
-        summary['mean-pixel-value'] = self.path_means()
-        summary['stdev-pixel-value'] = self.path_stdev()
-        for i in range(ndim):  # keep loops separate for best insertion order
-            summary[f'image-coord-src-{i}'] = self.coordinates[endpoints_src, i]
-        for i in range(ndim):
-            summary[f'image-coord-dst-{i}'] = self.coordinates[endpoints_dst, i]
-        coords_real_src = self.coordinates[endpoints_src] * self.spacing
-        for i in range(ndim):
-            summary[f'image-coord-src-{i}'] = coords_real_src[:, i]
-        coords_real_dst = self.coordinates[endpoints_dst] * self.spacing
-        for i in range(ndim):
-            summary[f'image-coord-dst-{i}'] = coords_real_dst[:, i]
-        summary['euclidean-distance'] = (
-                np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
-        )
-        df = pd.DataFrame(summary)
-        return df
+
+def summarize(skel: Skeleton):
+    """Compute statistics for every skeleton and branch in ``skel``.
+
+    Parameters
+    ----------
+    skel : skan.csr.Skeleton
+        A Skeleton object.
+
+    Returns
+    -------
+    summary : pandas.DataFrame
+        A summary of the branches including branch length, mean branch value,
+        branch euclidean distance, etc.
+    """
+    summary = {}
+    ndim = skel.coordinates.shape[1]
+    _, skeleton_ids = csgraph.connected_components(skel.graph,
+                                                   directed=False)
+    endpoints_src = skel.paths.indices[skel.paths.indptr[:-1]]
+    endpoints_dst = skel.paths.indices[skel.paths.indptr[1:] - 1]
+    summary['skeleton-id'] = skeleton_ids[endpoints_src]
+    summary['node-id-src'] = endpoints_src
+    summary['node-id-dst'] = endpoints_dst
+    summary['branch-distance'] = skel.path_lengths()
+    deg_src = skel.degrees[endpoints_src]
+    deg_dst = skel.degrees[endpoints_dst]
+    kind = np.full(deg_src.shape, 2)  # default: junction-to-junction
+    kind[(deg_src == 1) | (deg_dst == 1)] = 1  # tip-junction
+    kind[(deg_src == 1) & (deg_dst == 1)] = 0  # tip-tip
+    kind[endpoints_src == endpoints_dst] = 3  # cycle
+    summary['branch-type'] = kind
+    summary['mean-pixel-value'] = skel.path_means()
+    summary['stdev-pixel-value'] = skel.path_stdev()
+    for i in range(ndim):  # keep loops separate for best insertion order
+        summary[f'image-coord-src-{i}'] = skel.coordinates[endpoints_src, i]
+    for i in range(ndim):
+        summary[f'image-coord-dst-{i}'] = skel.coordinates[endpoints_dst, i]
+    coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
+    for i in range(ndim):
+        summary[f'image-coord-src-{i}'] = coords_real_src[:, i]
+    coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
+    for i in range(ndim):
+        summary[f'image-coord-dst-{i}'] = coords_real_dst[:, i]
+    summary['euclidean-distance'] = (
+            np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
+    )
+    df = pd.DataFrame(summary)
+    return df
 
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0

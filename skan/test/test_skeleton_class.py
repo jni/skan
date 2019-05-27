@@ -3,7 +3,7 @@ from collections import defaultdict
 from time import process_time
 import numpy as np
 from numpy.testing import assert_equal, assert_allclose
-from skan.csr import Skeleton
+from skan.csr import Skeleton, summarize
 
 from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
                             skeleton2, skeleton3d, topograph1d, skeleton4,
@@ -98,7 +98,7 @@ def test_skeleton_summarize():
     image = np.zeros(skeleton2.shape, dtype=float)
     image[skeleton2] = 1 + np.random.random(np.sum(skeleton2))
     skeleton = Skeleton(image)
-    summary = skeleton.summarize()
+    summary = summarize(skeleton)
     assert set(summary['skeleton-id']) == {1, 2}
     assert np.corrcoef(abs(summary['mean-pixel-value'] - 1),
                        summary['branch-distance'])[0, 1] < 0
