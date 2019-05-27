@@ -176,6 +176,7 @@ def _write_pixel_graph_height(image, height, steps, distances, row, col, data):
 def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
     indptr_i = 0
     indices_j = 0
+    # first, process all nodes in a path to an endpoint or junction
     for node in range(1, jgraph.shape[0]):
         if degrees[node] > 2 or degrees[node] == 1 and not visited[node]:
             for neighbor in jgraph.neighbors(node):
@@ -187,6 +188,17 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
                     indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                     indptr_i += 1
                     indices_j += n_steps
+    # everything else is by definition in isolated cycles
+    for node in range(1, jgraph.shape[0]):
+        if degrees[node] > 0:
+            if not visited[node]:
+                visited[node] = True
+                neighbor = jgraph.neighbors(node)[0]
+                n_steps = _walk_path(jgraph, node, neighbor, visited, degrees,
+                                     indices, path_data, indices_j)
+                indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
+                indptr_i += 1
+                indices_j += n_steps
     return indptr_i + 1, indices_j
 
 
@@ -210,7 +222,10 @@ def _walk_path(jgraph, node, neighbor, visited, degrees, indices, path_data,
     return j - startj + 1
 
 
-def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
+def _build_skeleton_path_graph(graph, *, _buffer_size_offset=None):
+    if _buffer_size_offset is None:
+        max_num_cycles = graph.indices.size // 4
+        _buffer_size_offset = max_num_cycles
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
@@ -220,14 +235,18 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=0):
     # the number of points that we need to save to store all skeleton
     # paths is equal to the number of pixels plus the sum of endpoint
     # degrees minus one (since the endpoints will have been counted once
-    # already in the number of pixels).
-    path_indices = np.zeros(graph.indices.size
-                            + np.sum(endpoint_degrees - 1), dtype=int)
+    # already in the number of pixels) *plus* the number of isolated
+    # cycles (since each cycle has one index repeated). We don't know
+    # the number of cycles ahead of time, but it is bounded by one quarter
+    # of the number of points.
+    n_points = (graph.indices.size + np.sum(endpoint_degrees - 1) +
+                max_num_cycles)
+    path_indices = np.zeros(n_points, dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
     m, n = _build_paths(graph, path_indptr, path_indices, path_data,
                         visited, degrees)
     paths = sparse.csr_matrix((path_data[:n], path_indices[:n],
-                               path_indptr[:m]))
+                               path_indptr[:m]), shape=(m-1, n))
     return paths
 
 
@@ -292,7 +311,7 @@ class Skeleton:
         `keep_images` is True. This is useful for visualization.
     """
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
-                 _buffer_size_offset=0, keep_images=True):
+                 _buffer_size_offset=None, keep_images=True):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
                                                      spacing=spacing)
         if np.issubdtype(skeleton_image.dtype, np.float_):
@@ -310,6 +329,10 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.source_image = None
+        self.degrees_image = degrees
+        self.degrees = np.diff(self.graph.indptr)
+        self.spacing = (np.asarray(spacing) if not np.isscalar(spacing)
+                        else np.full(skeleton_image.ndim, spacing))
         if keep_images:
             self.skeleton_image = skeleton_image
             self.source_image = source_image
@@ -423,6 +446,56 @@ class Skeleton:
         lengths = np.diff(self.paths.indptr)
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
+
+
+def summarize(skel: Skeleton):
+    """Compute statistics for every skeleton and branch in ``skel``.
+
+    Parameters
+    ----------
+    skel : skan.csr.Skeleton
+        A Skeleton object.
+
+    Returns
+    -------
+    summary : pandas.DataFrame
+        A summary of the branches including branch length, mean branch value,
+        branch euclidean distance, etc.
+    """
+    summary = {}
+    ndim = skel.coordinates.shape[1]
+    _, skeleton_ids = csgraph.connected_components(skel.graph,
+                                                   directed=False)
+    endpoints_src = skel.paths.indices[skel.paths.indptr[:-1]]
+    endpoints_dst = skel.paths.indices[skel.paths.indptr[1:] - 1]
+    summary['skeleton-id'] = skeleton_ids[endpoints_src]
+    summary['node-id-src'] = endpoints_src
+    summary['node-id-dst'] = endpoints_dst
+    summary['branch-distance'] = skel.path_lengths()
+    deg_src = skel.degrees[endpoints_src]
+    deg_dst = skel.degrees[endpoints_dst]
+    kind = np.full(deg_src.shape, 2)  # default: junction-to-junction
+    kind[(deg_src == 1) | (deg_dst == 1)] = 1  # tip-junction
+    kind[(deg_src == 1) & (deg_dst == 1)] = 0  # tip-tip
+    kind[endpoints_src == endpoints_dst] = 3  # cycle
+    summary['branch-type'] = kind
+    summary['mean-pixel-value'] = skel.path_means()
+    summary['stdev-pixel-value'] = skel.path_stdev()
+    for i in range(ndim):  # keep loops separate for best insertion order
+        summary[f'image-coord-src-{i}'] = skel.coordinates[endpoints_src, i]
+    for i in range(ndim):
+        summary[f'image-coord-dst-{i}'] = skel.coordinates[endpoints_dst, i]
+    coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
+    for i in range(ndim):
+        summary[f'image-coord-src-{i}'] = coords_real_src[:, i]
+    coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
+    for i in range(ndim):
+        summary[f'image-coord-dst-{i}'] = coords_real_dst[:, i]
+    summary['euclidean-distance'] = (
+            np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
+    )
+    df = pd.DataFrame(summary)
+    return df
 
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0

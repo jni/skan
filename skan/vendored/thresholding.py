@@ -1,8 +1,6 @@
 import itertools
 import numpy as np
-from scipy import ndimage as ndi
 from skimage.transform import integral_image
-from skimage import util
 from skimage.util import dtype_limits
 import numba
 
@@ -12,7 +10,7 @@ def broadcast_mgrid(arrays):
     ndim = len(shape)
     result = []
     for i, arr in enumerate(arrays, start=1):
-        reshaped = np.broadcast_to(arr[[...] + [np.newaxis] * (ndim - i)],
+        reshaped = np.broadcast_to(arr[(...,) + (np.newaxis,) * (ndim - i)],
                                    shape)
         result.append(reshaped)
     return result
