@@ -17,6 +17,7 @@ dependencies:
 - pytest-cov>=2.2
 - click>=0.5
 - pip:
+  - tifffile>=2019.*
   - hypothesis>=3.6
   - imageio>=2.0
   - tqdm>=4.11
