@@ -1,0 +1,8 @@
+numpydoc>=0.5*
+matplotlib>=3.0*
+jupyter
+imageio>=2.0
+tqdm>=4.11
+nb2plots>=0.5
+sphinx_rtd_theme
+seaborn>=0.9

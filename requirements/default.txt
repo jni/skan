@@ -1,0 +1,13 @@
+numpy>=1.11
+scipy>=0.18
+networkx>=1.11
+numba>=0.29
+pandas>=0.24
+openpyxl>=2.4
+xlrd>=1.0
+matplotlib>=3.0
+scikit-image>=0.14
+imageio>=2.0
+tqdm>=4.0
+dask>=0.12
+click>=0.5
