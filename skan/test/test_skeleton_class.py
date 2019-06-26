@@ -1,5 +1,3 @@
-import os, sys
-from collections import defaultdict
 from time import process_time
 import numpy as np
 from numpy.testing import assert_equal, assert_allclose
