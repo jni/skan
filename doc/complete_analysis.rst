@@ -15,7 +15,7 @@ URL:
 
 ::
 
-    https://osf.io/7vyx3
+   https://osf.io/7vyx3
 
 Download and extract the zipfile, and make sure the ``schizonts`` folder
 contained within it is placed in this notebook’s working directory.
@@ -29,11 +29,6 @@ contained within it is placed in this notebook’s working directory.
     >>>
     >>>
     >>> schizont_files = glob('schizonts/*.tif')
-    >>> if len(schizont_files) == 0:
-    ...     import os
-    ...     msg = (f'No files found with current directory {os.getcwd()}'
-    ...            f'and contents {os.listdir(".")}')
-    ...     raise RuntimeError(msg)
     >>> # remove files ending with '01.tif', which are low-res overview images
     >>> schizont_files = list(filter(lambda x: not x.endswith('01.tif'),
     ...                              schizont_files))
@@ -59,7 +54,7 @@ processes images using as many CPUs as are avaliable.
     ...     smooth_method='Gaussian'
     >>> ))
 
-    96it [01:52,  3.34it/s]
+    96it [00:29,  8.33it/s]
 
 Next, we use the filename to infer the infection status of each image.
 
@@ -107,8 +102,8 @@ non-overlapping locations).
 2. Cleaning up the data
 -----------------------
 
-Next, we filter the branches by using the `*shape
-index* <http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index>`__.
+Next, we filter the branches by using the `shape
+index <http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index>`__.
 We have used a very simple method to extract skeletons (see `Getting
 started <getting_started.html>`__), which does an acceptable job but
 creates a lot of false branches. Since the goal of Skan is to analyse
@@ -146,10 +141,9 @@ for our purpose.
 
     >>> import numpy as np
     >>> import imageio as iio
-    >>> from scipy import ndimage as ndi
     >>> from skimage import morphology
     >>> import matplotlib.pyplot as plt
-    >>> import seaborn.apionly as sns
+    >>> import seaborn as sns
     >>>
     >>> from skan.pre import threshold
 
@@ -160,7 +154,7 @@ for our purpose.
     >>>
     >>> # PANEL A
     >>> # display an arbitrary image
-    >>> crop = [slice(20, -20),] * 2
+    >>> crop = (slice(20, -20),) * 2
     >>> image_raw = iio.imread('schizonts/schizont4_UninfRBC7_06.tif',
     ...                        format='fei')
     >>> image = image_raw[crop]
@@ -196,7 +190,7 @@ for our purpose.
     >>> for inf, df in (datar.sort_values(by='infection', ascending=False)
     ...                 .groupby('infection', sort=False)):
     ...     ax[2].hist(df['branch distance (nm)'], bins=bins,
-    ...                normed=True, alpha=0.5, label=inf)
+    ...                density=True, alpha=0.5, label=inf)
     ...
     >>> ax[2].legend()
     >>> ax[2].set_xlabel('branch distance (nm)')
@@ -205,7 +199,7 @@ for our purpose.
     >>> # PANEL D
     >>> # Finally, a panel grouping the data by cell, showing the difference
     >>> # between infected and uninfected cells
-    >>> cellmeans = (datar.groupby(('infection', 'cell number'))
+    >>> cellmeans = (datar.groupby(['infection', 'cell number'])
     ...                   .mean().reset_index())
     >>> sns.stripplot(x='infection', y='branch distance (nm)', data=cellmeans,
     ...               jitter=True, order=('normal', 'infected'), ax=ax[3])
