@@ -205,7 +205,6 @@ for our purpose.
     ...               jitter=True, order=('normal', 'infected'), ax=ax[3])
     ...
     >>> ax[3].set_xlabel('infection status')
-    >>> ax[3].set_ylabel('mean branch distance by cell (nm)')
     >>> ax[3].set_ylabel('mean branch distance\nby cell (nm)')
     >>>
     >>> # Use matplotlib's automatic layout algorithm
