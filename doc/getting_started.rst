@@ -229,6 +229,10 @@ Let’s go back to the red blood cell image to illustrate this graph.
           <th>image-coord-src-1</th>
           <th>image-coord-dst-0</th>
           <th>image-coord-dst-1</th>
+          <th>coord-src-0</th>
+          <th>coord-src-1</th>
+          <th>coord-dst-0</th>
+          <th>coord-dst-1</th>
           <th>euclidean-distance</th>
         </tr>
       </thead>
@@ -242,6 +246,10 @@ Let’s go back to the red blood cell image to illustrate this graph.
           <td>1</td>
           <td>1.0</td>
           <td>0.0</td>
+          <td>0.0</td>
+          <td>979.0</td>
+          <td>8.250000</td>
+          <td>960.000000</td>
           <td>0.00000</td>
           <td>1320.63184</td>
           <td>11.128920</td>
@@ -257,6 +265,10 @@ Let’s go back to the red blood cell image to illustrate this graph.
           <td>0</td>
           <td>1.0</td>
           <td>0.0</td>
+          <td>0.0</td>
+          <td>1042.0</td>
+          <td>5.000000</td>
+          <td>1020.000000</td>
           <td>0.00000</td>
           <td>1405.61632</td>
           <td>6.744800</td>
@@ -272,6 +284,10 @@ Let’s go back to the red blood cell image to illustrate this graph.
           <td>0</td>
           <td>1.0</td>
           <td>0.0</td>
+          <td>0.0</td>
+          <td>1446.0</td>
+          <td>2.000000</td>
+          <td>1420.000000</td>
           <td>0.00000</td>
           <td>1950.59616</td>
           <td>2.697920</td>
@@ -287,6 +303,10 @@ Let’s go back to the red blood cell image to illustrate this graph.
           <td>1</td>
           <td>1.0</td>
           <td>0.0</td>
+          <td>0.0</td>
+          <td>1533.0</td>
+          <td>9.666667</td>
+          <td>1518.666667</td>
           <td>0.00000</td>
           <td>2067.95568</td>
           <td>13.039947</td>
@@ -302,6 +322,10 @@ Let’s go back to the red blood cell image to illustrate this graph.
           <td>1</td>
           <td>1.0</td>
           <td>0.0</td>
+          <td>1.0</td>
+          <td>175.0</td>
+          <td>19.000000</td>
+          <td>153.750000</td>
           <td>1.34896</td>
           <td>236.06800</td>
           <td>25.630240</td>
@@ -482,4 +506,5 @@ This is of course a toy example. For the full dataset and analysis, see:
 But we hope this minimal example will serve for inspiration for your
 future analysis of skeleton images.
 
-.. code-links::
+
+.. code-links:: python clear
