@@ -11,14 +11,12 @@ latest/_images/gui-screenshot.png
 latest/_modules/index.html
 latest/_modules/skan/csr.html
 latest/_modules/skan/draw.html
-latest/_modules/skan/nx.html
 latest/_modules/skan/pipe.html
 latest/_modules/skan/pre.html
 latest/_modules/skan/vendored/thresholding.html
 latest/_sources/api/api.rst.txt
 latest/_sources/api/skan.csr.rst.txt
 latest/_sources/api/skan.draw.rst.txt
-latest/_sources/api/skan.nx.rst.txt
 latest/_sources/api/skan.pipe.rst.txt
 latest/_sources/api/skan.pre.rst.txt
 latest/_sources/api/skan.vendored.thresholding.rst.txt
@@ -84,7 +82,6 @@ latest/_static/underscore.js
 latest/api/api.html
 latest/api/skan.csr.html
 latest/api/skan.draw.html
-latest/api/skan.nx.html
 latest/api/skan.pipe.html
 latest/api/skan.pre.html
 latest/api/skan.vendored.thresholding.html
@@ -122,7 +119,6 @@ latest/getting_started-9.png
 latest/getting_started.html
 latest/getting_started.ipynb
 latest/getting_started.py
-latest/getting_started_full.ipynb
 latest/gui.html
 latest/index.html
 latest/install.html

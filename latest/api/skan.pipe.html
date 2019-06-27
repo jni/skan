@@ -96,7 +96,6 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">skan.pipe:: Pipeline functions for skeleton analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skan.pre.html">skan.pre: Image preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skan.vendored.thresholding.html">skan.vendored.thresholding: Thresholding algorithms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="skan.nx.html">skan.nx: NetworkX respresentation of skeletons</a></li>
 </ul>
 </li>
 </ul>
@@ -169,46 +168,37 @@
 <span id="skan-pipe-pipeline-functions-for-skeleton-analysis"></span><h1>skan.pipe:: Pipeline functions for skeleton analysis<a class="headerlink" href="#module-skan.pipe" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="skan.pipe.process_images">
-<code class="descclassname">skan.pipe.</code><code class="descname">process_images</code><span class="sig-paren">(</span><em>filenames</em>, <em>image_format</em>, <em>threshold_radius</em>, <em>smooth_radius</em>, <em>brightness_offset</em>, <em>scale_metadata_path</em>, <em>crop_radius=0</em>, <em>smooth_method='Gaussian'</em>, <em>num_threads=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pipe.html#process_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pipe.process_images" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.pipe.</code><code class="sig-name descname">process_images</code><span class="sig-paren">(</span><em class="sig-param">filenames</em>, <em class="sig-param">image_format</em>, <em class="sig-param">threshold_radius</em>, <em class="sig-param">smooth_radius</em>, <em class="sig-param">brightness_offset</em>, <em class="sig-param">scale_metadata_path</em>, <em class="sig-param">crop_radius=0</em>, <em class="sig-param">smooth_method='Gaussian'</em>, <em class="sig-param">num_threads=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pipe.html#process_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pipe.process_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Full pipeline from images to skeleton stats with local median threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>filenames</strong><span class="classifier">list of string</span></dt><dd><p>The list of input filenames.</p>
-</dd>
-<dt><strong>image_format</strong><span class="classifier">string</span></dt><dd><p>The format of the files. ‘auto’ is automatically determined by the
-imageio library. See imageio documentation for valid image formats.</p>
-</dd>
-<dt><strong>threshold_radius</strong><span class="classifier">float</span></dt><dd><p>The radius for median thresholding,</p>
-</dd>
-<dt><strong>smooth_radius</strong><span class="classifier">float in [0, 1]</span></dt><dd><p>The value of sigma with which to Gaussian-smooth the image,
-<strong>relative to `threshold_radius`</strong>.</p>
-</dd>
-<dt><strong>brightness_offset</strong><span class="classifier">float</span></dt><dd><p>The standard brightness value with which to threshold is the local
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filenames</strong> (<em>list of string</em>) – The list of input filenames.</p></li>
+<li><p><strong>image_format</strong> (<em>string</em>) – The format of the files. ‘auto’ is automatically determined by the
+imageio library. See imageio documentation for valid image formats.</p></li>
+<li><p><strong>threshold_radius</strong> (<em>float</em>) – The radius for median thresholding,</p></li>
+<li><p><strong>smooth_radius</strong> (<em>float in</em><em> [</em><em>0</em><em>, </em><em>1</em><em>]</em>) – The value of sigma with which to Gaussian-smooth the image,
+<strong>relative to `threshold_radius`</strong>.</p></li>
+<li><p><strong>brightness_offset</strong> (<em>float</em>) – The standard brightness value with which to threshold is the local
 median, <cite>m(x, y)</cite>. Use this value to offset from there: the threshold
-used will be <cite>m(x, y) + brightness_offset</cite>.</p>
-</dd>
-<dt><strong>scale_metadata_path</strong><span class="classifier">string</span></dt><dd><p>The path in the image dictionary to find the metadata on pixel scale,
-separated by forward slashes (‘/’).</p>
-</dd>
-<dt><strong>crop_radius</strong><span class="classifier">int, optional</span></dt><dd><p>Crop <cite>crop_radius</cite> pixels from each margin of the image before
-processing.</p>
-</dd>
-<dt><strong>smooth_method</strong><span class="classifier">{‘Gaussian’, ‘TV’, ‘NL’}, optional</span></dt><dd><p>Which method to use for smoothing.</p>
-</dd>
-<dt><strong>num_threads</strong><span class="classifier">int, optional</span></dt><dd><p>How many threads to use for computation. This should generally be
-set to the number of CPU cores available to you.</p>
-</dd>
-</dl>
+used will be <cite>m(x, y) + brightness_offset</cite>.</p></li>
+<li><p><strong>scale_metadata_path</strong> (<em>string</em>) – The path in the image dictionary to find the metadata on pixel scale,
+separated by forward slashes (‘/’).</p></li>
+<li><p><strong>crop_radius</strong> (<em>int</em><em>, </em><em>optional</em>) – Crop <cite>crop_radius</cite> pixels from each margin of the image before
+processing.</p></li>
+<li><p><strong>smooth_method</strong> (<em>{'Gaussian'</em><em>, </em><em>'TV'</em><em>, </em><em>'NL'}</em><em>, </em><em>optional</em>) – Which method to use for smoothing.</p></li>
+<li><p><strong>num_threads</strong> (<em>int</em><em>, </em><em>optional</em>) – How many threads to use for computation. This should generally be
+set to the number of CPU cores available to you.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>results</strong><span class="classifier">generator</span></dt><dd><p>The pipeline yields individual image results in the form of a tuple
+<dd class="field-even"><p><strong>results</strong> – The pipeline yields individual image results in the form of a tuple
 of <code class="docutils literal notranslate"><span class="pre">(filename,</span> <span class="pre">image,</span> <span class="pre">thresholded_image,</span> <span class="pre">skeleton,</span> <span class="pre">data_frame)</span></code>.
 Finally, after all the images have been processed, the pipeline yields
 a DataFrame containing all the collated branch-level results.</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>generator</p>
 </dd>
 </dl>
 </dd></dl>
