@@ -124,7 +124,7 @@ def _mean_std(image, w):
 
 
 def threshold_niblack(image, window_size=15, k=0.2):
-    """Applies Niblack local threshold to an array.
+    """Apply Niblack local threshold to an array. [1]_
 
     A threshold T is calculated for every pixel in the image using the
     following formula:
@@ -171,8 +171,7 @@ def threshold_niblack(image, window_size=15, k=0.2):
 
 
 def threshold_sauvola(image, window_size=15, k=0.2, r=None):
-    """Applies Sauvola local threshold to an array. Sauvola is a
-    modification of Niblack technique.
+    """Apply Sauvola local threshold to an array. [2]_
 
     In the original method a threshold T is calculated for every pixel
     in the image using the following formula:
@@ -211,7 +210,7 @@ def threshold_sauvola(image, window_size=15, k=0.2, r=None):
 
     References
     ----------
-    .. [1] J. Sauvola and M. Pietikainen, "Adaptive document image
+    .. [2] J. Sauvola and M. Pietikainen, "Adaptive document image
            binarization," Pattern Recognition 33(2),
            pp. 225-236, 2000.
            DOI:10.1016/S0031-3203(99)00055-2

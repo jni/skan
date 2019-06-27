@@ -487,10 +487,10 @@ def summarize(skel: Skeleton):
         summary[f'image-coord-dst-{i}'] = skel.coordinates[endpoints_dst, i]
     coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
     for i in range(ndim):
-        summary[f'image-coord-src-{i}'] = coords_real_src[:, i]
+        summary[f'coord-src-{i}'] = coords_real_src[:, i]
     coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
     for i in range(ndim):
-        summary[f'image-coord-dst-{i}'] = coords_real_dst[:, i]
+        summary[f'coord-dst-{i}'] = coords_real_dst[:, i]
     summary['euclidean-distance'] = (
             np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
     )
@@ -819,6 +819,8 @@ def submatrix(M, idxs):
 def summarise(image, *, spacing=1, using_height=False):
     """Compute statistics for every disjoint skeleton in `image`.
 
+    **Note: this function is deprecated. Prefer** :func:`.summarize`.
+
     Parameters
     ----------
     image : array, shape (M, N, ..., P)
@@ -878,10 +880,10 @@ def summarise(image, *, spacing=1, using_height=False):
     columns = (['skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
                 'branch-type'] +
                value_columns +
-               ['img-coord-0-%i' % i for i in range(ndim)] +
-               ['img-coord-1-%i' % i for i in range(ndim)] +
-               ['coord-0-%i' % i for i in range(height_ndim)] +
-               ['coord-1-%i' % i for i in range(height_ndim)] +
+               ['image-coord-src-%i' % i for i in range(ndim)] +
+               ['image-coord-dst-%i' % i for i in range(ndim)] +
+               ['coord-src-%i' % i for i in range(height_ndim)] +
+               ['coord-dst-%i' % i for i in range(height_ndim)] +
                ['euclidean-distance'])
     column_types = ([int, int, int, float, int] + value_column_types +
                     2 * ndim * [int] +
