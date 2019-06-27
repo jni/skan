@@ -819,6 +819,8 @@ def submatrix(M, idxs):
 def summarise(image, *, spacing=1, using_height=False):
     """Compute statistics for every disjoint skeleton in `image`.
 
+    **Note: this function is deprecated. Prefer** :func:`.summarize`.
+
     Parameters
     ----------
     image : array, shape (M, N, ..., P)
