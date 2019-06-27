@@ -487,10 +487,10 @@ def summarize(skel: Skeleton):
         summary[f'image-coord-dst-{i}'] = skel.coordinates[endpoints_dst, i]
     coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
     for i in range(ndim):
-        summary[f'image-coord-src-{i}'] = coords_real_src[:, i]
+        summary[f'coord-src-{i}'] = coords_real_src[:, i]
     coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
     for i in range(ndim):
-        summary[f'image-coord-dst-{i}'] = coords_real_dst[:, i]
+        summary[f'coord-dst-{i}'] = coords_real_dst[:, i]
     summary['euclidean-distance'] = (
             np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
     )

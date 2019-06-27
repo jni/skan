@@ -94,8 +94,8 @@ def test_topograph():
 def test_topograph_summary():
     stats = csr.summarise(topograph1d, spacing=2.5, using_height=True)
     assert stats.loc[0, 'euclidean-distance'] == 5.0
-    assert_almost_equal(stats.loc[0, ['coord-0-0', 'coord-0-1',
-                                      'coord-1-0', 'coord-1-1']],
+    assert_almost_equal(stats.loc[0, ['coord-src-0', 'coord-src-1',
+                                      'coord-dst-0', 'coord-dst-1']],
                         [3, 0, 3, 5])
 
 
