@@ -36,7 +36,6 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="skan.nx: NetworkX respresentation of skeletons" href="skan.nx.html" />
     <link rel="prev" title="skan.pre: Image preprocessing" href="skan.pre.html" /> 
 </head>
 
@@ -96,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="skan.pipe.html">skan.pipe:: Pipeline functions for skeleton analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skan.pre.html">skan.pre: Image preprocessing</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">skan.vendored.thresholding: Thresholding algorithms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="skan.nx.html">skan.nx: NetworkX respresentation of skeletons</a></li>
 </ul>
 </li>
 </ul>
@@ -171,41 +169,38 @@
 sizes.</p>
 <span class="target" id="module-skan.vendored.thresholding"></span><dl class="function">
 <dt id="skan.vendored.thresholding.correlate_sparse">
-<code class="descclassname">skan.vendored.thresholding.</code><code class="descname">correlate_sparse</code><span class="sig-paren">(</span><em>image</em>, <em>kernel</em>, <em>mode='reflect'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#correlate_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.correlate_sparse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">correlate_sparse</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">kernel</em>, <em class="sig-param">mode='reflect'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#correlate_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.correlate_sparse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute valid cross-correlation of <cite>padded_array</cite> and <cite>kernel</cite>.</p>
 <p>This function is <em>fast</em> when <cite>kernel</cite> is large with many zeros.</p>
 <p>See <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.correlate</span></code> for a description of cross-correlation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>image</strong><span class="classifier">array of float, shape (M, N,[ …,] P)</span></dt><dd><p>The input array. It should be already padded, as a margin of the
-same shape as kernel (-1) will be stripped off.</p>
-</dd>
-<dt><strong>kernel</strong><span class="classifier">array of float, shape (Q, R,[ …,] S)</span></dt><dd><p>The kernel to be correlated. Must have the same number of
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array of float</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>,</em><em>[ </em><em>..</em><em>,</em><em>] </em><em>P</em><em>)</em>) – The input array. It should be already padded, as a margin of the
+same shape as kernel (-1) will be stripped off.</p></li>
+<li><p><strong>kernel</strong> (<em>array of float</em><em>, </em><em>shape</em><em> (</em><em>Q</em><em>, </em><em>R</em><em>,</em><em>[ </em><em>..</em><em>,</em><em>] </em><em>S</em><em>)</em>) – The kernel to be correlated. Must have the same number of
 dimensions as <cite>padded_array</cite>. For high performance, it should
-be sparse (few nonzero entries).</p>
-</dd>
-<dt><strong>mode</strong><span class="classifier">string, optional</span></dt><dd><p>See <cite>np.pad</cite> for valid modes. Additionally, mode ‘valid’ is
+be sparse (few nonzero entries).</p></li>
+<li><p><strong>mode</strong> (<em>string</em><em>, </em><em>optional</em>) – See <cite>np.pad</cite> for valid modes. Additionally, mode ‘valid’ is
 accepted, in which case no padding is applied and the result is
 the result for the smaller image for which the kernel is entirely
-inside the original data.</p>
-</dd>
-</dl>
+inside the original data.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>result</strong><span class="classifier">array of float, shape (M, N,[ …,] P)</span></dt><dd><p>The result of cross-correlating <cite>image</cite> with <cite>kernel</cite>. If mode
+<dd class="field-even"><p><strong>result</strong> – The result of cross-correlating <cite>image</cite> with <cite>kernel</cite>. If mode
 ‘valid’ is used, the resulting shape is (M-Q+1, N-R+1,[ …,] P-S+1).</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array of float, shape (M, N,[ ..,] P)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="skan.vendored.thresholding.threshold_niblack">
-<code class="descclassname">skan.vendored.thresholding.</code><code class="descname">threshold_niblack</code><span class="sig-paren">(</span><em>image</em>, <em>window_size=15</em>, <em>k=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_niblack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_niblack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies Niblack local threshold to an array.</p>
+<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">threshold_niblack</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">window_size=15</em>, <em class="sig-param">k=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_niblack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_niblack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply Niblack local threshold to an array. <a class="footnote-reference brackets" href="#id2" id="id1">1</a></p>
 <p>A threshold T is calculated for every pixel in the image using the
 following formula:</p>
 <p>T = m(x,y) - k * s(x,y)</p>
@@ -215,28 +210,25 @@ times w centered around the pixel. k is a configurable parameter
 that weights the effect of standard deviation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>image: (N, M) ndarray</strong></dt><dd><p>Grayscale input image.</p>
-</dd>
-<dt><strong>window_size</strong><span class="classifier">int, optional</span></dt><dd><p>Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p>
-</dd>
-<dt><strong>k</strong><span class="classifier">float, optional</span></dt><dd><p>Value of parameter k in threshold formula.</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>(</em><em>N</em><em>, </em><em>M</em><em>) </em><em>ndarray</em>) – Grayscale input image.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p></li>
+<li><p><strong>k</strong> (<em>float</em><em>, </em><em>optional</em>) – Value of parameter k in threshold formula.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>threshold</strong><span class="classifier">(N, M) ndarray</span></dt><dd><p>Threshold mask. All pixels with an intensity higher than
+<dd class="field-even"><p><strong>threshold</strong> – Threshold mask. All pixels with an intensity higher than
 this value are assumed to be foreground.</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(N, M) ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>This algorithm is originally designed for text recognition.</p>
 <p class="rubric">References</p>
-<dl class="citation">
-<dt class="label" id="r57e62cd248fd-1"><span class="brackets">1</span></dt>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p>Niblack, W (1986), An introduction to Digital Image
 Processing, Prentice-Hall.</p>
 </dd>
@@ -251,9 +243,8 @@ Processing, Prentice-Hall.</p>
 
 <dl class="function">
 <dt id="skan.vendored.thresholding.threshold_sauvola">
-<code class="descclassname">skan.vendored.thresholding.</code><code class="descname">threshold_sauvola</code><span class="sig-paren">(</span><em>image</em>, <em>window_size=15</em>, <em>k=0.2</em>, <em>r=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_sauvola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_sauvola" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies Sauvola local threshold to an array. Sauvola is a
-modification of Niblack technique.</p>
+<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">threshold_sauvola</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">window_size=15</em>, <em class="sig-param">k=0.2</em>, <em class="sig-param">r=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_sauvola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_sauvola" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply Sauvola local threshold to an array. <a class="footnote-reference brackets" href="#id4" id="id3">2</a></p>
 <p>In the original method a threshold T is calculated for every pixel
 in the image using the following formula:</p>
 <p>T = m(x,y) * (1 + k * ((s(x,y) / R) - 1))</p>
@@ -264,33 +255,28 @@ that weights the effect of standard deviation.
 R is the maximum standard deviation of a greyscale image.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>image: (N, M) ndarray</strong></dt><dd><p>Grayscale input image.</p>
-</dd>
-<dt><strong>window_size</strong><span class="classifier">int, optional</span></dt><dd><p>Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p>
-</dd>
-<dt><strong>k</strong><span class="classifier">float, optional</span></dt><dd><p>Value of the positive parameter k.</p>
-</dd>
-<dt><strong>r</strong><span class="classifier">float, optional</span></dt><dd><p>Value of R, the dynamic range of standard deviation.
-If None, set to the half of the image dtype range.</p>
-</dd>
-<dt><strong>offset</strong><span class="classifier">float, optional</span></dt><dd><p>Constant subtracted from obtained local thresholds.</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>(</em><em>N</em><em>, </em><em>M</em><em>) </em><em>ndarray</em>) – Grayscale input image.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Odd size of pixel neighborhood window (e.g. 3, 5, 7…).</p></li>
+<li><p><strong>k</strong> (<em>float</em><em>, </em><em>optional</em>) – Value of the positive parameter k.</p></li>
+<li><p><strong>r</strong> (<em>float</em><em>, </em><em>optional</em>) – Value of R, the dynamic range of standard deviation.
+If None, set to the half of the image dtype range.</p></li>
+<li><p><strong>offset</strong> (<em>float</em><em>, </em><em>optional</em>) – Constant subtracted from obtained local thresholds.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>threshold</strong><span class="classifier">(N, M) ndarray</span></dt><dd><p>Threshold mask. All pixels with an intensity higher than
+<dd class="field-even"><p><strong>threshold</strong> – Threshold mask. All pixels with an intensity higher than
 this value are assumed to be foreground.</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(N, M) ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>This algorithm is originally designed for text recognition.</p>
 <p class="rubric">References</p>
-<dl class="citation">
-<dt class="label" id="r4f87676385ca-1"><span class="brackets">1</span></dt>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
 <dd><p>J. Sauvola and M. Pietikainen, “Adaptive document image
 binarization,” Pattern Recognition 33(2),
 pp. 225-236, 2000.
@@ -315,8 +301,6 @@ DOI:10.1016/S0031-3203(99)00055-2</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="skan.nx.html" class="btn btn-neutral float-right" title="skan.nx: NetworkX respresentation of skeletons" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="skan.pre.html" class="btn btn-neutral float-left" title="skan.pre: Image preprocessing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

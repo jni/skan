@@ -103,9 +103,9 @@ draw.overlay_skeleton_2d(image0, skeleton0, dilate=1, axes=ax);
 # producing a network of skeleton pixels, and measuring the properties of
 # branches along that network.
 
-from skan import csr
+from skan import skeleton_to_csgraph
 
-pixel_graph, coordinates, degrees = csr.skeleton_to_csgraph(skeleton0)
+pixel_graph, coordinates, degrees = skeleton_to_csgraph(skeleton0)
 
 # The pixel graph is a SciPy [CSR
 # matrix](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html)
@@ -118,8 +118,8 @@ pixel_graph, coordinates, degrees = csr.skeleton_to_csgraph(skeleton0)
 # case, we know the spacing between pixels, so we can measure our network
 # in physical units instead of pixels:
 
-pixel_graph0, coordinates0, degrees0 = csr.skeleton_to_csgraph(skeleton0,
-                                                               spacing=spacing_nm)
+pixel_graph0, coordinates0, degrees0 = skeleton_to_csgraph(skeleton0,
+                                                           spacing=spacing_nm)
 
 # The second variable contains the coordinates (in pixel units) of the
 # points in the pixel graph. Finally, `degrees` is an image of the
@@ -136,8 +136,8 @@ pixel_graph0, coordinates0, degrees0 = csr.skeleton_to_csgraph(skeleton0,
 # recommended for very small networks.)
 
 from skan import _testdata
-g0, c0, _ = csr.skeleton_to_csgraph(_testdata.skeleton0)
-g1, c1, _ = csr.skeleton_to_csgraph(_testdata.skeleton1)
+g0, c0, _ = skeleton_to_csgraph(_testdata.skeleton0)
+g1, c1, _ = skeleton_to_csgraph(_testdata.skeleton1)
 fig, axes = plt.subplots(1, 2)
 
 draw.overlay_skeleton_networkx(g0, c0, image=_testdata.skeleton0,
@@ -145,15 +145,20 @@ draw.overlay_skeleton_networkx(g0, c0, image=_testdata.skeleton0,
 draw.overlay_skeleton_networkx(g1, c1, image=_testdata.skeleton1,
                                axis=axes[1])
 
-# The function `skan.csr.summarise` uses this graph to trace the path
-# from junctions (node 3 in the left graph, 8 and 13 in the right graph)
-# to endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and
+# For more sophisticated analyses, the `skan.Skeleton` class provides a
+# way to keep all relevant information (the CSR matrix, the image, the
+# node coordinates…) together.
+#
+# The function `skan.summarize` uses this class to trace the path from
+# junctions (node 3 in the left graph, 8 and 13 in the right graph) to
+# endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and
 # other junctions. It then produces a junction graph and table in the form
 # of a pandas DataFrame.
 #
 # Let’s go back to the red blood cell image to illustrate this graph.
 
-branch_data = csr.summarise(skeleton0, spacing=spacing_nm)
+from skan import Skeleton, summarize
+branch_data = summarize(Skeleton(skeleton0, spacing=spacing_nm))
 branch_data.head()
 
 # The branch distance is the sum of the distances along path nodes between
@@ -220,7 +225,7 @@ def skeletonize(images, spacings_nm):
 
 
 skeletons = skeletonize(images, spacings_nm)
-tables = [csr.summarise(skeleton, spacing=spacing)
+tables = [summarize(Skeleton(skeleton, spacing=spacing))
           for skeleton, spacing in zip(skeletons, spacings_nm)]
 
 for filename, dataframe in zip(files, tables):
@@ -236,7 +241,7 @@ table = pd.concat(tables)
 # treatment on our skeleton measurement. We will use only
 # junction-to-junction branches.
 
-import seaborn.apionly as sns
+import seaborn as sns
 
 j2j = (table[table['branch-type'] == 2].
        rename(columns={'branch-distance':
@@ -255,7 +260,10 @@ sns.stripplot(data=per_image,
 #
 # This is of course a toy example. For the full dataset and analysis, see:
 #
-# * our paper (submitted to PeerJ),
+# * our [PeerJ paper](https://peerj.com/articles/4312/) (and [please
+#   cite
+#   it](https://ilovesymposia.com/2019/05/02/why-you-should-cite-open-source-tools/)
+#   if you publish using skan!),
 #
 # * the [“Complete analysis with skan”](complete_analysis.html) page,
 #   and

@@ -7,4 +7,3 @@ Skan API Reference
    skan.pipe
    skan.pre
    skan.vendored.thresholding
-   skan.nx

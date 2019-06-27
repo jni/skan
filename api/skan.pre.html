@@ -96,7 +96,6 @@
 <li class="toctree-l2"><a class="reference internal" href="skan.pipe.html">skan.pipe:: Pipeline functions for skeleton analysis</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">skan.pre: Image preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skan.vendored.thresholding.html">skan.vendored.thresholding: Thresholding algorithms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="skan.nx.html">skan.nx: NetworkX respresentation of skeletons</a></li>
 </ul>
 </li>
 </ul>
@@ -169,62 +168,54 @@
 <span id="skan-pre-image-preprocessing"></span><h1>skan.pre: Image preprocessing<a class="headerlink" href="#module-skan.pre" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="skan.pre.hyperball">
-<code class="descclassname">skan.pre.</code><code class="descname">hyperball</code><span class="sig-paren">(</span><em>ndim</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#hyperball"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.hyperball" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.pre.</code><code class="sig-name descname">hyperball</code><span class="sig-paren">(</span><em class="sig-param">ndim</em>, <em class="sig-param">radius</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#hyperball"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.hyperball" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a binary morphological filter containing pixels within <cite>radius</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>ndim</strong><span class="classifier">int</span></dt><dd><p>The number of dimensions of the filter.</p>
-</dd>
-<dt><strong>radius</strong><span class="classifier">int</span></dt><dd><p>The radius of the filter.</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ndim</strong> (<em>int</em>) – The number of dimensions of the filter.</p></li>
+<li><p><strong>radius</strong> (<em>int</em>) – The radius of the filter.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>ball</strong><span class="classifier">array of bool, shape [2 * radius + 1,] * ndim</span></dt><dd><p>The required structural element</p>
+<dd class="field-even"><p><strong>ball</strong> – The required structural element</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array of bool, shape [2 * radius + 1,] * ndim</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="skan.pre.threshold">
-<code class="descclassname">skan.pre.</code><code class="descname">threshold</code><span class="sig-paren">(</span><em>image</em>, <em>*</em>, <em>sigma=0.0</em>, <em>radius=0</em>, <em>offset=0.0</em>, <em>method='sauvola'</em>, <em>smooth_method='Gaussian'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.threshold" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.pre.</code><code class="sig-name descname">threshold</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">*</em>, <em class="sig-param">sigma=0.0</em>, <em class="sig-param">radius=0</em>, <em class="sig-param">offset=0.0</em>, <em class="sig-param">method='sauvola'</em>, <em class="sig-param">smooth_method='Gaussian'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.threshold" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use scikit-image filters to “intelligently” threshold an image.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>image</strong><span class="classifier">array, shape (M, N, …[, 3])</span></dt><dd><p>Input image, conformant with scikit-image data type
-specification <a class="reference internal" href="#ra96a3d029c32-1" id="id1">[1]</a>.</p>
-</dd>
-<dt><strong>sigma</strong><span class="classifier">float, optional</span></dt><dd><p>If positive, use Gaussian filtering to smooth the image before
-thresholding.</p>
-</dd>
-<dt><strong>radius</strong><span class="classifier">int, optional</span></dt><dd><p>If given, use local median thresholding instead of global.</p>
-</dd>
-<dt><strong>offset</strong><span class="classifier">float, optional</span></dt><dd><p>If given, reduce the threshold by this amount. Higher values
-result in fewer pixels above the threshold.</p>
-</dd>
-<dt><strong>method: {‘sauvola’, ‘niblack’, ‘median’}</strong></dt><dd><p>Which method to use for thresholding. Sauvola is 100x faster, but
-median might be more accurate.</p>
-</dd>
-<dt><strong>smooth_method: {‘Gaussian’, ‘TV’}</strong></dt><dd><p>Which method to use for smoothing. Choose from Gaussian smoothing
-and total variation denoising.</p>
-</dd>
-</dl>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>, </em><em>..</em><em>[</em><em>, </em><em>3</em><em>]</em><em>)</em>) – Input image, conformant with scikit-image data type
+specification <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – If positive, use Gaussian filtering to smooth the image before
+thresholding.</p></li>
+<li><p><strong>radius</strong> (<em>int</em><em>, </em><em>optional</em>) – If given, use local median thresholding instead of global.</p></li>
+<li><p><strong>offset</strong> (<em>float</em><em>, </em><em>optional</em>) – If given, reduce the threshold by this amount. Higher values
+result in fewer pixels above the threshold.</p></li>
+<li><p><strong>method</strong> (<em>{'sauvola'</em><em>, </em><em>'niblack'</em><em>, </em><em>'median'}</em>) – Which method to use for thresholding. Sauvola is 100x faster, but
+median might be more accurate.</p></li>
+<li><p><strong>smooth_method</strong> (<em>{'Gaussian'</em><em>, </em><em>'TV'}</em>) – Which method to use for smoothing. Choose from Gaussian smoothing
+and total variation denoising.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl>
-<dt><strong>thresholded</strong><span class="classifier">image of bool, same shape as <cite>image</cite></span></dt><dd><p>The thresholded image.</p>
+<dd class="field-even"><p><strong>thresholded</strong> – The thresholded image.</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image of bool, same shape as <cite>image</cite></p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<dl class="citation">
-<dt class="label" id="ra96a3d029c32-1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p><a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></p>
 </dd>
 </dl>

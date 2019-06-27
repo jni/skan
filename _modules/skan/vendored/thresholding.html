@@ -278,7 +278,7 @@
 
 
 <div class="viewcode-block" id="threshold_niblack"><a class="viewcode-back" href="../../../api/skan.vendored.thresholding.html#skan.vendored.thresholding.threshold_niblack">[docs]</a><span class="k">def</span> <span class="nf">threshold_niblack</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Applies Niblack local threshold to an array.</span>
+    <span class="sd">&quot;&quot;&quot;Apply Niblack local threshold to an array. [1]_</span>
 
 <span class="sd">    A threshold T is calculated for every pixel in the image using the</span>
 <span class="sd">    following formula:</span>
@@ -325,8 +325,7 @@
 
 
 <div class="viewcode-block" id="threshold_sauvola"><a class="viewcode-back" href="../../../api/skan.vendored.thresholding.html#skan.vendored.thresholding.threshold_sauvola">[docs]</a><span class="k">def</span> <span class="nf">threshold_sauvola</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Applies Sauvola local threshold to an array. Sauvola is a</span>
-<span class="sd">    modification of Niblack technique.</span>
+    <span class="sd">&quot;&quot;&quot;Apply Sauvola local threshold to an array. [2]_</span>
 
 <span class="sd">    In the original method a threshold T is calculated for every pixel</span>
 <span class="sd">    in the image using the following formula:</span>
@@ -365,7 +364,7 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [1] J. Sauvola and M. Pietikainen, &quot;Adaptive document image</span>
+<span class="sd">    .. [2] J. Sauvola and M. Pietikainen, &quot;Adaptive document image</span>
 <span class="sd">           binarization,&quot; Pattern Recognition 33(2),</span>
 <span class="sd">           pp. 225-236, 2000.</span>
 <span class="sd">           DOI:10.1016/S0031-3203(99)00055-2</span>
