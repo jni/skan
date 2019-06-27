@@ -129,9 +129,9 @@ branches along that network.
 
 .. nbplot::
 
-    >>> from skan import csr
+    >>> from skan import skeleton_to_csgraph
     >>>
-    >>> pixel_graph, coordinates, degrees = csr.skeleton_to_csgraph(skeleton0)
+    >>> pixel_graph, coordinates, degrees = skeleton_to_csgraph(skeleton0)
 
 The pixel graph is a SciPy `CSR
 matrix <https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html>`__
@@ -146,8 +146,8 @@ in physical units instead of pixels:
 
 .. nbplot::
 
-    >>> pixel_graph0, coordinates0, degrees0 = csr.skeleton_to_csgraph(skeleton0,
-    ...                                                                spacing=spacing_nm)
+    >>> pixel_graph0, coordinates0, degrees0 = skeleton_to_csgraph(skeleton0,
+    ...                                                            spacing=spacing_nm)
 
 The second variable contains the coordinates (in pixel units) of the
 points in the pixel graph. Finally, ``degrees`` is an image of the
@@ -166,8 +166,8 @@ recommended for very small networks.)
 .. nbplot::
 
     >>> from skan import _testdata
-    >>> g0, c0, _ = csr.skeleton_to_csgraph(_testdata.skeleton0)
-    >>> g1, c1, _ = csr.skeleton_to_csgraph(_testdata.skeleton1)
+    >>> g0, c0, _ = skeleton_to_csgraph(_testdata.skeleton0)
+    >>> g1, c1, _ = skeleton_to_csgraph(_testdata.skeleton1)
     >>> fig, axes = plt.subplots(1, 2)
     >>>
     >>> draw.overlay_skeleton_networkx(g0, c0, image=_testdata.skeleton0,
@@ -178,9 +178,13 @@ recommended for very small networks.)
 
 
 
-The function ``skan.csr.summarise`` uses this graph to trace the path
-from junctions (node 3 in the left graph, 8 and 13 in the right graph)
-to endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and
+For more sophisticated analyses, the ``skan.Skeleton`` class provides a
+way to keep all relevant information (the CSR matrix, the image, the
+node coordinates…) together.
+
+The function ``skan.summarize`` uses this class to trace the path from
+junctions (node 3 in the left graph, 8 and 13 in the right graph) to
+endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and
 other junctions. It then produces a junction graph and table in the form
 of a pandas DataFrame.
 
@@ -188,7 +192,8 @@ Let’s go back to the red blood cell image to illustrate this graph.
 
 .. nbplot::
 
-    >>> branch_data = csr.summarise(skeleton0, spacing=spacing_nm)
+    >>> from skan import Skeleton, summarize
+    >>> branch_data = summarize(Skeleton(skeleton0, spacing=spacing_nm))
     >>> branch_data.head()
 
 
@@ -196,124 +201,112 @@ Let’s go back to the red blood cell image to illustrate this graph.
 .. raw:: html
 
     <div>
-    <style>
-        .dataframe thead tr:only-child th {
-            text-align: right;
-        }
-    
-        .dataframe thead th {
-            text-align: left;
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
         }
     
         .dataframe tbody tr th {
             vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
         }
     </style>
     <table border="1" class="dataframe">
       <thead>
         <tr style="text-align: right;">
           <th></th>
+          <th>skeleton-id</th>
+          <th>node-id-src</th>
+          <th>node-id-dst</th>
           <th>branch-distance</th>
           <th>branch-type</th>
-          <th>coord-0-0</th>
-          <th>coord-0-1</th>
-          <th>coord-1-0</th>
-          <th>coord-1-1</th>
+          <th>mean-pixel-value</th>
+          <th>stdev-pixel-value</th>
+          <th>image-coord-src-0</th>
+          <th>image-coord-src-1</th>
+          <th>image-coord-dst-0</th>
+          <th>image-coord-dst-1</th>
           <th>euclidean-distance</th>
-          <th>img-coord-0-0</th>
-          <th>img-coord-0-1</th>
-          <th>img-coord-1-0</th>
-          <th>img-coord-1-1</th>
-          <th>node-id-0</th>
-          <th>node-id-1</th>
-          <th>skeleton-id</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <th>0</th>
+          <td>1</td>
+          <td>3</td>
+          <td>265</td>
           <td>30.121296</td>
           <td>1</td>
+          <td>1.0</td>
+          <td>0.0</td>
           <td>0.00000</td>
           <td>1320.63184</td>
           <td>11.128920</td>
           <td>1295.001600</td>
           <td>27.942120</td>
-          <td>0</td>
-          <td>979</td>
-          <td>8</td>
-          <td>960</td>
-          <td>3</td>
-          <td>265</td>
-          <td>1</td>
         </tr>
         <tr>
           <th>1</th>
+          <td>2</td>
+          <td>4</td>
+          <td>234</td>
           <td>33.588423</td>
           <td>0</td>
+          <td>1.0</td>
+          <td>0.0</td>
           <td>0.00000</td>
           <td>1405.61632</td>
           <td>6.744800</td>
           <td>1375.939200</td>
           <td>30.433925</td>
-          <td>0</td>
-          <td>1042</td>
-          <td>5</td>
-          <td>1020</td>
-          <td>4</td>
-          <td>234</td>
-          <td>2</td>
         </tr>
         <tr>
           <th>2</th>
+          <td>3</td>
+          <td>5</td>
+          <td>52</td>
           <td>39.543020</td>
           <td>0</td>
+          <td>1.0</td>
+          <td>0.0</td>
           <td>0.00000</td>
           <td>1950.59616</td>
           <td>2.697920</td>
           <td>1915.523200</td>
           <td>35.176573</td>
-          <td>0</td>
-          <td>1446</td>
-          <td>2</td>
-          <td>1420</td>
-          <td>5</td>
-          <td>52</td>
-          <td>3</td>
         </tr>
         <tr>
           <th>3</th>
+          <td>4</td>
+          <td>6</td>
+          <td>375</td>
           <td>25.648291</td>
           <td>1</td>
+          <td>1.0</td>
+          <td>0.0</td>
           <td>0.00000</td>
           <td>2067.95568</td>
           <td>13.039947</td>
           <td>2048.620587</td>
           <td>23.321365</td>
-          <td>0</td>
-          <td>1533</td>
-          <td>9</td>
-          <td>1518</td>
-          <td>6</td>
-          <td>375</td>
-          <td>4</td>
         </tr>
         <tr>
           <th>4</th>
+          <td>1</td>
+          <td>8</td>
+          <td>437</td>
           <td>39.891039</td>
           <td>1</td>
+          <td>1.0</td>
+          <td>0.0</td>
           <td>1.34896</td>
           <td>236.06800</td>
           <td>25.630240</td>
           <td>207.402600</td>
           <td>37.567083</td>
-          <td>1</td>
-          <td>175</td>
-          <td>19</td>
-          <td>153</td>
-          <td>8</td>
-          <td>437</td>
-          <td>1</td>
         </tr>
       </tbody>
     </table>
@@ -437,7 +430,7 @@ skeleton?
     ...
     ...
     >>> skeletons = skeletonize(images, spacings_nm)
-    >>> tables = [csr.summarise(skeleton, spacing=spacing)
+    >>> tables = [summarize(Skeleton(skeleton, spacing=spacing))
     ...           for skeleton, spacing in zip(skeletons, spacings_nm)]
     ...
     >>> for filename, dataframe in zip(files, tables):
@@ -455,7 +448,7 @@ junction-to-junction branches.
 
 .. nbplot::
 
-    >>> import seaborn.apionly as sns
+    >>> import seaborn as sns
     >>>
     >>> j2j = (table[table['branch-type'] == 2].
     ...        rename(columns={'branch-distance':
@@ -477,7 +470,10 @@ surface of the RBC membrane.
 
 This is of course a toy example. For the full dataset and analysis, see:
 
--  our paper (submitted to PeerJ),
+-  our `PeerJ paper <https://peerj.com/articles/4312/>`__ (and `please
+   cite
+   it <https://ilovesymposia.com/2019/05/02/why-you-should-cite-open-source-tools/>`__
+   if you publish using skan!),
 -  the `“Complete analysis with skan” <complete_analysis.html>`__ page,
    and
 -  the `skan-scripts <https://github.com/jni/skan-scripts>`__
