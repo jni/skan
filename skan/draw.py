@@ -4,8 +4,6 @@ from matplotlib import collections
 import networkx as nx
 from skimage import img_as_float, morphology
 from skimage.color import gray2rgb
-from .csr import summarise
-from .pre import threshold
 
 
 def _normalise_image(image, *, image_cmap=None):
@@ -132,8 +130,8 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
     image = _normalise_image(image, image_cmap=image_cmap)
     summary = stats
     # transforming from row, col to x, y
-    coords_cols = (['img-coord-0-%i' % i for i in [1, 0]] +
-                   ['img-coord-1-%i' % i for i in [1, 0]])
+    coords_cols = (['image-coord-src-%i' % i for i in [1, 0]] +
+                   ['image-coord-dst-%i' % i for i in [1, 0]])
     coords = summary[coords_cols].values.reshape((-1, 2, 2))
     if axes is None:
         fig, axes = plt.subplots()

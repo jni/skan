@@ -878,10 +878,10 @@ def summarise(image, *, spacing=1, using_height=False):
     columns = (['skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
                 'branch-type'] +
                value_columns +
-               ['img-coord-0-%i' % i for i in range(ndim)] +
-               ['img-coord-1-%i' % i for i in range(ndim)] +
-               ['coord-0-%i' % i for i in range(height_ndim)] +
-               ['coord-1-%i' % i for i in range(height_ndim)] +
+               ['image-coord-src-%i' % i for i in range(ndim)] +
+               ['image-coord-dst-%i' % i for i in range(ndim)] +
+               ['coord-src-%i' % i for i in range(height_ndim)] +
+               ['coord-dst-%i' % i for i in range(height_ndim)] +
                ['euclidean-distance'])
     column_types = ([int, int, int, float, int] + value_column_types +
                     2 * ndim * [int] +
