@@ -311,9 +311,11 @@ class Skeleton:
         `keep_images` is True. This is useful for visualization.
     """
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
-                 _buffer_size_offset=None, keep_images=True):
+                 _buffer_size_offset=None, keep_images=True, 
+                 unique_junctions=True):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
-                                                     spacing=spacing)
+                                                     spacing=spacing,
+                                                     unique_junctions=unique_junctions)
         if np.issubdtype(skeleton_image.dtype, np.float_):
             pixel_values = ndi.map_coordinates(skeleton_image, coords.T,
                                                order=3)
