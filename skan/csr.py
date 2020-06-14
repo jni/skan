@@ -279,6 +279,10 @@ class Skeleton:
     keep_images : bool
         Whether or not to keep the original input images. These can be useful
         for visualization, but they may take up a lot of memory.
+    unique_junctions : bool, optional
+        If True, adjacent junction nodes get collapsed into a single
+        conceptual node, with position at the centroid of all the connected
+        initial nodes.
 
     Attributes
     ----------
