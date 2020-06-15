@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -166,9 +166,9 @@
             
   <div class="section" id="module-skan.pre">
 <span id="skan-pre-image-preprocessing"></span><h1>skan.pre: Image preprocessing<a class="headerlink" href="#module-skan.pre" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="skan.pre.hyperball">
-<code class="sig-prename descclassname">skan.pre.</code><code class="sig-name descname">hyperball</code><span class="sig-paren">(</span><em class="sig-param">ndim</em>, <em class="sig-param">radius</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#hyperball"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.hyperball" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.pre.</code><code class="sig-name descname">hyperball</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ndim</span></em>, <em class="sig-param"><span class="n">radius</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#hyperball"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.hyperball" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a binary morphological filter containing pixels within <cite>radius</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -186,9 +186,9 @@
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.pre.threshold">
-<code class="sig-prename descclassname">skan.pre.</code><code class="sig-name descname">threshold</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">*</em>, <em class="sig-param">sigma=0.0</em>, <em class="sig-param">radius=0</em>, <em class="sig-param">offset=0.0</em>, <em class="sig-param">method='sauvola'</em>, <em class="sig-param">smooth_method='Gaussian'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.threshold" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.pre.</code><code class="sig-name descname">threshold</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">radius</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'sauvola'</span></em>, <em class="sig-param"><span class="n">smooth_method</span><span class="o">=</span><span class="default_value">'Gaussian'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pre.threshold" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use scikit-image filters to “intelligently” threshold an image.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -166,9 +166,9 @@
             
   <div class="section" id="module-skan.pipe">
 <span id="skan-pipe-pipeline-functions-for-skeleton-analysis"></span><h1>skan.pipe:: Pipeline functions for skeleton analysis<a class="headerlink" href="#module-skan.pipe" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="skan.pipe.process_images">
-<code class="sig-prename descclassname">skan.pipe.</code><code class="sig-name descname">process_images</code><span class="sig-paren">(</span><em class="sig-param">filenames</em>, <em class="sig-param">image_format</em>, <em class="sig-param">threshold_radius</em>, <em class="sig-param">smooth_radius</em>, <em class="sig-param">brightness_offset</em>, <em class="sig-param">scale_metadata_path</em>, <em class="sig-param">crop_radius=0</em>, <em class="sig-param">smooth_method='Gaussian'</em>, <em class="sig-param">num_threads=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pipe.html#process_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pipe.process_images" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.pipe.</code><code class="sig-name descname">process_images</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filenames</span></em>, <em class="sig-param"><span class="n">image_format</span></em>, <em class="sig-param"><span class="n">threshold_radius</span></em>, <em class="sig-param"><span class="n">smooth_radius</span></em>, <em class="sig-param"><span class="n">brightness_offset</span></em>, <em class="sig-param"><span class="n">scale_metadata_path</span></em>, <em class="sig-param"><span class="n">crop_radius</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">smooth_method</span><span class="o">=</span><span class="default_value">'Gaussian'</span></em>, <em class="sig-param"><span class="n">num_threads</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pipe.html#process_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.pipe.process_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Full pipeline from images to skeleton stats with local median threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

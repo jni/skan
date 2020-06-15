@@ -68,7 +68,7 @@
 ./_static/fonts/fontawesome-webfont.woff
 ./_static/fonts/fontawesome-webfont.woff2
 ./_static/gui-screenshot.png
-./_static/jquery-3.2.1.js
+./_static/jquery-3.5.1.js
 ./_static/jquery.js
 ./_static/js/modernizr.min.js
 ./_static/js/theme.js
