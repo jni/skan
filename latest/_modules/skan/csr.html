@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -154,12 +154,12 @@
   <h1>Source code for skan.csr</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span><span class="p">,</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
-<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">csgraph</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">spatial</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span><span class="p">,</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csgraph</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">spatial</span>
 <span class="kn">import</span> <span class="nn">numba</span>
 
-<span class="kn">from</span> <span class="nn">.nputil</span> <span class="k">import</span> <span class="n">pad</span><span class="p">,</span> <span class="n">raveled_steps_to_neighbors</span>
+<span class="kn">from</span> <span class="nn">.nputil</span> <span class="kn">import</span> <span class="n">pad</span><span class="p">,</span> <span class="n">raveled_steps_to_neighbors</span>
 
 
 <span class="c1">## NBGraph and Numba-based implementation</span>
@@ -174,7 +174,7 @@
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jitclass</span><span class="p">(</span><span class="n">csr_spec</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">NBGraph</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indptr</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">node_props</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indptr</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">node_props</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indptr</span> <span class="o">=</span> <span class="n">indptr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
@@ -433,6 +433,10 @@
 <span class="sd">    keep_images : bool</span>
 <span class="sd">        Whether or not to keep the original input images. These can be useful</span>
 <span class="sd">        for visualization, but they may take up a lot of memory.</span>
+<span class="sd">    unique_junctions : bool, optional</span>
+<span class="sd">        If True, adjacent junction nodes get collapsed into a single</span>
+<span class="sd">        conceptual node, with position at the centroid of all the connected</span>
+<span class="sd">        initial nodes.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -464,10 +468,12 @@
 <span class="sd">        The image from which the skeleton was derived. Only present if</span>
 <span class="sd">        `keep_images` is True. This is useful for visualization.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skeleton_image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">source_image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_images</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skeleton_image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">source_image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_images</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">unique_junctions</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">graph</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">degrees</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton_image</span><span class="p">,</span>
-                                                     <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">)</span>
+                                                     <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
+                                                     <span class="n">unique_junctions</span><span class="o">=</span><span class="n">unique_junctions</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">):</span>
             <span class="n">pixel_values</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span><span class="n">skeleton_image</span><span class="p">,</span> <span class="n">coords</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
                                                <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -636,15 +642,15 @@
     <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;mean-pixel-value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">path_means</span><span class="p">()</span>
     <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;stdev-pixel-value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">path_stdev</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>  <span class="c1"># keep loops separate for best insertion order</span>
-        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;image-coord-src-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;image-coord-src-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
-        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;image-coord-dst-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;image-coord-dst-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
     <span class="n">coords_real_src</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">]</span> <span class="o">*</span> <span class="n">skel</span><span class="o">.</span><span class="n">spacing</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
-        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;coord-src-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_src</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;coord-src-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_src</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
     <span class="n">coords_real_dst</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">]</span> <span class="o">*</span> <span class="n">skel</span><span class="o">.</span><span class="n">spacing</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
-        <span class="n">summary</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;coord-dst-</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_dst</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;coord-dst-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_dst</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
     <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;euclidean-distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">coords_real_dst</span> <span class="o">-</span> <span class="n">coords_real_src</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ndim</span><span class="p">))</span>
     <span class="p">)</span>

@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -179,7 +179,7 @@ contained within it is placed in this notebook’s working directory.</p>
 </div>
 <div class="section" id="using-skan-pipe-to-get-a-branch-dataset-for-analysis">
 <h2>1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis<a class="headerlink" href="#using-skan-pipe-to-get-a-branch-dataset-for-analysis" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">schizont_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;schizonts/*.tif&#39;</span><span class="p">)</span>
@@ -191,7 +191,7 @@ contained within it is placed in this notebook’s working directory.</p>
 <p>Now we process all 96 images. This should take about a minute on a
 modern laptop, but could be faster on a multicore machine, as it
 processes images using as many CPUs as are avaliable.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan</span> <span class="k">import</span> <span class="n">pipe</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">pipe</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">toolz</span> <span class="k">as</span> <span class="nn">tz</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="go">&gt;&gt;&gt;</span>
@@ -209,7 +209,7 @@ processes images using as many CPUs as are avaliable.</p>
 </div>
 <p>96it [00:29,  8.33it/s]</p>
 <p>Next, we use the filename to infer the infection status of each image.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">infection_status</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">infection_status</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="s1">&#39;Uninf&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;normal&#39;</span>
 <span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
@@ -222,7 +222,7 @@ processes images using as many CPUs as are avaliable.</p>
 <p>Also encoded in the filename are the <em>cell number</em> (unique by infection
 status) and the <em>field number</em> (each cell membrane is imaged at several
 non-overlapping locations).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>  <span class="c1"># regular expressions, for text matching</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>  <span class="c1"># regular expressions, for text matching</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">cell_number</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
@@ -258,20 +258,20 @@ creates a lot of false branches. Since the goal of Skan is to analyse
 skeletons, rather than generate them, we attempt to filter the branches,
 and measure only those that look like ridges according to the shape
 index.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ridges</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean shape index&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.625</span><span class="p">)</span> <span class="o">&amp;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ridges</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean shape index&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.625</span><span class="p">)</span> <span class="o">&amp;</span>
 <span class="gp">... </span>          <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean shape index&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.125</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>For the same reason, we only look at junction-to-junction branches,
 which are more accurately identified by our method than
 junction-to-endpoint branches.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">j2j</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">j2j</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">datar</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ridges</span> <span class="o">&amp;</span> <span class="n">j2j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Finally, we make a new column of measurements in a more natural scale
 for our purpose.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e9</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e9</span>
 </pre></div>
 </div>
 </div>
@@ -283,16 +283,16 @@ for our purpose.</p>
 interactive plots.  If running in the Jupyter Notebook, use <code class="docutils literal notranslate"><span class="pre">%matplotlib</span>
 <span class="pre">inline</span></code>.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">imageio</span> <span class="k">as</span> <span class="nn">iio</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">morphology</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan.pre</span> <span class="k">import</span> <span class="n">threshold</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan.pre</span> <span class="kn">import</span> <span class="n">threshold</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># PANEL A</span>

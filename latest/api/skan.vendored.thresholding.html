@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -167,9 +167,9 @@
 <h1>skan.vendored.thresholding: Thresholding algorithms<a class="headerlink" href="#skan-vendored-thresholding-thresholding-algorithms" title="Permalink to this headline">¶</a></h1>
 <p>This version of Sauvola thresholding is extremely fast even for large window
 sizes.</p>
-<span class="target" id="module-skan.vendored.thresholding"></span><dl class="function">
+<span class="target" id="module-skan.vendored.thresholding"></span><dl class="py function">
 <dt id="skan.vendored.thresholding.correlate_sparse">
-<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">correlate_sparse</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">kernel</em>, <em class="sig-param">mode='reflect'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#correlate_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.correlate_sparse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">correlate_sparse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">kernel</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'reflect'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#correlate_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.correlate_sparse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute valid cross-correlation of <cite>padded_array</cite> and <cite>kernel</cite>.</p>
 <p>This function is <em>fast</em> when <cite>kernel</cite> is large with many zeros.</p>
 <p>See <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.correlate</span></code> for a description of cross-correlation.</p>
@@ -197,9 +197,9 @@ inside the original data.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.vendored.thresholding.threshold_niblack">
-<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">threshold_niblack</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">window_size=15</em>, <em class="sig-param">k=0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_niblack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_niblack" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">threshold_niblack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">window_size</span><span class="o">=</span><span class="default_value">15</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">0.2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_niblack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_niblack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply Niblack local threshold to an array. <a class="footnote-reference brackets" href="#id2" id="id1">1</a></p>
 <p>A threshold T is calculated for every pixel in the image using the
 following formula:</p>
@@ -234,16 +234,16 @@ Processing, Prentice-Hall.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">page</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">binary_image</span> <span class="o">=</span> <span class="n">threshold_niblack</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.vendored.thresholding.threshold_sauvola">
-<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">threshold_sauvola</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">window_size=15</em>, <em class="sig-param">k=0.2</em>, <em class="sig-param">r=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_sauvola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_sauvola" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.vendored.thresholding.</code><code class="sig-name descname">threshold_sauvola</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">window_size</span><span class="o">=</span><span class="default_value">15</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/vendored/thresholding.html#threshold_sauvola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.vendored.thresholding.threshold_sauvola" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply Sauvola local threshold to an array. <a class="footnote-reference brackets" href="#id4" id="id3">2</a></p>
 <p>In the original method a threshold T is calculated for every pixel
 in the image using the following formula:</p>
@@ -284,7 +284,7 @@ DOI:10.1016/S0031-3203(99)00055-2</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">data</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">data</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">page</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">binary_sauvola</span> <span class="o">=</span> <span class="n">threshold_sauvola</span><span class="p">(</span><span class="n">image</span><span class="p">,</span>
 <span class="gp">... </span>                                   <span class="n">window_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>

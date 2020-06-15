@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -166,9 +166,9 @@
             
   <div class="section" id="module-skan.draw">
 <span id="skan-draw-skeleton-visualisation"></span><h1>skan.draw: Skeleton visualisation<a class="headerlink" href="#module-skan.draw" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="skan.draw.overlay_euclidean_skeleton_2d">
-<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_euclidean_skeleton_2d</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">stats</em>, <em class="sig-param">*</em>, <em class="sig-param">image_cmap=None</em>, <em class="sig-param">skeleton_color_source='branch-type'</em>, <em class="sig-param">skeleton_colormap='viridis'</em>, <em class="sig-param">axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_euclidean_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_euclidean_skeleton_2d" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_euclidean_skeleton_2d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">stats</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">image_cmap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">skeleton_color_source</span><span class="o">=</span><span class="default_value">'branch-type'</span></em>, <em class="sig-param"><span class="n">skeleton_colormap</span><span class="o">=</span><span class="default_value">'viridis'</span></em>, <em class="sig-param"><span class="n">axes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_euclidean_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_euclidean_skeleton_2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the image, and overlay the straight-line skeleton over it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -205,9 +205,9 @@ junction-junction, path-path). This is the default.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.draw.overlay_skeleton_2d">
-<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_skeleton_2d</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">skeleton</em>, <em class="sig-param">*</em>, <em class="sig-param">image_cmap=None</em>, <em class="sig-param">color=(1</em>, <em class="sig-param">0</em>, <em class="sig-param">0)</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">dilate=0</em>, <em class="sig-param">axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_skeleton_2d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">skeleton</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">image_cmap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">1, 0, 0</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">dilate</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">axes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overlay the skeleton pixels on the input image.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -237,9 +237,9 @@ not to be drawn.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.draw.overlay_skeleton_2d_class">
-<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_skeleton_2d_class</code><span class="sig-paren">(</span><em class="sig-param">skeleton</em>, <em class="sig-param">*</em>, <em class="sig-param">image_cmap='gray'</em>, <em class="sig-param">skeleton_color_source='path_means'</em>, <em class="sig-param">skeleton_colormap='viridis'</em>, <em class="sig-param">vmin=None</em>, <em class="sig-param">vmax=None</em>, <em class="sig-param">axes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d_class" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_skeleton_2d_class</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">skeleton</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">image_cmap</span><span class="o">=</span><span class="default_value">'gray'</span></em>, <em class="sig-param"><span class="n">skeleton_color_source</span><span class="o">=</span><span class="default_value">'path_means'</span></em>, <em class="sig-param"><span class="n">skeleton_colormap</span><span class="o">=</span><span class="default_value">'viridis'</span></em>, <em class="sig-param"><span class="n">vmin</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vmax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the image, and overlay the skeleton over it.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -278,9 +278,9 @@ to create a colorbar for the plot.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.draw.overlay_skeleton_networkx">
-<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_skeleton_networkx</code><span class="sig-paren">(</span><em class="sig-param">csr_graph</em>, <em class="sig-param">coordinates</em>, <em class="sig-param">*</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">image=None</em>, <em class="sig-param">cmap=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_networkx" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">overlay_skeleton_networkx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">csr_graph</span></em>, <em class="sig-param"><span class="n">coordinates</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">image</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_networkx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the skeleton as a NetworkX graph, optionally overlaid on an image.</p>
 <p>Due to the size of NetworkX drawing elements, this is only recommended
 for very small skeletons.</p>
@@ -305,9 +305,9 @@ include <code class="docutils literal notranslate"><span class="pre">node_size=<
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.draw.pipeline_plot">
-<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">pipeline_plot</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">thresholded</em>, <em class="sig-param">skeleton</em>, <em class="sig-param">stats</em>, <em class="sig-param">*</em>, <em class="sig-param">figure=None</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">figsize=(9</em>, <em class="sig-param">9)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pipeline_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pipeline_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">pipeline_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">thresholded</span></em>, <em class="sig-param"><span class="n">skeleton</span></em>, <em class="sig-param"><span class="n">stats</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">figure</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">9, 9</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pipeline_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pipeline_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the image, the thresholded version, and its skeleton.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -343,9 +343,9 @@ specification <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="skan.draw.pixel_perfect_figsize">
-<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">pixel_perfect_figsize</code><span class="sig-paren">(</span><em class="sig-param">image</em>, <em class="sig-param">dpi=80</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pixel_perfect_figsize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pixel_perfect_figsize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">skan.draw.</code><code class="sig-name descname">pixel_perfect_figsize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">80</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pixel_perfect_figsize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skan.draw.pixel_perfect_figsize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the Matplotlib figure size tuple (w, h) for given image and dpi.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -362,7 +362,7 @@ specification <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">768</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">768</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_perfect_figsize</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 <span class="go">(12.8, 9.6)</span>
 </pre></div>
