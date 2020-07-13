@@ -18,7 +18,7 @@ csr_spec = [
     ('node_properties', numba.float64[:])
 ]
 
-@numba.jitclass(csr_spec)
+@numba.experimental.jitclass(csr_spec)
 class NBGraph:
     def __init__(self, indptr, indices, data, shape, node_props):
         self.indptr = indptr
