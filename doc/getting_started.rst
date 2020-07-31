@@ -506,5 +506,9 @@ This is of course a toy example. For the full dataset and analysis, see:
 But we hope this minimal example will serve for inspiration for your
 future analysis of skeleton images.
 
+If you are interested in how we used `numba <https://numba.pydata.org/>`_
+to accelerate some parts of Skan, check out `jni's talk <https://www.youtube.com/watch?v=0pUPNMglnaE>`_
+at the the SciPy 2019 conference.
+
 
 .. code-links:: python clear
