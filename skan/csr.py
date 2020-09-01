@@ -591,7 +591,9 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         adjacent ones.
     pixel_coordinates : array of float
         An array of shape (Nnz + 1, skel.ndim), mapping indices in `graph`
-        to pixel coordinates in `degree_image` or `skel`.
+        to pixel coordinates in `degree_image` or `skel`. Array entry
+        (0,:) contains currently always zeros to index the pixels, which
+        start at 1, directly to the coordinates.
     degree_image : array of int, same shape as skel
         An image where each pixel value contains the degree of its
         corresponding node in `graph`. This is useful to classify nodes.
