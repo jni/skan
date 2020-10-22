@@ -512,7 +512,9 @@ between adjacent pixels i and j. In a 2D image, that would be
 1 for immediately adjacent pixels and sqrt(2) for diagonally
 adjacent ones.</p></li>
 <li><p><strong>pixel_coordinates</strong> (<em>array of float</em>) – An array of shape (Nnz + 1, skel.ndim), mapping indices in <cite>graph</cite>
-to pixel coordinates in <cite>degree_image</cite> or <cite>skel</cite>.</p></li>
+to pixel coordinates in <cite>degree_image</cite> or <cite>skel</cite>. Array entry
+(0,:) contains currently always zeros to index the pixels, which
+start at 1, directly to the coordinates.</p></li>
 <li><p><strong>degree_image</strong> (<em>array of int, same shape as skel</em>) – An image where each pixel value contains the degree of its
 corresponding node in <cite>graph</cite>. This is useful to classify nodes.</p></li>
 </ul>

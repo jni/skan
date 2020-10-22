@@ -748,7 +748,9 @@
 <span class="sd">        adjacent ones.</span>
 <span class="sd">    pixel_coordinates : array of float</span>
 <span class="sd">        An array of shape (Nnz + 1, skel.ndim), mapping indices in `graph`</span>
-<span class="sd">        to pixel coordinates in `degree_image` or `skel`.</span>
+<span class="sd">        to pixel coordinates in `degree_image` or `skel`. Array entry</span>
+<span class="sd">        (0,:) contains currently always zeros to index the pixels, which</span>
+<span class="sd">        start at 1, directly to the coordinates.</span>
 <span class="sd">    degree_image : array of int, same shape as skel</span>
 <span class="sd">        An image where each pixel value contains the degree of its</span>
 <span class="sd">        corresponding node in `graph`. This is useful to classify nodes.</span>
