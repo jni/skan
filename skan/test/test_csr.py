@@ -4,6 +4,7 @@ from numpy.testing import assert_equal, assert_almost_equal
 from skan import csr
 
 rundir = os.path.dirname(os.path.abspath(__file__))
+print (rundir)
 sys.path.append(rundir)
 
 from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
@@ -123,6 +124,18 @@ def test_pixel_values():
     expected = np.mean(image[1:-1])
     stats = csr.summarise(image)
     assert_almost_equal(stats.loc[0, 'mean pixel value'], expected)
+
+
+def test_maximum_length():
+    image = np.random.random((45,))
+    expected = np.max(image[1:-1])
+    stats = csr.summarise(image)
+    print (csr.path_maximum_length())
+    print (stats)
+    #print (stats.loc[0, 'max-length'], expected)
+    #assert_almost_equal(stats.loc[0, 'max-length'], expected)
+
+
 
 
 def test_tip_junction_edges():
