@@ -4,8 +4,6 @@ from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
 from scipy import spatial
 import numba
-
-
 from .nputil import pad, raveled_steps_to_neighbors
 
 ## NBGraph and Numba-based implementation
@@ -516,9 +514,7 @@ def summarize(skel: Skeleton):
     kind[endpoints_src == endpoints_dst] = 3  # cycle
     summary['branch-type'] = kind
     summary['mean-pixel-value'] = skel.path_means()
-    #summary['max-length'] = skel.path_maximum_length()
     summary['stdev-pixel-value'] = skel.path_stdev()
-    #print (summary)
     for i in range(ndim):  # keep loops separate for best insertion order
         summary[f'image-coord-src-{i}'] = skel.coordinates[endpoints_src, i]
     for i in range(ndim):
