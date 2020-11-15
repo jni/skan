@@ -306,7 +306,8 @@ class Skeleton:
         The number of paths, P. This is redundant information given `n_paths`,
         but it is used often enough that it is worth keeping around.
     distances : array of float, shape (P,)
-        The distance of each path.
+        The distance of each path. Note: not initialized until `path_lengths()`
+        is called on the skeleton; use path_lengths() instead
     skeleton_image : array or None
         The input skeleton image. Only present if `keep_images` is True. Set to
         False to preserve memory.
