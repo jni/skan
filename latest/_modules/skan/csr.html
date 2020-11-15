@@ -463,7 +463,8 @@
 <span class="sd">        The number of paths, P. This is redundant information given `n_paths`,</span>
 <span class="sd">        but it is used often enough that it is worth keeping around.</span>
 <span class="sd">    distances : array of float, shape (P,)</span>
-<span class="sd">        The distance of each path.</span>
+<span class="sd">        The distance of each path. Note: not initialized until `path_lengths()`</span>
+<span class="sd">        is called on the skeleton; use path_lengths() instead</span>
 <span class="sd">    skeleton_image : array or None</span>
 <span class="sd">        The input skeleton image. Only present if `keep_images` is True. Set to</span>
 <span class="sd">        False to preserve memory.</span>
