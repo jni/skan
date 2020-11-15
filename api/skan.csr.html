@@ -268,7 +268,8 @@ but it is used often enough that it is worth keeping around.</p>
 <dl class="py attribute">
 <dt id="skan.csr.Skeleton.distances">
 <code class="sig-name descname">distances</code><a class="headerlink" href="#skan.csr.Skeleton.distances" title="Permalink to this definition">¶</a></dt>
-<dd><p>The distance of each path.</p>
+<dd><p>The distance of each path. Note: not initialized until <cite>path_lengths()</cite>
+is called on the skeleton; use path_lengths() instead</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>array of float, shape (P,)</p>
