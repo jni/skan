@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>skan.pre: Image preprocessing &mdash; Skan 0.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skan.vendored.thresholding: Thresholding algorithms" href="skan.vendored.thresholding.html" />
+    <link rel="prev" title="skan.pipe:: Pipeline functions for skeleton analysis" href="skan.pipe.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Skan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui.html">Using Skan’s GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Skan API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="skan.csr.html">skan.csr: CSR Graph representation of skeletons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.draw.html">skan.draw: Skeleton visualisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.pipe.html">skan.pipe:: Pipeline functions for skeleton analysis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">skan.pre: Image preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="skan.vendored.thresholding.html">skan.vendored.thresholding: Thresholding algorithms</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Skan</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="api.html">Skan API Reference</a> &raquo;</li>
+        
+      <li>skan.pre: Image preprocessing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/api/skan.pre.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skan.pre">
+<span id="skan-pre-image-preprocessing"></span><h1>skan.pre: Image preprocessing<a class="headerlink" href="#module-skan.pre" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="skan.pre.hyperball">
+<code class="sig-prename descclassname"><span class="pre">skan.pre.</span></code><code class="sig-name descname"><span class="pre">hyperball</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#hyperball"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.pre.hyperball" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a binary morphological filter containing pixels within <cite>radius</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ndim</strong> (<em>int</em>) – The number of dimensions of the filter.</p></li>
+<li><p><strong>radius</strong> (<em>int</em>) – The radius of the filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ball</strong> – The required structural element</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array of bool, shape [2 * radius + 1,] * ndim</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skan.pre.threshold">
+<code class="sig-prename descclassname"><span class="pre">skan.pre.</span></code><code class="sig-name descname"><span class="pre">threshold</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sauvola'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Gaussian'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/pre.html#threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.pre.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use scikit-image filters to “intelligently” threshold an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>, </em><em>..</em><em>[</em><em>, </em><em>3</em><em>]</em><em>)</em>) – Input image, conformant with scikit-image data type
+specification <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.</p></li>
+<li><p><strong>sigma</strong> (<em>float</em><em>, </em><em>optional</em>) – If positive, use Gaussian filtering to smooth the image before
+thresholding.</p></li>
+<li><p><strong>radius</strong> (<em>int</em><em>, </em><em>optional</em>) – If given, use local median thresholding instead of global.</p></li>
+<li><p><strong>offset</strong> (<em>float</em><em>, </em><em>optional</em>) – If given, reduce the threshold by this amount. Higher values
+result in fewer pixels above the threshold.</p></li>
+<li><p><strong>method</strong> (<em>{'sauvola'</em><em>, </em><em>'niblack'</em><em>, </em><em>'median'}</em>) – Which method to use for thresholding. Sauvola is 100x faster, but
+median might be more accurate.</p></li>
+<li><p><strong>smooth_method</strong> (<em>{'Gaussian'</em><em>, </em><em>'TV'}</em>) – Which method to use for smoothing. Choose from Gaussian smoothing
+and total variation denoising.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>thresholded</strong> – The thresholded image.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image of bool, same shape as <cite>image</cite></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p><a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="skan.vendored.thresholding.html" class="btn btn-neutral float-right" title="skan.vendored.thresholding: Thresholding algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="skan.pipe.html" class="btn btn-neutral float-left" title="skan.pipe:: Pipeline functions for skeleton analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017, Juan Nunez-Iglesias.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
