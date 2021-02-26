@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>skan.pipe &mdash; Skan 0.10.0-dev documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Skan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.10.0-dev
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gui.html">Using Skan’s GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">Skan API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Skan</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>skan.pipe</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skan.pipe</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">pre</span><span class="p">,</span> <span class="n">csr</span>
+<span class="kn">import</span> <span class="nn">imageio</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">.image_stats</span> <span class="kn">import</span> <span class="n">image_summary</span>
+<span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="kn">import</span> <span class="n">shape_index</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+
+
+<span class="n">CPU_COUNT</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CPU_COUNT&#39;</span><span class="p">,</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()))</span>
+
+<span class="k">def</span> <span class="nf">_get_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">md_path_or_scale</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get a valid scale from an image and a metadata path or scale.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : np.ndarray</span>
+<span class="sd">        The input image.</span>
+<span class="sd">    md_path_or_scale : float or image filename</span>
+<span class="sd">        The path to the file containing the metadata, or the scale.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    scale : float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">md_path_or_scale</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">md_path_or_scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">md_path</span> <span class="o">=</span> <span class="n">md_path_or_scale</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">meta</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">md_path</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># measurements will be in pixel units</span>
+    <span class="k">return</span> <span class="n">scale</span>
+
+
+<span class="k">def</span> <span class="nf">process_single_image</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">image_format</span><span class="p">,</span> <span class="n">scale_metadata_path</span><span class="p">,</span>
+                         <span class="n">threshold_radius</span><span class="p">,</span> <span class="n">smooth_radius</span><span class="p">,</span>
+                         <span class="n">brightness_offset</span><span class="p">,</span> <span class="n">crop_radius</span><span class="p">,</span> <span class="n">smooth_method</span><span class="p">):</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">image_format</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">_get_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale_metadata_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">crop_radius</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">crop_radius</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">c</span><span class="p">:</span><span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span><span class="o">-</span><span class="n">c</span><span class="p">]</span>
+    <span class="n">pixel_threshold_radius</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">threshold_radius</span> <span class="o">/</span> <span class="n">scale</span><span class="p">))</span>
+
+    <span class="n">pixel_smoothing_radius</span> <span class="o">=</span> <span class="n">smooth_radius</span> <span class="o">*</span> <span class="n">pixel_threshold_radius</span>
+    <span class="n">thresholded</span> <span class="o">=</span> <span class="n">pre</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">pixel_smoothing_radius</span><span class="p">,</span>
+                                <span class="n">radius</span><span class="o">=</span><span class="n">pixel_threshold_radius</span><span class="p">,</span>
+                                <span class="n">offset</span><span class="o">=</span><span class="n">brightness_offset</span><span class="p">,</span>
+                                <span class="n">smooth_method</span><span class="o">=</span><span class="n">smooth_method</span><span class="p">)</span>
+    <span class="n">quality</span> <span class="o">=</span> <span class="n">shape_index</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">pixel_smoothing_radius</span><span class="p">,</span>
+                          <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;reflect&#39;</span><span class="p">)</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">thresholded</span><span class="p">)</span> <span class="o">*</span> <span class="n">quality</span>
+    <span class="n">framedata</span> <span class="o">=</span> <span class="n">csr</span><span class="o">.</span><span class="n">summarise</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">framedata</span><span class="p">[</span><span class="s1">&#39;squiggle&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">framedata</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span> <span class="o">/</span>
+                                    <span class="n">framedata</span><span class="p">[</span><span class="s1">&#39;euclidean-distance&#39;</span><span class="p">])</span>
+    <span class="n">framedata</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scale</span>
+    <span class="n">framedata</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mean pixel value&#39;</span><span class="p">:</span> <span class="s1">&#39;mean shape index&#39;</span><span class="p">},</span>
+                     <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">framedata</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+    <span class="k">return</span> <span class="n">image</span><span class="p">,</span> <span class="n">thresholded</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">framedata</span>
+
+
+<div class="viewcode-block" id="process_images"><a class="viewcode-back" href="../../api/skan.pipe.html#skan.pipe.process_images">[docs]</a><span class="k">def</span> <span class="nf">process_images</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">image_format</span><span class="p">,</span> <span class="n">threshold_radius</span><span class="p">,</span>
+                   <span class="n">smooth_radius</span><span class="p">,</span> <span class="n">brightness_offset</span><span class="p">,</span> <span class="n">scale_metadata_path</span><span class="p">,</span>
+                   <span class="n">crop_radius</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">smooth_method</span><span class="o">=</span><span class="s1">&#39;Gaussian&#39;</span><span class="p">,</span>
+                   <span class="n">num_threads</span><span class="o">=</span><span class="n">CPU_COUNT</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Full pipeline from images to skeleton stats with local median threshold.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filenames : list of string</span>
+<span class="sd">        The list of input filenames.</span>
+<span class="sd">    image_format : string</span>
+<span class="sd">        The format of the files. &#39;auto&#39; is automatically determined by the</span>
+<span class="sd">        imageio library. See imageio documentation for valid image formats.</span>
+<span class="sd">    threshold_radius : float</span>
+<span class="sd">        The radius for median thresholding,</span>
+<span class="sd">    smooth_radius : float in [0, 1]</span>
+<span class="sd">        The value of sigma with which to Gaussian-smooth the image,</span>
+<span class="sd">        **relative to `threshold_radius`**.</span>
+<span class="sd">    brightness_offset : float</span>
+<span class="sd">        The standard brightness value with which to threshold is the local</span>
+<span class="sd">        median, `m(x, y)`. Use this value to offset from there: the threshold</span>
+<span class="sd">        used will be `m(x, y) + brightness_offset`.</span>
+<span class="sd">    scale_metadata_path : string</span>
+<span class="sd">        The path in the image dictionary to find the metadata on pixel scale,</span>
+<span class="sd">        separated by forward slashes (&#39;/&#39;).</span>
+<span class="sd">    crop_radius : int, optional</span>
+<span class="sd">        Crop `crop_radius` pixels from each margin of the image before</span>
+<span class="sd">        processing.</span>
+<span class="sd">    smooth_method : {&#39;Gaussian&#39;, &#39;TV&#39;, &#39;NL&#39;}, optional</span>
+<span class="sd">        Which method to use for smoothing.</span>
+<span class="sd">    num_threads : int, optional</span>
+<span class="sd">        How many threads to use for computation. This should generally be</span>
+<span class="sd">        set to the number of CPU cores available to you.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : generator</span>
+<span class="sd">        The pipeline yields individual image results in the form of a tuple</span>
+<span class="sd">        of ``(filename, image, thresholded_image, skeleton, data_frame)``.</span>
+<span class="sd">        Finally, after all the images have been processed, the pipeline yields</span>
+<span class="sd">        a DataFrame containing all the collated branch-level results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image_format</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">image_format</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="k">else</span> <span class="n">image_format</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">image_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">num_threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="n">future_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">ex</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">process_single_image</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span>
+                                 <span class="n">image_format</span><span class="p">,</span> <span class="n">scale_metadata_path</span><span class="p">,</span>
+                                 <span class="n">threshold_radius</span><span class="p">,</span> <span class="n">smooth_radius</span><span class="p">,</span>
+                                 <span class="n">brightness_offset</span><span class="p">,</span> <span class="n">crop_radius</span><span class="p">,</span>
+                                 <span class="n">smooth_method</span><span class="p">):</span> <span class="n">filename</span>
+                       <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">completed_data</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">as_completed</span><span class="p">(</span><span class="n">future_data</span><span class="p">)):</span>
+            <span class="n">image</span><span class="p">,</span> <span class="n">thresholded</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">framedata</span> <span class="o">=</span> <span class="n">completed_data</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">future_data</span><span class="p">[</span><span class="n">completed_data</span><span class="p">]</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">framedata</span><span class="p">)</span>
+            <span class="n">image_stats</span> <span class="o">=</span> <span class="n">image_summary</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span>
+                                        <span class="n">spacing</span><span class="o">=</span><span class="n">framedata</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">image_stats</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+            <span class="n">image_stats</span><span class="p">[</span><span class="s1">&#39;branch density&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">framedata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span>
+                                             <span class="n">image_stats</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">])</span>
+            <span class="n">j2j</span> <span class="o">=</span> <span class="n">framedata</span><span class="p">[</span><span class="n">framedata</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">image_stats</span><span class="p">[</span><span class="s1">&#39;mean J2J branch distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                            <span class="n">j2j</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+            <span class="n">image_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_stats</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">filename</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">thresholded</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">framedata</span>
+    <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">image_results</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017, Juan Nunez-Iglesias.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
