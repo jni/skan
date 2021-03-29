@@ -316,7 +316,7 @@ class Skeleton:
         `keep_images` is True. This is useful for visualization.
     """
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
-                 _buffer_size_offset=None, keep_images=True, 
+                 _buffer_size_offset=None, keep_images=True,
                  unique_junctions=True):
         graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
                                                      spacing=spacing,
@@ -608,8 +608,8 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
     pixel_indices = np.concatenate(([[0.] * ndim],
                                     np.transpose(np.nonzero(skel))), axis=0)
     skelint = np.zeros(skel.shape, dtype=int)
-    skelint[tuple(pixel_indices.T.astype(int))] = \
-                                            np.arange(pixel_indices.shape[0])
+    skelint[tuple(pixel_indices[1:].T.astype(int))] = \
+                                            np.arange(pixel_indices.shape[0])[1:]
 
     degree_kernel = np.ones((3,) * ndim)
     degree_kernel[(1,) * ndim] = 0  # remove centre pixel
