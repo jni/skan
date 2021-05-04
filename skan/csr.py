@@ -3,9 +3,11 @@ import pandas as pd
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
 from scipy import spatial
+from skimage import morphology
 import numba
 
 from .nputil import pad, raveled_steps_to_neighbors
+from .summary_utils import find_main_branches
 
 
 ## NBGraph and Numba-based implementation
@@ -298,7 +300,9 @@ class Skeleton:
         faster graph methods. For example, it is much faster to get a list of
         neighbors, or test for the presence of a specific edge.
     coordinates : array, shape (N, ndim)
+        skeleton_pixel_id i -> coordinates[i]
         The image coordinates of each pixel in the skeleton.
+        Some values in this matrix are non-sensical — you should only access them from node ids.
     paths : scipy.sparse.csr_matrix, shape (P, N + 1)
         A csr_matrix where element [i, j] is on if node j is in path i. This
         includes path endpoints. The number of nonzero elements is N - J + Sd.
@@ -340,6 +344,7 @@ class Skeleton:
         self.degrees = np.diff(self.graph.indptr)
         self.spacing = (np.asarray(spacing) if not np.isscalar(spacing)
                         else np.full(skeleton_image.ndim, spacing))
+        self.unique_junctions = unique_junctions
         if keep_images:
             self.skeleton_image = skeleton_image
             self.source_image = source_image
@@ -428,6 +433,22 @@ class Skeleton:
         """
         return [list(self.path(i)) for i in range(self.n_paths)]
 
+    def path_label_image(self):
+        """Image like self.skeleton_image with path_ids as values.
+        
+        Returns
+        -------
+        label_image : array of ints
+            Image of the same shape as self.skeleton_image where each pixel
+            has the value of its branch id + 1.
+        """
+        image_out = np.zeros(self.skeleton_image.shape, dtype=int)
+        for i in range(self.n_paths):
+            coords_to_wipe = self.path_coordinates(i)
+            coords_idxs = tuple(np.round(coords_to_wipe).astype(int).T)
+            image_out[coords_idxs] = i + 1
+        return image_out
+
     def path_means(self):
         """Compute the mean pixel value along each path.
 
@@ -453,6 +474,27 @@ class Skeleton:
         lengths = np.diff(self.paths.indptr)
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
+
+    def prune_paths(self, indices) -> 'Skeleton':
+        # warning: slow
+        image_cp = np.copy(self.skeleton_image)
+        for i in indices:
+            coords_to_wipe = self.path_coordinates(i)
+            coords_idxs = tuple(np.round(coords_to_wipe).astype(int).T)
+            image_cp[coords_idxs] = 0
+        # optional cleanup:
+        new_skeleton = morphology.skeletonize(image_cp.astype(bool)) * image_cp
+        # note: add unique_junctions attribute for this
+        return Skeleton(
+                new_skeleton,
+                spacing=self.spacing,
+                source_image=self.source_image,
+                unique_junctions=self.unique_junctions,
+                )
+    
+    def __array__(self, dtype=None):
+        """Array representation of the skeleton path labels."""
+        return self.path_label_image()
 
 
 def summarize(skel: Skeleton):
@@ -502,6 +544,8 @@ def summarize(skel: Skeleton):
             np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
     )
     df = pd.DataFrame(summary)
+    # define main branch as longest shortest path within a single skeleton
+    df['main'] = find_main_branches(df)
     return df
 
 
