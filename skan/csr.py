@@ -318,9 +318,11 @@ class Skeleton:
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
                  _buffer_size_offset=None, keep_images=True,
                  unique_junctions=True):
-        graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
-                                                     spacing=spacing,
-                                                     unique_junctions=unique_junctions)
+        graph, coords = skeleton_to_csgraph(
+                skeleton_image,
+                spacing=spacing,
+                unique_junctions=unique_junctions,
+                )
         if np.issubdtype(skeleton_image.dtype, np.float_):
             pixel_values = ndi.map_coordinates(skeleton_image, coords.T,
                                                order=3)
@@ -595,9 +597,6 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         to pixel coordinates in `degree_image` or `skel`. Array entry
         (0,:) contains currently always zeros to index the pixels, which
         start at 1, directly to the coordinates.
-    degree_image : array of int, same shape as skel
-        An image where each pixel value contains the degree of its
-        corresponding node in `graph`. This is useful to classify nodes.
     """
     height = pad(skel, 0.) if value_is_height else None
     # ensure we have a bool image, since we later use it for bool indexing
@@ -635,7 +634,7 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
     if unique_junctions:
         _uniquify_junctions(graph, pixel_indices,
                             labeled_junctions, centroids, spacing=spacing)
-    return graph, pixel_indices, degree_image
+    return graph, pixel_indices
 
 
 @numba.jit(nopython=True, cache=True)
@@ -857,8 +856,8 @@ def summarise(image, *, spacing=1, using_height=False):
     """
     ndim = image.ndim
     spacing = np.ones(ndim, dtype=float) * spacing
-    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing,
-                                                 value_is_height=using_height)
+    g, coords_img = skeleton_to_csgraph(image, spacing=spacing,
+                                        value_is_height=using_height)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
     if np.issubdtype(image.dtype, np.float_) and not using_height:

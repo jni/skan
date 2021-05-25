@@ -65,7 +65,7 @@ def image_summary(skeleton, *, spacing=1):
     """
     stats = pd.DataFrame()
     stats['scale'] = [spacing]
-    g, coords, degimg = csr.skeleton_to_csgraph(skeleton, spacing=spacing)
+    g, coords = csr.skeleton_to_csgraph(skeleton, spacing=spacing)
     degrees = np.diff(g.indptr)
     num_junctions = np.sum(degrees > 2)
     stats['number of junctions'] = num_junctions

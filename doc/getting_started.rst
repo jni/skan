@@ -166,8 +166,8 @@ recommended for very small networks.)
 .. nbplot::
 
     >>> from skan import _testdata
-    >>> g0, c0, _ = skeleton_to_csgraph(_testdata.skeleton0)
-    >>> g1, c1, _ = skeleton_to_csgraph(_testdata.skeleton1)
+    >>> g0, c0 = skeleton_to_csgraph(_testdata.skeleton0)
+    >>> g1, c1 = skeleton_to_csgraph(_testdata.skeleton1)
     >>> fig, axes = plt.subplots(1, 2)
     >>>
     >>> draw.overlay_skeleton_networkx(g0, c0, image=_testdata.skeleton0,
@@ -205,11 +205,11 @@ Let’s go back to the red blood cell image to illustrate this graph.
         .dataframe tbody tr th:only-of-type {
             vertical-align: middle;
         }
-    
+
         .dataframe tbody tr th {
             vertical-align: top;
         }
-    
+
         .dataframe thead th {
             text-align: right;
         }
