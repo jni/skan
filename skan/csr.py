@@ -338,7 +338,6 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.source_image = None
-        self.degrees_image = degrees
         self.degrees = np.diff(self.graph.indptr)
         self.spacing = (np.asarray(spacing) if not np.isscalar(spacing)
                         else np.full(skeleton_image.ndim, spacing))
