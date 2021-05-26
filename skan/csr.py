@@ -5,7 +5,7 @@ from scipy.sparse import csgraph
 from scipy import spatial
 import numba
 
-from .nputil import pad, raveled_steps_to_neighbors
+from .nputil import raveled_steps_to_neighbors
 
 
 ## NBGraph and Numba-based implementation
@@ -597,7 +597,11 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         (0,:) contains currently always zeros to index the pixels, which
         start at 1, directly to the coordinates.
     """
-    height = pad(skel, 0.) if value_is_height else None
+    height = (
+            np.pad(skel, 1, mode='constant', constant_values=0.)
+            if value_is_height
+            else None
+            )
     # ensure we have a bool image, since we later use it for bool indexing
     skel = skel.astype(bool)
     ndim = skel.ndim
@@ -625,7 +629,8 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         pixel_indices[np.unique(labeled_junctions)[1:]] = centroids
 
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
-    skelint = pad(skelint, 0)  # pad image to prevent looparound errors
+    # pad image to prevent looparound errors
+    skelint = np.pad(skelint, 1, mode='constant', constant_values=0)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim,
                                                   spacing=spacing)
     graph = _pixel_graph(skelint, steps, distances, num_edges, height)
