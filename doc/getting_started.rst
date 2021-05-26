@@ -1,4 +1,3 @@
-
 Getting started: Skeleton analysis with Skan
 ============================================
 
@@ -131,7 +130,7 @@ branches along that network.
 
     >>> from skan import skeleton_to_csgraph
     >>>
-    >>> pixel_graph, coordinates, degrees = skeleton_to_csgraph(skeleton0)
+    >>> pixel_graph, coordinates = skeleton_to_csgraph(skeleton0)
 
 The pixel graph is a SciPy `CSR
 matrix <https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html>`__
@@ -146,8 +145,7 @@ in physical units instead of pixels:
 
 .. nbplot::
 
-    >>> pixel_graph0, coordinates0, degrees0 = skeleton_to_csgraph(skeleton0,
-    ...                                                            spacing=spacing_nm)
+    >>> pixel_graph0, coordinates0 = skeleton_to_csgraph(skeleton0, spacing=spacing_nm)
 
 The second variable contains the coordinates (in pixel units) of the
 points in the pixel graph. Finally, ``degrees`` is an image of the
@@ -205,11 +203,11 @@ Let’s go back to the red blood cell image to illustrate this graph.
         .dataframe tbody tr th:only-of-type {
             vertical-align: middle;
         }
-
+    
         .dataframe tbody tr th {
             vertical-align: top;
         }
-
+    
         .dataframe thead th {
             text-align: right;
         }
@@ -506,9 +504,3 @@ This is of course a toy example. For the full dataset and analysis, see:
 But we hope this minimal example will serve for inspiration for your
 future analysis of skeleton images.
 
-If you are interested in how we used `numba <https://numba.pydata.org/>`_
-to accelerate some parts of Skan, check out `jni's talk <https://www.youtube.com/watch?v=0pUPNMglnaE>`_
-at the the SciPy 2019 conference.
-
-
-.. code-links:: python clear
