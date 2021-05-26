@@ -939,3 +939,40 @@ def compute_centroids(image):
     sums = np.add.reduceat(coords[grouping], np.cumsum(sizes)[:-1])
     means = sums / sizes[1:, np.newaxis]
     return labeled_image, means
+
+
+def make_degree_image(skeleton_image):
+    """Create a array showing the degree of connectivity of each pixel.
+
+    Parameters
+    ----------
+    skeleton_image : array
+        An input image in which every nonzero pixel is considered part of
+        the skeleton, and links between pixels are determined by a full
+        n-dimensional neighborhood.
+
+    Returns
+    -------
+    degree_image : array of int, same shape as skeleton_image
+        An image containing the degree of connectivity of each pixel in the
+        skeleton to neighboring pixels.
+    """
+    bool_skeleton = skeleton_image.astype(bool)
+    degree_kernel = np.ones((3,) * bool_skeleton.ndim)
+    degree_kernel[(1,) * bool_skeleton.ndim] = 0  # remove centre pixel
+    if isinstance(bool_skeleton, np.ndarray):
+        degree_image = ndi.convolve(
+            bool_skeleton.astype(int),
+            degree_kernel,
+            mode='constant',
+            ) * bool_skeleton
+    # use dask image for any array other than a numpy array (which isn't
+    # supported yet anyway)
+    else:
+        import dask.array as da
+        from dask_image.ndfilters import convolve as dask_convolve
+        if isinstance(bool_skeleton, da.Array):
+            degree_image = dask_convolve(bool_skeleton.astype(int),
+                                         degree_kernel,
+                                         mode='constant') * bool_skeleton
+    return degree_image
