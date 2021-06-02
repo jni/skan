@@ -1,4 +1,3 @@
-
 Getting started: Skeleton analysis with Skan
 ============================================
 
@@ -131,7 +130,7 @@ branches along that network.
 
     >>> from skan import skeleton_to_csgraph
     >>>
-    >>> pixel_graph, coordinates, degrees = skeleton_to_csgraph(skeleton0)
+    >>> pixel_graph, coordinates = skeleton_to_csgraph(skeleton0)
 
 The pixel graph is a SciPy `CSR
 matrix <https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html>`__
@@ -146,8 +145,7 @@ in physical units instead of pixels:
 
 .. nbplot::
 
-    >>> pixel_graph0, coordinates0, degrees0 = skeleton_to_csgraph(skeleton0,
-    ...                                                            spacing=spacing_nm)
+    >>> pixel_graph0, coordinates0 = skeleton_to_csgraph(skeleton0, spacing=spacing_nm)
 
 The second variable contains the coordinates (in pixel units) of the
 points in the pixel graph. Finally, ``degrees`` is an image of the
@@ -166,8 +164,8 @@ recommended for very small networks.)
 .. nbplot::
 
     >>> from skan import _testdata
-    >>> g0, c0, _ = skeleton_to_csgraph(_testdata.skeleton0)
-    >>> g1, c1, _ = skeleton_to_csgraph(_testdata.skeleton1)
+    >>> g0, c0 = skeleton_to_csgraph(_testdata.skeleton0)
+    >>> g1, c1 = skeleton_to_csgraph(_testdata.skeleton1)
     >>> fig, axes = plt.subplots(1, 2)
     >>>
     >>> draw.overlay_skeleton_networkx(g0, c0, image=_testdata.skeleton0,

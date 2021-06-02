@@ -29,8 +29,8 @@ def mesh_sizes(skeleton):
     ...                   [0, 1, 0, 1, 0]])
     >>> print(mesh_sizes(image))
     []
-    >>> from skan.nputil import pad
-    >>> image2 = pad(image, 1)  # make sure mesh not touching border
+    >>> # make sure mesh not touching border
+    >>> image2 = np.pad(image, 1, mode='constant', constant_values=1)
     >>> print(mesh_sizes(image2))  # sizes in row order of first pixel in space
     [7 2 3 1]
     """
@@ -65,7 +65,7 @@ def image_summary(skeleton, *, spacing=1):
     """
     stats = pd.DataFrame()
     stats['scale'] = [spacing]
-    g, coords, degimg = csr.skeleton_to_csgraph(skeleton, spacing=spacing)
+    g, coords = csr.skeleton_to_csgraph(skeleton, spacing=spacing)
     degrees = np.diff(g.indptr)
     num_junctions = np.sum(degrees > 2)
     stats['number of junctions'] = num_junctions
