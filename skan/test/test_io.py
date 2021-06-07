@@ -22,9 +22,15 @@ def test_write_excel_tables():
                         'threshold radius': 5e-8}
     with temporary_file(suffix='.xlsx') as file:
         io.write_excel(file, **kwargs)
-        tables_in = [pd.read_excel(file, sheet_name=name, index_col=0)
-                     for name in sheet_names]
-        config_in_df = pd.read_excel(file, sheet_name='config')
+        tables_in = [
+            pd.read_excel(
+                file, sheet_name=name, index_col=0, engine='openpyxl'
+                )
+            for name in sheet_names
+            ]
+        config_in_df = pd.read_excel(
+            file, sheet_name='config', engine='openpyxl'
+            )
         config_in = dict(zip(config_in_df['parameters'],
                              config_in_df['values']))
     for table, table_in in zip(tables, tables_in):
