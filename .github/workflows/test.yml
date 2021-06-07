@@ -15,7 +15,6 @@ on:
 jobs:
 
   test:
-    needs: code
     name: ${{ matrix.platform }} py${{ matrix.python }}
     runs-on: ${{ matrix.platform }}
     strategy:
