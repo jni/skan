@@ -1,0 +1,62 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    tags:
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  test:
+    needs: code
+    name: ${{ matrix.platform }} py${{ matrix.python }}
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+        python: [3.7, 3.8, 3.9]
+        include:
+          # test big sur on 3.9.0
+          - python: 3.9
+            platform: macos-11.0
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Setup Miniconda
+        if: runner.os == 'macOS' && matrix.python == '3.9'
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          channels: conda-forge
+          channel-priority: strict
+          python-version: ${{ matrix.python }}
+
+      # these libraries, along with pytest-xvfb (added in the `deps` in tox.ini),
+      # enable testing on Qt on linux
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install setuptools
+          pip install .
+
+      - name: Test
+        shell: bash -l {0}
+        run: pytest
+
+      - name: Coverage
+        if: runner.os == 'Linux' && matrix.python == '3.9'
+        uses: codecov/codecov-action@v1
