@@ -16,6 +16,8 @@ dependencies:
 - coverage>=4.0
 - pytest-cov>=2.2
 - click>=0.5
+- dask>=2021.6.2
+- dask-image
 - pip:
   - tifffile>=2019.*
   - hypothesis>=3.6
