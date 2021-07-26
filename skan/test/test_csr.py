@@ -4,7 +4,7 @@ from numpy.testing import assert_equal, assert_almost_equal
 from skan import csr
 
 rundir = os.path.dirname(os.path.abspath(__file__))
-print (rundir)
+print(rundir)
 sys.path.append(rundir)
 
 from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
