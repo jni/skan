@@ -447,7 +447,7 @@ class Skeleton:
             The maximum length in the skeleton.
         """
 
-        sums = np.maximum.reduceat(self.paths.data, self.paths.indptr[:-1])
+        maxes = np.maximum.reduceat(self.paths.data, self.paths.indptr[:-1])
 
         # We test on _testdata.skeleton1
         # self.paths.data = [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
