@@ -4,7 +4,7 @@ from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
 from scipy import spatial
 import numba
-from .nputil import pad, raveled_steps_to_neighbors
+from .nputil import raveled_steps_to_neighbors
 
 ## NBGraph and Numba-based implementation
 
@@ -238,7 +238,7 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=None):
     # the number of cycles ahead of time, but it is bounded by one quarter
     # of the number of points.
     n_points = (graph.indices.size + np.sum(endpoint_degrees - 1) +
-                max_num_cycles)
+                _buffer_size_offset)
     path_indices = np.zeros(n_points, dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
     m, n = _build_paths(graph, path_indptr, path_indices, path_data,
@@ -304,7 +304,8 @@ class Skeleton:
         The number of paths, P. This is redundant information given `n_paths`,
         but it is used often enough that it is worth keeping around.
     distances : array of float, shape (P,)
-        The distance of each path.
+        The distance of each path. Note: not initialized until `path_lengths()`
+        is called on the skeleton; use path_lengths() instead
     skeleton_image : array or None
         The input skeleton image. Only present if `keep_images` is True. Set to
         False to preserve memory.
@@ -313,11 +314,13 @@ class Skeleton:
         `keep_images` is True. This is useful for visualization.
     """
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
-                 _buffer_size_offset=None, keep_images=True, 
+                 _buffer_size_offset=None, keep_images=True,
                  unique_junctions=True):
-        graph, coords, degrees = skeleton_to_csgraph(skeleton_image,
-                                                     spacing=spacing,
-                                                     unique_junctions=unique_junctions)
+        graph, coords = skeleton_to_csgraph(
+                skeleton_image,
+                spacing=spacing,
+                unique_junctions=unique_junctions,
+                )
         if np.issubdtype(skeleton_image.dtype, np.float_):
             pixel_values = ndi.map_coordinates(skeleton_image, coords.T,
                                                order=3)
@@ -333,7 +336,6 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.source_image = None
-        self.degrees_image = degrees
         self.degrees = np.diff(self.graph.indptr)
         self.spacing = (np.asarray(spacing) if not np.isscalar(spacing)
                         else np.full(skeleton_image.ndim, spacing))
@@ -622,11 +624,12 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         to pixel coordinates in `degree_image` or `skel`. Array entry
         (0,:) contains currently always zeros to index the pixels, which
         start at 1, directly to the coordinates.
-    degree_image : array of int, same shape as skel
-        An image where each pixel value contains the degree of its
-        corresponding node in `graph`. This is useful to classify nodes.
     """
-    height = pad(skel, 0.) if value_is_height else None
+    height = (
+            np.pad(skel, 1, mode='constant', constant_values=0.)
+            if value_is_height
+            else None
+            )
     # ensure we have a bool image, since we later use it for bool indexing
     skel = skel.astype(bool)
     ndim = skel.ndim
@@ -635,8 +638,8 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
     pixel_indices = np.concatenate(([[0.] * ndim],
                                     np.transpose(np.nonzero(skel))), axis=0)
     skelint = np.zeros(skel.shape, dtype=int)
-    skelint[tuple(pixel_indices.T.astype(int))] = \
-                                            np.arange(pixel_indices.shape[0])
+    skelint[tuple(pixel_indices[1:].T.astype(int))] = \
+                                            np.arange(pixel_indices.shape[0])[1:]
 
     degree_kernel = np.ones((3,) * ndim)
     degree_kernel[(1,) * ndim] = 0  # remove centre pixel
@@ -654,7 +657,8 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         pixel_indices[np.unique(labeled_junctions)[1:]] = centroids
 
     num_edges = np.sum(degree_image)  # *2, which is how many we need to store
-    skelint = pad(skelint, 0)  # pad image to prevent looparound errors
+    # pad image to prevent looparound errors
+    skelint = np.pad(skelint, 1, mode='constant', constant_values=0)
     steps, distances = raveled_steps_to_neighbors(skelint.shape, ndim,
                                                   spacing=spacing)
     graph = _pixel_graph(skelint, steps, distances, num_edges, height)
@@ -662,7 +666,7 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
     if unique_junctions:
         _uniquify_junctions(graph, pixel_indices,
                             labeled_junctions, centroids, spacing=spacing)
-    return graph, pixel_indices, degree_image
+    return graph, pixel_indices
 
 
 @numba.jit(nopython=True, cache=True)
@@ -884,8 +888,8 @@ def summarise(image, *, spacing=1, using_height=False):
     """
     ndim = image.ndim
     spacing = np.ones(ndim, dtype=float) * spacing
-    g, coords_img, degrees = skeleton_to_csgraph(image, spacing=spacing,
-                                                 value_is_height=using_height)
+    g, coords_img = skeleton_to_csgraph(image, spacing=spacing,
+                                        value_is_height=using_height)
     num_skeletons, skeleton_ids = csgraph.connected_components(g,
                                                                directed=False)
     if np.issubdtype(image.dtype, np.float_) and not using_height:
@@ -968,3 +972,40 @@ def compute_centroids(image):
     sums = np.add.reduceat(coords[grouping], np.cumsum(sizes)[:-1])
     means = sums / sizes[1:, np.newaxis]
     return labeled_image, means
+
+
+def make_degree_image(skeleton_image):
+    """Create a array showing the degree of connectivity of each pixel.
+
+    Parameters
+    ----------
+    skeleton_image : array
+        An input image in which every nonzero pixel is considered part of
+        the skeleton, and links between pixels are determined by a full
+        n-dimensional neighborhood.
+
+    Returns
+    -------
+    degree_image : array of int, same shape as skeleton_image
+        An image containing the degree of connectivity of each pixel in the
+        skeleton to neighboring pixels.
+    """
+    bool_skeleton = skeleton_image.astype(bool)
+    degree_kernel = np.ones((3,) * bool_skeleton.ndim)
+    degree_kernel[(1,) * bool_skeleton.ndim] = 0  # remove centre pixel
+    if isinstance(bool_skeleton, np.ndarray):
+        degree_image = ndi.convolve(
+            bool_skeleton.astype(int),
+            degree_kernel,
+            mode='constant',
+            ) * bool_skeleton
+    # use dask image for any array other than a numpy array (which isn't
+    # supported yet anyway)
+    else:
+        import dask.array as da
+        from dask_image.ndfilters import convolve as dask_convolve
+        if isinstance(bool_skeleton, da.Array):
+            degree_image = dask_convolve(bool_skeleton.astype(int),
+                                         degree_kernel,
+                                         mode='constant') * bool_skeleton
+    return degree_image

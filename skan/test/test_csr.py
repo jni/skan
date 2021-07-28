@@ -12,7 +12,7 @@ from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
 
 
 def test_tiny_cycle():
-    g, idxs, degimg = csr.skeleton_to_csgraph(tinycycle)
+    g, idxs = csr.skeleton_to_csgraph(tinycycle)
     expected_indptr = [0, 0, 2, 4, 6, 8]
     expected_indices = [2, 3, 1, 4, 1, 4, 2, 3]
     expected_data = np.sqrt(2)
@@ -21,14 +21,12 @@ def test_tiny_cycle():
     assert_equal(g.indices, expected_indices)
     assert_almost_equal(g.data, expected_data)
 
-    expected_degrees = np.array([[0, 2, 0], [2, 0, 2], [0, 2, 0]])
-    assert_equal(degimg, expected_degrees)
     assert_equal(np.ravel_multi_index(idxs.astype(int).T, tinycycle.shape),
                  [0, 1, 3, 5, 7])
 
 
 def test_skeleton1_stats():
-    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton1)
+    g, idxs = csr.skeleton_to_csgraph(skeleton1)
     stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (4, 4))
     keys = map(tuple, stats[:, :2].astype(int))
@@ -63,9 +61,8 @@ def test_summarise_spacing():
 
 
 def test_line():
-    g, idxs, degimg = csr.skeleton_to_csgraph(tinyline)
+    g, idxs = csr.skeleton_to_csgraph(tinyline)
     assert_equal(np.ravel(idxs), [0, 1, 2, 3])
-    assert_equal(degimg, [0, 1, 2, 1, 0])
     assert_equal(g.shape, (4, 4))
     assert_equal(csr.branch_statistics(g), [[1, 3, 2, 0]])
 
@@ -77,7 +74,7 @@ def test_cycle_stats():
 
 
 def test_3d_spacing():
-    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
+    g, idxs = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
     stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (5, 4))
     assert_almost_equal(stats[0], [1, 5, 10.467, 1], decimal=3)
@@ -85,7 +82,7 @@ def test_3d_spacing():
 
 
 def test_topograph():
-    g, idxs, degimg = csr.skeleton_to_csgraph(topograph1d,
+    g, idxs = csr.skeleton_to_csgraph(topograph1d,
                                               value_is_height=True)
     stats = csr.branch_statistics(g)
     assert stats.shape == (1, 4)
@@ -102,10 +99,9 @@ def test_topograph_summary():
 
 def test_junction_multiplicity():
     """Test correct distances when a junction has more than one pixel."""
-    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton0)
+    g, idxs = csr.skeleton_to_csgraph(skeleton0)
     assert_almost_equal(g[3, 5], 2.0155644)
-    g, idxs, degimg = csr.skeleton_to_csgraph(skeleton0,
-                                              unique_junctions=False)
+    g, idxs = csr.skeleton_to_csgraph(skeleton0, unique_junctions=False)
     assert_almost_equal(g[2, 3], 1.0)
     assert_almost_equal(g[3, 6], np.sqrt(2))
 

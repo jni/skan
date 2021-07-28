@@ -13,9 +13,20 @@ import multiprocessing as mp
 
 CPU_COUNT = int(os.environ.get('CPU_COUNT', mp.cpu_count()))
 
-
 def _get_scale(image, md_path_or_scale):
-    """Get a valid scale from an image and a metadata path or scale."""
+    """Get a valid scale from an image and a metadata path or scale.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        The input image.
+    md_path_or_scale : float or image filename
+        The path to the file containing the metadata, or the scale.
+
+    Returns
+    -------
+    scale : float
+    """
     scale = None
     try:
         scale = float(md_path_or_scale)
