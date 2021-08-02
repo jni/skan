@@ -6,7 +6,7 @@ from scipy import spatial
 from skimage import morphology
 import numba
 
-from .nputil import pad, raveled_steps_to_neighbors
+from .nputil import raveled_steps_to_neighbors
 from .summary_utils import find_main_branches
 
 
