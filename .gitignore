@@ -1,6 +1,7 @@
 # Documentation downloads
 doc/download.zip
 doc/schizonts*
+doc/_build/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
