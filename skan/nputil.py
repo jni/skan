@@ -1,4 +1,4 @@
-import collections
+from collections import abc
 import itertools
 import numpy as np
 
@@ -103,9 +103,9 @@ def pad(ar, vals, *, axes=None):
     """
     if axes is None:
         axes = list(range(ar.ndim))
-    if not isinstance(vals, collections.Iterable):
+    if not isinstance(vals, abc.Iterable):
         vals = [vals]
-    if not isinstance(axes, collections.Iterable):
+    if not isinstance(axes, abc.Iterable):
         axes = [axes]
     p = len(vals)
     newshape = np.array(ar.shape)
