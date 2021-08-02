@@ -6,7 +6,6 @@ from skan import Skeleton
 
 @pytest.mark.parametrize('branch_num', [0])
 def test_pruning(branch_num):
-    data = skeleton0
     skeleton = Skeleton(skeleton0)
     pruned = skeleton.prune_paths([branch_num])
     print(pruned.skeleton_image.astype(int))
@@ -16,7 +15,6 @@ def test_pruning(branch_num):
 @pytest.mark.xfail
 @pytest.mark.parametrize('branch_num', [0, 1, 2])
 def test_pruning_comprehensive(branch_num):
-    data = skeleton0
     skeleton = Skeleton(skeleton0)
     pruned = skeleton.prune_paths([branch_num])
     print(pruned.skeleton_image.astype(int))
