@@ -1,4 +1,4 @@
-import collections
+from collections import abc
 import itertools
 import numpy as np
 
@@ -66,7 +66,6 @@ def smallest_int_dtype(number, *, signed=False, min_dtype=np.int8):
     if np.iinfo(dtype).max < np.iinfo(min_dtype).max:
         dtype = min_dtype
     return dtype
-
 
 def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C', spacing=1,
                                return_distances=True):

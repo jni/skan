@@ -1,6 +1,7 @@
 from time import process_time
 import numpy as np
 from numpy.testing import assert_equal, assert_allclose
+import pytest
 from skan.csr import Skeleton, summarize
 
 from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
@@ -100,3 +101,45 @@ def test_skeleton_summarize():
     assert set(summary['skeleton-id']) == {1, 2}
     assert (np.all(summary['mean-pixel-value'] < 2)
             and np.all(summary['mean-pixel-value'] > 1))
+
+
+@pytest.mark.xfail
+def test_skeleton_label_image_strict():
+    """Test that the skeleton image has the same pattern as the expected label image.
+    
+    This does pixel-wise pairing of the label image with the expected label image.
+    There should be the same number of unique pairs as there are unique labels
+    in the expected label image. This that the branches are displayed correctly,
+    but does not assert an order to the numbering of the branches.
+
+    This is expected to fail due to the current junction representation.
+    See: https://github.com/jni/skan/issues/133
+    """
+    skeleton = Skeleton(skeleton4, unique_junctions=False)
+    label_image = np.asarray(skeleton)
+    expected = np.array([
+        [1, 0, 0, 0, 0],       
+        [0, 1, 2, 2, 2],
+        [0, 3, 0, 0, 0],
+        [0, 3, 0, 0, 0],
+    ])
+    paired_values = np.stack((expected, label_image), axis=-1).reshape((label_image.size, 2))
+    unique_pairs = np.unique(paired_values, axis=0)
+    expected_label_values = np.unique(expected)
+    assert len(expected_label_values) == len(unique_pairs)
+
+
+def test_skeleton_label_image():
+    """Simple test that the skeleton label image covers the same
+    pixels as the expected label image.
+    """
+    skeleton = Skeleton(skeleton4, unique_junctions=False)
+    label_image = np.asarray(skeleton)
+    expected = np.array([
+        [1, 0, 0, 0, 0],       
+        [0, 1, 2, 2, 2],
+        [0, 3, 0, 0, 0],
+        [0, 3, 0, 0, 0],
+    ])
+
+    np.testing.assert_array_equal(label_image.astype(bool), expected.astype(bool))
