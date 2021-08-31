@@ -10,4 +10,5 @@ scikit-image>=0.14
 imageio>=2.0
 tqdm>=4.0
 dask>=2021.6.2
+dask-image
 click>=0.5
