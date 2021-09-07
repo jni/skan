@@ -10,12 +10,12 @@ from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
 
 
 def test_tiny_cycle():
-    skeleton = Skeleton(tinycycle)
+    skeleton = Skeleton(tinycycle, junction_mode='centroid')
     assert skeleton.paths.shape == (1, 5)
 
 
 def test_skeleton1_topo():
-    skeleton = Skeleton(skeleton1)
+    skeleton = Skeleton(skeleton1, junction_mode='centroid')
     assert skeleton.paths.shape == (4, 21)
     paths_list = skeleton.paths_list()
     reference_paths = [
@@ -35,19 +35,19 @@ def test_skeleton1_topo():
 def test_skeleton1_float():
     image = np.zeros(skeleton1.shape, dtype=float)
     image[skeleton1] = 1 + np.random.random(np.sum(skeleton1))
-    skeleton = Skeleton(image)
+    skeleton = Skeleton(image, junction_mode='centroid')
     path, data = skeleton.path_with_data(0)
     assert 1.0 < np.mean(data) < 2.0
 
 
 def test_skeleton_coordinates():
-    skeleton = Skeleton(skeleton1)
+    skeleton = Skeleton(skeleton1, junction_mode='centroid')
     last_path_coordinates = skeleton.path_coordinates(3)
     assert_allclose(last_path_coordinates, [[3, 3], [4, 4], [4, 5], [4, 6]])
 
 
 def test_path_length_caching():
-    skeleton = Skeleton(skeleton3d)
+    skeleton = Skeleton(skeleton3d, junction_mode='centroid')
     t0 = process_time()
     distances = skeleton.path_lengths()
     t1 = process_time()
@@ -59,7 +59,7 @@ def test_path_length_caching():
 
 
 def test_tip_junction_edges():
-    skeleton = Skeleton(skeleton4)
+    skeleton = Skeleton(skeleton4, junction_mode='centroid')
     reference_paths = [[1, 2], [2, 4, 5], [2, 7]]
     paths_list = skeleton.paths_list()
     for path in reference_paths:
@@ -69,14 +69,14 @@ def test_tip_junction_edges():
 def test_path_stdev():
     image = np.zeros(skeleton1.shape, dtype=float)
     image[skeleton1] = 1 + np.random.random(np.sum(skeleton1))
-    skeleton = Skeleton(image)
+    skeleton = Skeleton(image, junction_mode='centroid')
     # longest_path should be 0, but could change.
     longest_path = np.argmax(skeleton.path_lengths())
     dev = skeleton.path_stdev()[longest_path]
     assert 0.09 < dev < 0.44  # chance is < 1/10K that this will fail
 
     # second check: first principles.
-    skeleton2 = Skeleton(image**2)
+    skeleton2 = Skeleton(image**2, junction_mode='centroid')
     # (Var = StDev**2 = E(X**2) - (E(X))**2)
     assert_allclose(skeleton.path_stdev()**2,
                     skeleton2.path_means() - skeleton.path_means()**2)
@@ -90,13 +90,13 @@ def test_junction_first():
     before any of its adjacent branches. This turns out to be tricky to achieve
     but not impossible in 2D.
     """
-    assert [1, 1] not in Skeleton(junction_first).paths_list()
+    assert [1, 1] not in Skeleton(junction_first, junction_mode='centroid').paths_list()
 
 
 def test_skeleton_summarize():
     image = np.zeros(skeleton2.shape, dtype=float)
     image[skeleton2] = 1 + np.random.random(np.sum(skeleton2))
-    skeleton = Skeleton(image)
+    skeleton = Skeleton(image, junction_mode='centroid')
     summary = summarize(skeleton)
     assert set(summary['skeleton-id']) == {1, 2}
     assert (np.all(summary['mean-pixel-value'] < 2)
@@ -115,7 +115,7 @@ def test_skeleton_label_image_strict():
     This is expected to fail due to the current junction representation.
     See: https://github.com/jni/skan/issues/133
     """
-    skeleton = Skeleton(skeleton4, unique_junctions=False)
+    skeleton = Skeleton(skeleton4, junction_mode='none')
     label_image = np.asarray(skeleton)
     expected = np.array([
         [1, 0, 0, 0, 0],       
@@ -133,10 +133,10 @@ def test_skeleton_label_image():
     """Simple test that the skeleton label image covers the same
     pixels as the expected label image.
     """
-    skeleton = Skeleton(skeleton4, unique_junctions=False)
+    skeleton = Skeleton(skeleton4, junction_mode='none')
     label_image = np.asarray(skeleton)
     expected = np.array([
-        [1, 0, 0, 0, 0],       
+        [1, 0, 0, 0, 0],    
         [0, 1, 2, 2, 2],
         [0, 3, 0, 0, 0],
         [0, 3, 0, 0, 0],
