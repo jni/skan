@@ -568,6 +568,49 @@ def _path_distance(graph, path):
     return d
 
 
+def _mst_junctions(csmat):
+    """Replace clustered pixels with degree > 2 by their minimum spanning tree.
+
+    This function performs the operation in place.
+
+    Parameters
+    ----------
+    csmat : NBGraph
+        The input graph.
+    pixel_indices : array of int
+        The raveled index in the image of every pixel represented in csmat.
+    spacing : float, or array-like of float, shape `len(shape)`, optional
+        The spacing between pixels in the source image along each dimension.
+
+    Returns
+    -------
+    final_graph : NBGraph
+        The output csmat.
+    """
+    # make copy
+    # mask out all degree < 3 entries
+    # find MST
+    # replace edges not in MST with zeros
+    # use .eliminate_zeros() to get a new matrix
+    csc_graph = csmat.tocsc()
+    degrees = np.asarray(csmat.astype(bool).astype(int).sum(axis=0))
+    non_junction = np.flatnonzero(degrees < 3)
+    non_junction_column_start = csc_graph.indptr[non_junction]
+    non_junction_column_end = csc_graph.indptr[non_junction+1]
+    for start, end in zip(non_junction_column_start, non_junction_column_end):
+        csc_graph.data[start:end] = 0
+    csr_graph = csc_graph.tocsr()
+    non_junction_row_start = csr_graph.indptr[non_junction]
+    non_junction_row_end = csr_graph.indptr[non_junction+1]
+    for start, end in zip(non_junction_row_start, non_junction_row_end):
+        csr_graph.data[start:end] = 0
+    csr_graph.eliminate_zeros()
+    mst = csgraph.minimum_spanning_tree(csr_graph)
+    non_tree_edges = csr_graph - (mst + mst.T)
+    final_graph = csmat - non_tree_edges
+    return final_graph
+
+
 def _uniquify_junctions(csmat, pixel_indices, junction_labels,
                         junction_centroids, *, spacing=1):
     """Replace clustered pixels with degree > 2 by a single "floating" pixel.
