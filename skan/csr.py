@@ -1,3 +1,6 @@
+from enum import Enum
+import warnings
+
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -8,6 +11,20 @@ import numba
 
 from .nputil import raveled_steps_to_neighbors
 from .summary_utils import find_main_branches
+
+
+class JunctionModes(Enum):
+    """Modes for cleaning up junctions in skeletons.
+
+    NONE: the junctions are left as is. In skan < 0.9, this is equavalent
+        to unique_junctions=False.
+    Centroid: junctions are consolidated into the centroid of the contributing nodes.
+        In skan < 0.9, this is equivalent to unique_junctions=True.
+    MST: junctions are replaced with the minimum spanning tree.
+    """
+    NONE='none'
+    Centroid='centroid'
+    MST='mst'
 
 
 ## NBGraph and Numba-based implementation
@@ -321,10 +338,12 @@ class Skeleton:
     """
     def __init__(self, skeleton_image, *, spacing=1, source_image=None,
                  _buffer_size_offset=None, keep_images=True,
-                 unique_junctions=True):
+                 junction_mode=JunctionModes.MST,
+                 unique_junctions=None):
         graph, coords = skeleton_to_csgraph(
                 skeleton_image,
                 spacing=spacing,
+                junction_mode=junction_mode,
                 unique_junctions=unique_junctions,
                 )
         if np.issubdtype(skeleton_image.dtype, np.float_):
@@ -480,7 +499,10 @@ class Skeleton:
         # warning: slow
         image_cp = np.copy(self.skeleton_image)
         for i in indices:
-            coords_to_wipe = self.path_coordinates(i)
+            pixel_ids_to_wipe = self.path(i)
+            junctions = self.degrees[pixel_ids_to_wipe] > 2
+            pixel_ids_to_wipe = pixel_ids_to_wipe[~junctions]
+            coords_to_wipe = self.coordinates[pixel_ids_to_wipe]
             coords_idxs = tuple(np.round(coords_to_wipe).astype(int).T)
             image_cp[coords_idxs] = 0
         # optional cleanup:
@@ -643,7 +665,8 @@ def _uniquify_junctions(csmat, pixel_indices, junction_labels,
 
 
 def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
-                        unique_junctions=True):
+                        junction_mode=JunctionModes.MST,
+                        unique_junctions=None):
     """Convert a skeleton image of thin lines to a graph of neighbor pixels.
 
     Parameters
@@ -665,7 +688,14 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
         considered to be a height measurement, and this height will be
         incorporated into skeleton branch lengths. Used for analysis of
         atomic force microscopy (AFM) images.
+    junction_mode : JunctionModes.{NONE,MST,CENTROID}
+        If NONE, junction pixels are not collapsed.
+        If MST, junction pixels are replaced by their minimum spanning tree,
+        resulting in a single junction pixel.
+        If CENTROID, junction pixels are collapsed to their centroid.
     unique_junctions : bool, optional
+        **DEPRECATED**: Use junction_mode=JunctionModes.Centroid to get
+        behavior equivalent to ``unique_junctions=True``.
         If True, adjacent junction nodes get collapsed into a single
         conceptual node, with position at the centroid of all the connected
         initial nodes.
@@ -705,7 +735,21 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
     degree_image = ndi.convolve(skel.astype(int), degree_kernel,
                                 mode='constant') * skel
 
-    if unique_junctions:
+    if unique_junctions is not None:
+        warnings.warn('unique junctions in deprecated, see junction_modes')
+        junction_mode = (
+            JunctionModes.Centroid if unique_junctions else JunctionModes.NONE
+        )
+
+    if not isinstance(junction_mode, JunctionModes):
+        try:
+            junction_mode = JunctionModes(junction_mode.lower())
+        except ValueError:
+            raise ValueError(f"{junction_mode} is an invalid junction_mode. Should be 'none', 'centroid', or 'mst'")
+        except AttributeError:
+            raise TypeError('junction_mode should be a string or a JunctionModes')
+
+    if junction_mode == JunctionModes.Centroid:
         # group all connected junction nodes into "meganodes".
         junctions = degree_image > 2
         junction_ids = skelint[junctions]
@@ -722,9 +766,11 @@ def skeleton_to_csgraph(skel, *, spacing=1, value_is_height=False,
                                                   spacing=spacing)
     graph = _pixel_graph(skelint, steps, distances, num_edges, height)
 
-    if unique_junctions:
+    if junction_mode == JunctionModes.Centroid:
         _uniquify_junctions(graph, pixel_indices,
                             labeled_junctions, centroids, spacing=spacing)
+    elif junction_mode == JunctionModes.MST:
+        graph = _mst_junctions(graph)
     return graph, pixel_indices
 
 
