@@ -1093,8 +1093,8 @@ def summarise(image, *, spacing=1, using_height=False):
             + ['image-coord-src-%i' % i for i in range(ndim)]
             + ['image-coord-dst-%i' % i for i in range(ndim)]
             + ['coord-src-%i' % i for i in range(height_ndim)]
-            + ['coord-dst-%i' % i
-                    for i in range(height_ndim)] + ['euclidean-distance'],
+            + ['coord-dst-%i' % i for i in range(height_ndim)]
+            + ['euclidean-distance']
             )  # yapf: disable
     column_types = ([int, int, int, float, int] + value_column_types
                     + 2 * ndim * [int] + 2 * height_ndim * [float] + [float])
