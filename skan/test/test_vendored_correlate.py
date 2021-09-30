@@ -37,7 +37,6 @@ def test_reference_correlation():
     kern = reduce(np.outer, [[-1, 0, 0, 1]] * ndim).reshape((4,) * ndim)
     px = np.pad(x, (2, 1), mode='reflect')
     pxi = integral_image(px)
-    mean_fast = th.correlate_sparse(pxi, kern / 3 ** ndim, mode='valid')
-    mean_ref = ndi.correlate(x, np.ones((3,) * ndim) / 3 ** ndim,
-                             mode='mirror')
+    mean_fast = th.correlate_sparse(pxi, kern / 3**ndim, mode='valid')
+    mean_ref = ndi.correlate(x, np.ones((3,) * ndim) / 3**ndim, mode='mirror')
     np.testing.assert_allclose(mean_fast, mean_ref)

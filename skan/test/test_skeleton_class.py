@@ -4,9 +4,10 @@ from numpy.testing import assert_equal, assert_allclose
 import pytest
 from skan.csr import Skeleton, summarize
 
-from skan._testdata import (tinycycle, tinyline, skeleton0, skeleton1,
-                            skeleton2, skeleton3d, topograph1d, skeleton4,
-                            junction_first)
+from skan._testdata import (
+        tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
+        topograph1d, skeleton4, junction_first
+        )
 
 
 def test_tiny_cycle():
@@ -18,18 +19,15 @@ def test_skeleton1_topo():
     skeleton = Skeleton(skeleton1, junction_mode='centroid')
     assert skeleton.paths.shape == (4, 21)
     paths_list = skeleton.paths_list()
-    reference_paths = [
-        [8, 6, 1, 2, 3, 4, 5, 7, 11, 10, 13],
-        [8, 9, 13],
-        [8, 12, 14],
-        [13, 15, 16, 17]
-    ]
+    reference_paths = [[8, 6, 1, 2, 3, 4, 5, 7, 11, 10, 13], [8, 9, 13],
+                       [8, 12, 14], [13, 15, 16, 17]]
     d0 = 1 + np.sqrt(2)
     reference_distances = [5 * d0, d0, d0, 1 + d0]
     for path in reference_paths:
         assert path in paths_list or path[::-1] in paths_list
-    assert_allclose(sorted(skeleton.path_lengths()),
-                    sorted(reference_distances))
+    assert_allclose(
+            sorted(skeleton.path_lengths()), sorted(reference_distances)
+            )
 
 
 def test_skeleton1_float():
@@ -78,8 +76,10 @@ def test_path_stdev():
     # second check: first principles.
     skeleton2 = Skeleton(image**2, junction_mode='centroid')
     # (Var = StDev**2 = E(X**2) - (E(X))**2)
-    assert_allclose(skeleton.path_stdev()**2,
-                    skeleton2.path_means() - skeleton.path_means()**2)
+    assert_allclose(
+            skeleton.path_stdev()**2,
+            skeleton2.path_means() - skeleton.path_means()**2
+            )
 
 
 def test_junction_first():
@@ -90,7 +90,9 @@ def test_junction_first():
     before any of its adjacent branches. This turns out to be tricky to achieve
     but not impossible in 2D.
     """
-    assert [1, 1] not in Skeleton(junction_first, junction_mode='centroid').paths_list()
+    assert [1, 1] not in Skeleton(
+            junction_first, junction_mode='centroid'
+            ).paths_list()
 
 
 def test_skeleton_summarize():
@@ -99,8 +101,10 @@ def test_skeleton_summarize():
     skeleton = Skeleton(image, junction_mode='centroid')
     summary = summarize(skeleton)
     assert set(summary['skeleton-id']) == {1, 2}
-    assert (np.all(summary['mean-pixel-value'] < 2)
-            and np.all(summary['mean-pixel-value'] > 1))
+    assert (
+            np.all(summary['mean-pixel-value'] < 2)
+            and np.all(summary['mean-pixel-value'] > 1)
+            )
 
 
 @pytest.mark.xfail
@@ -118,12 +122,13 @@ def test_skeleton_label_image_strict():
     skeleton = Skeleton(skeleton4, junction_mode='none')
     label_image = np.asarray(skeleton)
     expected = np.array([
-        [1, 0, 0, 0, 0],       
-        [0, 1, 2, 2, 2],
-        [0, 3, 0, 0, 0],
-        [0, 3, 0, 0, 0],
-    ])
-    paired_values = np.stack((expected, label_image), axis=-1).reshape((label_image.size, 2))
+            [1, 0, 0, 0, 0],
+            [0, 1, 2, 2, 2],
+            [0, 3, 0, 0, 0],
+            [0, 3, 0, 0, 0],
+            ])
+    paired_values = np.stack((expected, label_image),
+                             axis=-1).reshape((label_image.size, 2))
     unique_pairs = np.unique(paired_values, axis=0)
     expected_label_values = np.unique(expected)
     assert len(expected_label_values) == len(unique_pairs)
@@ -136,10 +141,12 @@ def test_skeleton_label_image():
     skeleton = Skeleton(skeleton4, junction_mode='none')
     label_image = np.asarray(skeleton)
     expected = np.array([
-        [1, 0, 0, 0, 0],    
-        [0, 1, 2, 2, 2],
-        [0, 3, 0, 0, 0],
-        [0, 3, 0, 0, 0],
-    ])
+            [1, 0, 0, 0, 0],
+            [0, 1, 2, 2, 2],
+            [0, 3, 0, 0, 0],
+            [0, 3, 0, 0, 0],
+            ])
 
-    np.testing.assert_array_equal(label_image.astype(bool), expected.astype(bool))
+    np.testing.assert_array_equal(
+            label_image.astype(bool), expected.astype(bool)
+            )

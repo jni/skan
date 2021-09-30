@@ -17,22 +17,23 @@ def test_write_excel_tables():
         tables.append(pd.DataFrame(data=data, columns=columns))
     sheet_names = [f'sheet {i}' for i in range(num_sheets)]
     kwargs = dict(zip(sheet_names, tables))
-    kwargs['config'] = {'image files': ['image1.tif', 'image2.tif'],
-                        'image format': 'fei',
-                        'threshold radius': 5e-8}
+    kwargs['config'] = {
+            'image files': ['image1.tif', 'image2.tif'], 'image format': 'fei',
+            'threshold radius': 5e-8
+            }
     with temporary_file(suffix='.xlsx') as file:
         io.write_excel(file, **kwargs)
         tables_in = [
-            pd.read_excel(
-                file, sheet_name=name, index_col=0, engine='openpyxl'
-                )
-            for name in sheet_names
-            ]
+                pd.read_excel(
+                        file, sheet_name=name, index_col=0, engine='openpyxl'
+                        ) for name in sheet_names
+                ]
         config_in_df = pd.read_excel(
-            file, sheet_name='config', engine='openpyxl'
-            )
-        config_in = dict(zip(config_in_df['parameters'],
-                             config_in_df['values']))
+                file, sheet_name='config', engine='openpyxl'
+                )
+        config_in = dict(
+                zip(config_in_df['parameters'], config_in_df['values'])
+                )
     for table, table_in in zip(tables, tables_in):
         assert list(table.columns) == list(table_in.columns)
         np.testing.assert_allclose(table_in.values, table.values)

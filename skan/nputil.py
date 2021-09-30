@@ -2,6 +2,7 @@ from collections import abc
 import itertools
 import numpy as np
 
+
 # adapted from github.com/janelia-flyem/gala
 def smallest_int_dtype(number, *, signed=False, min_dtype=np.int8):
     """Return the smallest numpy integer dtype that can represent `number`.
@@ -67,8 +68,10 @@ def smallest_int_dtype(number, *, signed=False, min_dtype=np.int8):
         dtype = min_dtype
     return dtype
 
-def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C', spacing=1,
-                               return_distances=True):
+
+def raveled_steps_to_neighbors(
+        shape, connectivity=1, *, order='C', spacing=1, return_distances=True
+        ):
     """Return raveled coordinate steps for given array shape and neighborhood.
 
     Parameters
@@ -121,12 +124,10 @@ def raveled_steps_to_neighbors(shape, connectivity=1, *, order='C', spacing=1,
     for nhops in range(2, connectivity + 1):
         prod = np.array(list(itertools.product(*[[1, -1]] * nhops)))
         multisteps = np.array(list(itertools.combinations(stepsizes, nhops))).T
-        dhopsq = np.array(list(itertools.combinations(spacing ** 2, nhops))).T
+        dhopsq = np.array(list(itertools.combinations(spacing**2, nhops))).T
         steps.append((prod @ multisteps).ravel())
         distances.append(np.sqrt(np.abs(prod) @ dhopsq).ravel())
     if return_distances:
-        return (np.concatenate(steps).astype(int),
-                np.concatenate(distances))
+        return (np.concatenate(steps).astype(int), np.concatenate(distances))
     else:
         return np.concatenate(steps).astype(int)
-
