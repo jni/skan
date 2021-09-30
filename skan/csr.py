@@ -29,9 +29,13 @@ class JunctionModes(Enum):
 
 ## NBGraph and Numba-based implementation
 
-csr_spec = [('indptr', numba.int32[:]), ('indices', numba.int32[:]),
-            ('data', numba.float64[:]), ('shape', numba.int32[:]),
-            ('node_properties', numba.float64[:])]
+csr_spec = [
+        ('indptr', numba.int32[:]),
+        ('indices', numba.int32[:]),
+        ('data', numba.float64[:]),
+        ('shape', numba.int32[:]),
+        ('node_properties', numba.float64[:]),
+        ]  # yapf: disable
 
 
 @numba.experimental.jitclass(csr_spec)
@@ -757,8 +761,10 @@ def skeleton_to_csgraph(
     ndim = skel.ndim
     spacing = np.ones(ndim, dtype=float) * spacing
 
-    pixel_indices = np.concatenate(([[0.] * ndim
-                                     ], np.transpose(np.nonzero(skel))),
+    pixel_indices_raw = np.transpose(np.nonzero(skel))
+    # We prepend a row of zeros so that pixel_indices[i] contains the
+    # coordinates for pixel labeled i.
+    pixel_indices = np.concatenate((np.zeros((1, ndim)), pixel_indices_raw),
                                    axis=0)
     skelint = np.zeros(skel.shape, dtype=int)
     skelint[tuple(pixel_indices[1:].T.astype(int))] = \
@@ -766,9 +772,9 @@ def skeleton_to_csgraph(
 
     degree_kernel = np.ones((3,) * ndim)
     degree_kernel[(1,) * ndim] = 0  # remove centre pixel
-    degree_image = ndi.convolve(
+    degree_image = skel * ndi.convolve(
             skel.astype(int), degree_kernel, mode='constant'
-            ) * skel
+            )
 
     if unique_junctions is not None:
         warnings.warn('unique junctions in deprecated, see junction_modes')
@@ -1077,15 +1083,19 @@ def summarise(image, *, spacing=1, using_height=False):
             coords_real1, distances
             ))
     height_ndim = ndim if not using_height else (ndim + 1)
-    columns = ([
+    base_columns = [
             'skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
             'branch-type'
-            ] + value_columns
-               + ['image-coord-src-%i' % i for i in range(ndim)]
-               + ['image-coord-dst-%i' % i for i in range(ndim)]
-               + ['coord-src-%i' % i for i in range(height_ndim)]
-               + ['coord-dst-%i' % i
-                  for i in range(height_ndim)] + ['euclidean-distance'])
+            ]
+    columns = (
+            base_columns
+            + value_columns
+            + ['image-coord-src-%i' % i for i in range(ndim)]
+            + ['image-coord-dst-%i' % i for i in range(ndim)]
+            + ['coord-src-%i' % i for i in range(height_ndim)]
+            + ['coord-dst-%i' % i
+                    for i in range(height_ndim)] + ['euclidean-distance'],
+            )  # yapf: disable
     column_types = ([int, int, int, float, int] + value_column_types
                     + 2 * ndim * [int] + 2 * height_ndim * [float] + [float])
     data_dict = {
@@ -1166,7 +1176,7 @@ def make_degree_image(skeleton_image):
         import dask.array as da
         from dask_image.ndfilters import convolve as dask_convolve
         if isinstance(bool_skeleton, da.Array):
-            degree_image = dask_convolve(
+            degree_image = bool_skeleton * dask_convolve(
                     bool_skeleton.astype(int), degree_kernel, mode='constant'
-                    ) * bool_skeleton
+                    )
     return degree_image

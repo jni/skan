@@ -148,10 +148,13 @@ def test_tip_junction_edges():
 
 
 @pytest.mark.parametrize(
-        'mst_mode,none_mode', [('mst', 'none'), ('MST', 'NONE'),
-                               ('MsT', 'NoNe'),
-                               (JunctionModes.MST, JunctionModes.NONE)]
-        )
+        'mst_mode,none_mode', [
+                ('mst', 'none'),
+                ('MST', 'NONE'),
+                ('MsT', 'NoNe'),
+                (JunctionModes.MST, JunctionModes.NONE)
+                ]
+        )  # yapf: disable
 def test_mst_junctions(mst_mode, none_mode):
     g, _ = csr.skeleton_to_csgraph(skeleton0, junction_mode=none_mode)
     h = csr._mst_junctions(g)
