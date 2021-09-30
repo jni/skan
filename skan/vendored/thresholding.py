@@ -10,8 +10,9 @@ def broadcast_mgrid(arrays):
     ndim = len(shape)
     result = []
     for i, arr in enumerate(arrays, start=1):
-        reshaped = np.broadcast_to(arr[(...,) + (np.newaxis,) * (ndim - i)],
-                                   shape)
+        reshaped = np.broadcast_to(
+                arr[(...,) + (np.newaxis,) * (ndim-i)], shape
+                )
         result.append(reshaped)
     return result
 
@@ -56,18 +57,23 @@ def correlate_sparse(image, kernel, mode='reflect'):
         padded_image = image
     else:
         w = kernel.shape[0] // 2
-        padded_image = np.pad(image, (w, w-1), mode=mode)
+        padded_image = np.pad(image, (w, w - 1), mode=mode)
     indices = np.nonzero(kernel)
     offsets = np.ravel_multi_index(indices, padded_image.shape)
     values = kernel[indices]
-    result = np.zeros([a - b + 1
-                       for a, b in zip(padded_image.shape, kernel.shape)])
-    corner_multi_indices = broadcast_mgrid([np.arange(i)
-                                            for i in result.shape])
-    corner_indices = np.ravel_multi_index(corner_multi_indices,
-                                          padded_image.shape).ravel()
-    _correlate_sparse_offsets(padded_image.ravel(), corner_indices,
-                              offsets, values, result.ravel())
+    result = np.zeros([
+            a - b + 1 for a, b in zip(padded_image.shape, kernel.shape)
+            ])
+    corner_multi_indices = broadcast_mgrid([
+            np.arange(i) for i in result.shape
+            ])
+    corner_indices = np.ravel_multi_index(
+            corner_multi_indices, padded_image.shape
+            ).ravel()
+    _correlate_sparse_offsets(
+            padded_image.ravel(), corner_indices, offsets, values,
+            result.ravel()
+            )
     return result
 
 
@@ -100,12 +106,14 @@ def _mean_std(image, w):
     """
     if w == 1 or w % 2 == 0:
         raise ValueError(
-            "Window size w = %s must be odd and greater than 1." % w)
+                "Window size w = %s must be odd and greater than 1." % w
+                )
 
-    left_pad = w // 2 + 1
+    left_pad = w//2 + 1
     right_pad = w // 2
-    padded = np.pad(image.astype('float'), (left_pad, right_pad),
-                    mode='reflect')
+    padded = np.pad(
+            image.astype('float'), (left_pad, right_pad), mode='reflect'
+            )
     padded_sq = padded * padded
 
     integral = integral_image(padded)
@@ -113,13 +121,13 @@ def _mean_std(image, w):
 
     kern = np.zeros((w + 1,) * image.ndim)
     for indices in itertools.product(*([[0, -1]] * image.ndim)):
-        kern[indices] = (-1) ** (image.ndim % 2 != np.sum(indices) % 2)
+        kern[indices] = (-1)**(image.ndim % 2 != np.sum(indices) % 2)
 
     sum_full = correlate_sparse(integral, kern, mode='valid')
-    m = sum_full / (w ** image.ndim)
+    m = sum_full / (w**image.ndim)
     sum_sq_full = correlate_sparse(integral_sq, kern, mode='valid')
-    g2 = sum_sq_full / (w ** image.ndim)
-    s = np.sqrt(g2 - m * m)
+    g2 = sum_sq_full / (w**image.ndim)
+    s = np.sqrt(g2 - m*m)
     return m, s
 
 
@@ -167,7 +175,7 @@ def threshold_niblack(image, window_size=15, k=0.2):
     >>> binary_image = threshold_niblack(image, window_size=7, k=0.1)
     """
     m, s = _mean_std(image, window_size)
-    return m - k * s
+    return m - k*s
 
 
 def threshold_sauvola(image, window_size=15, k=0.2, r=None):
@@ -224,6 +232,6 @@ def threshold_sauvola(image, window_size=15, k=0.2, r=None):
     """
     if r is None:
         imin, imax = dtype_limits(image, clip_negative=False)
-        r = 0.5 * (imax - imin)
+        r = 0.5 * (imax-imin)
     m, s = _mean_std(image, window_size)
-    return m * (1 + k * ((s / r) - 1))
+    return m * (1 + k * ((s/r) - 1))

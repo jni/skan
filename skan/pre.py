@@ -5,11 +5,10 @@ from skimage import filters, restoration
 # Temporary until skimage 0.13 is out
 from .vendored.thresholding import threshold_sauvola, threshold_niblack
 
-
 SMOOTH_METHODS = {
-    'Gaussian': filters.gaussian,
-    'TV': restoration.denoise_tv_bregman,
-}
+        'Gaussian': filters.gaussian,
+        'TV': restoration.denoise_tv_bregman,
+        }
 
 
 def hyperball(ndim, radius):
@@ -27,10 +26,12 @@ def hyperball(ndim, radius):
     ball : array of bool, shape [2 * radius + 1,] * ndim
         The required structural element
     """
-    size = 2 * radius + 1
+    size = 2*radius + 1
     center = [(radius,) * ndim]
 
-    coords = np.mgrid[[slice(None, size),] * ndim].reshape(ndim, -1).T
+    coords = np.mgrid[[
+            slice(None, size),
+            ] * ndim].reshape(ndim, -1).T
     distances = np.ravel(spatial.distance_matrix(coords, center))
     selector = distances <= radius
 
@@ -39,8 +40,15 @@ def hyperball(ndim, radius):
     return ball
 
 
-def threshold(image, *, sigma=0., radius=0, offset=0.,
-              method='sauvola', smooth_method='Gaussian'):
+def threshold(
+        image,
+        *,
+        sigma=0.,
+        radius=0,
+        offset=0.,
+        method='sauvola',
+        smooth_method='Gaussian'
+        ):
     """Use scikit-image filters to "intelligently" threshold an image.
 
     Parameters
@@ -84,13 +92,15 @@ def threshold(image, *, sigma=0., radius=0, offset=0.,
             footprint = hyperball(image.ndim, radius=radius)
             t = ndi.median_filter(image, footprint=footprint) + offset
         elif method == 'sauvola':
-            w = 2 * radius + 1
+            w = 2*radius + 1
             t = threshold_sauvola(image, window_size=w, k=offset)
         elif method == 'niblack':
-            w = 2 * radius + 1
+            w = 2*radius + 1
             t = threshold_niblack(image, window_size=w, k=offset)
         else:
-            raise ValueError('Unknown method %s. Valid methods are median,'
-                             'niblack, and sauvola.' % method)
+            raise ValueError(
+                    'Unknown method %s. Valid methods are median,'
+                    'niblack, and sauvola.' % method
+                    )
     thresholded = image > t
     return thresholded

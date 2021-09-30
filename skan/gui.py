@@ -4,16 +4,17 @@ import asyncio
 from pathlib import Path
 import numpy as np
 import matplotlib
+
 matplotlib.use('TkAgg')
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
-                                               NavigationToolbar2Tk)
+from matplotlib.backends.backend_tkagg import (
+        FigureCanvasTkAgg, NavigationToolbar2Tk
+        )
 import matplotlib.pyplot as plt
 import tkinter as tk
 import tkinter.filedialog
 from tkinter import ttk
 import click
-
 
 from . import pre, pipe, draw, io, __version__
 
@@ -32,39 +33,47 @@ class Launch(tk.Tk):
         super().__init__()
         self.title('Skeleton analysis tool')
         self.crop_radius = tk.IntVar(value=0, name='Crop radius')
-        self.smooth_method = tk.StringVar(value='Gaussian',
-                                          name='Smoothing method')
+        self.smooth_method = tk.StringVar(
+                value='Gaussian', name='Smoothing method'
+                )
         self.smooth_method._choices = pre.SMOOTH_METHODS
         self.smooth_radius = tk.DoubleVar(value=0.1, name='Smoothing radius')
-        self.threshold_radius = tk.DoubleVar(value=50e-9,
-                                             name='Threshold radius')
-        self.brightness_offset = tk.DoubleVar(value=0.075,
-                                              name='Brightness offset')
-        self.image_format = tk.StringVar(value='auto',
-                                         name='Image format')
-        self.scale_metadata_path = tk.StringVar(value='Scan/PixelHeight',
-                                                name='Scale metadata path')
-        self.preview_skeleton_plots = tk.BooleanVar(value=True, name='Live '
-                                                    'preview skeleton plot?')
-        self.save_skeleton_plots = tk.BooleanVar(value=True,
-                                                 name='Save skeleton plot?')
-        self.skeleton_plot_prefix = tk.StringVar(value='skeleton-plot-',
-                                         name='Prefix for skeleton plots')
-        self.output_filename = tk.StringVar(value='skeleton.xlsx',
-                                            name='Output filename')
+        self.threshold_radius = tk.DoubleVar(
+                value=50e-9, name='Threshold radius'
+                )
+        self.brightness_offset = tk.DoubleVar(
+                value=0.075, name='Brightness offset'
+                )
+        self.image_format = tk.StringVar(value='auto', name='Image format')
+        self.scale_metadata_path = tk.StringVar(
+                value='Scan/PixelHeight', name='Scale metadata path'
+                )
+        self.preview_skeleton_plots = tk.BooleanVar(
+                value=True, name='Live '
+                'preview skeleton plot?'
+                )
+        self.save_skeleton_plots = tk.BooleanVar(
+                value=True, name='Save skeleton plot?'
+                )
+        self.skeleton_plot_prefix = tk.StringVar(
+                value='skeleton-plot-', name='Prefix for skeleton plots'
+                )
+        self.output_filename = tk.StringVar(
+                value='skeleton.xlsx', name='Output filename'
+                )
         self.parameters = [
-            self.crop_radius,
-            self.smooth_method,
-            self.smooth_radius,
-            self.threshold_radius,
-            self.brightness_offset,
-            self.image_format,
-            self.scale_metadata_path,
-            self.preview_skeleton_plots,
-            self.save_skeleton_plots,
-            self.skeleton_plot_prefix,
-            self.output_filename,
-        ]
+                self.crop_radius,
+                self.smooth_method,
+                self.smooth_radius,
+                self.threshold_radius,
+                self.brightness_offset,
+                self.image_format,
+                self.scale_metadata_path,
+                self.preview_skeleton_plots,
+                self.save_skeleton_plots,
+                self.skeleton_plot_prefix,
+                self.output_filename,
+                ]
 
         self.input_files = []
         self.output_folder = None
@@ -141,8 +150,9 @@ class Launch(tk.Tk):
             if type(param) == tk.BooleanVar:
                 param_entry = ttk.Checkbutton(parameters, variable=param)
             elif hasattr(param, '_choices'):
-                param_entry = ttk.OptionMenu(parameters, param, param.get(),
-                                             *param._choices.keys())
+                param_entry = ttk.OptionMenu(
+                        parameters, param, param.get(), *param._choices.keys()
+                        )
             else:
                 param_entry = ttk.Entry(parameters, textvariable=param)
             param_entry.grid(row=i, column=1, sticky='nsew')
@@ -150,15 +160,12 @@ class Launch(tk.Tk):
     def create_buttons_frame(self, parent):
         buttons = ttk.Frame(master=parent, padding=STANDARD_MARGIN)
         buttons.grid(sticky='nsew')
-        actions = [
-            ('Choose config', self.choose_config_file),
-            ('Choose files', self.choose_input_files),
-            ('Choose output folder', self.choose_output_folder),
-            ('Run', lambda: asyncio.ensure_future(self.run()))
-        ]
+        actions = [('Choose config', self.choose_config_file),
+                   ('Choose files', self.choose_input_files),
+                   ('Choose output folder', self.choose_output_folder),
+                   ('Run', lambda: asyncio.ensure_future(self.run()))]
         for col, (action_name, action) in enumerate(actions):
-            button = ttk.Button(buttons, text=action_name,
-                                command=action)
+            button = ttk.Button(buttons, text=action_name, command=action)
             button.grid(row=0, column=col)
 
     def choose_config_file(self):
@@ -172,7 +179,8 @@ class Launch(tk.Tk):
 
     def choose_output_folder(self):
         self.output_folder = Path(
-                tk.filedialog.askdirectory(initialdir=self.output_folder))
+                tk.filedialog.askdirectory(initialdir=self.output_folder)
+                )
 
     def make_figure_window(self):
         self.figure_window = tk.Toplevel(self)
@@ -181,11 +189,14 @@ class Launch(tk.Tk):
         screen_width = self.figure_window.winfo_screenwidth()  # in pixels
         figure_width = screen_width / 2 / screen_dpi
         figure_height = 0.75 * figure_width
-        self.figure = Figure(figsize=(figure_width, figure_height),
-                             dpi=screen_dpi)
+        self.figure = Figure(
+                figsize=(figure_width, figure_height), dpi=screen_dpi
+                )
         ax0 = self.figure.add_subplot(221)
-        axes = [self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
-                for i in range(2, 5)]
+        axes = [
+                self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
+                for i in range(2, 5)
+                ]
         self.axes = np.array([ax0] + axes)
         canvas = FigureCanvasTkAgg(self.figure, master=self.figure_window)
         canvas.show()
@@ -203,23 +214,29 @@ class Launch(tk.Tk):
             p = param.get()
             print('  ', param, type(p), p)
         print('Output:', self.output_folder)
-        save_skeleton = ('' if not self.save_skeleton_plots.get() else
-                         self.skeleton_plot_prefix.get())
+        save_skeleton = (
+                '' if not self.save_skeleton_plots.get() else
+                self.skeleton_plot_prefix.get()
+                )
         images_iterator = pipe.process_images(
-                self.input_files, self.image_format.get(),
+                self.input_files,
+                self.image_format.get(),
                 self.threshold_radius.get(),
                 self.smooth_radius.get(),
                 self.brightness_offset.get(),
                 self.scale_metadata_path.get(),
                 crop_radius=self.crop_radius.get(),
-                smooth_method=self.smooth_method.get())
+                smooth_method=self.smooth_method.get()
+                )
         if self.preview_skeleton_plots.get():
             self.make_figure_window()
         elif self.save_skeleton_plots.get():
             self.figure = plt.figure()
             ax0 = self.figure.add_subplot(221)
-            axes = [self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
-                    for i in range(2, 5)]
+            axes = [
+                    self.figure.add_subplot(220 + i, sharex=ax0, sharey=ax0)
+                    for i in range(2, 5)
+                    ]
             self.axes = np.array([ax0] + axes)
         self.save_parameters(self.output_folder / 'skan-config.json')
         for i, result in enumerate(images_iterator):
@@ -229,30 +246,42 @@ class Launch(tk.Tk):
                     for ax in self.axes:
                         ax.clear()
                     w, h = draw.pixel_perfect_figsize(image)
-                    self.figure.set_size_inches(4*w, 4*h)
-                    draw.pipeline_plot(image, thresholded, skeleton, framedata,
-                                       figure=self.figure, axes=self.axes)
-                    output_basename = (save_skeleton +
-                                       os.path.basename(
-                                           os.path.splitext(filename)[0]) +
-                                       '.png')
+                    self.figure.set_size_inches(4 * w, 4 * h)
+                    draw.pipeline_plot(
+                            image,
+                            thresholded,
+                            skeleton,
+                            framedata,
+                            figure=self.figure,
+                            axes=self.axes
+                            )
+                    output_basename = (
+                            save_skeleton
+                            + os.path.basename(os.path.splitext(filename)[0])
+                            + '.png'
+                            )
                     output_filename = str(self.output_folder / output_basename)
                     self.figure.savefig(output_filename)
                 if self.preview_skeleton_plots.get():
                     self.figure.canvas.draw_idle()
             else:
                 result_full, result_image = result
-                result_filtered = result_full[(result_full['mean shape index']>0.125) &
-                                              (result_full['mean shape index']<0.625) &
-                                              (result_full['branch-type'] == 2) &
-                                              (result_full['euclidean-distance']>0)]
-                ridgeydata = result_filtered.groupby('filename')[['filename','branch-distance','scale','euclidean-distance','squiggle','mean shape index']].mean()
-                io.write_excel(str(self.output_folder /
-                                   self.output_filename.get()),
-                               branches=result_full,
-                               images=result_image,
-                               filtered=ridgeydata,
-                               parameters=json.loads(self.save_parameters()))
+                result_filtered = result_full[
+                        (result_full['mean shape index'] > 0.125)
+                        & (result_full['mean shape index'] < 0.625) &
+                        (result_full['branch-type'] == 2) &
+                        (result_full['euclidean-distance'] > 0)]
+                ridgeydata = result_filtered.groupby('filename')[[
+                        'filename', 'branch-distance', 'scale',
+                        'euclidean-distance', 'squiggle', 'mean shape index'
+                        ]].mean()
+                io.write_excel(
+                        str(self.output_folder / self.output_filename.get()),
+                        branches=result_full,
+                        images=result_image,
+                        filtered=ridgeydata,
+                        parameters=json.loads(self.save_parameters())
+                        )
 
 
 def tk_update(loop, app):
@@ -265,8 +294,7 @@ def tk_update(loop, app):
 
 
 @click.command()
-@click.option('-c', '--config', default='',
-              help='JSON configuration file.')
+@click.option('-c', '--config', default='', help='JSON configuration file.')
 def launch(config):
     params = json.load(open(config)) if config else None
     app = Launch(params)

@@ -38,12 +38,19 @@ def pixel_perfect_figsize(image, dpi=80):
     (12.8, 9.6)
     """
     hpix, wpix = image.shape[:2]
-    return wpix/dpi, hpix/dpi
+    return wpix / dpi, hpix / dpi
 
 
-def overlay_skeleton_2d(image, skeleton, *,
-                        image_cmap=None, color=(1, 0, 0), alpha=1,
-                        dilate=0, axes=None):
+def overlay_skeleton_2d(
+        image,
+        skeleton,
+        *,
+        image_cmap=None,
+        color=(1, 0, 0),
+        alpha=1,
+        dilate=0,
+        axes=None
+        ):
     """Overlay the skeleton pixels on the input image.
 
     Parameters
@@ -81,17 +88,21 @@ def overlay_skeleton_2d(image, skeleton, *,
         skeleton = morphology.binary_dilation(skeleton, selem)
     if axes is None:
         fig, axes = plt.subplots()
-    image[skeleton] = alpha * np.array(color) + (1 - alpha) * image[skeleton]
+    image[skeleton] = alpha * np.array(color) + (1-alpha) * image[skeleton]
     axes.imshow(image)
     axes.axis('off')
     return axes
 
 
-def overlay_euclidean_skeleton_2d(image, stats, *,
-                                  image_cmap=None,
-                                  skeleton_color_source='branch-type',
-                                  skeleton_colormap='viridis',
-                                  axes=None):
+def overlay_euclidean_skeleton_2d(
+        image,
+        stats,
+        *,
+        image_cmap=None,
+        skeleton_color_source='branch-type',
+        skeleton_colormap='viridis',
+        axes=None
+        ):
     """Plot the image, and overlay the straight-line skeleton over it.
 
     Parameters
@@ -130,16 +141,17 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
     image = _normalise_image(image, image_cmap=image_cmap)
     summary = stats
     # transforming from row, col to x, y
-    coords_cols = (['image-coord-src-%i' % i for i in [1, 0]] +
-                   ['image-coord-dst-%i' % i for i in [1, 0]])
+    coords_cols = (['image-coord-src-%i' % i for i in [1, 0]]
+                   + ['image-coord-dst-%i' % i for i in [1, 0]])
     coords = summary[coords_cols].values.reshape((-1, 2, 2))
     if axes is None:
         fig, axes = plt.subplots()
     axes.imshow(image)
     axes.axis('off')
     color_values = summary[skeleton_color_source]
-    cmap = plt.get_cmap(skeleton_colormap,
-                        min(len(np.unique(color_values)), 256))
+    cmap = plt.get_cmap(
+            skeleton_colormap, min(len(np.unique(color_values)), 256)
+            )
     colormapped = cmap((color_values - np.min(color_values)) /
                        (np.max(color_values) - np.min(color_values)))
     linecoll = collections.LineCollection(coords, colors=colormapped)
@@ -147,12 +159,16 @@ def overlay_euclidean_skeleton_2d(image, stats, *,
     return axes
 
 
-def overlay_skeleton_2d_class(skeleton, *,
-                              image_cmap='gray',
-                              skeleton_color_source='path_means',
-                              skeleton_colormap='viridis',
-                              vmin=None, vmax=None,
-                              axes=None):
+def overlay_skeleton_2d_class(
+        skeleton,
+        *,
+        image_cmap='gray',
+        skeleton_color_source='path_means',
+        skeleton_colormap='viridis',
+        vmin=None,
+        vmax=None,
+        axes=None
+        ):
     """Plot the image, and overlay the skeleton over it.
 
     Parameters
@@ -203,28 +219,39 @@ def overlay_skeleton_2d_class(skeleton, *,
     elif hasattr(skeleton, skeleton_color_source):
         values = getattr(skeleton, skeleton_color_source)()
     else:
-        raise ValueError('Unknown skeleton color source: %s. Provide an '
-                         'attribute of skan.csr.Skeleton or a callable.' %
-                         skeleton_color_source)
-    cmap = plt.get_cmap(skeleton_colormap,
-                        min(len(np.unique(values)), 256))
+        raise ValueError(
+                'Unknown skeleton color source: %s. Provide an '
+                'attribute of skan.csr.Skeleton or a callable.'
+                % skeleton_color_source
+                )
+    cmap = plt.get_cmap(skeleton_colormap, min(len(np.unique(values)), 256))
     if vmin is None:
         vmin = np.min(values)
     if vmax is None:
         vmax = np.max(values)
-    mapping_values = (values - vmin) / (vmax - vmin)
+    mapping_values = (values-vmin) / (vmax-vmin)
     mappable = plt.cm.ScalarMappable(plt.Normalize(vmin, vmax), cmap)
     mappable._A = mapping_values
     colors = cmap(mapping_values)
-    coordinates = [skeleton.path_coordinates(i)[:, ::-1]
-                   for i in range(skeleton.n_paths)]
+    coordinates = [
+            skeleton.path_coordinates(i)[:, ::-1]
+            for i in range(skeleton.n_paths)
+            ]
     linecoll = collections.LineCollection(coordinates, colors=colors)
     axes.add_collection(linecoll)
     return axes, mappable
 
 
-def pipeline_plot(image, thresholded, skeleton, stats, *,
-                  figure=None, axes=None, figsize=(9, 9)):
+def pipeline_plot(
+        image,
+        thresholded,
+        skeleton,
+        stats,
+        *,
+        figure=None,
+        axes=None,
+        figsize=(9, 9)
+        ):
     """Draw the image, the thresholded version, and its skeleton.
 
     Parameters
@@ -262,15 +289,18 @@ def pipeline_plot(image, thresholded, skeleton, stats, *,
     .. [1] http://scikit-image.org/docs/dev/user_guide/data_types.html
     """
     if figure is None:
-        fig, axes = plt.subplots(2, 2, figsize=figsize,
-                                 sharex=True, sharey=True)
+        fig, axes = plt.subplots(
+                2, 2, figsize=figsize, sharex=True, sharey=True
+                )
         axes = np.ravel(axes)
     else:
         fig = figure
         if axes is None:
             ax0 = fig.add_subplot(2, 2, 1)
-            axes = [ax0] + [fig.add_subplot(2, 2, i, sharex=ax0, sharey=ax0)
-                            for i in range(2, 5)]
+            axes = [ax0] + [
+                    fig.add_subplot(2, 2, i, sharex=ax0, sharey=ax0)
+                    for i in range(2, 5)
+                    ]
 
     axes = np.ravel(axes)
     axes[0].imshow(image, cmap='gray')
@@ -296,8 +326,9 @@ def _clean_positions_dict(d, g):
             g.remove_node(k)
 
 
-def overlay_skeleton_networkx(csr_graph, coordinates, *, axis=None,
-                              image=None, cmap=None, **kwargs):
+def overlay_skeleton_networkx(
+        csr_graph, coordinates, *, axis=None, image=None, cmap=None, **kwargs
+        ):
     """Draw the skeleton as a NetworkX graph, optionally overlaid on an image.
 
     Due to the size of NetworkX drawing elements, this is only recommended

@@ -36,9 +36,11 @@ def mesh_sizes(skeleton):
     """
     spaces = ~skeleton.astype(bool)
     labeled = ndi.label(spaces)[0]
-    touching_border = np.unique(np.concatenate((labeled[0], labeled[-1],
-                                                labeled[:, 0],
-                                                labeled[:, -1])))
+    touching_border = np.unique(
+            np.concatenate(
+                    (labeled[0], labeled[-1], labeled[:, 0], labeled[:, -1])
+                    )
+            )
     sizes = np.bincount(labeled.flat)
     sizes[touching_border] = 0
     sizes = sizes[sizes != 0]
@@ -69,11 +71,14 @@ def image_summary(skeleton, *, spacing=1):
     degrees = np.diff(g.indptr)
     num_junctions = np.sum(degrees > 2)
     stats['number of junctions'] = num_junctions
-    pixel_area = (spacing ** skeleton.ndim if np.isscalar(spacing) else
-                  np.prod(spacing))
+    pixel_area = (
+            spacing**skeleton.ndim if np.isscalar(spacing) else
+            np.prod(spacing)
+            )
     stats['area'] = np.prod(skeleton.shape) * pixel_area
-    stats['junctions per unit area'] = (stats['number of junctions'] /
-                                        stats['area'])
+    stats['junctions per unit area'] = (
+            stats['number of junctions'] / stats['area']
+            )
     sizes = mesh_sizes(skeleton)
     stats['average mesh area'] = np.mean(sizes)
     stats['median mesh area'] = np.median(sizes)
