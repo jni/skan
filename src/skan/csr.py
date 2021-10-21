@@ -5,12 +5,148 @@ import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
-from scipy import spatial
 from skimage import morphology
+from skimage.morphology._util import _raveled_offsets_and_distances
+from skimage.util._map_array import map_array
 import numba
 
 from .nputil import raveled_steps_to_neighbors
 from .summary_utils import find_main_branches
+
+
+def _weighted_abs_diff(values0, values1, distances):
+    """A default edge function for complete image graphs.
+
+    A pixel graph on an image with no edge values and no mask is a very
+    boring regular lattice, so we define a default edge weight to be the
+    absolute difference between values *weighted* by the distance
+    between them.
+
+    Parameters
+    ----------
+    values0 : array
+        The pixel values for each node.
+    values1 : array
+        The pixel values for each neighbor.
+    distances : array
+        The distance between each node and its neighbor.
+
+    Returns
+    -------
+    edge_values : array of float
+        The computed values: abs(values0 - values1) * distances.
+    """
+    return np.abs(values0 - values1) * distances
+
+
+def pixel_graph(
+        image, *, mask=None, edge_function=None, connectivity=1, spacing=None
+        ):
+    """Create an adjacency graph of pixels in an image.
+
+    Pixels where the mask is True are nodes in the returned graph, and they are
+    connected by edges to their neighbors according to the connectivity
+    parameter. By default, the *value* of an edge when a mask is given, or when
+    the image is itself the mask, is the euclidean distance betwene the pixels.
+
+    However, if an int- or float-valued image is given with no mask, the value
+    of the edges is the absolute difference in intensity between adjacent
+    pixels, weighted by the euclidean distance.
+
+    Parameters
+    ----------
+    image : array
+        The input image. If the image is of type bool, it will be used as the
+        mask as well.
+    mask : array of bool
+        Which pixels to use. If None, the graph for the whole image is used.
+    edge_function : callable
+        A function taking an array of pixel values, and an array of neighbor
+        pixel values, and an array of distances, and returning a value for the
+        edge. If no function is given, the value of an edge is just the
+        distance.
+    connectivity : int
+        The square connectivity of the pixel neighborhood: the number of
+        orthogonal steps allowed to consider a pixel a neigbor. See
+        `scipy.ndimage.generate_binary_structure` for details.
+    spacing : tuple of float
+        The spacing between pixels along each axis.
+
+    Returns
+    -------
+    graph : scipy.sparse.csr_matrix
+        A sparse adjacency matrix in which entry (i, j) is 1 if nodes i and j
+        are neighbors, 0 otherwise.
+    nodes : array of int
+        The nodes of the graph. These correspond to the raveled indices of the
+        nonzero pixels in the mask.
+    """
+    if image.dtype == bool and mask is None:
+        mask = image
+    if mask is None and edge_function is None:
+        mask = np.ones_like(image, dtype=bool)
+        edge_function = _weighted_abs_diff
+
+    # Strategy: we are going to build the (i, j, data) arrays of a scipy
+    # sparse COO matrix, then convert to CSR (which is fast).
+    # - grab the raveled IDs of the foreground (mask == True) parts of the
+    #   image **in the padded space**.
+    # - broadcast them together with the raveled offsets to their neighbors.
+    #   This gives us for each foreground pixel a list of neighbors (that
+    #   may or may not be selected by the mask.) (We also track the *distance*
+    #   to each neighbor.)
+    # - select "valid" entries in the neighbors and distance arrays by indexing
+    #   into the mask, which we can do since these are raveled indices.
+    # - use np.repeat() to repeat each source index according to the number
+    #   of neighbors selected by the mask it has. Each of these repeated
+    #   indices will be lined up with its neighbor, i.e. **this is the i
+    #   array** of the COO format matrix.
+    # - use the mask as a boolean index to get a 1D view of the selected
+    #   neighbors. **This is the j array.**
+    # - by default, the same boolean indexing can be applied to the distances
+    #   to each neighbor, to give the **data array.** Optionally, a
+    #   provided edge function can be computed on the pixel values and the
+    #   distances to give a different value for the edges.
+    # Note, we use map_array to map the raveled coordinates in the padded
+    # image to the ones in the original image, and those are the returned
+    # nodes.
+    padded = np.pad(mask, 1, mode='constant', constant_values=False)
+    nodes_padded = np.flatnonzero(padded)
+    neighbor_offsets_padded, distances_padded = _raveled_offsets_and_distances(
+            padded.shape, connectivity=connectivity, spacing=spacing
+            )
+    neighbors_padded = nodes_padded[:, np.newaxis] + neighbor_offsets_padded
+    neighbor_distances_full = np.broadcast_to(
+            distances_padded, neighbors_padded.shape
+            )
+    nodes = np.flatnonzero(mask)
+    nodes_sequential = np.arange(nodes.size)
+    # neighbors outside the mask get mapped to 0, which is a valid index,
+    # BUT, they will be masked out in the next step.
+    neighbors = map_array(neighbors_padded, nodes_padded, nodes)
+    neighbors_mask = padded.reshape(-1)[neighbors_padded]
+    num_neighbors = np.sum(neighbors_mask, axis=1)
+    indices = np.repeat(nodes, num_neighbors)
+    indices_sequential = np.repeat(nodes_sequential, num_neighbors)
+    neighbor_indices = neighbors[neighbors_mask]
+    neighbor_distances = neighbor_distances_full[neighbors_mask]
+    neighbor_indices_sequential = map_array(
+            neighbor_indices, nodes, nodes_sequential
+            )
+    if edge_function is None:
+        data = neighbor_distances
+    else:
+        image_r = image.reshape(-1)
+        data = edge_function(
+                image_r[indices], image_r[neighbor_indices], neighbor_distances
+                )
+    m = nodes_sequential.size
+    mat = sparse.coo_matrix(
+            (data, (indices_sequential, neighbor_indices_sequential)),
+            shape=(m, m)
+            )
+    graph = mat.tocsr()
+    return graph, nodes
 
 
 class JunctionModes(Enum):
@@ -256,16 +392,15 @@ def _walk_path(
     return j - startj + 1
 
 
-def _build_skeleton_path_graph(graph, *, _buffer_size_offset=None):
-    if _buffer_size_offset is None:
-        max_num_cycles = graph.indices.size // 4
-        _buffer_size_offset = max_num_cycles
+def _build_skeleton_path_graph(graph):
+    max_num_cycles = graph.indices.size // 4
+    buffer_size_offset = max_num_cycles
     degrees = np.diff(graph.indptr)
     visited = np.zeros(degrees.shape, dtype=bool)
     endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
     num_paths = np.sum(endpoint_degrees)
-    path_indptr = np.zeros(num_paths + _buffer_size_offset, dtype=int)
+    path_indptr = np.zeros(num_paths + buffer_size_offset, dtype=int)
     # the number of points that we need to save to store all skeleton
     # paths is equal to the number of pixels plus the sum of endpoint
     # degrees minus one (since the endpoints will have been counted once
@@ -275,7 +410,7 @@ def _build_skeleton_path_graph(graph, *, _buffer_size_offset=None):
     # of the number of points.
     n_points = (
             graph.indices.size + np.sum(endpoint_degrees - 1)
-            + _buffer_size_offset
+            + buffer_size_offset
             )
     path_indices = np.zeros(n_points, dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
@@ -362,29 +497,20 @@ class Skeleton:
             *,
             spacing=1,
             source_image=None,
-            _buffer_size_offset=None,
             keep_images=True,
-            junction_mode=JunctionModes.MST,
-            unique_junctions=None
             ):
         graph, coords = skeleton_to_csgraph(
                 skeleton_image,
                 spacing=spacing,
-                junction_mode=junction_mode,
-                unique_junctions=unique_junctions,
                 )
         if np.issubdtype(skeleton_image.dtype, np.float_):
-            pixel_values = ndi.map_coordinates(
-                    skeleton_image, coords.T, order=3
-                    )
+            pixel_values = skeleton_image[tuple(coords.T)]
         else:
             pixel_values = None
         self.graph = graph
         self.nbgraph = csr_to_nbgraph(graph, pixel_values)
         self.coordinates = coords
-        self.paths = _build_skeleton_path_graph(
-                self.nbgraph, _buffer_size_offset=_buffer_size_offset
-                )
+        self.paths = _build_skeleton_path_graph(self.nbgraph)
         self.n_paths = self.paths.shape[0]
         self.distances = np.empty(self.n_paths, dtype=float)
         self._distances_initialized = False
@@ -672,41 +798,9 @@ def _mst_junctions(csmat):
     return final_graph
 
 
-def _uniquify_junctions(
-        csmat,
-        pixel_indices,
-        junction_labels,
-        junction_centroids,
-        *,
-        spacing=1
-        ):
-    """Replace clustered pixels with degree > 2 by a single "floating" pixel.
-
-    Parameters
-    ----------
-    csmat : NBGraph
-        The input graph.
-    pixel_indices : array of int
-        The raveled index in the image of every pixel represented in csmat.
-    spacing : float, or array-like of float, shape `len(shape)`, optional
-        The spacing between pixels in the source image along each dimension.
-
-    Returns
-    -------
-    final_graph : NBGraph
-        The output csmat.
-    """
-    junctions = np.unique(junction_labels)[1:]  # discard 0, background
-    junction_centroids_real = junction_centroids * spacing
-    for j, jloc in zip(junctions, junction_centroids_real):
-        loc, stop = csmat.indptr[j], csmat.indptr[j + 1]
-        neighbors = csmat.indices[loc:stop]
-        neighbor_locations = pixel_indices[neighbors]
-        neighbor_locations *= spacing
-        distances = np.sqrt(np.sum((neighbor_locations - jloc)**2, axis=1))
-        csmat.data[loc:stop] = distances
-    tdata = csmat.T.tocsr().data
-    csmat.data = np.maximum(csmat.data, tdata)
+def distance_with_height(source_values, neighbor_values, distances):
+    height_diff = source_values - neighbor_values
+    return np.hypot(height_diff, distances)
 
 
 def skeleton_to_csgraph(
@@ -714,8 +808,6 @@ def skeleton_to_csgraph(
         *,
         spacing=1,
         value_is_height=False,
-        junction_mode=JunctionModes.MST,
-        unique_junctions=None
         ):
     """Convert a skeleton image of thin lines to a graph of neighbor pixels.
 
@@ -738,104 +830,41 @@ def skeleton_to_csgraph(
         considered to be a height measurement, and this height will be
         incorporated into skeleton branch lengths. Used for analysis of
         atomic force microscopy (AFM) images.
-    junction_mode : JunctionModes.{NONE,MST,CENTROID}
-        If NONE, junction pixels are not collapsed.
-        If MST, junction pixels are replaced by their minimum spanning tree,
-        resulting in a single junction pixel.
-        If CENTROID, junction pixels are collapsed to their centroid.
-    unique_junctions : bool, optional
-        **DEPRECATED**: Use junction_mode=JunctionModes.Centroid to get
-        behavior equivalent to ``unique_junctions=True``.
-        If True, adjacent junction nodes get collapsed into a single
-        conceptual node, with position at the centroid of all the connected
-        initial nodes.
 
     Returns
     -------
     graph : sparse.csr_matrix
-        A graph of shape (Nnz + 1, Nnz + 1), where Nnz is the number of
+        A graph of shape (Nnz, Nnz), where Nnz is the number of
         nonzero pixels in `skel`. The value graph[i, j] is the distance
         between adjacent pixels i and j. In a 2D image, that would be
         1 for immediately adjacent pixels and sqrt(2) for diagonally
         adjacent ones.
     pixel_coordinates : array of float
-        An array of shape (Nnz + 1, skel.ndim), mapping indices in `graph`
-        to pixel coordinates in `degree_image` or `skel`. Array entry
-        (0,:) contains currently always zeros to index the pixels, which
-        start at 1, directly to the coordinates.
+        An array of shape (Nnz, skel.ndim), mapping indices in `graph`
+        to pixel coordinates in `skel`.
     """
-    height = (
-            np.pad(skel, 1, mode='constant', constant_values=0.) if
-            value_is_height else None
-            )
     # ensure we have a bool image, since we later use it for bool indexing
-    skel = skel.astype(bool)
+    skel_im = skel
+    skel_bool = skel.astype(bool)
     ndim = skel.ndim
     spacing = np.ones(ndim, dtype=float) * spacing
 
-    pixel_indices_raw = np.transpose(np.nonzero(skel))
-    # We prepend a row of zeros so that pixel_indices[i] contains the
-    # coordinates for pixel labeled i.
-    pixel_indices = np.concatenate((np.zeros((1, ndim)), pixel_indices_raw),
-                                   axis=0)
-    skelint = np.zeros(skel.shape, dtype=int)
-    skelint[tuple(pixel_indices[1:].T.astype(int))] = \
-                                            np.arange(pixel_indices.shape[0])[1:]
+    if value_is_height:
+        edge_func = distance_with_height
+    else:
+        edge_func = None
 
-    degree_kernel = np.ones((3,) * ndim)
-    degree_kernel[(1,) * ndim] = 0  # remove centre pixel
-    degree_image = skel * ndi.convolve(
-            skel.astype(int), degree_kernel, mode='constant'
+    graph, pixel_indices = pixel_graph(
+            skel_im,
+            mask=skel_bool,
+            edge_function=edge_func,
+            connectivity=ndim,
+            spacing=spacing
             )
 
-    if unique_junctions is not None:
-        warnings.warn('unique junctions in deprecated, see junction_modes')
-        junction_mode = (
-                JunctionModes.Centroid if unique_junctions else
-                JunctionModes.NONE
-                )
-
-    if not isinstance(junction_mode, JunctionModes):
-        try:
-            junction_mode = JunctionModes(junction_mode.lower())
-        except ValueError:
-            raise ValueError(
-                    f"{junction_mode} is an invalid junction_mode. Should be 'none', 'centroid', or 'mst'"
-                    )
-        except AttributeError:
-            raise TypeError(
-                    'junction_mode should be a string or a JunctionModes'
-                    )
-
-    if junction_mode == JunctionModes.Centroid:
-        # group all connected junction nodes into "meganodes".
-        junctions = degree_image > 2
-        junction_ids = skelint[junctions]
-        labeled_junctions, centroids = compute_centroids(junctions)
-        labeled_junctions[junctions] = \
-                                junction_ids[labeled_junctions[junctions] - 1]
-        skelint[junctions] = labeled_junctions[junctions]
-        pixel_indices[np.unique(labeled_junctions)[1:]] = centroids
-
-    num_edges = np.sum(degree_image)  # *2, which is how many we need to store
-    # pad image to prevent looparound errors
-    skelint = np.pad(skelint, 1, mode='constant', constant_values=0)
-    steps, distances = raveled_steps_to_neighbors(
-            skelint.shape, ndim, spacing=spacing
-            )
-    graph = _pixel_graph(skelint, steps, distances, num_edges, height)
-
-    if junction_mode == JunctionModes.Centroid:
-        _uniquify_junctions(
-                graph,
-                pixel_indices,
-                labeled_junctions,
-                centroids,
-                spacing=spacing
-                )
-    elif junction_mode == JunctionModes.MST:
-        graph = _mst_junctions(graph)
-    return graph, pixel_indices
+    graph = _mst_junctions(graph)
+    pixel_coordinates = np.unravel_index(pixel_indices, skel.shape)
+    return graph, pixel_coordinates
 
 
 @numba.jit(nopython=True, cache=True)
@@ -891,10 +920,11 @@ def _expand_path(graph, source, step, visited, degrees):
     d : float
         The distance travelled from `source` to `dest`.
     n : int
-        The number of pixels along the path followed (excluding the source).
+        The number of pixels along the path followed (excluding the source and
+        end points).
     s : float
         The sum of the pixel values along the path followed (also excluding
-        the source).
+        the source and end points).
     deg : int
         The degree of `dest`.
     """
@@ -916,7 +946,7 @@ def _expand_path(graph, source, step, visited, degrees):
 @numba.jit(nopython=True, nogil=True)
 def _branch_statistics_loop(jgraph, degrees, visited, result):
     num_results = 0
-    for node in range(1, jgraph.shape[0]):
+    for node in range(jgraph.shape[0]):
         if not visited[node]:
             if degrees[node] == 2:
                 visited[node] = True
@@ -1028,133 +1058,6 @@ def submatrix(M, idxs):
     """
     Msub = M[idxs, :][:, idxs]
     return Msub
-
-
-def summarise(image, *, spacing=1, using_height=False):
-    """Compute statistics for every disjoint skeleton in `image`.
-
-    **Note: this function is deprecated. Prefer** :func:`.summarize`.
-
-    Parameters
-    ----------
-    image : array, shape (M, N, ..., P)
-        N-dimensional array, where nonzero entries correspond to an
-        object's single-pixel-wide skeleton. If the image is of type 'float',
-        the values are taken to be the height at that pixel, which is used
-        to compute the skeleton distances.
-    spacing : float, or array-like of float, shape `(skel.ndim,)`
-        A value indicating the distance between adjacent pixels. This can
-        either be a single value if the data has the same resolution along
-        all axes, or it can be an array of the same shape as `skel` to
-        indicate spacing along each axis.
-    using_height : bool, optional
-        If `True`, the pixel value at each point of the skeleton will be
-        considered to be a height measurement, and this height will be
-        incorporated into skeleton branch lengths, endpoint coordinates,
-        and euclidean distances. Used for analysis of atomic force
-        microscopy (AFM) images.
-
-    Returns
-    -------
-    df : pandas DataFrame
-        A data frame summarising the statistics of the skeletons in
-        `image`.
-    """
-    ndim = image.ndim
-    spacing = np.ones(ndim, dtype=float) * spacing
-    g, coords_img = skeleton_to_csgraph(
-            image, spacing=spacing, value_is_height=using_height
-            )
-    num_skeletons, skeleton_ids = csgraph.connected_components(
-            g, directed=False
-            )
-    if np.issubdtype(image.dtype, np.float_) and not using_height:
-        pixel_values = ndi.map_coordinates(image, coords_img.T, order=3)
-        value_columns = ['mean pixel value']
-        value_column_types = [float]
-    else:
-        pixel_values = None
-        value_columns = []
-        value_column_types = []
-    stats = branch_statistics(g, pixel_values)
-    indices0 = stats[:, 0].astype(int)
-    indices1 = stats[:, 1].astype(int)
-    coords_img0 = coords_img[indices0]
-    coords_img1 = coords_img[indices1]
-    coords_real0 = coords_img0 * spacing
-    coords_real1 = coords_img1 * spacing
-    if using_height:
-        height_coords0 = ndi.map_coordinates(image, coords_img0.T, order=3)
-        coords_real0 = np.column_stack((height_coords0, coords_real0))
-        height_coords1 = ndi.map_coordinates(image, coords_img1.T, order=3)
-        coords_real1 = np.column_stack((height_coords1, coords_real1))
-    distances = np.sqrt(np.sum((coords_real0 - coords_real1)**2, axis=1))
-    skeleton_id = skeleton_ids[stats[:, 0].astype(int)]
-    table = np.column_stack((
-            skeleton_id, stats, coords_img0, coords_img1, coords_real0,
-            coords_real1, distances
-            ))
-    height_ndim = ndim if not using_height else (ndim + 1)
-    base_columns = [
-            'skeleton-id', 'node-id-0', 'node-id-1', 'branch-distance',
-            'branch-type'
-            ]
-    columns = (
-            base_columns
-            + value_columns
-            + ['image-coord-src-%i' % i for i in range(ndim)]
-            + ['image-coord-dst-%i' % i for i in range(ndim)]
-            + ['coord-src-%i' % i for i in range(height_ndim)]
-            + ['coord-dst-%i' % i for i in range(height_ndim)]
-            + ['euclidean-distance']
-            )  # yapf: disable
-    column_types = ([int, int, int, float, int] + value_column_types
-                    + 2 * ndim * [int] + 2 * height_ndim * [float] + [float])
-    data_dict = {
-            col: dat.astype(dtype)
-            for col, dat, dtype in zip(columns, table.T, column_types)
-            }
-    df = pd.DataFrame(data_dict)
-    return df
-
-
-def compute_centroids(image):
-    """Find the centroids of all nonzero connected blobs in `image`.
-
-    Parameters
-    ----------
-    image : ndarray
-        The input image.
-
-    Returns
-    -------
-    label_image : ndarray of int
-        The input image, with each connected region containing a different
-        integer label.
-
-    Examples
-    --------
-    >>> image = np.array([[1, 0, 1, 0, 0, 1, 1],
-    ...                   [1, 0, 0, 1, 0, 0, 0]])
-    >>> labels, centroids = compute_centroids(image)
-    >>> print(labels)
-    [[1 0 2 0 0 3 3]
-     [1 0 0 2 0 0 0]]
-    >>> centroids
-    array([[0.5, 0. ],
-           [0.5, 2.5],
-           [0. , 5.5]])
-    """
-    connectivity = np.ones((3,) * image.ndim)
-    labeled_image = ndi.label(image, connectivity)[0]
-    nz = np.nonzero(labeled_image)
-    nzpix = labeled_image[nz]
-    sizes = np.bincount(nzpix)
-    coords = np.transpose(nz)
-    grouping = np.argsort(nzpix)
-    sums = np.add.reduceat(coords[grouping], np.cumsum(sizes)[:-1])
-    means = sums / sizes[1:, np.newaxis]
-    return labeled_image, means
 
 
 def make_degree_image(skeleton_image):
