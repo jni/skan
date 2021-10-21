@@ -149,25 +149,6 @@ def pixel_graph(
     return graph, nodes
 
 
-class JunctionModes(Enum):
-    """Modes for cleaning up junctions in skeletons.
-
-    NONE:
-        Junctions are left as is. This is equivalent to unique_junctions=False
-        in skan < 0.10.
-    Centroid:
-        Junctions are consolidated into the centroid of the contributing nodes.
-        This is equivalent to unique_junctions=True in skan < 0.10.
-
-    MST:
-        Junctions are replaced with the minimum spanning tree. This is the new
-        default in skan==0.10.0 and will become the only mode in skan>=0.11.
-    """
-    NONE = 'none'
-    Centroid = 'centroid'
-    MST = 'mst'
-
-
 ## NBGraph and Numba-based implementation
 
 csr_spec = [
@@ -453,10 +434,6 @@ class Skeleton:
     keep_images : bool
         Whether or not to keep the original input images. These can be useful
         for visualization, but they may take up a lot of memory.
-    unique_junctions : bool, optional
-        If True, adjacent junction nodes get collapsed into a single
-        conceptual node, with position at the centroid of all the connected
-        initial nodes.
 
     Attributes
     ----------
@@ -521,7 +498,6 @@ class Skeleton:
                 np.asarray(spacing) if not np.isscalar(spacing) else
                 np.full(skeleton_image.ndim, spacing)
                 )
-        self.unique_junctions = unique_junctions
         if keep_images:
             self.skeleton_image = skeleton_image
             self.source_image = source_image
@@ -666,12 +642,10 @@ class Skeleton:
             image_cp[coords_idxs] = 0
         # optional cleanup:
         new_skeleton = morphology.skeletonize(image_cp.astype(bool)) * image_cp
-        # note: add unique_junctions attribute for this
         return Skeleton(
                 new_skeleton,
                 spacing=self.spacing,
                 source_image=self.source_image,
-                unique_junctions=self.unique_junctions,
                 )
 
     def __array__(self, dtype=None):
