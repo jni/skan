@@ -481,12 +481,12 @@ class Skeleton:
                 spacing=spacing,
                 )
         if np.issubdtype(skeleton_image.dtype, np.float_):
-            pixel_values = skeleton_image[tuple(coords.T)]
+            pixel_values = skeleton_image[coords]
         else:
             pixel_values = None
         self.graph = graph
         self.nbgraph = csr_to_nbgraph(graph, pixel_values)
-        self.coordinates = coords
+        self.coordinates = np.transpose(coords)
         self.paths = _build_skeleton_path_graph(self.nbgraph)
         self.n_paths = self.paths.shape[0]
         self.distances = np.empty(self.n_paths, dtype=float)

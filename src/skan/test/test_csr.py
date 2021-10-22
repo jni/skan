@@ -38,10 +38,10 @@ def test_skeleton1_stats():
     assert_almost_equal(np.unique(dists), [d0, 2 + np.sqrt(2), d1])
 
 
-def test_3skeletons():
-    df = csr.summarise(skeleton2)
+def test_2skeletons():
+    df = csr.summarize(csr.Skeleton(skeleton2))
     assert_almost_equal(np.unique(df['euclidean-distance']), np.sqrt([5, 10]))
-    assert_equal(np.unique(df['skeleton-id']), [1, 2])
+    assert_equal(np.unique(df['skeleton-id']), [0, 1])
     assert_equal(np.bincount(df['branch-type']), [0, 4, 4])
 
 
