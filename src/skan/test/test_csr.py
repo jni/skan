@@ -60,62 +60,58 @@ def test_summarize_spacing():
 
 
 def test_line():
-    g, idxs = csr.skeleton_to_csgraph(tinyline, junction_mode='centroid')
-    assert_equal(np.ravel(idxs), [0, 1, 2, 3])
-    assert_equal(g.shape, (4, 4))
-    assert_equal(csr.branch_statistics(g), [[1, 3, 2, 0]])
+    g, idxs = csr.skeleton_to_csgraph(tinyline)
+    assert_equal(np.ravel(idxs), [1, 2, 3])
+    assert_equal(g.shape, (3, 3))
+    # source, dest, length, type
+    assert_equal(csr.branch_statistics(g), [[0, 2, 2, 0]])
 
 
 def test_cycle_stats():
     stats = csr.branch_statistics(
-            csr.skeleton_to_csgraph(tinycycle, junction_mode='centroid')[0],
-            buffer_size_offset=1
+            csr.skeleton_to_csgraph(tinycycle)[0], buffer_size_offset=1
             )
-    assert_almost_equal(stats, [[1, 1, 4 * np.sqrt(2), 3]])
+    # source, dest, length, type
+    assert_almost_equal(stats, [[0, 0, 4 * np.sqrt(2), 3]])
 
 
 def test_3d_spacing():
-    g, idxs = csr.skeleton_to_csgraph(
-            skeleton3d, spacing=[5, 1, 1], junction_mode='centroid'
-            )
+    g, idxs = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
     stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (5, 4))
-    assert_almost_equal(stats[0], [1, 5, 10.467, 1], decimal=3)
+    assert_almost_equal(stats[0], [0, 10, 2 * np.sqrt(5**2 + 1 + 1), 1])
+    # source, dest, length, type
+    # test only junction-tip segments
     assert_equal(np.unique(stats[:, 3].astype(int)), [1, 2, 3])
 
 
 def test_topograph():
-    g, idxs = csr.skeleton_to_csgraph(
-            topograph1d, value_is_height=True, junction_mode='centroid'
-            )
+    g, idxs = csr.skeleton_to_csgraph(topograph1d, value_is_height=True)
     stats = csr.branch_statistics(g)
     assert stats.shape == (1, 4)
-    assert_almost_equal(stats[0], [1, 3, 2 * np.sqrt(2), 0])
+    assert_almost_equal(stats[0], [0, 2, 2 * np.sqrt(2), 0])
 
 
 def test_topograph_summary():
-    stats = csr.summarise(topograph1d, spacing=2.5, using_height=True)
-    assert stats.loc[0, 'euclidean-distance'] == 5.0
-    assert_almost_equal(
-            stats
-            .loc[0,
-                 ['coord-src-0', 'coord-src-1', 'coord-dst-0', 'coord-dst-1']],
-            [3, 0, 3, 5]
+    stats = csr.summarize(
+            csr.Skeleton(topograph1d, spacing=2.5, value_is_height=True),
+            value_is_height=True,
             )
+    assert stats.loc[0, 'euclidean-distance'] == 5.0
+    columns = ['coord-src-0', 'coord-src-1', 'coord-dst-0', 'coord-dst-1']
+    assert_almost_equal(sorted(stats.loc[0, columns]), [0, 3, 3, 5])
 
 
 def test_junction_multiplicity():
     """Test correct distances when a junction has more than one pixel."""
-    g, idxs = csr.skeleton_to_csgraph(skeleton0, junction_mode='centroid')
-    assert_almost_equal(g[3, 5], 2.0155644)
-    g, idxs = csr.skeleton_to_csgraph(skeleton0, junction_mode='none')
-    assert_almost_equal(g[2, 3], 1.0)
-    assert_almost_equal(g[3, 6], np.sqrt(2))
+    g, idxs = csr.skeleton_to_csgraph(skeleton0)
+    assert_equal(g.data, 1.0)
+    assert_equal(g[2, 5], 0.0)
 
 
 def test_multiplicity_stats():
-    stats1 = csr.summarise(skeleton0)
-    stats2 = csr.summarise(skeleton0, spacing=2)
+    stats1 = csr.summarize(csr.Skeleton(skeleton0))
+    stats2 = csr.summarize(csr.Skeleton(skeleton0, spacing=2))
     assert_almost_equal(
             2 * stats1['branch-distance'].values,
             stats2['branch-distance'].values
@@ -128,13 +124,13 @@ def test_multiplicity_stats():
 
 def test_pixel_values():
     image = np.random.random((45,))
-    expected = np.mean(image[1:-1])
-    stats = csr.summarise(image)
-    assert_almost_equal(stats.loc[0, 'mean pixel value'], expected)
+    expected = np.mean(image)
+    stats = csr.summarize(csr.Skeleton(image))
+    assert_almost_equal(stats.loc[0, 'mean-pixel-value'], expected)
 
 
 def test_tip_junction_edges():
-    stats1 = csr.summarise(skeleton4)
+    stats1 = csr.summarize(csr.Skeleton(skeleton4))
     assert stats1.shape[0] == 3  # ensure all three branches are counted
 
 

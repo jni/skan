@@ -1,6 +1,3 @@
-from enum import Enum
-import warnings
-
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -10,7 +7,6 @@ from skimage.morphology._util import _raveled_offsets_and_distances
 from skimage.util._map_array import map_array
 import numba
 
-from .nputil import raveled_steps_to_neighbors
 from .summary_utils import find_main_branches
 
 
@@ -149,8 +145,7 @@ def pixel_graph(
     return graph, nodes
 
 
-## NBGraph and Numba-based implementation
-
+# NBGraph and Numba-based implementation
 csr_spec = [
         ('indptr', numba.int32[:]),
         ('indices', numba.int32[:]),
@@ -434,6 +429,10 @@ class Skeleton:
     keep_images : bool
         Whether or not to keep the original input images. These can be useful
         for visualization, but they may take up a lot of memory.
+    value_is_height : bool
+        Whether to consider the value of a float skeleton to be the "height"
+        of the image. This can be useful e.g. when measuring lengths along
+        ridges in AFM images.
 
     Attributes
     ----------
@@ -451,7 +450,8 @@ class Skeleton:
     coordinates : array, shape (N, ndim)
         skeleton_pixel_id i -> coordinates[i]
         The image coordinates of each pixel in the skeleton.
-        Some values in this matrix are non-sensical — you should only access them from node ids.
+        Some values in this matrix are non-sensical — you should only access
+        them from node ids.
     paths : scipy.sparse.csr_matrix, shape (P, N + 1)
         A csr_matrix where element [i, j] is on if node j is in path i. This
         includes path endpoints. The number of nonzero elements is N - J + Sd.
@@ -475,17 +475,19 @@ class Skeleton:
             spacing=1,
             source_image=None,
             keep_images=True,
+            value_is_height=False,
             ):
         graph, coords = skeleton_to_csgraph(
                 skeleton_image,
                 spacing=spacing,
+                value_is_height=value_is_height,
                 )
         if np.issubdtype(skeleton_image.dtype, np.float_):
-            pixel_values = skeleton_image[coords]
+            self.pixel_values = skeleton_image[coords]
         else:
-            pixel_values = None
+            self.pixel_values = None
         self.graph = graph
-        self.nbgraph = csr_to_nbgraph(graph, pixel_values)
+        self.nbgraph = csr_to_nbgraph(graph, self.pixel_values)
         self.coordinates = np.transpose(coords)
         self.paths = _build_skeleton_path_graph(self.nbgraph)
         self.n_paths = self.paths.shape[0]
@@ -590,7 +592,7 @@ class Skeleton:
 
     def path_label_image(self):
         """Image like self.skeleton_image with path_ids as values.
-        
+
         Returns
         -------
         label_image : array of ints
@@ -653,13 +655,19 @@ class Skeleton:
         return self.path_label_image()
 
 
-def summarize(skel: Skeleton, *, find_main_branch=False):
+def summarize(
+        skel: Skeleton, *, value_is_height=False, find_main_branch=False
+        ):
     """Compute statistics for every skeleton and branch in ``skel``.
 
     Parameters
     ----------
     skel : skan.csr.Skeleton
         A Skeleton object.
+    value_is_height : bool
+        Whether to consider the value of a float skeleton to be the "height"
+        of the image. This can be useful e.g. when measuring lengths along
+        ridges in AFM images.
     find_main_branch : bool, optional
         Whether to compute main branches. A main branch is defined as the
         longest shortest path within a skeleton. This step is very expensive
@@ -697,11 +705,26 @@ def summarize(skel: Skeleton, *, find_main_branch=False):
     coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
     for i in range(ndim):
         summary[f'coord-src-{i}'] = coords_real_src[:, i]
+    if value_is_height:
+        values_src = skel.pixel_values[endpoints_src]
+        summary[f'coord-src-{ndim}'] = values_src
+        coords_real_src = np.concatenate(
+                [coords_real_src, values_src[:, np.newaxis]],
+                axis=1,
+                )  # yapf: ignore
     coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
     for i in range(ndim):
         summary[f'coord-dst-{i}'] = coords_real_dst[:, i]
+    if value_is_height:
+        values_dst = skel.pixel_values[endpoints_dst]
+        summary[f'coord-dst-{ndim}'] = values_dst
+        coords_real_dst = np.concatenate(
+                [coords_real_dst, values_dst[:, np.newaxis]],
+                axis=1,
+                )  # yapf: ignore
     summary['euclidean-distance'] = (
-            np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
+            np.sqrt((coords_real_dst - coords_real_src)**2
+                    @ np.ones(ndim + int(value_is_height)))
             )
     df = pd.DataFrame(summary)
 
