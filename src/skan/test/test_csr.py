@@ -45,10 +45,10 @@ def test_2skeletons():
     assert_equal(np.bincount(df['branch-type']), [0, 4, 4])
 
 
-def test_summarise_spacing():
-    df = csr.summarise(skeleton2)
-    df2 = csr.summarise(skeleton2, spacing=2)
-    assert_equal(np.array(df['node-id-0']), np.array(df2['node-id-0']))
+def test_summarize_spacing():
+    df = csr.summarize(csr.Skeleton(skeleton2))
+    df2 = csr.summarize(csr.Skeleton(skeleton2, spacing=2))
+    assert_equal(np.array(df['node-id-src']), np.array(df2['node-id-src']))
     assert_almost_equal(
             np.array(df2['euclidean-distance']),
             np.array(2 * df['euclidean-distance'])
