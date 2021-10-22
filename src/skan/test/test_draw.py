@@ -35,7 +35,7 @@ def test_skeleton(test_thresholded):
 
 @pytest.fixture
 def test_stats(test_skeleton):
-    stats = csr.summarise(test_skeleton)
+    stats = csr.summarize(csr.Skeleton(test_skeleton))
     return stats
 
 
@@ -106,7 +106,9 @@ def test_skeleton_class_overlay(test_image, test_skeleton):
 
 def test_networkx_plot():
     g0, c0 = csr.skeleton_to_csgraph(_testdata.skeleton0)
+    c0 = np.transpose(c0)
     g1, c1 = csr.skeleton_to_csgraph(_testdata.skeleton1)
+    c1 = np.transpose(c1)
     fig, axes = plt.subplots(1, 2)
     draw.overlay_skeleton_networkx(
             g0, c0, image=_testdata.skeleton0, axis=axes[0]
