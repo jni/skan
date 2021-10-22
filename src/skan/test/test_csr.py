@@ -29,9 +29,9 @@ def test_skeleton1_stats():
     dists = stats[:, 2]
     types = stats[:, 3].astype(int)
     ids2dist = dict(zip(keys, dists))
-    assert (13, 8) in ids2dist
-    assert (8, 13) in ids2dist
-    d0, d1 = sorted((ids2dist[(13, 8)], ids2dist[(8, 13)]))
+    assert (12, 7) in ids2dist
+    assert (7, 12) in ids2dist
+    d0, d1 = sorted((ids2dist[(12, 7)], ids2dist[(7, 12)]))
     assert_almost_equal(d0, 1 + np.sqrt(2))
     assert_almost_equal(d1, 5 * d0)
     assert_equal(np.bincount(types), [0, 2, 2])
