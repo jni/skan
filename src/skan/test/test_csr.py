@@ -1,13 +1,7 @@
-import os, sys
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
 import pytest
 from skan import csr
-from skan.csr import JunctionModes
-
-rundir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(rundir)
-
 from skan._testdata import (
         tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
         topograph1d, skeleton4
@@ -15,23 +9,20 @@ from skan._testdata import (
 
 
 def test_tiny_cycle():
-    g, idxs = csr.skeleton_to_csgraph(tinycycle, junction_mode='centroid')
-    expected_indptr = [0, 0, 2, 4, 6, 8]
-    expected_indices = [2, 3, 1, 4, 1, 4, 2, 3]
+    g, idxs = csr.skeleton_to_csgraph(tinycycle)
+    expected_indptr = [0, 2, 4, 6, 8]
+    expected_indices = [1, 2, 0, 3, 0, 3, 1, 2]
     expected_data = np.sqrt(2)
 
     assert_equal(g.indptr, expected_indptr)
     assert_equal(g.indices, expected_indices)
     assert_almost_equal(g.data, expected_data)
 
-    assert_equal(
-            np.ravel_multi_index(idxs.astype(int).T, tinycycle.shape),
-            [0, 1, 3, 5, 7]
-            )
+    assert_equal(np.ravel_multi_index(idxs, tinycycle.shape), [1, 3, 5, 7])
 
 
 def test_skeleton1_stats():
-    g, idxs = csr.skeleton_to_csgraph(skeleton1, junction_mode='centroid')
+    g, idxs = csr.skeleton_to_csgraph(skeleton1)
     stats = csr.branch_statistics(g)
     assert_equal(stats.shape, (4, 4))
     keys = map(tuple, stats[:, :2].astype(int))
@@ -147,33 +138,13 @@ def test_tip_junction_edges():
     assert stats1.shape[0] == 3  # ensure all three branches are counted
 
 
-@pytest.mark.parametrize(
-        'mst_mode,none_mode', [
-                ('mst', 'none'),
-                ('MST', 'NONE'),
-                ('MsT', 'NoNe'),
-                (JunctionModes.MST, JunctionModes.NONE)
-                ]
-        )  # yapf: disable
-def test_mst_junctions(mst_mode, none_mode):
-    g, _ = csr.skeleton_to_csgraph(skeleton0, junction_mode=none_mode)
+def test_mst_junctions():
+    g, _ = csr.skeleton_to_csgraph(skeleton0)
     h = csr._mst_junctions(g)
-    hprime, _ = csr.skeleton_to_csgraph(skeleton0, junction_mode=mst_mode)
+    hprime, _ = csr.skeleton_to_csgraph(skeleton0)
 
     G = g.todense()
     G[G > 1.1] = 0
 
     np.testing.assert_equal(G, h.todense())
     np.testing.assert_equal(G, hprime.todense())
-
-
-def test_junction_mode_type_error():
-    with pytest.raises(TypeError):
-        """Test that giving the wrong type of junction_mode raises a TypeError"""
-        g, _ = csr.skeleton_to_csgraph(skeleton0, junction_mode=4)
-
-
-def test_junction_mode_value_error():
-    with pytest.raises(ValueError):
-        """Test that giving an invalidjunction_mode raises a ValueError"""
-        g, _ = csr.skeleton_to_csgraph(skeleton0, junction_mode='not a mode')
