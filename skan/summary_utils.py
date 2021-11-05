@@ -6,6 +6,7 @@ import toolz as tz
 
 def find_main_branches(summary: DataFrame) -> np.ndarray:
     """Predict the extent of branching.
+
     Parameters
     ----------
     summary : pd.DataFrame
@@ -39,7 +40,7 @@ def find_main_branches(summary: DataFrame) -> np.ndarray:
         for src in p:
             for dst in p[src]:
                 val = p[src][dst]
-                if (val is not None and np.isfinite(val) and val > curr_val):
+                if (val is not None and np.isfinite(val) and val >= curr_val):
                     curr_val = val
                     curr_pair = (src, dst)
         for i, j in tz.sliding_window(2, nx.shortest_path(h,
