@@ -49,7 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install setuptools
+          pip install 'setuptools<50.0'
           pip install .[all,testing]
 
       - name: Test
