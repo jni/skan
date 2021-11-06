@@ -49,12 +49,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install setuptools
+          pip install 'setuptools<50.0'
           pip install .[all,testing]
 
       - name: Test
         shell: bash -l {0}
         run: |
+          cd  # don't run pytest in root dir
           export MPLBACKEND="ps"
           python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
           pytest --ignore skan/gui.py

@@ -1,7 +1,7 @@
 name: skantest
 dependencies:
 - python>=3.6*
-- setuptools>=19.6*
+- setuptools>=19.6*,<50.*
 - numba>=0.29
 - numpy>=1.11*
 - numpydoc>=0.5*
