@@ -548,13 +548,18 @@ class Skeleton:
         return self.path_label_image()
 
 
-def summarize(skel: Skeleton):
+def summarize(skel: Skeleton, *, find_main_branch=False):
     """Compute statistics for every skeleton and branch in ``skel``.
 
     Parameters
     ----------
     skel : skan.csr.Skeleton
         A Skeleton object.
+    find_main_branch : bool, optional
+        Whether to compute main branches. A main branch is defined as the
+        longest shortest path within a skeleton. This step is very expensive
+        as it involves computing the shortest paths between all pairs of branch
+        endpoints, so it is off by default.
 
     Returns
     -------
@@ -594,8 +599,10 @@ def summarize(skel: Skeleton):
             np.sqrt((coords_real_dst - coords_real_src)**2 @ np.ones(ndim))
             )
     df = pd.DataFrame(summary)
-    # define main branch as longest shortest path within a single skeleton
-    df['main'] = find_main_branches(df)
+
+    if find_main_branch:
+        # define main branch as longest shortest path within a single skeleton
+        df['main'] = find_main_branches(df)
     return df
 
 
