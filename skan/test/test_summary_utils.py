@@ -6,7 +6,7 @@ from skan import Skeleton, summarize
 
 def test_find_main():
     skeleton = Skeleton(skeleton1)
-    summary_df = summarize(skeleton)
+    summary_df = summarize(skeleton, find_main_branch=True)
 
     non_main_edge_start = [2, 1]
     non_main_edge_finish = [3, 3]
