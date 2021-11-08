@@ -6,6 +6,7 @@ from skan import csr
 from skan.csr import JunctionModes
 
 rundir = os.path.dirname(os.path.abspath(__file__))
+print(rundir)
 sys.path.append(rundir)
 
 from skan._testdata import (
@@ -140,6 +141,18 @@ def test_pixel_values():
     expected = np.mean(image[1:-1])
     stats = csr.summarise(image)
     assert_almost_equal(stats.loc[0, 'mean pixel value'], expected)
+
+
+def test_maximum_length():
+    image = np.random.random((45,))
+    expected = np.max(image[1:-1])
+    stats = csr.summarise(image)
+    print (csr.path_maximum_length())
+    print (stats)
+    #print (stats.loc[0, 'max-length'], expected)
+    #assert_almost_equal(stats.loc[0, 'max-length'], expected)
+
+
 
 
 def test_tip_junction_edges():

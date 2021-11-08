@@ -8,7 +8,6 @@ from scipy.sparse import csgraph
 from scipy import spatial
 from skimage import morphology
 import numba
-
 from .nputil import raveled_steps_to_neighbors
 from .summary_utils import find_main_branches
 
@@ -25,7 +24,6 @@ class JunctionModes(Enum):
     NONE = 'none'
     Centroid = 'centroid'
     MST = 'mst'
-
 
 ## NBGraph and Numba-based implementation
 
@@ -505,9 +503,39 @@ class Skeleton:
         means : array of float
             The average pixel value along each path in the skeleton.
         """
+
         sums = np.add.reduceat(self.paths.data, self.paths.indptr[:-1])
         lengths = np.diff(self.paths.indptr)
         return sums / lengths
+
+    def path_maximum_length(self):
+        """Compute the longest path.
+
+        Returns
+        -------
+        max_length : array of float
+            The maximum length in the skeleton.
+        """
+
+        maxes = np.maximum.reduceat(self.paths.data, self.paths.indptr[:-1])
+
+        # We test on _testdata.skeleton1
+        # self.paths.data = [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+        # self.paths.indptr[:-1] = [0 11 14 17]
+        # If I understood correctly, np.ufunc.reduceat will slice an array according to a list and apply a function
+        # which means:
+        # 0-11 -->  [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.] --> maximum --> 1.
+        # 11-14 --> [1. 1. 1. ]                        --> maximum --> 1.
+        # 14-17 --> [1. 1. 1. ]                        --> maximum --> 1.
+        # 17: -->   [1. 1. 1. 1.]                      --> maximum --> 1.
+        # which will end up with sums = [1. 1. 1. 1.]
+
+
+        # self.paths.indptr = [ 0 11 14 17 21]
+        # length = [21-17, 17-14, 14-11, 11-0]
+        lengths = np.diff(self.paths.indptr)
+
+        # Not sure what should be returned, sums*lengths?
 
     def path_stdev(self):
         """Compute the standard deviation of values along each path.
