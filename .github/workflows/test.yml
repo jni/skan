@@ -53,7 +53,6 @@ jobs:
           pip install .[all,testing]
 
       - name: Test
-        shell: bash -l {0}
         run: |
           cd  # don't run pytest in root dir
           export MPLBACKEND="ps"
