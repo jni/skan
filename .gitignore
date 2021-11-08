@@ -96,3 +96,6 @@ ENV/
 
 # PyCharm configuration files
 .idea/
+
+# VSCode configuration files
+.vscode/
