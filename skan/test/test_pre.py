@@ -2,7 +2,7 @@ import os
 import imageio
 from scipy import special
 import numpy as np
-from hypothesis import given, strategies
+from hypothesis import given, strategies, settings
 import pytest
 
 from skan import pre
@@ -23,9 +23,10 @@ def ball_volume(ndim, radius):
     return np.pi**(n / 2) / special.gamma(n/2 + 1) * r**n
 
 
+@settings(deadline=None)
 @given(
         strategies.integers(min_value=1, max_value=4),
-        strategies.integers(min_value=2, max_value=10)
+        strategies.integers(min_value=2, max_value=10),
         )
 def test_hyperball_volume(ndim, radius):
     theoretical_volume = ball_volume(ndim, radius)
