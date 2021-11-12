@@ -45,6 +45,8 @@ jobs:
         run: |
           export MPLBACKEND="ps"
           python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
+          ls /Users/runner/hostedtoolcache/Python/3.9.8/x64/lib/python3.9/site-packages/skan/
+          ls /Users/runner/hostedtoolcache/Python/3.9.8/x64/lib/python3.9/site-packages/skan/test
           pytest --pyargs skan --doctest-modules
 
       - name: Coverage
