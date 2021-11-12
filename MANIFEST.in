@@ -1,2 +1,2 @@
 include LICENSE
-recursive-include src/skan/test *.py
+recursive-include src *.tif
