@@ -46,13 +46,14 @@ jobs:
 
       - name: Install dependencies
         run: |
+          conda activate
           pip install --upgrade pip
           pip install 'setuptools<50.0'
           pip install .[all,testing]
 
       - name: Test
         run: |
-          cd  # don't run pytest in root dir
+          conda activate
           export MPLBACKEND="ps"
           python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
           pytest --pyargs skan
