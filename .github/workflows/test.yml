@@ -45,7 +45,7 @@ jobs:
         run: |
           export MPLBACKEND="ps"
           python -c 'import matplotlib.pyplot as plt; print(plt.get_backend())'
-          pytest --pyargs skan --doctest-modules --ignore-glob='*gui.py'
+          pytest --pyargs skan --doctest-modules
 
       - name: Coverage
         if: runner.os == 'Linux' && matrix.python == '3.9'
