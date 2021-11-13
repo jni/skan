@@ -6,4 +6,3 @@ Skan API Reference
    skan.draw
    skan.pipe
    skan.pre
-   skan.vendored.thresholding

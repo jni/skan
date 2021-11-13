@@ -1,2 +1,2 @@
 doc/conf.py
-skan/_testdata.py
+src/skan/_testdata.py

@@ -1,9 +1,7 @@
 import numpy as np
 from scipy import spatial, ndimage as ndi
 from skimage import filters, restoration
-
-# Temporary until skimage 0.13 is out
-from .vendored.thresholding import threshold_sauvola, threshold_niblack
+from skimage.filters import threshold_sauvola, threshold_niblack
 
 SMOOTH_METHODS = {
         'Gaussian': filters.gaussian,
