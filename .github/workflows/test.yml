@@ -43,7 +43,6 @@ jobs:
 
       - name: Test
         run: |
-          ls /Users/runner/hostedtoolcache/Python/3.9.8/x64/lib/python3.9/site-packages/skan/test
           pytest --pyargs skan --doctest-modules
 
       - name: Coverage
