@@ -42,9 +42,17 @@ jobs:
             wget -q -O s.zip https://osf.io/7vyx3/download && unzip s.zip;
           fi
           make html
+          cd ..
 
       - name: Deploy docs 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
           folder: doc/_build/html
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            doc/schizonts
+          key: full-data
