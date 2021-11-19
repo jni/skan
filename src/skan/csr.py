@@ -16,11 +16,16 @@ from .summary_utils import find_main_branches
 class JunctionModes(Enum):
     """Modes for cleaning up junctions in skeletons.
 
-    NONE: the junctions are left as is. In skan < 0.9, this is equavalent
-        to unique_junctions=False.
-    Centroid: junctions are consolidated into the centroid of the contributing nodes.
-        In skan < 0.9, this is equivalent to unique_junctions=True.
-    MST: junctions are replaced with the minimum spanning tree.
+    NONE:
+        Junctions are left as is. This is equivalent to unique_junctions=False
+        in skan < 0.10.
+    Centroid:
+        Junctions are consolidated into the centroid of the contributing nodes.
+        This is equivalent to unique_junctions=True in skan < 0.10.
+
+    MST:
+        Junctions are replaced with the minimum spanning tree. This is the new
+        default in skan==0.10.0 and will become the only mode in skan>=0.11.
     """
     NONE = 'none'
     Centroid = 'centroid'

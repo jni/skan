@@ -1,4 +1,3 @@
-
 Complete analysis with Skan
 ===========================
 
@@ -15,10 +14,10 @@ URL:
 
 ::
 
-   https://osf.io/7vyx3
+    https://osf.io/7vyx3
 
 Download and extract the zipfile, and make sure the ``schizonts`` folder
-contained within it is placed in this notebook’s working directory.
+contained within it is placed in this notebook's working directory.
 
 1. Using ``skan.pipe`` to get a branch dataset for analysis
 -----------------------------------------------------------
@@ -102,8 +101,8 @@ non-overlapping locations).
 2. Cleaning up the data
 -----------------------
 
-Next, we filter the branches by using the `shape
-index <http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index>`__.
+Next, we filter the branches by using the `*shape
+index* <http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index>`__.
 We have used a very simple method to extract skeletons (see `Getting
 started <getting_started.html>`__), which does an acceptable job but
 creates a lot of false branches. Since the goal of Skan is to analyse

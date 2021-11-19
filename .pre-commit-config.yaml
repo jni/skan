@@ -3,3 +3,4 @@ repos:
   rev: '5441be1'  # Use the sha / tag you want to point at
   hooks:
   - id: yapf
+    exclude: doc/conf.py

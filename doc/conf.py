@@ -20,9 +20,9 @@
 # current working copy
 import os
 import sys
+
 rundir = os.path.dirname(__file__)
 sys.path.insert(0, os.path.abspath(rundir + '/..'))
-
 
 # -- General configuration ------------------------------------------------
 
@@ -33,14 +33,19 @@ sys.path.insert(0, os.path.abspath(rundir + '/..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',
-    'nb2plots',
-    'sphinxcontrib.bibtex'
-]
+        'sphinx.ext.autodoc',
+        'sphinx.ext.mathjax',
+        'sphinx.ext.viewcode',
+        'sphinx.ext.githubpages',
+        'sphinx.ext.napoleon',
+        'nb2plots',
+        'sphinxcontrib.bibtex',
+        'sphinx_copybutton',
+        ]
+
+# sphinx-copybutton prompt-stripping configuration
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -56,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Skan'
-copyright = '2017, Juan Nunez-Iglesias'
+copyright = '2021, Juan Nunez-Iglesias & skan contributors'
 author = 'Juan Nunez-Iglesias'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -65,6 +70,7 @@ author = 'Juan Nunez-Iglesias'
 #
 # The short X.Y version.
 import skan
+
 version = skan.__version__
 # The full version, including alpha/beta/rc tags.
 release = skan.__version__
@@ -89,7 +95,6 @@ todo_include_todos = False
 
 # List of publications
 bibtex_bibfiles = ['publications.bib']
-
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -122,60 +127,55 @@ html_static_path = ['_static']
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
-    '**': [
-        'about.html',
-        'navigation.html',
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-        'donate.html',
-    ]
-}
-
+        '**': [
+                'about.html',
+                'navigation.html',
+                'relations.html',  # needs 'show_related': True theme option to display
+                'searchbox.html',
+                'donate.html',
+                ]
+        }
 
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Skandoc'
 
-
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
+        # The paper size ('letterpaper' or 'a4paper').
+        #
+        # 'papersize': 'letterpaper',
 
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
+        # The font size ('10pt', '11pt' or '12pt').
+        #
+        # 'pointsize': '10pt',
 
-    # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
+        # Additional stuff for the LaTeX preamble.
+        #
+        # 'preamble': '',
 
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
+        # Latex figure (float) alignment
+        #
+        # 'figure_align': 'htbp',
+        }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Skan.tex', 'Skan Documentation',
-     'Juan Nunez-Iglesias', 'manual'),
-]
-
+        (
+                master_doc, 'Skan.tex', 'Skan Documentation',
+                'Juan Nunez-Iglesias', 'manual'
+                ),
+        ]
 
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'skan', 'Skan Documentation',
-     [author], 1)
-]
-
+man_pages = [(master_doc, 'skan', 'Skan Documentation', [author], 1)]
 
 # -- Options for Texinfo output -------------------------------------------
 
@@ -183,10 +183,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Skan', 'Skan Documentation',
-     author, 'Skan', 'Skeleton analysis in Python.',
-     'Miscellaneous'),
-]
-
-
-
+        (
+                master_doc, 'Skan', 'Skan Documentation', author, 'Skan',
+                'Skeleton analysis in Python.', 'Miscellaneous'
+                ),
+        ]
