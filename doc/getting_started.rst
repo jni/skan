@@ -9,14 +9,14 @@ infected by the malaria parasite *Plasmodium falciparum*, or uninfected.
 0. Extracting a skeleton from an image
 --------------------------------------
 
-Skan’s primary purpose is to analyse skeletons. (It primarily mimics the
-`“Analyze Skeleton” Fiji
+Skan's primary purpose is to analyse skeletons. (It primarily mimics the
+`"Analyze Skeleton" Fiji
 plugin <https://imagej.net/AnalyzeSkeleton>`__.) In this section, we
 will run some simple preprocessing on our source images to extract a
 skeleton, provided by Skan and
 `scikit-image <https://scikit-image.org>`__, but this is far from the
 optimal way of extracting a skeleton from an image. Skip to section 1
-for Skan’s primary functionality.
+for Skan's primary functionality.
 
 First, we load the images. These images were produced by an FEI scanning
 electron microscope. `ImageIO <https://imageio.github.io>`__ provides a
@@ -96,7 +96,7 @@ physical resolutions.
 
 (There are some thresholding artifacts around the left edge, due to the
 dark border caused by microscope imaging drift and alignment. We will
-ignore this in this document, but the Skan GUI allows for a “crop”
+ignore this in this document, but the Skan GUI allows for a "crop"
 parameter to filter out these regions.)
 
 Finally, we skeletonise this binary image:
@@ -122,7 +122,7 @@ Skan has functions for drawing skeletons in 2D:
 1. Measuring the length of skeleton branches
 --------------------------------------------
 
-Now that we have a skeleton, we can use Skan’s primary functions:
+Now that we have a skeleton, we can use Skan's primary functions:
 producing a network of skeleton pixels, and measuring the properties of
 branches along that network.
 
@@ -178,7 +178,7 @@ recommended for very small networks.)
 
 For more sophisticated analyses, the ``skan.Skeleton`` class provides a
 way to keep all relevant information (the CSR matrix, the image, the
-node coordinates…) together.
+node coordinates...) together.
 
 The function ``skan.summarize`` uses this class to trace the path from
 junctions (node 3 in the left graph, 8 and 13 in the right graph) to
@@ -186,7 +186,7 @@ endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and
 other junctions. It then produces a junction graph and table in the form
 of a pandas DataFrame.
 
-Let’s go back to the red blood cell image to illustrate this graph.
+Let's go back to the red blood cell image to illustrate this graph.
 
 .. nbplot::
 
@@ -394,7 +394,7 @@ Finally, the unique IDs of the endpoints of the branch (these correspond
 to the pixel indices in the CSR representation above), and the unique ID
 of the skeleton that the branch belongs to.
 
-This data table follows the “tidy data” paradigm, with one row per
+This data table follows the "tidy data" paradigm, with one row per
 branch, which allows fast exploration of branch statistics. Here, for
 example, we plot the distribution of branch lengths according to branch
 type:
@@ -425,7 +425,7 @@ user-selected attribute in the table:
 2. Comparing different skeletons
 --------------------------------
 
-Now we can use Python’s data analysis tools to answer a scientific
+Now we can use Python's data analysis tools to answer a scientific
 question: do malaria-infected red blood cells differ in their spectrin
 skeleton?
 
@@ -496,7 +496,7 @@ This is of course a toy example. For the full dataset and analysis, see:
    cite
    it <https://ilovesymposia.com/2019/05/02/why-you-should-cite-open-source-tools/>`__
    if you publish using skan!),
--  the `“Complete analysis with skan” <complete_analysis.html>`__ page,
+-  the `"Complete analysis with skan" <complete_analysis.html>`__ page,
    and
 -  the `skan-scripts <https://github.com/jni/skan-scripts>`__
    repository.
