@@ -1,74 +1,40 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>skan.csr: CSR Graph representation of skeletons &mdash; Skan 0.9.0-dev documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>skan.csr: CSR Graph representation of skeletons &mdash; Skan 0.10.0-dev documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="skan.draw: Skeleton visualisation" href="skan.draw.html" />
     <link rel="prev" title="Skan API Reference" href="api.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> Skan
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                0.9.0-dev
+                0.10.0-dev
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -76,106 +42,70 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installing Skan</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gui.html">Using Skan’s GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing Skan</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api.html">Skan API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">skan.csr: CSR Graph representation of skeletons</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skan.draw.html">skan.draw: Skeleton visualisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skan.pipe.html">skan.pipe:: Pipeline functions for skeleton analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="skan.pre.html">skan.pre: Image preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="skan.vendored.thresholding.html">skan.vendored.thresholding: Thresholding algorithms</a></li>
 </ul>
 </li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Skan</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="api.html">Skan API Reference</a> &raquo;</li>
-        
       <li>skan.csr: CSR Graph representation of skeletons</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/api/skan.csr.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="module-skan.csr">
+             
+  <section id="module-skan.csr">
 <span id="skan-csr-csr-graph-representation-of-skeletons"></span><h1>skan.csr: CSR Graph representation of skeletons<a class="headerlink" href="#module-skan.csr" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="skan.csr.Skeleton">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">skan.csr.</span></code><code class="sig-name descname"><span class="pre">Skeleton</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_buffer_size_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_junctions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.JunctionModes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">JunctionModes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#JunctionModes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.JunctionModes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modes for cleaning up junctions in skeletons.</p>
+<dl class="simple">
+<dt>NONE:</dt><dd><p>Junctions are left as is. This is equivalent to unique_junctions=False
+in skan &lt; 0.10.</p>
+</dd>
+<dt>Centroid:</dt><dd><p>Junctions are consolidated into the centroid of the contributing nodes.
+This is equivalent to unique_junctions=True in skan &lt; 0.10.</p>
+</dd>
+<dt>MST:</dt><dd><p>Junctions are replaced with the minimum spanning tree. This is the new
+default in skan==0.10.0 and will become the only mode in skan&gt;=0.11.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="skan.csr.Skeleton">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">Skeleton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_buffer_size_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">junction_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">JunctionModes.MST</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_junctions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to group together all the properties of a skeleton.</p>
 <p>In the text below, we use the following notation:</p>
 <ul class="simple">
@@ -189,25 +119,23 @@ junction graph).</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>skeleton_image</strong> (<em>array</em>) – The input skeleton (1-pixel/voxel thick skeleton, all other values 0).</p>
-</dd>
-<dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><ul class="simple">
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skeleton_image</strong> (<em>array</em>) – The input skeleton (1-pixel/voxel thick skeleton, all other values 0).</p></li>
 <li><p><strong>spacing</strong> (float or array of float, shape <code class="docutils literal notranslate"><span class="pre">(ndim,)</span></code>) – The scale of the pixel spacing along each axis.</p></li>
 <li><p><strong>source_image</strong> (array of float, same shape as <cite>skeleton_image</cite>) – The image that <cite>skeleton_image</cite> represents / summarizes / was generated
 from. This is used to produce visualizations as well as statistical
 properties of paths.</p></li>
 <li><p><strong>keep_images</strong> (<em>bool</em>) – Whether or not to keep the original input images. These can be useful
 for visualization, but they may take up a lot of memory.</p></li>
-<li><p><strong>unique_junctions</strong> (<em>bool, optional</em>) – If True, adjacent junction nodes get collapsed into a single
+<li><p><strong>unique_junctions</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, adjacent junction nodes get collapsed into a single
 conceptual node, with position at the centroid of all the connected
 initial nodes.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.graph">
-<code class="sig-name descname"><span class="pre">graph</span></code><a class="headerlink" href="#skan.csr.Skeleton.graph" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#skan.csr.Skeleton.graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>The skeleton pixel graph, where each node is a non-zero pixel in the
 input image, and each edge connects adjacent pixels. The graph is
 represented as an adjacency matrix in SciPy sparse matrix format. For
@@ -222,8 +150,8 @@ shape of this matrix is <code class="docutils literal notranslate"><span class="
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.nbgraph">
-<code class="sig-name descname"><span class="pre">nbgraph</span></code><a class="headerlink" href="#skan.csr.Skeleton.nbgraph" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.nbgraph">
+<span class="sig-name descname"><span class="pre">nbgraph</span></span><a class="headerlink" href="#skan.csr.Skeleton.nbgraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>A thin Numba wrapper around the <code class="docutils literal notranslate"><span class="pre">csr_matrix</span></code> format, this provides
 faster graph methods. For example, it is much faster to get a list of
 neighbors, or test for the presence of a specific edge.</p>
@@ -235,9 +163,11 @@ neighbors, or test for the presence of a specific edge.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.coordinates">
-<code class="sig-name descname"><span class="pre">coordinates</span></code><a class="headerlink" href="#skan.csr.Skeleton.coordinates" title="Permalink to this definition">¶</a></dt>
-<dd><p>The image coordinates of each pixel in the skeleton.</p>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#skan.csr.Skeleton.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>skeleton_pixel_id i -&gt; coordinates[i]
+The image coordinates of each pixel in the skeleton.
+Some values in this matrix are non-sensical — you should only access them from node ids.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>array, shape (N, ndim)</p>
@@ -246,8 +176,8 @@ neighbors, or test for the presence of a specific edge.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.paths">
-<code class="sig-name descname"><span class="pre">paths</span></code><a class="headerlink" href="#skan.csr.Skeleton.paths" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.paths">
+<span class="sig-name descname"><span class="pre">paths</span></span><a class="headerlink" href="#skan.csr.Skeleton.paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>A csr_matrix where element [i, j] is on if node j is in path i. This
 includes path endpoints. The number of nonzero elements is N - J + Sd.</p>
 <dl class="field-list simple">
@@ -258,8 +188,8 @@ includes path endpoints. The number of nonzero elements is N - J + Sd.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.n_paths">
-<code class="sig-name descname"><span class="pre">n_paths</span></code><a class="headerlink" href="#skan.csr.Skeleton.n_paths" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.n_paths">
+<span class="sig-name descname"><span class="pre">n_paths</span></span><a class="headerlink" href="#skan.csr.Skeleton.n_paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of paths, P. This is redundant information given <cite>n_paths</cite>,
 but it is used often enough that it is worth keeping around.</p>
 <dl class="field-list simple">
@@ -270,8 +200,8 @@ but it is used often enough that it is worth keeping around.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.distances">
-<code class="sig-name descname"><span class="pre">distances</span></code><a class="headerlink" href="#skan.csr.Skeleton.distances" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.distances">
+<span class="sig-name descname"><span class="pre">distances</span></span><a class="headerlink" href="#skan.csr.Skeleton.distances" title="Permalink to this definition">¶</a></dt>
 <dd><p>The distance of each path. Note: not initialized until <cite>path_lengths()</cite>
 is called on the skeleton; use path_lengths() instead</p>
 <dl class="field-list simple">
@@ -282,8 +212,8 @@ is called on the skeleton; use path_lengths() instead</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.skeleton_image">
-<code class="sig-name descname"><span class="pre">skeleton_image</span></code><a class="headerlink" href="#skan.csr.Skeleton.skeleton_image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.skeleton_image">
+<span class="sig-name descname"><span class="pre">skeleton_image</span></span><a class="headerlink" href="#skan.csr.Skeleton.skeleton_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>The input skeleton image. Only present if <cite>keep_images</cite> is True. Set to
 False to preserve memory.</p>
 <dl class="field-list simple">
@@ -294,8 +224,8 @@ False to preserve memory.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="skan.csr.Skeleton.source_image">
-<code class="sig-name descname"><span class="pre">source_image</span></code><a class="headerlink" href="#skan.csr.Skeleton.source_image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.source_image">
+<span class="sig-name descname"><span class="pre">source_image</span></span><a class="headerlink" href="#skan.csr.Skeleton.source_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>The image from which the skeleton was derived. Only present if
 <cite>keep_images</cite> is True. This is useful for visualization.</p>
 <dl class="field-list simple">
@@ -306,8 +236,8 @@ False to preserve memory.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="skan.csr.Skeleton.path">
-<code class="sig-name descname"><span class="pre">path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path">
+<span class="sig-name descname"><span class="pre">path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the pixel indices of path number <cite>index</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -324,8 +254,8 @@ endpoints.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="skan.csr.Skeleton.path_coordinates">
-<code class="sig-name descname"><span class="pre">path_coordinates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_coordinates" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_coordinates">
+<span class="sig-name descname"><span class="pre">path_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the image coordinates of the pixels in the path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -341,8 +271,23 @@ endpoints.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="skan.csr.Skeleton.path_lengths">
-<code class="sig-name descname"><span class="pre">path_lengths</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_lengths" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_label_image">
+<span class="sig-name descname"><span class="pre">path_label_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_label_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_label_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image like self.skeleton_image with path_ids as values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>label_image</strong> – Image of the same shape as self.skeleton_image where each pixel
+has the value of its branch id + 1.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>array of ints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_lengths">
+<span class="sig-name descname"><span class="pre">path_lengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_lengths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the length of each path on the skeleton.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -355,8 +300,8 @@ endpoints.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="skan.csr.Skeleton.path_means">
-<code class="sig-name descname"><span class="pre">path_means</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_means"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_means" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_means">
+<span class="sig-name descname"><span class="pre">path_means</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_means"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_means" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the mean pixel value along each path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -369,8 +314,8 @@ endpoints.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="skan.csr.Skeleton.path_stdev">
-<code class="sig-name descname"><span class="pre">path_stdev</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_stdev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_stdev" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_stdev">
+<span class="sig-name descname"><span class="pre">path_stdev</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_stdev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_stdev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the standard deviation of values along each path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -383,8 +328,8 @@ endpoints.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="skan.csr.Skeleton.path_with_data">
-<code class="sig-name descname"><span class="pre">path_with_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_with_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_with_data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_with_data">
+<span class="sig-name descname"><span class="pre">path_with_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_with_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_with_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return pixel indices and corresponding pixel values on a path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -401,8 +346,8 @@ endpoints.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="skan.csr.Skeleton.paths_list">
-<code class="sig-name descname"><span class="pre">paths_list</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.paths_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.paths_list" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.Skeleton.paths_list">
+<span class="sig-name descname"><span class="pre">paths_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.paths_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.paths_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List all the paths in the skeleton, including endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -417,8 +362,8 @@ endpoints.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="skan.csr.branch_statistics">
-<code class="sig-prename descclassname"><span class="pre">skan.csr.</span></code><code class="sig-name descname"><span class="pre">branch_statistics</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_size_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#branch_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.branch_statistics" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.branch_statistics">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">branch_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_size_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#branch_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.branch_statistics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the length and type of each branch in a skeleton graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -452,8 +397,8 @@ along each branch (not including the endpoints).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="skan.csr.compute_centroids">
-<code class="sig-prename descclassname"><span class="pre">skan.csr.</span></code><code class="sig-name descname"><span class="pre">compute_centroids</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#compute_centroids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.compute_centroids" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.compute_centroids">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">compute_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#compute_centroids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.compute_centroids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the centroids of all nonzero connected blobs in <cite>image</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -483,8 +428,28 @@ integer label.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="skan.csr.skeleton_to_csgraph">
-<code class="sig-prename descclassname"><span class="pre">skan.csr.</span></code><code class="sig-name descname"><span class="pre">skeleton_to_csgraph</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_junctions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#skeleton_to_csgraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.skeleton_to_csgraph" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.make_degree_image">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">make_degree_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#make_degree_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.make_degree_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a array showing the degree of connectivity of each pixel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>skeleton_image</strong> (<em>array</em>) – An input image in which every nonzero pixel is considered part of
+the skeleton, and links between pixels are determined by a full
+n-dimensional neighborhood.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>degree_image</strong> – An image containing the degree of connectivity of each pixel in the
+skeleton to neighboring pixels.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array of int, same shape as skeleton_image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.skeleton_to_csgraph">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">skeleton_to_csgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">junction_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">JunctionModes.MST</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_junctions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#skeleton_to_csgraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.skeleton_to_csgraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a skeleton image of thin lines to a graph of neighbor pixels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -496,21 +461,23 @@ n-dimensional neighborhood.</p></li>
 either be a single value if the data has the same resolution along
 all axes, or it can be an array of the same shape as <cite>skel</cite> to
 indicate spacing along each axis.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>value_is_height</strong> (<em>bool, optional</em>) – If <cite>True</cite>, the pixel value at each point of the skeleton will be
+<li><p><strong>value_is_height</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <cite>True</cite>, the pixel value at each point of the skeleton will be
 considered to be a height measurement, and this height will be
 incorporated into skeleton branch lengths. Used for analysis of
 atomic force microscopy (AFM) images.</p></li>
-<li><p><strong>unique_junctions</strong> (<em>bool, optional</em>) – If True, adjacent junction nodes get collapsed into a single
+<li><p><strong>junction_mode</strong> (<em>JunctionModes.{NONE</em><em>,</em><em>MST</em><em>,</em><em>CENTROID}</em>) – If NONE, junction pixels are not collapsed.
+If MST, junction pixels are replaced by their minimum spanning tree,
+resulting in a single junction pixel.
+If CENTROID, junction pixels are collapsed to their centroid.</p></li>
+<li><p><strong>unique_junctions</strong> (<em>bool</em><em>, </em><em>optional</em>) – <strong>DEPRECATED</strong>: Use junction_mode=JunctionModes.Centroid to get
+behavior equivalent to <code class="docutils literal notranslate"><span class="pre">unique_junctions=True</span></code>.
+If True, adjacent junction nodes get collapsed into a single
 conceptual node, with position at the centroid of all the connected
 initial nodes.</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><strong>graph</strong> (<em>sparse.csr_matrix</em>) – A graph of shape (Nnz + 1, Nnz + 1), where Nnz is the number of
 nonzero pixels in <cite>skel</cite>. The value graph[i, j] is the distance
 between adjacent pixels i and j. In a 2D image, that would be
@@ -520,8 +487,6 @@ adjacent ones.</p></li>
 to pixel coordinates in <cite>degree_image</cite> or <cite>skel</cite>. Array entry
 (0,:) contains currently always zeros to index the pixels, which
 start at 1, directly to the coordinates.</p></li>
-<li><p><strong>degree_image</strong> (<em>array of int, same shape as skel</em>) – An image where each pixel value contains the degree of its
-corresponding node in <cite>graph</cite>. This is useful to classify nodes.</p></li>
 </ul>
 </p>
 </dd>
@@ -529,8 +494,8 @@ corresponding node in <cite>graph</cite>. This is useful to classify nodes.</p><
 </dd></dl>
 
 <dl class="py function">
-<dt id="skan.csr.submatrix">
-<code class="sig-prename descclassname"><span class="pre">skan.csr.</span></code><code class="sig-name descname"><span class="pre">submatrix</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#submatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.submatrix" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.submatrix">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">submatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#submatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.submatrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the outer-index product submatrix, <cite>M[idxs, :][:, idxs]</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -558,14 +523,14 @@ number of rows of <cite>M</cite>.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="skan.csr.summarise">
-<code class="sig-prename descclassname"><span class="pre">skan.csr.</span></code><code class="sig-name descname"><span class="pre">summarise</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">using_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarise" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.summarise">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">summarise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">using_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute statistics for every disjoint skeleton in <cite>image</cite>.</p>
 <p><strong>Note: this function is deprecated. Prefer</strong> <a class="reference internal" href="#skan.csr.summarize" title="skan.csr.summarize"><code class="xref py py-func docutils literal notranslate"><span class="pre">summarize()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>, </em><em>..</em><em>, </em><em>P</em><em>)</em>) – N-dimensional array, where nonzero entries correspond to an
+<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>, </em><em>...</em><em>, </em><em>P</em><em>)</em>) – N-dimensional array, where nonzero entries correspond to an
 object’s single-pixel-wide skeleton. If the image is of type ‘float’,
 the values are taken to be the height at that pixel, which is used
 to compute the skeleton distances.</p></li>
@@ -591,12 +556,18 @@ microscopy (AFM) images.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="skan.csr.summarize">
-<code class="sig-prename descclassname"><span class="pre">skan.csr.</span></code><code class="sig-name descname"><span class="pre">summarize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><span class="pre">skan.csr.Skeleton</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="skan.csr.summarize">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><span class="pre">skan.csr.Skeleton</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">find_main_branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute statistics for every skeleton and branch in <code class="docutils literal notranslate"><span class="pre">skel</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>skel</strong> (<a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><em>skan.csr.Skeleton</em></a>) – A Skeleton object.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skel</strong> (<a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><em>skan.csr.Skeleton</em></a>) – A Skeleton object.</p></li>
+<li><p><strong>find_main_branch</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to compute main branches. A main branch is defined as the
+longest shortest path within a skeleton. This step is very expensive
+as it involves computing the shortest paths between all pairs of branch
+endpoints, so it is off by default.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>summary</strong> – A summary of the branches including branch length, mean branch value,
@@ -608,54 +579,37 @@ branch euclidean distance, etc.</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="skan.draw.html" class="btn btn-neutral float-right" title="skan.draw: Skeleton visualisation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="api.html" class="btn btn-neutral float-left" title="Skan API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="skan.draw.html" class="btn btn-neutral float-right" title="skan.draw: Skeleton visualisation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017, Juan Nunez-Iglesias.
-
-    </p>
+    <p>&#169; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

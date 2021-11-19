@@ -89,8 +89,8 @@ data['field number'] = data['filename'].apply(field_number)
 
 # # 2. Cleaning up the data
 #
-# Next, we filter the branches by using the [shape
-# index](http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index).
+# Next, we filter the branches by using the [*shape
+# index*](http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index).
 # We have used a very simple method to extract skeletons (see [Getting
 # started](getting_started.html)), which does an acceptable job but
 # creates a lot of false branches. Since the goal of Skan is to analyse

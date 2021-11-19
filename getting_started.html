@@ -1,75 +1,41 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Getting started: Skeleton analysis with Skan &mdash; Skan 0.9.0-dev documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>Getting started: Skeleton analysis with Skan &mdash; Skan 0.10.0-dev documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Using Skan’s GUI" href="gui.html" />
     <link rel="prev" title="Installing Skan" href="install.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> Skan
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                0.9.0-dev
+                0.10.0-dev
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,18 +43,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Skan</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started: Skeleton analysis with Skan</a><ul>
@@ -99,82 +54,42 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="gui.html">Using Skan’s GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing Skan</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/api.html">Skan API Reference</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Skan</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Getting started: Skeleton analysis with Skan</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="getting-started-skeleton-analysis-with-skan">
+             
+  <section id="getting-started-skeleton-analysis-with-skan">
 <h1>Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started-skeleton-analysis-with-skan" title="Permalink to this headline">¶</a></h1>
 <p>Skeleton analysis allows us to measure fine structure in samples. In
 this case, we are going to measure the network formed by a protein
 called <em>spectrin</em> inside the membrane of a red blood cell, either
 infected by the malaria parasite <em>Plasmodium falciparum</em>, or uninfected.</p>
-<div class="section" id="extracting-a-skeleton-from-an-image">
+<section id="extracting-a-skeleton-from-an-image">
 <h2>0. Extracting a skeleton from an image<a class="headerlink" href="#extracting-a-skeleton-from-an-image" title="Permalink to this headline">¶</a></h2>
 <p>Skan’s primary purpose is to analyse skeletons. (It primarily mimics the
 <a class="reference external" href="https://imagej.net/AnalyzeSkeleton">“Analyze Skeleton” Fiji
@@ -209,9 +124,9 @@ interactive plots.  If running in the Jupyter Notebook, use <code class="docutil
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-2.png">png</a>, <a class="reference external" href=".//getting_started-2.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-2.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-2.png" src="_images/getting_started-2.png" />
-</div>
+</figure>
 <p>As an aside, we can extract the pixel spacing in meters from the
 <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -228,9 +143,9 @@ interactive plots.  If running in the Jupyter Notebook, use <code class="docutil
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-3.png">png</a>, <a class="reference external" href=".//getting_started-3.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-3.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-3.png" src="_images/getting_started-3.png" />
-</div>
+</figure>
 <p>This is an image of the inside of the membrane of a red blood cell. We
 want to measure the network of bright regions in this image, which is
 made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
@@ -256,9 +171,9 @@ physical resolutions.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-4.png">png</a>, <a class="reference external" href=".//getting_started-4.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-4.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-4.png" src="_images/getting_started-4.png" />
-</div>
+</figure>
 <p>(There are some thresholding artifacts around the left edge, due to the
 dark border caused by microscope imaging drift and alignment. We will
 ignore this in this document, but the Skan GUI allows for a “crop”
@@ -277,18 +192,18 @@ parameter to filter out these regions.)</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-6.png">png</a>, <a class="reference external" href=".//getting_started-6.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-6.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-6.png" src="_images/getting_started-6.png" />
-</div>
-</div>
-<div class="section" id="measuring-the-length-of-skeleton-branches">
+</figure>
+</section>
+<section id="measuring-the-length-of-skeleton-branches">
 <h2>1. Measuring the length of skeleton branches<a class="headerlink" href="#measuring-the-length-of-skeleton-branches" title="Permalink to this headline">¶</a></h2>
 <p>Now that we have a skeleton, we can use Skan’s primary functions:
 producing a network of skeleton pixels, and measuring the properties of
 branches along that network.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_graph</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">degrees</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_graph</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The pixel graph is a SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html">CSR
@@ -301,8 +216,7 @@ but in this can be scaled by a <code class="docutils literal notranslate"><span 
 the scale (and this scale can be different for each image axis). In our
 case, we know the spacing between pixels, so we can measure our network
 in physical units instead of pixels:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_graph0</span><span class="p">,</span> <span class="n">coordinates0</span><span class="p">,</span> <span class="n">degrees0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span>
-<span class="gp">... </span>                                                           <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_graph0</span><span class="p">,</span> <span class="n">coordinates0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The second variable contains the coordinates (in pixel units) of the
@@ -318,8 +232,8 @@ of minimal examples. Skan provides a function to do this. (Because of
 the way NetworkX and Matplotlib draw networks, this method is only
 recommended for very small networks.)</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">_testdata</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g0</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g0</span><span class="p">,</span> <span class="n">c0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_networkx</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span> <span class="n">c0</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span><span class="p">,</span>
@@ -330,9 +244,9 @@ recommended for very small networks.)</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-9.png">png</a>, <a class="reference external" href=".//getting_started-9.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-9.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-9.png" src="_images/getting_started-9.png" />
-</div>
+</figure>
 <p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a
 way to keep all relevant information (the CSR matrix, the image, the
 node coordinates…) together.</p>
@@ -501,9 +415,9 @@ type:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-11.png">png</a>, <a class="reference external" href=".//getting_started-11.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-11.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-11.png" src="_images/getting_started-11.png" />
-</div>
+</figure>
 <p>We can see that junction-to-junction branches tend to be longer than
 junction-to-endpoint and junction isolated branches, and that there are
 no cycles in our dataset.</p>
@@ -515,11 +429,11 @@ user-selected attribute in the table:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-12.png">png</a>, <a class="reference external" href=".//getting_started-12.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-12.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-12.png" src="_images/getting_started-12.png" />
-</div>
-</div>
-<div class="section" id="comparing-different-skeletons">
+</figure>
+</section>
+<section id="comparing-different-skeletons">
 <h2>2. Comparing different skeletons<a class="headerlink" href="#comparing-different-skeletons" title="Permalink to this headline">¶</a></h2>
 <p>Now we can use Python’s data analysis tools to answer a scientific
 question: do malaria-infected red blood cells differ in their spectrin
@@ -575,9 +489,9 @@ junction-to-junction branches.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//getting_started-14.png">png</a>, <a class="reference external" href=".//getting_started-14.hires.png">hires.png</a>, <a class="reference external" href=".//getting_started-14.pdf">pdf</a>)</p>
-<div class="figure align-default">
+<figure class="align-default">
 <img alt="_images/getting_started-14.png" src="_images/getting_started-14.png" />
-</div>
+</figure>
 <p>We now have a hint that infection by the malaria-causing parasite,
 <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner
 surface of the RBC membrane.</p>
@@ -594,62 +508,47 @@ repository.</p></li>
 </ul>
 <p>But we hope this minimal example will serve for inspiration for your
 future analysis of skeleton images.</p>
-<p>If you are interested in how we used <a class="reference external" href="https://numba.pydata.org/">numba</a>
-to accelerate some parts of Skan, check out <a class="reference external" href="https://www.youtube.com/watch?v=0pUPNMglnaE">jni’s talk</a>
-at the the SciPy 2019 conference.</p>
+<p>If you are interested in how we used
+<a class="reference external" href="https://numba.pydata.org">numba</a> to accelerate some parts of Skan,
+check out <a class="reference external" href="https://www.youtube.com/watch?v=0pUPNMglnaE">Juan’s talk at the SciPy 2019
+conference</a> at the the
+SciPy 2019 conference.</p>
 <ul class="simple">
 <li><p><a class="reference download internal" href="getting_started.py">Download this page as a Python code file</a>;</p></li>
 <li><p><a class="reference download internal" href="getting_started.ipynb">Download this page as a Jupyter notebook (no outputs)</a>.</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="gui.html" class="btn btn-neutral float-right" title="Using Skan’s GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="install.html" class="btn btn-neutral float-left" title="Installing Skan" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gui.html" class="btn btn-neutral float-right" title="Using Skan’s GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017, Juan Nunez-Iglesias.
-
-    </p>
+    <p>&#169; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -105,7 +105,7 @@ draw.overlay_skeleton_2d(image0, skeleton0, dilate=1, axes=ax);
 
 from skan import skeleton_to_csgraph
 
-pixel_graph, coordinates, degrees = skeleton_to_csgraph(skeleton0)
+pixel_graph, coordinates = skeleton_to_csgraph(skeleton0)
 
 # The pixel graph is a SciPy [CSR
 # matrix](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html)
@@ -118,8 +118,7 @@ pixel_graph, coordinates, degrees = skeleton_to_csgraph(skeleton0)
 # case, we know the spacing between pixels, so we can measure our network
 # in physical units instead of pixels:
 
-pixel_graph0, coordinates0, degrees0 = skeleton_to_csgraph(skeleton0,
-                                                           spacing=spacing_nm)
+pixel_graph0, coordinates0 = skeleton_to_csgraph(skeleton0, spacing=spacing_nm)
 
 # The second variable contains the coordinates (in pixel units) of the
 # points in the pixel graph. Finally, `degrees` is an image of the
@@ -136,8 +135,8 @@ pixel_graph0, coordinates0, degrees0 = skeleton_to_csgraph(skeleton0,
 # recommended for very small networks.)
 
 from skan import _testdata
-g0, c0, _ = skeleton_to_csgraph(_testdata.skeleton0)
-g1, c1, _ = skeleton_to_csgraph(_testdata.skeleton1)
+g0, c0 = skeleton_to_csgraph(_testdata.skeleton0)
+g1, c1 = skeleton_to_csgraph(_testdata.skeleton1)
 fig, axes = plt.subplots(1, 2)
 
 draw.overlay_skeleton_networkx(g0, c0, image=_testdata.skeleton0,
@@ -274,6 +273,8 @@ sns.stripplot(data=per_image,
 # But we hope this minimal example will serve for inspiration for your
 # future analysis of skeleton images.
 #
-# If you are interested in how we used [numba](https://numba.pydata.org/)
-# to accelerate some parts of Skan, check out [jni’s talk](https://www.youtube.com/watch?v=0pUPNMglnaE)
-# at the the SciPy 2019 conference.
+# If you are interested in how we used
+# [numba](https://numba.pydata.org) to accelerate some parts of Skan,
+# check out [Juan’s talk at the SciPy 2019
+# conference](https://www.youtube.com/watch?v=0pUPNMglnaE) at the the
+# SciPy 2019 conference.
