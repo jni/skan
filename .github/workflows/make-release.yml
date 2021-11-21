@@ -24,6 +24,11 @@ jobs:
           python -m pip install -e .  # need full install so we can build type stubs
       - name: Build Distribution
         run: python setup.py sdist bdist_wheel
+      - name: Publish PyPI Package
+        uses: pypa/gh-action-pypi-publish@v1
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@latest
@@ -44,8 +49,3 @@ jobs:
           asset_path: ./dist/skan-${{ env.tag }}.tar.gz
           asset_name: dist-${{ env.tag }}.tar.gz
           asset_content_type: application/gzip
-      - name: Publish PyPI Package
-        uses: pypa/gh-action-pypi-publish@v1
-        with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
