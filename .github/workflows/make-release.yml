@@ -25,7 +25,7 @@ jobs:
       - name: Build Distribution
         run: python setup.py sdist bdist_wheel
       - name: Publish PyPI Package
-        uses: pypa/gh-action-pypi-publish@v1
+        uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}
@@ -41,7 +41,7 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref, 'rc') }}
       - name: Upload GitHub Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
