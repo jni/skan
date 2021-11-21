@@ -38,6 +38,7 @@ extensions = [
         'sphinx.ext.viewcode',
         'sphinx.ext.githubpages',
         'sphinx.ext.napoleon',
+        'myst_parser',
         'nb2plots',
         'sphinxcontrib.bibtex',
         'sphinx_copybutton',
