@@ -37,7 +37,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ env.tag }}
-          body_path: doc/release-notes/release-${{ env.tag }}.md
+          body_path: doc/release-notes/release-latest.md
           draft: false
           prerelease: ${{ contains(github.ref, 'rc') }}
       - name: Upload GitHub Release Asset
