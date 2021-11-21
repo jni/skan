@@ -1,6 +1,15 @@
 FAQ
 ===
 
+I just upgraded from skan v0.8 or 0.9 and my measurements are slightly different. What gives?
+------------------------------------------------------------------------------------------------
+
+In skan v0.10, we added a new way to deal with junctions (see next
+question). This new method offered enough advantages that we decided to
+make it the default straight away. This should not affect the accuracy
+of the measurements provided by skan, but will result in small numerical
+differences of less than the pixel spacing of your dataset.
+
 What's ``unique_junctions`` or ``junction_mode``?
 -------------------------------------------------
 
@@ -76,12 +85,11 @@ value to indicate that that position contained dummy data, but that
 would have made it more difficult to work with NumPy functions such as
 ``np.min``/``np.max``, which would always return ``np.nan`` without
 special handling. - Additionally, look closely at the figure in `What's
-``unique_junctions`` or
-``junction_mode``? <#What's-unique_junctions-or-junction_mode?>`__:
-during centroid-based junction consolidation, a bunch of pixel IDs are
-removed from the graph. However, we keep indexing using the original
-IDs, so the coordinates in the coordinate array now contain "unused"
-data.
+unique\_junctions or
+junction\_mode? <#What's-unique_junctions-or-junction_mode?>`__: during
+centroid-based junction consolidation, a bunch of pixel IDs are removed
+from the graph. However, we keep indexing using the original IDs, so the
+coordinates in the coordinate array now contain "unused" data.
 
 See these GitHub issues for more details:
 `#93 <https://github.com/jni/skan/issues/93>`__ and
