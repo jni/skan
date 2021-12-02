@@ -238,7 +238,7 @@ def _raveled_offsets_and_distances(
     >>> off, d = _raveled_offsets_and_distances(
     ...         (4, 5), footprint=np.ones((4, 3)), center=(1, 1)
     ...         )
-    >>> off
+    >>> off  # doctest: +SKIP
     array([-5, -1,  1,  5, -6, -4,  4,  6, 10,  9, 11])
     >>> d[0]
     1.0
