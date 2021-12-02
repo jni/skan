@@ -1,4 +1,3 @@
-from collections import abc
 import itertools
 import numpy as np
 from scipy import ndimage as ndi
