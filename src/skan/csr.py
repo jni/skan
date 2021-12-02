@@ -3,10 +3,10 @@ import pandas as pd
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
 from skimage import morphology
-from skimage.morphology._util import _raveled_offsets_and_distances
 from skimage.util._map_array import map_array
 import numba
 
+from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
 
 
