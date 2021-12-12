@@ -1,7 +1,5 @@
 import os
 import pytest
-import tempfile
-
 import pandas
 from skan import pipe
 
