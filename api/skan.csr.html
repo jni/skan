@@ -88,25 +88,8 @@
   <section id="module-skan.csr">
 <span id="skan-csr-csr-graph-representation-of-skeletons"></span><h1>skan.csr: CSR Graph representation of skeletons<a class="headerlink" href="#module-skan.csr" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="skan.csr.JunctionModes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">JunctionModes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#JunctionModes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.JunctionModes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Modes for cleaning up junctions in skeletons.</p>
-<dl class="simple">
-<dt>NONE:</dt><dd><p>Junctions are left as is. This is equivalent to unique_junctions=False
-in skan &lt; 0.10.</p>
-</dd>
-<dt>Centroid:</dt><dd><p>Junctions are consolidated into the centroid of the contributing nodes.
-This is equivalent to unique_junctions=True in skan &lt; 0.10.</p>
-</dd>
-<dt>MST:</dt><dd><p>Junctions are replaced with the minimum spanning tree. This is the new
-default in skan==0.10.0 and will become the only mode in skan&gt;=0.11.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="skan.csr.Skeleton">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">Skeleton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_buffer_size_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">junction_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">JunctionModes.MST</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_junctions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">Skeleton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton" title="Permalink to this definition">¶</a></dt>
 <dd><p>Object to group together all the properties of a skeleton.</p>
 <p>In the text below, we use the following notation:</p>
 <ul class="simple">
@@ -128,9 +111,9 @@ from. This is used to produce visualizations as well as statistical
 properties of paths.</p></li>
 <li><p><strong>keep_images</strong> (<em>bool</em>) – Whether or not to keep the original input images. These can be useful
 for visualization, but they may take up a lot of memory.</p></li>
-<li><p><strong>unique_junctions</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, adjacent junction nodes get collapsed into a single
-conceptual node, with position at the centroid of all the connected
-initial nodes.</p></li>
+<li><p><strong>value_is_height</strong> (<em>bool</em>) – Whether to consider the value of a float skeleton to be the “height”
+of the image. This can be useful e.g. when measuring lengths along
+ridges in AFM images.</p></li>
 </ul>
 </dd>
 </dl>
@@ -168,7 +151,8 @@ neighbors, or test for the presence of a specific edge.</p>
 <span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#skan.csr.Skeleton.coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>skeleton_pixel_id i -&gt; coordinates[i]
 The image coordinates of each pixel in the skeleton.
-Some values in this matrix are non-sensical — you should only access them from node ids.</p>
+Some values in this matrix are non-sensical — you should only access
+them from node ids.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>array, shape (N, ndim)</p>
@@ -398,37 +382,6 @@ along each branch (not including the endpoints).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="skan.csr.compute_centroids">
-<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">compute_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#compute_centroids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.compute_centroids" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the centroids of all nonzero connected blobs in <cite>image</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>image</strong> (<em>ndarray</em>) – The input image.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>label_image</strong> – The input image, with each connected region containing a different
-integer label.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ndarray of int</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">... </span>                  <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">compute_centroids</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-<span class="go">[[1 0 2 0 0 3 3]</span>
-<span class="go"> [1 0 0 2 0 0 0]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">centroids</span>
-<span class="go">array([[0.5, 0. ],</span>
-<span class="go">       [0.5, 2.5],</span>
-<span class="go">       [0. , 5.5]])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="skan.csr.make_degree_image">
 <span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">make_degree_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#make_degree_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.make_degree_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a array showing the degree of connectivity of each pixel.</p>
@@ -449,8 +402,47 @@ skeleton to neighboring pixels.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.pixel_graph">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">pixel_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#pixel_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.pixel_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an adjacency graph of pixels in an image.</p>
+<p>Pixels where the mask is True are nodes in the returned graph, and they are
+connected by edges to their neighbors according to the connectivity
+parameter. By default, the <em>value</em> of an edge when a mask is given, or when
+the image is itself the mask, is the euclidean distance betwene the pixels.</p>
+<p>However, if an int- or float-valued image is given with no mask, the value
+of the edges is the absolute difference in intensity between adjacent
+pixels, weighted by the euclidean distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em>) – The input image. If the image is of type bool, it will be used as the
+mask as well.</p></li>
+<li><p><strong>mask</strong> (<em>array of bool</em>) – Which pixels to use. If None, the graph for the whole image is used.</p></li>
+<li><p><strong>edge_function</strong> (<em>callable</em>) – A function taking an array of pixel values, and an array of neighbor
+pixel values, and an array of distances, and returning a value for the
+edge. If no function is given, the value of an edge is just the
+distance.</p></li>
+<li><p><strong>connectivity</strong> (<em>int</em>) – The square connectivity of the pixel neighborhood: the number of
+orthogonal steps allowed to consider a pixel a neigbor. See
+<cite>scipy.ndimage.generate_binary_structure</cite> for details.</p></li>
+<li><p><strong>spacing</strong> (<em>tuple of float</em>) – The spacing between pixels along each axis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>graph</strong> (<em>scipy.sparse.csr_matrix</em>) – A sparse adjacency matrix in which entry (i, j) is 1 if nodes i and j
+are neighbors, 0 otherwise.</p></li>
+<li><p><strong>nodes</strong> (<em>array of int</em>) – The nodes of the graph. These correspond to the raveled indices of the
+nonzero pixels in the mask.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="skan.csr.skeleton_to_csgraph">
-<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">skeleton_to_csgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">junction_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">JunctionModes.MST</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_junctions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#skeleton_to_csgraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.skeleton_to_csgraph" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">skeleton_to_csgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#skeleton_to_csgraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.skeleton_to_csgraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a skeleton image of thin lines to a graph of neighbor pixels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -466,28 +458,17 @@ indicate spacing along each axis.</p></li>
 considered to be a height measurement, and this height will be
 incorporated into skeleton branch lengths. Used for analysis of
 atomic force microscopy (AFM) images.</p></li>
-<li><p><strong>junction_mode</strong> (<em>JunctionModes.{NONE</em><em>,</em><em>MST</em><em>,</em><em>CENTROID}</em>) – If NONE, junction pixels are not collapsed.
-If MST, junction pixels are replaced by their minimum spanning tree,
-resulting in a single junction pixel.
-If CENTROID, junction pixels are collapsed to their centroid.</p></li>
-<li><p><strong>unique_junctions</strong> (<em>bool</em><em>, </em><em>optional</em>) – <strong>DEPRECATED</strong>: Use junction_mode=JunctionModes.Centroid to get
-behavior equivalent to <code class="docutils literal notranslate"><span class="pre">unique_junctions=True</span></code>.
-If True, adjacent junction nodes get collapsed into a single
-conceptual node, with position at the centroid of all the connected
-initial nodes.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>graph</strong> (<em>sparse.csr_matrix</em>) – A graph of shape (Nnz + 1, Nnz + 1), where Nnz is the number of
+<li><p><strong>graph</strong> (<em>sparse.csr_matrix</em>) – A graph of shape (Nnz, Nnz), where Nnz is the number of
 nonzero pixels in <cite>skel</cite>. The value graph[i, j] is the distance
 between adjacent pixels i and j. In a 2D image, that would be
 1 for immediately adjacent pixels and sqrt(2) for diagonally
 adjacent ones.</p></li>
-<li><p><strong>pixel_coordinates</strong> (<em>array of float</em>) – An array of shape (Nnz + 1, skel.ndim), mapping indices in <cite>graph</cite>
-to pixel coordinates in <cite>degree_image</cite> or <cite>skel</cite>. Array entry
-(0,:) contains currently always zeros to index the pixels, which
-start at 1, directly to the coordinates.</p></li>
+<li><p><strong>pixel_coordinates</strong> (<em>array of float</em>) – An array of shape (Nnz, skel.ndim), mapping indices in <cite>graph</cite>
+to pixel coordinates in <cite>skel</cite>.</p></li>
 </ul>
 </p>
 </dd>
@@ -524,46 +505,16 @@ number of rows of <cite>M</cite>.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="skan.csr.summarise">
-<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">summarise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">using_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute statistics for every disjoint skeleton in <cite>image</cite>.</p>
-<p><strong>Note: this function is deprecated. Prefer</strong> <a class="reference internal" href="#skan.csr.summarize" title="skan.csr.summarize"><code class="xref py py-func docutils literal notranslate"><span class="pre">summarize()</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>, </em><em>...</em><em>, </em><em>P</em><em>)</em>) – N-dimensional array, where nonzero entries correspond to an
-object’s single-pixel-wide skeleton. If the image is of type ‘float’,
-the values are taken to be the height at that pixel, which is used
-to compute the skeleton distances.</p></li>
-<li><p><strong>spacing</strong> (float, or array-like of float, shape <cite>(skel.ndim,)</cite>) – A value indicating the distance between adjacent pixels. This can
-either be a single value if the data has the same resolution along
-all axes, or it can be an array of the same shape as <cite>skel</cite> to
-indicate spacing along each axis.</p></li>
-<li><p><strong>using_height</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <cite>True</cite>, the pixel value at each point of the skeleton will be
-considered to be a height measurement, and this height will be
-incorporated into skeleton branch lengths, endpoint coordinates,
-and euclidean distances. Used for analysis of atomic force
-microscopy (AFM) images.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>df</strong> – A data frame summarising the statistics of the skeletons in
-<cite>image</cite>.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="skan.csr.summarize">
-<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><span class="pre">skan.csr.Skeleton</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">find_main_branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarize" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><span class="pre">skan.csr.Skeleton</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">find_main_branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute statistics for every skeleton and branch in <code class="docutils literal notranslate"><span class="pre">skel</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>skel</strong> (<a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><em>skan.csr.Skeleton</em></a>) – A Skeleton object.</p></li>
+<li><p><strong>value_is_height</strong> (<em>bool</em>) – Whether to consider the value of a float skeleton to be the “height”
+of the image. This can be useful e.g. when measuring lengths along
+ridges in AFM images.</p></li>
 <li><p><strong>find_main_branch</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to compute main branches. A main branch is defined as the
 longest shortest path within a skeleton. This step is very expensive
 as it involves computing the shortest paths between all pairs of branch

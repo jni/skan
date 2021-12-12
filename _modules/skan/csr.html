@@ -76,42 +76,154 @@
            <div itemprop="articleBody">
              
   <h1>Source code for skan.csr</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span><span class="p">,</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csgraph</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">spatial</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<span class="kn">from</span> <span class="nn">skimage.util._map_array</span> <span class="kn">import</span> <span class="n">map_array</span>
 <span class="kn">import</span> <span class="nn">numba</span>
 
-<span class="kn">from</span> <span class="nn">.nputil</span> <span class="kn">import</span> <span class="n">raveled_steps_to_neighbors</span>
+<span class="kn">from</span> <span class="nn">.nputil</span> <span class="kn">import</span> <span class="n">_raveled_offsets_and_distances</span>
 <span class="kn">from</span> <span class="nn">.summary_utils</span> <span class="kn">import</span> <span class="n">find_main_branches</span>
 
 
-<div class="viewcode-block" id="JunctionModes"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.JunctionModes">[docs]</a><span class="k">class</span> <span class="nc">JunctionModes</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Modes for cleaning up junctions in skeletons.</span>
+<span class="k">def</span> <span class="nf">_weighted_abs_diff</span><span class="p">(</span><span class="n">values0</span><span class="p">,</span> <span class="n">values1</span><span class="p">,</span> <span class="n">distances</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A default edge function for complete image graphs.</span>
 
-<span class="sd">    NONE:</span>
-<span class="sd">        Junctions are left as is. This is equivalent to unique_junctions=False</span>
-<span class="sd">        in skan &lt; 0.10.</span>
-<span class="sd">    Centroid:</span>
-<span class="sd">        Junctions are consolidated into the centroid of the contributing nodes.</span>
-<span class="sd">        This is equivalent to unique_junctions=True in skan &lt; 0.10.</span>
+<span class="sd">    A pixel graph on an image with no edge values and no mask is a very</span>
+<span class="sd">    boring regular lattice, so we define a default edge weight to be the</span>
+<span class="sd">    absolute difference between values *weighted* by the distance</span>
+<span class="sd">    between them.</span>
 
-<span class="sd">    MST:</span>
-<span class="sd">        Junctions are replaced with the minimum spanning tree. This is the new</span>
-<span class="sd">        default in skan==0.10.0 and will become the only mode in skan&gt;=0.11.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values0 : array</span>
+<span class="sd">        The pixel values for each node.</span>
+<span class="sd">    values1 : array</span>
+<span class="sd">        The pixel values for each neighbor.</span>
+<span class="sd">    distances : array</span>
+<span class="sd">        The distance between each node and its neighbor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    edge_values : array of float</span>
+<span class="sd">        The computed values: abs(values0 - values1) * distances.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">NONE</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
-    <span class="n">Centroid</span> <span class="o">=</span> <span class="s1">&#39;centroid&#39;</span>
-    <span class="n">MST</span> <span class="o">=</span> <span class="s1">&#39;mst&#39;</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">values0</span> <span class="o">-</span> <span class="n">values1</span><span class="p">)</span> <span class="o">*</span> <span class="n">distances</span>
 
 
-<span class="c1">## NBGraph and Numba-based implementation</span>
+<div class="viewcode-block" id="pixel_graph"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.pixel_graph">[docs]</a><span class="k">def</span> <span class="nf">pixel_graph</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create an adjacency graph of pixels in an image.</span>
 
+<span class="sd">    Pixels where the mask is True are nodes in the returned graph, and they are</span>
+<span class="sd">    connected by edges to their neighbors according to the connectivity</span>
+<span class="sd">    parameter. By default, the *value* of an edge when a mask is given, or when</span>
+<span class="sd">    the image is itself the mask, is the euclidean distance betwene the pixels.</span>
+
+<span class="sd">    However, if an int- or float-valued image is given with no mask, the value</span>
+<span class="sd">    of the edges is the absolute difference in intensity between adjacent</span>
+<span class="sd">    pixels, weighted by the euclidean distance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : array</span>
+<span class="sd">        The input image. If the image is of type bool, it will be used as the</span>
+<span class="sd">        mask as well.</span>
+<span class="sd">    mask : array of bool</span>
+<span class="sd">        Which pixels to use. If None, the graph for the whole image is used.</span>
+<span class="sd">    edge_function : callable</span>
+<span class="sd">        A function taking an array of pixel values, and an array of neighbor</span>
+<span class="sd">        pixel values, and an array of distances, and returning a value for the</span>
+<span class="sd">        edge. If no function is given, the value of an edge is just the</span>
+<span class="sd">        distance.</span>
+<span class="sd">    connectivity : int</span>
+<span class="sd">        The square connectivity of the pixel neighborhood: the number of</span>
+<span class="sd">        orthogonal steps allowed to consider a pixel a neigbor. See</span>
+<span class="sd">        `scipy.ndimage.generate_binary_structure` for details.</span>
+<span class="sd">    spacing : tuple of float</span>
+<span class="sd">        The spacing between pixels along each axis.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    graph : scipy.sparse.csr_matrix</span>
+<span class="sd">        A sparse adjacency matrix in which entry (i, j) is 1 if nodes i and j</span>
+<span class="sd">        are neighbors, 0 otherwise.</span>
+<span class="sd">    nodes : array of int</span>
+<span class="sd">        The nodes of the graph. These correspond to the raveled indices of the</span>
+<span class="sd">        nonzero pixels in the mask.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">bool</span> <span class="ow">and</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">image</span>
+    <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">edge_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">edge_function</span> <span class="o">=</span> <span class="n">_weighted_abs_diff</span>
+
+    <span class="c1"># Strategy: we are going to build the (i, j, data) arrays of a scipy</span>
+    <span class="c1"># sparse COO matrix, then convert to CSR (which is fast).</span>
+    <span class="c1"># - grab the raveled IDs of the foreground (mask == True) parts of the</span>
+    <span class="c1">#   image **in the padded space**.</span>
+    <span class="c1"># - broadcast them together with the raveled offsets to their neighbors.</span>
+    <span class="c1">#   This gives us for each foreground pixel a list of neighbors (that</span>
+    <span class="c1">#   may or may not be selected by the mask.) (We also track the *distance*</span>
+    <span class="c1">#   to each neighbor.)</span>
+    <span class="c1"># - select &quot;valid&quot; entries in the neighbors and distance arrays by indexing</span>
+    <span class="c1">#   into the mask, which we can do since these are raveled indices.</span>
+    <span class="c1"># - use np.repeat() to repeat each source index according to the number</span>
+    <span class="c1">#   of neighbors selected by the mask it has. Each of these repeated</span>
+    <span class="c1">#   indices will be lined up with its neighbor, i.e. **this is the i</span>
+    <span class="c1">#   array** of the COO format matrix.</span>
+    <span class="c1"># - use the mask as a boolean index to get a 1D view of the selected</span>
+    <span class="c1">#   neighbors. **This is the j array.**</span>
+    <span class="c1"># - by default, the same boolean indexing can be applied to the distances</span>
+    <span class="c1">#   to each neighbor, to give the **data array.** Optionally, a</span>
+    <span class="c1">#   provided edge function can be computed on the pixel values and the</span>
+    <span class="c1">#   distances to give a different value for the edges.</span>
+    <span class="c1"># Note, we use map_array to map the raveled coordinates in the padded</span>
+    <span class="c1"># image to the ones in the original image, and those are the returned</span>
+    <span class="c1"># nodes.</span>
+    <span class="n">padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">nodes_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">padded</span><span class="p">)</span>
+    <span class="n">neighbor_offsets_padded</span><span class="p">,</span> <span class="n">distances_padded</span> <span class="o">=</span> <span class="n">_raveled_offsets_and_distances</span><span class="p">(</span>
+            <span class="n">padded</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span>
+            <span class="p">)</span>
+    <span class="n">neighbors_padded</span> <span class="o">=</span> <span class="n">nodes_padded</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">+</span> <span class="n">neighbor_offsets_padded</span>
+    <span class="n">neighbor_distances_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span>
+            <span class="n">distances_padded</span><span class="p">,</span> <span class="n">neighbors_padded</span><span class="o">.</span><span class="n">shape</span>
+            <span class="p">)</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="n">nodes_sequential</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="c1"># neighbors outside the mask get mapped to 0, which is a valid index,</span>
+    <span class="c1"># BUT, they will be masked out in the next step.</span>
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="n">map_array</span><span class="p">(</span><span class="n">neighbors_padded</span><span class="p">,</span> <span class="n">nodes_padded</span><span class="p">,</span> <span class="n">nodes</span><span class="p">)</span>
+    <span class="n">neighbors_mask</span> <span class="o">=</span> <span class="n">padded</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="n">neighbors_padded</span><span class="p">]</span>
+    <span class="n">num_neighbors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">neighbors_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">num_neighbors</span><span class="p">)</span>
+    <span class="n">indices_sequential</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">nodes_sequential</span><span class="p">,</span> <span class="n">num_neighbors</span><span class="p">)</span>
+    <span class="n">neighbor_indices</span> <span class="o">=</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">neighbors_mask</span><span class="p">]</span>
+    <span class="n">neighbor_distances</span> <span class="o">=</span> <span class="n">neighbor_distances_full</span><span class="p">[</span><span class="n">neighbors_mask</span><span class="p">]</span>
+    <span class="n">neighbor_indices_sequential</span> <span class="o">=</span> <span class="n">map_array</span><span class="p">(</span>
+            <span class="n">neighbor_indices</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">nodes_sequential</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">edge_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">neighbor_distances</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image_r</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">edge_function</span><span class="p">(</span>
+                <span class="n">image_r</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">image_r</span><span class="p">[</span><span class="n">neighbor_indices</span><span class="p">],</span> <span class="n">neighbor_distances</span>
+                <span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">nodes_sequential</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">indices_sequential</span><span class="p">,</span> <span class="n">neighbor_indices_sequential</span><span class="p">)),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span></div>
+
+
+<span class="c1"># NBGraph and Numba-based implementation</span>
 <span class="n">csr_spec</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="s1">&#39;indptr&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">[:]),</span>
         <span class="p">(</span><span class="s1">&#39;indices&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">[:]),</span>
@@ -334,16 +446,15 @@
     <span class="k">return</span> <span class="n">j</span> <span class="o">-</span> <span class="n">startj</span> <span class="o">+</span> <span class="mi">1</span>
 
 
-<span class="k">def</span> <span class="nf">_build_skeleton_path_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">_buffer_size_offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">max_num_cycles</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">4</span>
-        <span class="n">_buffer_size_offset</span> <span class="o">=</span> <span class="n">max_num_cycles</span>
+<span class="k">def</span> <span class="nf">_build_skeleton_path_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+    <span class="n">max_num_cycles</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">4</span>
+    <span class="n">buffer_size_offset</span> <span class="o">=</span> <span class="n">max_num_cycles</span>
     <span class="n">degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">degrees</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="n">endpoints</span> <span class="o">=</span> <span class="p">(</span><span class="n">degrees</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">endpoint_degrees</span> <span class="o">=</span> <span class="n">degrees</span><span class="p">[</span><span class="n">endpoints</span><span class="p">]</span>
     <span class="n">num_paths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">endpoint_degrees</span><span class="p">)</span>
-    <span class="n">path_indptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_paths</span> <span class="o">+</span> <span class="n">_buffer_size_offset</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">path_indptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_paths</span> <span class="o">+</span> <span class="n">buffer_size_offset</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="c1"># the number of points that we need to save to store all skeleton</span>
     <span class="c1"># paths is equal to the number of pixels plus the sum of endpoint</span>
     <span class="c1"># degrees minus one (since the endpoints will have been counted once</span>
@@ -353,7 +464,7 @@
     <span class="c1"># of the number of points.</span>
     <span class="n">n_points</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">endpoint_degrees</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="o">+</span> <span class="n">_buffer_size_offset</span>
+            <span class="o">+</span> <span class="n">buffer_size_offset</span>
             <span class="p">)</span>
     <span class="n">path_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">path_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">path_indices</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -396,10 +507,10 @@
 <span class="sd">    keep_images : bool</span>
 <span class="sd">        Whether or not to keep the original input images. These can be useful</span>
 <span class="sd">        for visualization, but they may take up a lot of memory.</span>
-<span class="sd">    unique_junctions : bool, optional</span>
-<span class="sd">        If True, adjacent junction nodes get collapsed into a single</span>
-<span class="sd">        conceptual node, with position at the centroid of all the connected</span>
-<span class="sd">        initial nodes.</span>
+<span class="sd">    value_is_height : bool</span>
+<span class="sd">        Whether to consider the value of a float skeleton to be the &quot;height&quot;</span>
+<span class="sd">        of the image. This can be useful e.g. when measuring lengths along</span>
+<span class="sd">        ridges in AFM images.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -417,7 +528,8 @@
 <span class="sd">    coordinates : array, shape (N, ndim)</span>
 <span class="sd">        skeleton_pixel_id i -&gt; coordinates[i]</span>
 <span class="sd">        The image coordinates of each pixel in the skeleton.</span>
-<span class="sd">        Some values in this matrix are non-sensical — you should only access them from node ids.</span>
+<span class="sd">        Some values in this matrix are non-sensical — you should only access</span>
+<span class="sd">        them from node ids.</span>
 <span class="sd">    paths : scipy.sparse.csr_matrix, shape (P, N + 1)</span>
 <span class="sd">        A csr_matrix where element [i, j] is on if node j is in path i. This</span>
 <span class="sd">        includes path endpoints. The number of nonzero elements is N - J + Sd.</span>
@@ -440,29 +552,22 @@
             <span class="o">*</span><span class="p">,</span>
             <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">source_image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">keep_images</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">junction_mode</span><span class="o">=</span><span class="n">JunctionModes</span><span class="o">.</span><span class="n">MST</span><span class="p">,</span>
-            <span class="n">unique_junctions</span><span class="o">=</span><span class="kc">None</span>
+            <span class="n">value_is_height</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">):</span>
         <span class="n">graph</span><span class="p">,</span> <span class="n">coords</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span>
                 <span class="n">skeleton_image</span><span class="p">,</span>
                 <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
-                <span class="n">junction_mode</span><span class="o">=</span><span class="n">junction_mode</span><span class="p">,</span>
-                <span class="n">unique_junctions</span><span class="o">=</span><span class="n">unique_junctions</span><span class="p">,</span>
+                <span class="n">value_is_height</span><span class="o">=</span><span class="n">value_is_height</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">):</span>
-            <span class="n">pixel_values</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span>
-                    <span class="n">skeleton_image</span><span class="p">,</span> <span class="n">coords</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span>
-                    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="n">skeleton_image</span><span class="p">[</span><span class="n">coords</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">pixel_values</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span> <span class="o">=</span> <span class="n">csr_to_nbgraph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">pixel_values</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">coords</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">_build_skeleton_path_graph</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span><span class="p">,</span> <span class="n">_buffer_size_offset</span><span class="o">=</span><span class="n">_buffer_size_offset</span>
-                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span> <span class="o">=</span> <span class="n">csr_to_nbgraph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">_build_skeleton_path_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_paths</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distances_initialized</span> <span class="o">=</span> <span class="kc">False</span>
@@ -473,7 +578,6 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spacing</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">spacing</span><span class="p">)</span> <span class="k">else</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">spacing</span><span class="p">)</span>
                 <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unique_junctions</span> <span class="o">=</span> <span class="n">unique_junctions</span>
         <span class="k">if</span> <span class="n">keep_images</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">skeleton_image</span> <span class="o">=</span> <span class="n">skeleton_image</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="o">=</span> <span class="n">source_image</span>
@@ -566,7 +670,7 @@
 
 <div class="viewcode-block" id="Skeleton.path_label_image"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_label_image">[docs]</a>    <span class="k">def</span> <span class="nf">path_label_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Image like self.skeleton_image with path_ids as values.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        label_image : array of ints</span>
@@ -618,12 +722,10 @@
             <span class="n">image_cp</span><span class="p">[</span><span class="n">coords_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># optional cleanup:</span>
         <span class="n">new_skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">image_cp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span> <span class="o">*</span> <span class="n">image_cp</span>
-        <span class="c1"># note: add unique_junctions attribute for this</span>
         <span class="k">return</span> <span class="n">Skeleton</span><span class="p">(</span>
                 <span class="n">new_skeleton</span><span class="p">,</span>
                 <span class="n">spacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
                 <span class="n">source_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_image</span><span class="p">,</span>
-                <span class="n">unique_junctions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_junctions</span><span class="p">,</span>
                 <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -631,13 +733,19 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_label_image</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">skel</span><span class="p">:</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">find_main_branch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span>
+        <span class="n">skel</span><span class="p">:</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">value_is_height</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">find_main_branch</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute statistics for every skeleton and branch in ``skel``.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    skel : skan.csr.Skeleton</span>
 <span class="sd">        A Skeleton object.</span>
+<span class="sd">    value_is_height : bool</span>
+<span class="sd">        Whether to consider the value of a float skeleton to be the &quot;height&quot;</span>
+<span class="sd">        of the image. This can be useful e.g. when measuring lengths along</span>
+<span class="sd">        ridges in AFM images.</span>
 <span class="sd">    find_main_branch : bool, optional</span>
 <span class="sd">        Whether to compute main branches. A main branch is defined as the</span>
 <span class="sd">        longest shortest path within a skeleton. This step is very expensive</span>
@@ -675,11 +783,26 @@
     <span class="n">coords_real_src</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">]</span> <span class="o">*</span> <span class="n">skel</span><span class="o">.</span><span class="n">spacing</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
         <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;coord-src-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_src</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">value_is_height</span><span class="p">:</span>
+        <span class="n">values_src</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">pixel_values</span><span class="p">[</span><span class="n">endpoints_src</span><span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;coord-src-</span><span class="si">{</span><span class="n">ndim</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values_src</span>
+        <span class="n">coords_real_src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">coords_real_src</span><span class="p">,</span> <span class="n">values_src</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>  <span class="c1"># yapf: ignore</span>
     <span class="n">coords_real_dst</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">]</span> <span class="o">*</span> <span class="n">skel</span><span class="o">.</span><span class="n">spacing</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
         <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;coord-dst-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords_real_dst</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">value_is_height</span><span class="p">:</span>
+        <span class="n">values_dst</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">pixel_values</span><span class="p">[</span><span class="n">endpoints_dst</span><span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;coord-dst-</span><span class="si">{</span><span class="n">ndim</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values_dst</span>
+        <span class="n">coords_real_dst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">coords_real_dst</span><span class="p">,</span> <span class="n">values_dst</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>  <span class="c1"># yapf: ignore</span>
     <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;euclidean-distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">coords_real_dst</span> <span class="o">-</span> <span class="n">coords_real_src</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ndim</span><span class="p">))</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">coords_real_dst</span> <span class="o">-</span> <span class="n">coords_real_src</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+                    <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ndim</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_is_height</span><span class="p">)))</span>
             <span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
 
@@ -750,41 +873,9 @@
     <span class="k">return</span> <span class="n">final_graph</span>
 
 
-<span class="k">def</span> <span class="nf">_uniquify_junctions</span><span class="p">(</span>
-        <span class="n">csmat</span><span class="p">,</span>
-        <span class="n">pixel_indices</span><span class="p">,</span>
-        <span class="n">junction_labels</span><span class="p">,</span>
-        <span class="n">junction_centroids</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span>
-        <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Replace clustered pixels with degree &gt; 2 by a single &quot;floating&quot; pixel.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    csmat : NBGraph</span>
-<span class="sd">        The input graph.</span>
-<span class="sd">    pixel_indices : array of int</span>
-<span class="sd">        The raveled index in the image of every pixel represented in csmat.</span>
-<span class="sd">    spacing : float, or array-like of float, shape `len(shape)`, optional</span>
-<span class="sd">        The spacing between pixels in the source image along each dimension.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    final_graph : NBGraph</span>
-<span class="sd">        The output csmat.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">junctions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">junction_labels</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># discard 0, background</span>
-    <span class="n">junction_centroids_real</span> <span class="o">=</span> <span class="n">junction_centroids</span> <span class="o">*</span> <span class="n">spacing</span>
-    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">jloc</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">junctions</span><span class="p">,</span> <span class="n">junction_centroids_real</span><span class="p">):</span>
-        <span class="n">loc</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="n">csmat</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">csmat</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">neighbors</span> <span class="o">=</span> <span class="n">csmat</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">loc</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span>
-        <span class="n">neighbor_locations</span> <span class="o">=</span> <span class="n">pixel_indices</span><span class="p">[</span><span class="n">neighbors</span><span class="p">]</span>
-        <span class="n">neighbor_locations</span> <span class="o">*=</span> <span class="n">spacing</span>
-        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">neighbor_locations</span> <span class="o">-</span> <span class="n">jloc</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-        <span class="n">csmat</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">loc</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">distances</span>
-    <span class="n">tdata</span> <span class="o">=</span> <span class="n">csmat</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
-    <span class="n">csmat</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">csmat</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">tdata</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">distance_with_height</span><span class="p">(</span><span class="n">source_values</span><span class="p">,</span> <span class="n">neighbor_values</span><span class="p">,</span> <span class="n">distances</span><span class="p">):</span>
+    <span class="n">height_diff</span> <span class="o">=</span> <span class="n">source_values</span> <span class="o">-</span> <span class="n">neighbor_values</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">height_diff</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="skeleton_to_csgraph"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.skeleton_to_csgraph">[docs]</a><span class="k">def</span> <span class="nf">skeleton_to_csgraph</span><span class="p">(</span>
@@ -792,8 +883,6 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">value_is_height</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">junction_mode</span><span class="o">=</span><span class="n">JunctionModes</span><span class="o">.</span><span class="n">MST</span><span class="p">,</span>
-        <span class="n">unique_junctions</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a skeleton image of thin lines to a graph of neighbor pixels.</span>
 
@@ -816,104 +905,41 @@
 <span class="sd">        considered to be a height measurement, and this height will be</span>
 <span class="sd">        incorporated into skeleton branch lengths. Used for analysis of</span>
 <span class="sd">        atomic force microscopy (AFM) images.</span>
-<span class="sd">    junction_mode : JunctionModes.{NONE,MST,CENTROID}</span>
-<span class="sd">        If NONE, junction pixels are not collapsed.</span>
-<span class="sd">        If MST, junction pixels are replaced by their minimum spanning tree,</span>
-<span class="sd">        resulting in a single junction pixel.</span>
-<span class="sd">        If CENTROID, junction pixels are collapsed to their centroid.</span>
-<span class="sd">    unique_junctions : bool, optional</span>
-<span class="sd">        **DEPRECATED**: Use junction_mode=JunctionModes.Centroid to get</span>
-<span class="sd">        behavior equivalent to ``unique_junctions=True``.</span>
-<span class="sd">        If True, adjacent junction nodes get collapsed into a single</span>
-<span class="sd">        conceptual node, with position at the centroid of all the connected</span>
-<span class="sd">        initial nodes.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    graph : sparse.csr_matrix</span>
-<span class="sd">        A graph of shape (Nnz + 1, Nnz + 1), where Nnz is the number of</span>
+<span class="sd">        A graph of shape (Nnz, Nnz), where Nnz is the number of</span>
 <span class="sd">        nonzero pixels in `skel`. The value graph[i, j] is the distance</span>
 <span class="sd">        between adjacent pixels i and j. In a 2D image, that would be</span>
 <span class="sd">        1 for immediately adjacent pixels and sqrt(2) for diagonally</span>
 <span class="sd">        adjacent ones.</span>
 <span class="sd">    pixel_coordinates : array of float</span>
-<span class="sd">        An array of shape (Nnz + 1, skel.ndim), mapping indices in `graph`</span>
-<span class="sd">        to pixel coordinates in `degree_image` or `skel`. Array entry</span>
-<span class="sd">        (0,:) contains currently always zeros to index the pixels, which</span>
-<span class="sd">        start at 1, directly to the coordinates.</span>
+<span class="sd">        An array of shape (Nnz, skel.ndim), mapping indices in `graph`</span>
+<span class="sd">        to pixel coordinates in `skel`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">height</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">skel</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span> <span class="k">if</span>
-            <span class="n">value_is_height</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="p">)</span>
     <span class="c1"># ensure we have a bool image, since we later use it for bool indexing</span>
-    <span class="n">skel</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">skel_im</span> <span class="o">=</span> <span class="n">skel</span>
+    <span class="n">skel_bool</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
     <span class="n">ndim</span> <span class="o">=</span> <span class="n">skel</span><span class="o">.</span><span class="n">ndim</span>
     <span class="n">spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ndim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">spacing</span>
 
-    <span class="n">pixel_indices_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">skel</span><span class="p">))</span>
-    <span class="c1"># We prepend a row of zeros so that pixel_indices[i] contains the</span>
-    <span class="c1"># coordinates for pixel labeled i.</span>
-    <span class="n">pixel_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">ndim</span><span class="p">)),</span> <span class="n">pixel_indices_raw</span><span class="p">),</span>
-                                   <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">skelint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">skel</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">skelint</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pixel_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))]</span> <span class="o">=</span> \
-                                            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">pixel_indices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">value_is_height</span><span class="p">:</span>
+        <span class="n">edge_func</span> <span class="o">=</span> <span class="n">distance_with_height</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">edge_func</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">degree_kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,)</span> <span class="o">*</span> <span class="n">ndim</span><span class="p">)</span>
-    <span class="n">degree_kernel</span><span class="p">[(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="n">ndim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># remove centre pixel</span>
-    <span class="n">degree_image</span> <span class="o">=</span> <span class="n">skel</span> <span class="o">*</span> <span class="n">ndi</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
-            <span class="n">skel</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">degree_kernel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span>
+    <span class="n">graph</span><span class="p">,</span> <span class="n">pixel_indices</span> <span class="o">=</span> <span class="n">pixel_graph</span><span class="p">(</span>
+            <span class="n">skel_im</span><span class="p">,</span>
+            <span class="n">mask</span><span class="o">=</span><span class="n">skel_bool</span><span class="p">,</span>
+            <span class="n">edge_function</span><span class="o">=</span><span class="n">edge_func</span><span class="p">,</span>
+            <span class="n">connectivity</span><span class="o">=</span><span class="n">ndim</span><span class="p">,</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span>
             <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">unique_junctions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;unique junctions in deprecated, see junction_modes&#39;</span><span class="p">)</span>
-        <span class="n">junction_mode</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">JunctionModes</span><span class="o">.</span><span class="n">Centroid</span> <span class="k">if</span> <span class="n">unique_junctions</span> <span class="k">else</span>
-                <span class="n">JunctionModes</span><span class="o">.</span><span class="n">NONE</span>
-                <span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">junction_mode</span><span class="p">,</span> <span class="n">JunctionModes</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">junction_mode</span> <span class="o">=</span> <span class="n">JunctionModes</span><span class="p">(</span><span class="n">junction_mode</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">junction_mode</span><span class="si">}</span><span class="s2"> is an invalid junction_mode. Should be &#39;none&#39;, &#39;centroid&#39;, or &#39;mst&#39;&quot;</span>
-                    <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="s1">&#39;junction_mode should be a string or a JunctionModes&#39;</span>
-                    <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">junction_mode</span> <span class="o">==</span> <span class="n">JunctionModes</span><span class="o">.</span><span class="n">Centroid</span><span class="p">:</span>
-        <span class="c1"># group all connected junction nodes into &quot;meganodes&quot;.</span>
-        <span class="n">junctions</span> <span class="o">=</span> <span class="n">degree_image</span> <span class="o">&gt;</span> <span class="mi">2</span>
-        <span class="n">junction_ids</span> <span class="o">=</span> <span class="n">skelint</span><span class="p">[</span><span class="n">junctions</span><span class="p">]</span>
-        <span class="n">labeled_junctions</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">compute_centroids</span><span class="p">(</span><span class="n">junctions</span><span class="p">)</span>
-        <span class="n">labeled_junctions</span><span class="p">[</span><span class="n">junctions</span><span class="p">]</span> <span class="o">=</span> \
-                                <span class="n">junction_ids</span><span class="p">[</span><span class="n">labeled_junctions</span><span class="p">[</span><span class="n">junctions</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">skelint</span><span class="p">[</span><span class="n">junctions</span><span class="p">]</span> <span class="o">=</span> <span class="n">labeled_junctions</span><span class="p">[</span><span class="n">junctions</span><span class="p">]</span>
-        <span class="n">pixel_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labeled_junctions</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">centroids</span>
-
-    <span class="n">num_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">degree_image</span><span class="p">)</span>  <span class="c1"># *2, which is how many we need to store</span>
-    <span class="c1"># pad image to prevent looparound errors</span>
-    <span class="n">skelint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">skelint</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">steps</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">raveled_steps_to_neighbors</span><span class="p">(</span>
-            <span class="n">skelint</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span>
-            <span class="p">)</span>
-    <span class="n">graph</span> <span class="o">=</span> <span class="n">_pixel_graph</span><span class="p">(</span><span class="n">skelint</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">distances</span><span class="p">,</span> <span class="n">num_edges</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">junction_mode</span> <span class="o">==</span> <span class="n">JunctionModes</span><span class="o">.</span><span class="n">Centroid</span><span class="p">:</span>
-        <span class="n">_uniquify_junctions</span><span class="p">(</span>
-                <span class="n">graph</span><span class="p">,</span>
-                <span class="n">pixel_indices</span><span class="p">,</span>
-                <span class="n">labeled_junctions</span><span class="p">,</span>
-                <span class="n">centroids</span><span class="p">,</span>
-                <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span>
-                <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">junction_mode</span> <span class="o">==</span> <span class="n">JunctionModes</span><span class="o">.</span><span class="n">MST</span><span class="p">:</span>
-        <span class="n">graph</span> <span class="o">=</span> <span class="n">_mst_junctions</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">pixel_indices</span></div>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">_mst_junctions</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">pixel_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">pixel_indices</span><span class="p">,</span> <span class="n">skel</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">pixel_coordinates</span></div>
 
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -969,10 +995,11 @@
 <span class="sd">    d : float</span>
 <span class="sd">        The distance travelled from `source` to `dest`.</span>
 <span class="sd">    n : int</span>
-<span class="sd">        The number of pixels along the path followed (excluding the source).</span>
+<span class="sd">        The number of pixels along the path followed (excluding the source and</span>
+<span class="sd">        end points).</span>
 <span class="sd">    s : float</span>
 <span class="sd">        The sum of the pixel values along the path followed (also excluding</span>
-<span class="sd">        the source).</span>
+<span class="sd">        the source and end points).</span>
 <span class="sd">    deg : int</span>
 <span class="sd">        The degree of `dest`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -994,7 +1021,7 @@
 <span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_branch_statistics_loop</span><span class="p">(</span><span class="n">jgraph</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
     <span class="n">num_results</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">jgraph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jgraph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">visited</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">degrees</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">visited</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1106,133 +1133,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Msub</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">idxs</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">idxs</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">Msub</span></div>
-
-
-<div class="viewcode-block" id="summarise"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.summarise">[docs]</a><span class="k">def</span> <span class="nf">summarise</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">using_height</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute statistics for every disjoint skeleton in `image`.</span>
-
-<span class="sd">    **Note: this function is deprecated. Prefer** :func:`.summarize`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    image : array, shape (M, N, ..., P)</span>
-<span class="sd">        N-dimensional array, where nonzero entries correspond to an</span>
-<span class="sd">        object&#39;s single-pixel-wide skeleton. If the image is of type &#39;float&#39;,</span>
-<span class="sd">        the values are taken to be the height at that pixel, which is used</span>
-<span class="sd">        to compute the skeleton distances.</span>
-<span class="sd">    spacing : float, or array-like of float, shape `(skel.ndim,)`</span>
-<span class="sd">        A value indicating the distance between adjacent pixels. This can</span>
-<span class="sd">        either be a single value if the data has the same resolution along</span>
-<span class="sd">        all axes, or it can be an array of the same shape as `skel` to</span>
-<span class="sd">        indicate spacing along each axis.</span>
-<span class="sd">    using_height : bool, optional</span>
-<span class="sd">        If `True`, the pixel value at each point of the skeleton will be</span>
-<span class="sd">        considered to be a height measurement, and this height will be</span>
-<span class="sd">        incorporated into skeleton branch lengths, endpoint coordinates,</span>
-<span class="sd">        and euclidean distances. Used for analysis of atomic force</span>
-<span class="sd">        microscopy (AFM) images.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    df : pandas DataFrame</span>
-<span class="sd">        A data frame summarising the statistics of the skeletons in</span>
-<span class="sd">        `image`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ndim</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span>
-    <span class="n">spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ndim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">spacing</span>
-    <span class="n">g</span><span class="p">,</span> <span class="n">coords_img</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span>
-            <span class="n">image</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span> <span class="n">value_is_height</span><span class="o">=</span><span class="n">using_height</span>
-            <span class="p">)</span>
-    <span class="n">num_skeletons</span><span class="p">,</span> <span class="n">skeleton_ids</span> <span class="o">=</span> <span class="n">csgraph</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span>
-            <span class="n">g</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">False</span>
-            <span class="p">)</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">using_height</span><span class="p">:</span>
-        <span class="n">pixel_values</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords_img</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-        <span class="n">value_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean pixel value&#39;</span><span class="p">]</span>
-        <span class="n">value_column_types</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pixel_values</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">value_columns</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">value_column_types</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">branch_statistics</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">pixel_values</span><span class="p">)</span>
-    <span class="n">indices0</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">indices1</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">coords_img0</span> <span class="o">=</span> <span class="n">coords_img</span><span class="p">[</span><span class="n">indices0</span><span class="p">]</span>
-    <span class="n">coords_img1</span> <span class="o">=</span> <span class="n">coords_img</span><span class="p">[</span><span class="n">indices1</span><span class="p">]</span>
-    <span class="n">coords_real0</span> <span class="o">=</span> <span class="n">coords_img0</span> <span class="o">*</span> <span class="n">spacing</span>
-    <span class="n">coords_real1</span> <span class="o">=</span> <span class="n">coords_img1</span> <span class="o">*</span> <span class="n">spacing</span>
-    <span class="k">if</span> <span class="n">using_height</span><span class="p">:</span>
-        <span class="n">height_coords0</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords_img0</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-        <span class="n">coords_real0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">height_coords0</span><span class="p">,</span> <span class="n">coords_real0</span><span class="p">))</span>
-        <span class="n">height_coords1</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords_img1</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-        <span class="n">coords_real1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">height_coords1</span><span class="p">,</span> <span class="n">coords_real1</span><span class="p">))</span>
-    <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">coords_real0</span> <span class="o">-</span> <span class="n">coords_real1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">skeleton_id</span> <span class="o">=</span> <span class="n">skeleton_ids</span><span class="p">[</span><span class="n">stats</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span>
-            <span class="n">skeleton_id</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">coords_img0</span><span class="p">,</span> <span class="n">coords_img1</span><span class="p">,</span> <span class="n">coords_real0</span><span class="p">,</span>
-            <span class="n">coords_real1</span><span class="p">,</span> <span class="n">distances</span>
-            <span class="p">))</span>
-    <span class="n">height_ndim</span> <span class="o">=</span> <span class="n">ndim</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">using_height</span> <span class="k">else</span> <span class="p">(</span><span class="n">ndim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">base_columns</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s1">&#39;skeleton-id&#39;</span><span class="p">,</span> <span class="s1">&#39;node-id-0&#39;</span><span class="p">,</span> <span class="s1">&#39;node-id-1&#39;</span><span class="p">,</span> <span class="s1">&#39;branch-distance&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;branch-type&#39;</span>
-            <span class="p">]</span>
-    <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">base_columns</span>
-            <span class="o">+</span> <span class="n">value_columns</span>
-            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;image-coord-src-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">)]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;image-coord-dst-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">)]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;coord-src-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">height_ndim</span><span class="p">)]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;coord-dst-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">height_ndim</span><span class="p">)]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;euclidean-distance&#39;</span><span class="p">]</span>
-            <span class="p">)</span>  <span class="c1"># yapf: disable</span>
-    <span class="n">column_types</span> <span class="o">=</span> <span class="p">([</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">+</span> <span class="n">value_column_types</span>
-                    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ndim</span> <span class="o">*</span> <span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">height_ndim</span> <span class="o">*</span> <span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">float</span><span class="p">])</span>
-    <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">col</span><span class="p">:</span> <span class="n">dat</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">dat</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">column_types</span><span class="p">)</span>
-            <span class="p">}</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span></div>
-
-
-<div class="viewcode-block" id="compute_centroids"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.compute_centroids">[docs]</a><span class="k">def</span> <span class="nf">compute_centroids</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Find the centroids of all nonzero connected blobs in `image`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    image : ndarray</span>
-<span class="sd">        The input image.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    label_image : ndarray of int</span>
-<span class="sd">        The input image, with each connected region containing a different</span>
-<span class="sd">        integer label.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; image = np.array([[1, 0, 1, 0, 0, 1, 1],</span>
-<span class="sd">    ...                   [1, 0, 0, 1, 0, 0, 0]])</span>
-<span class="sd">    &gt;&gt;&gt; labels, centroids = compute_centroids(image)</span>
-<span class="sd">    &gt;&gt;&gt; print(labels)</span>
-<span class="sd">    [[1 0 2 0 0 3 3]</span>
-<span class="sd">     [1 0 0 2 0 0 0]]</span>
-<span class="sd">    &gt;&gt;&gt; centroids</span>
-<span class="sd">    array([[0.5, 0. ],</span>
-<span class="sd">           [0.5, 2.5],</span>
-<span class="sd">           [0. , 5.5]])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">connectivity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,)</span> <span class="o">*</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
-    <span class="n">labeled_image</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">nz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">labeled_image</span><span class="p">)</span>
-    <span class="n">nzpix</span> <span class="o">=</span> <span class="n">labeled_image</span><span class="p">[</span><span class="n">nz</span><span class="p">]</span>
-    <span class="n">sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">nzpix</span><span class="p">)</span>
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
-    <span class="n">grouping</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">nzpix</span><span class="p">)</span>
-    <span class="n">sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">grouping</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">sizes</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">means</span> <span class="o">=</span> <span class="n">sums</span> <span class="o">/</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">labeled_image</span><span class="p">,</span> <span class="n">means</span></div>
 
 
 <div class="viewcode-block" id="make_degree_image"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.make_degree_image">[docs]</a><span class="k">def</span> <span class="nf">make_degree_image</span><span class="p">(</span><span class="n">skeleton_image</span><span class="p">):</span>
