@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
+from scipy.spatial import distance_matrix
 from skimage import morphology
+from skimage.graph import central_pixel
 from skimage.util._map_array import map_array
 import numba
 
@@ -996,3 +998,120 @@ def make_degree_image(skeleton_image):
                     bool_skeleton.astype(int), degree_kernel, mode='constant'
                     )
     return degree_image
+
+
+def sholl_analysis(
+        skeleton,
+        soma=None,
+        step_size=None,
+        num_shells=None,
+        start_radius=0,
+        end_radius=None
+        ):
+    """Sholl Analysis for Skeleton object.
+
+    Parameters
+    ----------
+    skeleton : skan.csr.Skeleton
+        A Skeleton object.
+    soma : array-like of float or None, optional
+        Pixel, not real, coordinates of point on skeleton keeping which as
+        center the concentric shells are computed. If None, pixel nearest to
+        geodesic center of skeleton is chosen, by default None
+    step_size : float or None, optional
+        Spacing between intermediate shells. If None, `num_shells` is used. It
+        takes precendence over `num_shells`, by default None
+    num_shells : int, optional
+        Number of concentric shells, by default None
+    start_radius : float, optional
+        The real world radius of the smallest shell, i.e., the first distance
+        to be sampled, by default 0
+    end_radius : float or None, optional
+        The real world radius of the largest (last) shell. If None, it is
+        automatically calculated as largest possible radius, by default None
+
+    Returns
+    -------
+    array
+        Radii for concentric shells used for analysis.
+    array
+        Number of intersections for corresponding shell radii.
+    """
+    def _path_distances(skeleton, center_point, path_id):
+        """Compute real world distances of specific skeleton path coordinates
+        from the center point.
+
+        Parameters
+        ----------
+        skeleton : skan.csr.Skeleton
+            A Skeleton object.
+        center_point : array
+            Real world coordinates of center.
+        path_id : int
+            Path ID of path to be traversed.
+
+        Returns
+        -------
+        ndarray
+            Distance from each pixel in the path to the central pixel.
+        """
+        path = skeleton.path_coordinates(path_id)
+        path_scaled = path * skeleton.spacing
+        distances = np.ravel(distance_matrix(path_scaled, [center_point]))
+        return distances
+
+    # Compute vector magnitude (length)
+    _magnitude = lambda coords: np.sqrt(np.sum(coords ** 2))
+
+    imskeleton = skeleton.skeleton_image
+    skel_shape = np.asarray(imskeleton.shape)
+
+    if soma is None:
+        soma, _ = central_pixel(skeleton.graph, shape=skel_shape,
+                                nodes=np.transpose(skeleton.coordinates))
+
+    soma = np.asarray(soma)
+
+    # if soma doesn't lie on skeleton, find nearest point on skeleton
+    if not imskeleton[tuple(soma)]:
+        soma = min(skeleton.coordinates,
+                   key=lambda x: _magnitude(soma - x))
+
+    scaled_soma = soma * skeleton.spacing
+
+    if end_radius is None:
+        end_radius = _magnitude(skel_shape * skeleton.spacing) / 2
+
+    if num_shells is None and type(step_size) in (int, float):
+        shell_radii = np.arange(start_radius,
+                                end_radius + step_size,
+                                step_size)
+    else:
+        if step_size is None and num_shells is None:
+            # TODO: set num_shells to # pixels away from farthest
+            # vertex of image
+            num_shells = max((
+                _magnitude(soma),
+                _magnitude(skel_shape - soma),
+            ))
+            num_shells = np.round(num_shells).astype(np.int)
+        shell_radii = np.linspace(start_radius, end_radius, num_shells)
+
+    intersection_counts = np.zeros_like(shell_radii)
+
+    for i in range(skeleton.n_paths):
+        # Find distances of the path pixels
+        distances = _path_distances(skeleton, scaled_soma, i)
+
+        # Find which shell bin each pixel sits in
+        shell_location = np.digitize(distances, shell_radii)
+
+        # Use np.diff to find where bins are crossed. The -1 accounts for
+        # 'shell 0' not existing.
+        crossings = shell_location[
+            np.flatnonzero(np.diff(shell_location))] - 1
+
+        # increment corresponding crossings
+        intersection_counts[crossings] += 1
+
+    return shell_radii, intersection_counts
