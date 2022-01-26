@@ -1129,7 +1129,7 @@ def sholl_analysis(
     Returns
     -------
     array
-        Radii for concentric shells used for analysis.
+        Radii in real world units for concentric shells used for analysis.
     array
         Number of intersections for corresponding shell radii.
     """
@@ -1149,7 +1149,8 @@ def sholl_analysis(
         Returns
         -------
         ndarray
-            Distance from each pixel in the path to the central pixel.
+            Distance from each pixel in the path to the central pixel in real
+            world units.
         """
         path = skeleton.path_coordinates(path_id)
         path_scaled = path * skeleton.spacing
