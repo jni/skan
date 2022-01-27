@@ -1096,9 +1096,34 @@ def make_degree_image(skeleton_image):
     return degree_image
 
 
+def _path_distances(skeleton, center_point, path_id):
+    """Compute real world distances of specific skeleton path coordinates
+    from the center point.
+
+    Parameters
+    ----------
+    skeleton : skan.csr.Skeleton
+        A Skeleton object.
+    center_point : array
+        Real world coordinates of center.
+    path_id : int
+        Path ID of path to be traversed.
+
+    Returns
+    -------
+    ndarray
+        Distance from each pixel in the path to the central pixel in real
+        world units.
+    """
+    path = skeleton.path_coordinates(path_id)
+    path_scaled = path * skeleton.spacing
+    distances = np.ravel(distance_matrix(path_scaled, [center_point]))
+    return distances
+
+
 def sholl_analysis(
         skeleton,
-        soma=None,
+        center=None,
         step_size=None,
         num_shells=None,
         start_radius=0,
@@ -1110,21 +1135,21 @@ def sholl_analysis(
     ----------
     skeleton : skan.csr.Skeleton
         A Skeleton object.
-    soma : array-like of float or None, optional
-        Pixel, not real, coordinates of point on skeleton keeping which as
-        center the concentric shells are computed. If None, pixel nearest to
-        geodesic center of skeleton is chosen, by default None
+    center : array-like of float or None, optional
+        Pixel coordinates of a point on the skeleton to use as the center
+        from which the concentric shells are computed. If None, the
+        geodesic center of skeleton is chosen.
     step_size : float or None, optional
         Spacing between intermediate shells. If None, `num_shells` is used. It
-        takes precendence over `num_shells`, by default None
-    num_shells : int, optional
-        Number of concentric shells, by default None
+        takes precendence over `num_shells`.
+    num_shells : int or None, optional
+        Number of concentric shells.
     start_radius : float, optional
         The real world radius of the smallest shell, i.e., the first distance
         to be sampled, by default 0
     end_radius : float or None, optional
         The real world radius of the largest (last) shell. If None, it is
-        automatically calculated as largest possible radius, by default None
+        automatically calculated as largest possible radius.
 
     Returns
     -------
@@ -1133,51 +1158,32 @@ def sholl_analysis(
     array
         Number of intersections for corresponding shell radii.
     """
-    def _path_distances(skeleton, center_point, path_id):
-        """Compute real world distances of specific skeleton path coordinates
-        from the center point.
-
-        Parameters
-        ----------
-        skeleton : skan.csr.Skeleton
-            A Skeleton object.
-        center_point : array
-            Real world coordinates of center.
-        path_id : int
-            Path ID of path to be traversed.
-
-        Returns
-        -------
-        ndarray
-            Distance from each pixel in the path to the central pixel in real
-            world units.
-        """
-        path = skeleton.path_coordinates(path_id)
-        path_scaled = path * skeleton.spacing
-        distances = np.ravel(distance_matrix(path_scaled, [center_point]))
-        return distances
-
-    # Compute vector magnitude (length)
-    _magnitude = lambda coords: np.sqrt(np.sum(coords ** 2))
-
     imskeleton = skeleton.skeleton_image
     skel_shape = np.asarray(imskeleton.shape)
 
-    if soma is None:
-        soma, _ = central_pixel(skeleton.graph, shape=skel_shape,
-                                nodes=np.transpose(skeleton.coordinates))
+    if center is None:
+        g, nodes = pixel_graph(imskeleton, connectivity=imskeleton.ndim,
+                               spacing=skeleton.spacing)
+        center, _ = central_pixel(g, shape=skel_shape, nodes=nodes)
 
-    soma = np.asarray(soma)
+    center = np.asarray(center)
 
     # if soma doesn't lie on skeleton, find nearest point on skeleton
-    if not imskeleton[tuple(soma)]:
-        soma = min(skeleton.coordinates,
-                   key=lambda x: _magnitude(soma - x))
+    if not imskeleton[tuple(center)]:
+        center = skeleton.coordinates[
+            np.argmin(np.linalg.norm(skeleton.coordinates - center, axis=1))]
 
-    scaled_soma = soma * skeleton.spacing
+    scaled_center = center * skeleton.spacing
+    terminal_degree_val = 1
+    terminal_nodes_mask = np.argwhere(skeleton.degrees == terminal_degree_val)
+    terminal_nodes = np.squeeze(skeleton.coordinates[terminal_nodes_mask])
+    terminal_to_center_vec = terminal_nodes - center
+    terminal_to_center_px = np.linalg.norm(terminal_to_center_vec, axis=1)
+    terminal_to_center_real = np.linalg.norm(
+        terminal_to_center_vec * skeleton.spacing, axis=1)
 
     if end_radius is None:
-        end_radius = _magnitude(skel_shape * skeleton.spacing) / 2
+        end_radius = np.max(terminal_to_center_real)
 
     if num_shells is None and type(step_size) in (int, float):
         shell_radii = np.arange(start_radius,
@@ -1185,20 +1191,15 @@ def sholl_analysis(
                                 step_size)
     else:
         if step_size is None and num_shells is None:
-            # TODO: set num_shells to # pixels away from farthest
-            # vertex of image
-            num_shells = max((
-                _magnitude(soma),
-                _magnitude(skel_shape - soma),
-            ))
-            num_shells = np.round(num_shells).astype(np.int)
+            num_shells = np.max(terminal_to_center_px) // 2
+            num_shells = num_shells.astype(np.int)
         shell_radii = np.linspace(start_radius, end_radius, num_shells)
 
     intersection_counts = np.zeros_like(shell_radii)
 
     for i in range(skeleton.n_paths):
         # Find distances of the path pixels
-        distances = _path_distances(skeleton, scaled_soma, i)
+        distances = _path_distances(skeleton, scaled_center, i)
 
         # Find which shell bin each pixel sits in
         shell_location = np.digitize(distances, shell_radii)
