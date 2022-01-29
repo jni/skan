@@ -1066,16 +1066,11 @@ def sholl_analysis(
     # if soma doesn't lie on skeleton, find nearest point on skeleton
     if not imskeleton[tuple(center)]:
         center = skeleton.coordinates[
-            np.argmin(np.linalg.norm(skeleton.coordinates - center, axis=1))]
+            np.argmin(np.linalg.norm(skeleton.coordinates - center, axis=1))
+            ]
 
     scaled_center = center * skeleton.spacing
-    terminal_degree_val = 1
-    terminal_nodes_mask = np.argwhere(skeleton.degrees == terminal_degree_val)
-    terminal_nodes = np.squeeze(skeleton.coordinates[terminal_nodes_mask])
-    terminal_to_center_vec = terminal_nodes - center
-    terminal_to_center_px = np.linalg.norm(terminal_to_center_vec, axis=1)
-    terminal_to_center_real = np.linalg.norm(
-        terminal_to_center_vec * skeleton.spacing, axis=1)
+    leaf_node_val = 1
 
     if isinstance(shells, (list, tuple, np.ndarray)):
         # The real world radius of the smallest shell
@@ -1084,11 +1079,20 @@ def sholl_analysis(
         end_radius = max(shells)
         shell_radii = shells
     else:
+        # Calculate euclidean distance of soma from all the leaf nodes
+        leaf_nodes_mask = np.argwhere(skeleton.degrees == leaf_node_val)
+        leaf_nodes = np.squeeze(skeleton.coordinates[leaf_nodes_mask])
+        leaf_to_center_vec = leaf_nodes - center
+        leaf_to_center_px = np.linalg.norm(leaf_to_center_vec, axis=1)
+        leaf_to_center_real = np.linalg.norm(
+                leaf_to_center_vec * skeleton.spacing, axis=1
+                )
+
         start_radius = 0
-        end_radius = np.max(terminal_to_center_real)  # largest possible radius
+        end_radius = np.max(leaf_to_center_real)  # largest possible radius
 
         if shells is None:
-            shells = np.max(terminal_to_center_px) // 2
+            shells = np.max(leaf_to_center_px) // 2
             shells = shells.astype(np.int)
 
         shell_radii = np.linspace(start_radius, end_radius, shells)
