@@ -1028,10 +1028,7 @@ def _path_distances(skeleton, center_point, path_id):
 def sholl_analysis(
         skeleton,
         center=None,
-        step_size=None,
-        num_shells=None,
-        start_radius=0,
-        end_radius=None
+        shells=None
         ):
     """Sholl Analysis for Skeleton object.
 
@@ -1043,17 +1040,11 @@ def sholl_analysis(
         Pixel coordinates of a point on the skeleton to use as the center
         from which the concentric shells are computed. If None, the
         geodesic center of skeleton is chosen.
-    step_size : float or None, optional
-        Spacing between intermediate shells. If None, `num_shells` is used. It
-        takes precendence over `num_shells`.
-    num_shells : int or None, optional
-        Number of concentric shells.
-    start_radius : float, optional
-        The real world radius of the smallest shell, i.e., the first distance
-        to be sampled, by default 0
-    end_radius : float or None, optional
-        The real world radius of the largest (last) shell. If None, it is
-        automatically calculated as largest possible radius.
+    shells : int or array of floats or None, optional
+        If an int, it is used as number of evenly spaced concentric shells. If
+        an array of floats, it is used directly as the different shell radii in
+        real world units. If None, the number of evenly spaced concentric
+        shells is automatically calculated.
 
     Returns
     -------
@@ -1086,18 +1077,21 @@ def sholl_analysis(
     terminal_to_center_real = np.linalg.norm(
         terminal_to_center_vec * skeleton.spacing, axis=1)
 
-    if end_radius is None:
-        end_radius = np.max(terminal_to_center_real)
-
-    if num_shells is None and type(step_size) in (int, float):
-        shell_radii = np.arange(start_radius,
-                                end_radius + step_size,
-                                step_size)
+    if isinstance(shells, (list, tuple, np.ndarray)):
+        # The real world radius of the smallest shell
+        start_radius = min(shells)
+        # The real world radius of the largest (last) shell
+        end_radius = max(shells)
+        shell_radii = shells
     else:
-        if step_size is None and num_shells is None:
-            num_shells = np.max(terminal_to_center_px) // 2
-            num_shells = num_shells.astype(np.int)
-        shell_radii = np.linspace(start_radius, end_radius, num_shells)
+        start_radius = 0
+        end_radius = np.max(terminal_to_center_real)  # largest possible radius
+
+        if shells is None:
+            shells = np.max(terminal_to_center_px) // 2
+            shells = shells.astype(np.int)
+
+        shell_radii = np.linspace(start_radius, end_radius, shells)
 
     intersection_counts = np.zeros_like(shell_radii)
 
