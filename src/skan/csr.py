@@ -1025,6 +1025,45 @@ def _path_distances(skeleton, center_point, path_id):
     return distances
 
 
+def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
+    """Normalize shells from any format allowed by `sholl_analysis` to radii.
+
+    Parameters
+    ----------
+    shells : int or sequence of floats, or None
+        If an int, it is used as number of evenly spaced concentric shells. If
+        an array of floats, it is used directly as the different shell radii in
+        real world units. If None, the number of evenly spaced concentric
+        shells is automatically calculated.
+    center : (D,) array of float
+        The scaled coordinates of the center point for Sholl analysis.
+    skeleton_coordinates : (N, D) array of float
+        The scaled coordinates of skeleton pixels. Used when shells is None or
+        int.
+    spacing : (D,) array of float
+        The pixel/voxel spacing of the skeleton data.
+
+    Returns
+    -------
+    radii : array of float
+        The computed and normalized shell radii.
+    """
+    if isinstance(shells, (list, tuple, np.ndarray)):
+        shell_radii = np.asarray(shells)
+    else:  # shells is int, number of shells, or None
+        # Find max euclidean distance from center to all nodes
+        distances = np.linalg.norm(skeleton_coordinates - center, axis=1)
+        start_radius = 0
+        end_radius = np.max(distances)  # largest possible radius
+        if shells is None:
+            stepsize = np.linalg.norm(spacing)
+        else:  # scalar
+            stepsize = (end_radius-start_radius) / shells
+        epsilon = np.finfo(np.float32).eps
+        shell_radii = np.arange(start_radius, end_radius + epsilon, stepsize)
+    return shell_radii
+
+
 def sholl_analysis(skeleton, center=None, shells=None):
     """Sholl Analysis for Skeleton object.
 
@@ -1044,9 +1083,9 @@ def sholl_analysis(skeleton, center=None, shells=None):
 
     Returns
     -------
-    array
+    shell_radii : array of float
         Radii in real world units for concentric shells used for analysis.
-    array
+    intersection_counts : array of int
         Number of intersections for corresponding shell radii.
     """
     if center is None:
@@ -1058,19 +1097,12 @@ def sholl_analysis(skeleton, center=None, shells=None):
 
     scaled_coords = skeleton.coordinates * skeleton.spacing
 
-    if isinstance(shells, (list, tuple, np.ndarray)):
-        shell_radii = np.asarray(shells)
-    else:  # shells is int, number of shells, or None
-        # Find max euclidean distance from center to all nodes
-        distances = np.linalg.norm(scaled_coords - center, axis=1)
-        start_radius = 0
-        end_radius = np.max(distances)  # largest possible radius
-        if shells is None:
-            stepsize = np.linalg.norm(skeleton.spacing)
-        else:  # scalar
-            stepsize = (end_radius-start_radius) / shells
-        epsilon = np.finfo(np.float32).eps
-        shell_radii = np.arange(start_radius, end_radius + epsilon, stepsize)
+    shell_radii = _normalize_shells(
+            shells,
+            center=center,
+            skeleton_coordinates=scaled_coords,
+            spacing=skeleton.spacing,
+            )
 
     edges = skeleton.graph.tocoo()
     coords0 = scaled_coords[edges.row]
