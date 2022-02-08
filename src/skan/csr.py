@@ -1056,35 +1056,23 @@ def sholl_analysis(skeleton, center=None, shells=None):
     else:
         center = np.asarray(center)
 
-    leaf_node_val = 1
+    scaled_coords = skeleton.coordinates * skeleton.spacing
 
     if isinstance(shells, (list, tuple, np.ndarray)):
-        # The real world radius of the smallest shell
-        start_radius = min(shells)
-        # The real world radius of the largest (last) shell
-        end_radius = max(shells)
-        shell_radii = shells
-    else:
-        # Calculate euclidean distance of soma from all the leaf nodes
-        leaf_nodes_mask = np.argwhere(skeleton.degrees == leaf_node_val)
-        leaf_nodes = np.squeeze(skeleton.coordinates[leaf_nodes_mask])
-        leaf_to_center_vec = leaf_nodes - center
-        leaf_to_center_px = np.linalg.norm(leaf_to_center_vec, axis=1)
-        leaf_to_center_real = np.linalg.norm(
-                leaf_to_center_vec * skeleton.spacing, axis=1
-                )
-
+        shell_radii = np.asarray(shells)
+    else:  # shells is int, number of shells, or None
+        # Find max euclidean distance from center to all nodes
+        distances = np.linalg.norm(scaled_coords - center, axis=1)
         start_radius = 0
-        end_radius = np.max(leaf_to_center_real)  # largest possible radius
-
+        end_radius = np.max(distances)  # largest possible radius
         if shells is None:
-            shells = np.max(leaf_to_center_px) // 2
-            shells = shells.astype(np.int)
-
-        shell_radii = np.linspace(start_radius, end_radius, shells)
+            stepsize = np.linalg.norm(skeleton.spacing)
+        else:  # scalar
+            stepsize = (end_radius-start_radius) / shells
+        epsilon = np.finfo(np.float32).eps
+        shell_radii = np.arange(start_radius, end_radius + epsilon, stepsize)
 
     edges = skeleton.graph.tocoo()
-    scaled_coords = skeleton.coordinates * skeleton.spacing
     coords0 = scaled_coords[edges.row]
     coords1 = scaled_coords[edges.col]
     d0 = distance_matrix(coords0, [center]).ravel()
