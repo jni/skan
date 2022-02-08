@@ -1049,21 +1049,12 @@ def sholl_analysis(skeleton, center=None, shells=None):
     array
         Number of intersections for corresponding shell radii.
     """
-    imskeleton = skeleton.skeleton_image
-    skel_shape = np.asarray(imskeleton.shape)
-
     if center is None:
         # By default, find the geodesic center of the graph
         center_idx, _ = central_pixel(skeleton.graph)
         center = skeleton.coordinates[center_idx] * skeleton.spacing
     else:
         center = np.asarray(center)
-
-    # if soma doesn't lie on skeleton, find nearest point on skeleton
-    if not imskeleton[tuple(center)]:
-        center = skeleton.coordinates[np.argmin(
-                np.linalg.norm(skeleton.coordinates - center, axis=1)
-                )]
 
     leaf_node_val = 1
 
