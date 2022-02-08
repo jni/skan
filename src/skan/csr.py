@@ -1033,7 +1033,7 @@ def sholl_analysis(skeleton, center=None, shells=None):
     skeleton : skan.csr.Skeleton
         A Skeleton object.
     center : array-like of float or None, optional
-        Pixel coordinates of a point on the skeleton to use as the center
+        Scaled coordinates of a point on the skeleton to use as the center
         from which the concentric shells are computed. If None, the
         geodesic center of skeleton is chosen.
     shells : int or array of floats or None, optional
@@ -1055,9 +1055,9 @@ def sholl_analysis(skeleton, center=None, shells=None):
     if center is None:
         # By default, find the geodesic center of the graph
         center_idx, _ = central_pixel(skeleton.graph)
-        center = skeleton.coordinates[center_idx]
-
-    center = np.asarray(center)
+        center = skeleton.coordinates[center_idx] * skeleton.spacing
+    else:
+        center = np.asarray(center)
 
     # if soma doesn't lie on skeleton, find nearest point on skeleton
     if not imskeleton[tuple(center)]:
@@ -1065,7 +1065,6 @@ def sholl_analysis(skeleton, center=None, shells=None):
                 np.linalg.norm(skeleton.coordinates - center, axis=1)
                 )]
 
-    scaled_center = center * skeleton.spacing
     leaf_node_val = 1
 
     if isinstance(shells, (list, tuple, np.ndarray)):
@@ -1097,8 +1096,8 @@ def sholl_analysis(skeleton, center=None, shells=None):
     scaled_coords = skeleton.coordinates * skeleton.spacing
     coords0 = scaled_coords[edges.row]
     coords1 = scaled_coords[edges.col]
-    d0 = distance_matrix(coords0, [scaled_center]).ravel()
-    d1 = distance_matrix(coords1, [scaled_center]).ravel()
+    d0 = distance_matrix(coords0, [center]).ravel()
+    d1 = distance_matrix(coords1, [center]).ravel()
     bins0 = np.digitize(d0, shell_radii)
     bins1 = np.digitize(d1, shell_radii)
     crossings = bins0 != bins1
