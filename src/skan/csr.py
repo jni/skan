@@ -1025,11 +1025,7 @@ def _path_distances(skeleton, center_point, path_id):
     return distances
 
 
-def sholl_analysis(
-        skeleton,
-        center=None,
-        shells=None
-        ):
+def sholl_analysis(skeleton, center=None, shells=None):
     """Sholl Analysis for Skeleton object.
 
     Parameters
@@ -1057,17 +1053,20 @@ def sholl_analysis(
     skel_shape = np.asarray(imskeleton.shape)
 
     if center is None:
-        g, nodes = pixel_graph(imskeleton, connectivity=imskeleton.ndim,
-                               spacing=skeleton.spacing)
+        g, nodes = pixel_graph(
+                imskeleton,
+                connectivity=imskeleton.ndim,
+                spacing=skeleton.spacing
+                )
         center, _ = central_pixel(g, shape=skel_shape, nodes=nodes)
 
     center = np.asarray(center)
 
     # if soma doesn't lie on skeleton, find nearest point on skeleton
     if not imskeleton[tuple(center)]:
-        center = skeleton.coordinates[
-            np.argmin(np.linalg.norm(skeleton.coordinates - center, axis=1))
-            ]
+        center = skeleton.coordinates[np.argmin(
+                np.linalg.norm(skeleton.coordinates - center, axis=1)
+                )]
 
     scaled_center = center * skeleton.spacing
     leaf_node_val = 1
@@ -1097,21 +1096,18 @@ def sholl_analysis(
 
         shell_radii = np.linspace(start_radius, end_radius, shells)
 
-    intersection_counts = np.zeros_like(shell_radii)
-
-    for i in range(skeleton.n_paths):
-        # Find distances of the path pixels
-        distances = _path_distances(skeleton, scaled_center, i)
-
-        # Find which shell bin each pixel sits in
-        shell_location = np.digitize(distances, shell_radii)
-
-        # Use np.diff to find where bins are crossed. The -1 accounts for
-        # 'shell 0' not existing.
-        crossings = shell_location[
-            np.flatnonzero(np.diff(shell_location))] - 1
-
-        # increment corresponding crossings
-        intersection_counts[crossings] += 1
+    edges = skeleton.graph.tocoo()
+    scaled_coords = skeleton.coordinates * skeleton.spacing
+    coords0 = scaled_coords[edges.row]
+    coords1 = scaled_coords[edges.col]
+    d0 = distance_matrix(coords0, [scaled_center]).ravel()
+    d1 = distance_matrix(coords1, [scaled_center]).ravel()
+    bins0 = np.digitize(d0, shell_radii)
+    bins1 = np.digitize(d1, shell_radii)
+    crossings = bins0 != bins1
+    shells = np.minimum(bins0[crossings], bins1[crossings])
+    # we divide by 2 because the graph is undirected, so each edge appears
+    # twice in the matrix
+    intersection_counts = np.bincount(shells) // 2
 
     return shell_radii, intersection_counts
