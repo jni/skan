@@ -1053,12 +1053,9 @@ def sholl_analysis(skeleton, center=None, shells=None):
     skel_shape = np.asarray(imskeleton.shape)
 
     if center is None:
-        g, nodes = pixel_graph(
-                imskeleton,
-                connectivity=imskeleton.ndim,
-                spacing=skeleton.spacing
-                )
-        center, _ = central_pixel(g, shape=skel_shape, nodes=nodes)
+        # By default, find the geodesic center of the graph
+        center_idx, _ = central_pixel(skeleton.graph)
+        center = skeleton.coordinates[center_idx]
 
     center = np.asarray(center)
 
