@@ -42,6 +42,8 @@ schizont_files = list(filter(lambda x: not x.endswith('01.tif'),
 Now we process all 96 images. This should take about a minute on a modern laptop, but could be faster on a multicore machine, as it processes images using as many CPUs as are avaliable.
 
 ```{code-cell} ipython3
+:tags: [remove-output]
+
 from skan import pipe
 import toolz as tz
 
@@ -103,7 +105,7 @@ data['field number'] = data['filename'].apply(field_number)
 
 +++
 
-Next, we filter the branches by using the [*shape index*](http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index). We have used a very simple method to extract skeletons (see [Getting started](getting_started.html)), which does an acceptable job but creates a lot of false branches. Since the goal of Skan is to analyse skeletons, rather than generate them, we attempt to filter the branches, and measure only those that look like ridges according to the shape index.
+Next, we filter the branches by using the [*shape index*](http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index). We have used a very simple method to extract skeletons (see [Getting started](getting_started)), which does an acceptable job but creates a lot of false branches. Since the goal of Skan is to analyse skeletons, rather than generate them, we attempt to filter the branches, and measure only those that look like ridges according to the shape index.
 
 ```{code-cell} ipython3
 ridges = ((data['mean-shape-index'] < 0.625) &
