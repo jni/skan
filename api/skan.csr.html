@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>skan.csr: CSR Graph representation of skeletons &mdash; Skan 0.10.0 documentation</title>
+  <title>skan.csr: CSR Graph representation of skeletons &mdash; Skan 0.11.0.dev documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
@@ -33,7 +33,7 @@
             <a href="../index.html" class="icon icon-home"> Skan
           </a>
               <div class="version">
-                0.10.0
+                0.11.0.dev
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -344,41 +344,6 @@ has the value of its branch id + 1.</p>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="skan.csr.branch_statistics">
-<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">branch_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_size_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#branch_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.branch_statistics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the length and type of each branch in a skeleton graph.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>graph</strong> (<em>sparse.csr_matrix</em><em>, </em><em>shape</em><em> (</em><em>N</em><em>, </em><em>N</em><em>)</em>) – A skeleton graph.</p></li>
-<li><p><strong>pixel_values</strong> (<em>array of float</em><em>, </em><em>shape</em><em> (</em><em>N</em><em>,</em><em>)</em>) – A value for each pixel in the graph. Used to compute total
-intensity statistics along each branch.</p></li>
-<li><p><strong>buffer_size_offset</strong> (<em>int</em><em>, </em><em>optional</em>) – The buffer size is given by the sum of the degrees of non-path
-nodes. This is usually 2x the amount needed, allowing room for
-extra cycles of path-only nodes. However, if the image consists
-<em>only</em> of such cycles, the buffer size will be 0, resulting in
-an error. Until a more sophisticated, expandable-buffer
-solution is implemented, you can manually set a bigger buffer
-size using this parameter.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>branches</strong> – An array containing branch endpoint IDs, length, and branch type.
-The types are:
-- tip-tip (0)
-- tip-junction (1)
-- junction-junction (2)
-- path-path (3) (This can only be a standalone cycle)
-Optionally, the last column contains the average pixel value
-along each branch (not including the endpoints).</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array of float, shape (N, {4, 5})</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
