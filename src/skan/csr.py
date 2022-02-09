@@ -363,6 +363,7 @@ def _walk_path(
         jgraph, node, neighbor, visited, degrees, indices, path_data, startj
         ):
     indices[startj] = node
+    start_node = node
     path_data[startj] = jgraph.node_properties[node]
     j = startj + 1
     while not visited.edge(node, neighbor):
@@ -370,7 +371,7 @@ def _walk_path(
         visited.set_edge(neighbor, node, True)
         indices[j] = neighbor
         path_data[j] = jgraph.node_properties[neighbor]
-        if degrees[neighbor] != 2:
+        if degrees[neighbor] != 2 or neighbor == start_node:
             break
         n1, n2 = jgraph.neighbors(neighbor)
         nextneighbor = n1 if n1 != node else n2

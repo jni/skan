@@ -88,7 +88,7 @@ def test_cycle_stats():
 
 def test_3d_spacing():
     stats = _old_branch_statistics(skeleton3d, spacing=[5, 1, 1])
-    assert_equal(stats.shape, (5, 4))
+    assert_equal(stats.shape, (7, 4))
     assert_almost_equal(stats[0], [0, 10, 2 * np.sqrt(5**2 + 1 + 1), 1])
     # source, dest, length, type
     # test only junction-tip segments
