@@ -1,6 +1,8 @@
+from collections import defaultdict
+
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
-import pytest
+
 from skan import csr
 from skan._testdata import (
         tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
@@ -22,16 +24,20 @@ def test_tiny_cycle():
 
 
 def test_skeleton1_stats():
-    g, idxs = csr.skeleton_to_csgraph(skeleton1)
-    stats = csr.branch_statistics(g)
+    skel = csr.Skeleton(skeleton1)
+    stats_full = csr.summarize(skel)
+    stats = stats_full[[
+            'node-id-src', 'node-id-dst', 'branch-distance', 'branch-type'
+            ]].to_numpy()
     assert_equal(stats.shape, (4, 4))
-    keys = map(tuple, stats[:, :2].astype(int))
+    keys = map(tuple, np.sort(stats[:, :2].astype(int), axis=1))
     dists = stats[:, 2]
     types = stats[:, 3].astype(int)
-    ids2dist = dict(zip(keys, dists))
-    assert (12, 7) in ids2dist
+    ids2dist = defaultdict(list)
+    for key, dist in zip(keys, dists):
+        ids2dist[key].append(dist)
     assert (7, 12) in ids2dist
-    d0, d1 = sorted((ids2dist[(12, 7)], ids2dist[(7, 12)]))
+    d0, d1 = sorted(ids2dist[(7, 12)])
     assert_almost_equal(d0, 1 + np.sqrt(2))
     assert_almost_equal(d1, 5 * d0)
     assert_equal(np.bincount(types), [0, 2, 2])

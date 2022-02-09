@@ -145,8 +145,7 @@ def pixel_graph(
     return graph, nodes
 
 
-# NBGraph and Numba-based implementation
-csr_spec = [
+csr_spec_float = [
         ('indptr', numba.int32[:]),
         ('indices', numba.int32[:]),
         ('data', numba.float64[:]),
@@ -154,9 +153,16 @@ csr_spec = [
         ('node_properties', numba.float64[:]),
         ]  # yapf: disable
 
+csr_spec_bool = [
+        ('indptr', numba.int32[:]),
+        ('indices', numba.int32[:]),
+        ('data', numba.bool_[:]),
+        ('shape', numba.int32[:]),
+        ('node_properties', numba.float64[:]),
+        ]  # yapf: disable
 
-@numba.experimental.jitclass(csr_spec)
-class NBGraph:
+
+class NBGraphBase:
     def __init__(self, indptr, indices, data, shape, node_props):
         self.indptr = indptr
         self.indices = indices
@@ -167,6 +173,9 @@ class NBGraph:
     def edge(self, i, j):
         return _csrget(self.indices, self.indptr, self.data, i, j)
 
+    def set_edge(self, i, j, value):
+        return _csrset(self.indices, self.indptr, self.data, i, j, value)
+
     def neighbors(self, row):
         loc, stop = self.indptr[row], self.indptr[row + 1]
         return self.indices[loc:stop]
@@ -174,6 +183,10 @@ class NBGraph:
     @property
     def has_node_props(self):
         return self.node_properties.strides != (0,)
+
+
+NBGraph = numba.experimental.jitclass(NBGraphBase, csr_spec_float)
+NBGraphBool = numba.experimental.jitclass(NBGraphBase, csr_spec_bool)
 
 
 def csr_to_nbgraph(csr, node_props=None):
@@ -319,24 +332,22 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
     indptr_i = 0
     indices_j = 0
     # first, process all nodes in a path to an endpoint or junction
-    for node in range(1, jgraph.shape[0]):
-        if degrees[node] > 2 or degrees[node] == 1 and not visited[node]:
+    for node in range(jgraph.shape[0]):
+        if degrees[node] > 2 or degrees[node] == 1:
             for neighbor in jgraph.neighbors(node):
-                if not visited[neighbor]:
+                if not visited.edge(node, neighbor):
                     n_steps = _walk_path(
                             jgraph, node, neighbor, visited, degrees, indices,
                             path_data, indices_j
                             )
-                    visited[node] = True
                     indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                     indptr_i += 1
                     indices_j += n_steps
     # everything else is by definition in isolated cycles
-    for node in range(1, jgraph.shape[0]):
+    for node in range(jgraph.shape[0]):
         if degrees[node] > 0:
-            if not visited[node]:
-                visited[node] = True
-                neighbor = jgraph.neighbors(node)[0]
+            neighbor = jgraph.neighbors(node)[0]
+            if not visited.edge(node, neighbor):
                 n_steps = _walk_path(
                         jgraph, node, neighbor, visited, degrees, indices,
                         path_data, indices_j
@@ -354,17 +365,17 @@ def _walk_path(
     indices[startj] = node
     path_data[startj] = jgraph.node_properties[node]
     j = startj + 1
-    while degrees[neighbor] == 2 and not visited[neighbor]:
+    while not visited.edge(node, neighbor):
+        visited.set_edge(node, neighbor, True)
+        visited.set_edge(neighbor, node, True)
         indices[j] = neighbor
         path_data[j] = jgraph.node_properties[neighbor]
+        if degrees[neighbor] != 2:
+            break
         n1, n2 = jgraph.neighbors(neighbor)
         nextneighbor = n1 if n1 != node else n2
         node, neighbor = neighbor, nextneighbor
-        visited[node] = True
         j += 1
-    indices[j] = neighbor
-    path_data[j] = jgraph.node_properties[neighbor]
-    visited[neighbor] = True
     return j - startj + 1
 
 
@@ -372,7 +383,11 @@ def _build_skeleton_path_graph(graph):
     max_num_cycles = graph.indices.size // 4
     buffer_size_offset = max_num_cycles
     degrees = np.diff(graph.indptr)
-    visited = np.zeros(degrees.shape, dtype=bool)
+    visited_data = np.zeros(graph.data.shape, dtype=bool)
+    visited = NBGraphBool(
+            graph.indptr, graph.indices, visited_data, graph.shape,
+            np.broadcast_to(1., graph.shape[0])
+            )
     endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
     num_paths = np.sum(endpoint_degrees)
@@ -885,6 +900,36 @@ def _csrget(indices, indptr, data, row, col):
         if indices[i] == col:
             return data[i]
     return 0.
+
+
+@numba.jit(nopython=True, cache=True)
+def _csrset(indices, indptr, data, row, col, value):
+    """Fast lookup and set of value in a scipy.sparse.csr_matrix format table.
+
+    Parameters
+    ----------
+    indices, indptr, data : numpy arrays of int, int, float
+        The CSR format data.
+    row, col : int
+        The matrix coordinates of the desired value.
+    value : dtype
+        The value to set in the matrix.
+
+    Notes
+    -----
+    This function only sets values that already existed in the matrix.
+
+    Returns
+    -------
+    success: bool
+        Whether the data value was successfully written to the matrix.
+    """
+    start, end = indptr[row], indptr[row + 1]
+    for i in range(start, end):
+        if indices[i] == col:
+            data[i] = value
+            return True
+    return False
 
 
 @numba.jit(nopython=True)
