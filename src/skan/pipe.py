@@ -71,7 +71,9 @@ def process_single_image(
             )
     framedata['scale'] = scale
     framedata.rename(
-            columns={'mean pixel value': 'mean shape index'}, inplace=True
+            columns={'mean-pixel-value': 'mean-shape-index'},
+            inplace=True,
+            errors='raise',
             )
     framedata['filename'] = filename
     return image, thresholded, skeleton, framedata
@@ -138,7 +140,8 @@ def process_images(
                         ): filename
                 for filename in filenames
                 }
-        for completed_data in tqdm(as_completed(future_data)):
+        for completed_data in tqdm(as_completed(future_data),
+                                   total=len(filenames)):
             image, thresholded, skeleton, framedata = completed_data.result()
             filename = future_data[completed_data]
             results.append(framedata)
