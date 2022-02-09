@@ -1,11 +1,25 @@
+from collections import defaultdict
+
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
-import pytest
+from skimage.draw import line
+
 from skan import csr
 from skan._testdata import (
         tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
         topograph1d, skeleton4
         )
+
+
+def _old_branch_statistics(
+        skeleton_image, *, spacing=1, value_is_height=False
+        ):
+    skel = csr.Skeleton(
+            skeleton_image, spacing=spacing, value_is_height=value_is_height
+            )
+    summary = csr.summarize(skel, value_is_height=value_is_height)
+    columns = ['node-id-src', 'node-id-dst', 'branch-distance', 'branch-type']
+    return summary[columns].to_numpy()
 
 
 def test_tiny_cycle():
@@ -22,16 +36,16 @@ def test_tiny_cycle():
 
 
 def test_skeleton1_stats():
-    g, idxs = csr.skeleton_to_csgraph(skeleton1)
-    stats = csr.branch_statistics(g)
+    stats = _old_branch_statistics(skeleton1)
     assert_equal(stats.shape, (4, 4))
-    keys = map(tuple, stats[:, :2].astype(int))
+    keys = map(tuple, np.sort(stats[:, :2].astype(int), axis=1))
     dists = stats[:, 2]
     types = stats[:, 3].astype(int)
-    ids2dist = dict(zip(keys, dists))
-    assert (12, 7) in ids2dist
+    ids2dist = defaultdict(list)
+    for key, dist in zip(keys, dists):
+        ids2dist[key].append(dist)
     assert (7, 12) in ids2dist
-    d0, d1 = sorted((ids2dist[(12, 7)], ids2dist[(7, 12)]))
+    d0, d1 = sorted(ids2dist[(7, 12)])
     assert_almost_equal(d0, 1 + np.sqrt(2))
     assert_almost_equal(d1, 5 * d0)
     assert_equal(np.bincount(types), [0, 2, 2])
@@ -64,21 +78,18 @@ def test_line():
     assert_equal(np.ravel(idxs), [1, 2, 3])
     assert_equal(g.shape, (3, 3))
     # source, dest, length, type
-    assert_equal(csr.branch_statistics(g), [[0, 2, 2, 0]])
+    assert_equal(_old_branch_statistics(tinyline), [[0, 2, 2, 0]])
 
 
 def test_cycle_stats():
-    stats = csr.branch_statistics(
-            csr.skeleton_to_csgraph(tinycycle)[0], buffer_size_offset=1
-            )
+    stats = _old_branch_statistics(tinycycle)
     # source, dest, length, type
     assert_almost_equal(stats, [[0, 0, 4 * np.sqrt(2), 3]])
 
 
 def test_3d_spacing():
-    g, idxs = csr.skeleton_to_csgraph(skeleton3d, spacing=[5, 1, 1])
-    stats = csr.branch_statistics(g)
-    assert_equal(stats.shape, (5, 4))
+    stats = _old_branch_statistics(skeleton3d, spacing=[5, 1, 1])
+    assert_equal(stats.shape, (7, 4))
     assert_almost_equal(stats[0], [0, 10, 2 * np.sqrt(5**2 + 1 + 1), 1])
     # source, dest, length, type
     # test only junction-tip segments
@@ -86,8 +97,7 @@ def test_3d_spacing():
 
 
 def test_topograph():
-    g, idxs = csr.skeleton_to_csgraph(topograph1d, value_is_height=True)
-    stats = csr.branch_statistics(g)
+    stats = _old_branch_statistics(topograph1d, value_is_height=True)
     assert stats.shape == (1, 4)
     assert_almost_equal(stats[0], [0, 2, 2 * np.sqrt(2), 0])
 
@@ -104,7 +114,7 @@ def test_topograph_summary():
 
 def test_junction_multiplicity():
     """Test correct distances when a junction has more than one pixel."""
-    g, idxs = csr.skeleton_to_csgraph(skeleton0)
+    g, _ = csr.skeleton_to_csgraph(skeleton0)
     assert_equal(g.data, 1.0)
     assert_equal(g[2, 5], 0.0)
 
@@ -144,3 +154,25 @@ def test_mst_junctions():
 
     np.testing.assert_equal(G, h.todense())
     np.testing.assert_equal(G, hprime.todense())
+
+
+def test_transpose_image():
+    image = np.zeros((10, 10))
+
+    rr, cc = line(4, 0, 4, 2)
+    image[rr, cc] = 1
+    rr, cc = line(3, 2, 3, 5)
+    image[rr, cc] = 1
+    rr, cc = line(1, 2, 8, 2)
+    image[rr, cc] = 1
+    rr, cc = line(1, 0, 1, 8)
+    image[rr, cc] = 1
+
+    skeleton1 = csr.Skeleton(image)
+    skeleton2 = csr.Skeleton(image.T)
+
+    assert (skeleton1.n_paths == skeleton2.n_paths)
+    np.testing.assert_allclose(
+            np.sort(skeleton1.path_lengths()),
+            np.sort(skeleton2.path_lengths()),
+            )
