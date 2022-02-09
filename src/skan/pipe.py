@@ -71,7 +71,9 @@ def process_single_image(
             )
     framedata['scale'] = scale
     framedata.rename(
-            columns={'mean pixel value': 'mean shape index'}, inplace=True
+            columns={'mean-pixel-value': 'mean-shape-index'},
+            inplace=True,
+            errors='raise',
             )
     framedata['filename'] = filename
     return image, thresholded, skeleton, framedata
