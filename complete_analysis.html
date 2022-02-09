@@ -8,6 +8,8 @@
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -18,6 +20,8 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
+        <script src="_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -76,7 +80,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Complete analysis with Skan</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/complete_analysis.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/complete_analysis.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -84,203 +88,213 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="complete-analysis-with-skan">
+  <section class="tex2jax_ignore mathjax_ignore" id="complete-analysis-with-skan">
 <h1>Complete analysis with Skan<a class="headerlink" href="#complete-analysis-with-skan" title="Permalink to this headline">¶</a></h1>
-<p>In this notebook, we reproduce the analysis leading to Figure 2 of our
-paper, submitted to PeerJ.</p>
+<p>In this notebook, we reproduce the analysis leading to Figure 2 of our paper, submitted to PeerJ.</p>
 <section id="getting-the-data">
 <h2>0. Getting the data<a class="headerlink" href="#getting-the-data" title="Permalink to this headline">¶</a></h2>
-<p>First, we need to download the input data, which is posted at the Open
-Science Framework (OSF) as a zip file. Many thanks to the OSF for
-providing hosting for scientific data. The data be downloaded at this
-URL:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">osf</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="mi">7</span><span class="n">vyx3</span>
+<p>First, we need to download the input data, which is posted at the Open Science Framework (OSF) as a zip file. Many thanks to the OSF for providing hosting for scientific data. The data be downloaded at this URL:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>https://osf.io/7vyx3
 </pre></div>
 </div>
-<p>Download and extract the zipfile, and make sure the <code class="docutils literal notranslate"><span class="pre">schizonts</span></code> folder
-contained within it is placed in this notebook’s working directory.</p>
+<p>Download and extract the zipfile, and make sure the <code class="docutils literal notranslate"><span class="pre">schizonts</span></code> folder contained within it is placed in this notebook’s working directory.</p>
 </section>
 <section id="using-skan-pipe-to-get-a-branch-dataset-for-analysis">
 <h2>1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis<a class="headerlink" href="#using-skan-pipe-to-get-a-branch-dataset-for-analysis" title="Permalink to this headline">¶</a></h2>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">schizont_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;schizonts/*.tif&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># remove files ending with &#39;01.tif&#39;, which are low-res overview images</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">schizont_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;01.tif&#39;</span><span class="p">),</span>
-<span class="gp">... </span>                             <span class="n">schizont_files</span><span class="p">))</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+
+
+<span class="n">schizont_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;schizonts/*.tif&#39;</span><span class="p">)</span>
+<span class="c1"># remove files ending with &#39;01.tif&#39;, which are low-res overview images</span>
+<span class="n">schizont_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;01.tif&#39;</span><span class="p">),</span>
+                             <span class="n">schizont_files</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Now we process all 96 images. This should take about a minute on a
-modern laptop, but could be faster on a multicore machine, as it
-processes images using as many CPUs as are avaliable.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">pipe</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">toolz</span> <span class="k">as</span> <span class="nn">tz</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">per_image_data</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">last</span><span class="p">(</span><span class="n">pipe</span><span class="o">.</span><span class="n">process_images</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">schizont_files</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">image_format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">threshold_radius</span><span class="o">=</span><span class="mf">5e-8</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">smooth_radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">brightness_offset</span><span class="o">=</span><span class="mf">0.075</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">scale_metadata_path</span><span class="o">=</span><span class="s1">&#39;Scan/PixelHeight&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">crop_radius</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">smooth_method</span><span class="o">=</span><span class="s1">&#39;Gaussian&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">))</span>
+</div>
+</div>
+<p>Now we process all 96 images. This should take about a minute on a modern laptop, but could be faster on a multicore machine, as it processes images using as many CPUs as are avaliable.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">pipe</span>
+<span class="kn">import</span> <span class="nn">toolz</span> <span class="k">as</span> <span class="nn">tz</span>
+
+
+<span class="n">data</span><span class="p">,</span> <span class="n">per_image_data</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">last</span><span class="p">(</span><span class="n">pipe</span><span class="o">.</span><span class="n">process_images</span><span class="p">(</span>
+    <span class="n">schizont_files</span><span class="p">,</span>
+    <span class="n">image_format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">,</span>
+    <span class="n">threshold_radius</span><span class="o">=</span><span class="mf">5e-8</span><span class="p">,</span>
+    <span class="n">smooth_radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">brightness_offset</span><span class="o">=</span><span class="mf">0.075</span><span class="p">,</span>
+    <span class="n">scale_metadata_path</span><span class="o">=</span><span class="s1">&#39;Scan/PixelHeight&#39;</span><span class="p">,</span>
+    <span class="n">crop_radius</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">smooth_method</span><span class="o">=</span><span class="s1">&#39;Gaussian&#39;</span>
+<span class="p">))</span>
 </pre></div>
 </div>
-<p>96it [00:29,  8.33it/s]</p>
+</div>
+</div>
 <p>Next, we use the filename to infer the infection status of each image.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">infection_status</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="s1">&#39;Uninf&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;normal&#39;</span>
-<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;infected&#39;</span>
-<span class="gp">...</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;infection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">infection_status</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">infection_status</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;Uninf&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;normal&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;infected&#39;</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;infection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">infection_status</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Also encoded in the filename are the <em>cell number</em> (unique by infection
-status) and the <em>field number</em> (each cell membrane is imaged at several
-non-overlapping locations).</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>  <span class="c1"># regular expressions, for text matching</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">cell_number</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;.*RBC(\d+)_\d\d.tif&#39;</span>
-<span class="gp">... </span>    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="kc">None</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">field_number</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;.*RBC\d+_(\d\d).tif&#39;</span>
-<span class="gp">... </span>    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="kc">None</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cell number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cell_number</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;field number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">field_number</span><span class="p">)</span>
+</div>
+</div>
+<p>Also encoded in the filename are the <em>cell number</em> (unique by infection status) and the <em>field number</em> (each cell membrane is imaged at several non-overlapping locations).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>  <span class="c1"># regular expressions, for text matching</span>
+
+
+<span class="k">def</span> <span class="nf">cell_number</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;.*RBC(\d+)_\d\d.tif&#39;</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+<span class="k">def</span> <span class="nf">field_number</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;.*RBC\d+_(\d\d).tif&#39;</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;cell number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cell_number</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;field number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">field_number</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="cleaning-up-the-data">
 <h2>2. Cleaning up the data<a class="headerlink" href="#cleaning-up-the-data" title="Permalink to this headline">¶</a></h2>
-<p>Next, we filter the branches by using the <a class="reference external" href="http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index">*shape
-index*</a>.
-We have used a very simple method to extract skeletons (see <a class="reference external" href="getting_started.html">Getting
-started</a>), which does an acceptable job but
-creates a lot of false branches. Since the goal of Skan is to analyse
-skeletons, rather than generate them, we attempt to filter the branches,
-and measure only those that look like ridges according to the shape
-index.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ridges</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean shape index&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.625</span><span class="p">)</span> <span class="o">&amp;</span>
-<span class="gp">... </span>          <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean shape index&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.125</span><span class="p">))</span>
+<p>Next, we filter the branches by using the <a class="reference external" href="http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index"><em>shape index</em></a>. We have used a very simple method to extract skeletons (see <a class="reference internal" href="getting_started.html"><span class="doc std std-doc">Getting started</span></a>), which does an acceptable job but creates a lot of false branches. Since the goal of Skan is to analyse skeletons, rather than generate them, we attempt to filter the branches, and measure only those that look like ridges according to the shape index.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ridges</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean-shape-index&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.625</span><span class="p">)</span> <span class="o">&amp;</span>
+          <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean-shape-index&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.125</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>For the same reason, we only look at junction-to-junction branches,
-which are more accurately identified by our method than
-junction-to-endpoint branches.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">j2j</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">datar</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ridges</span> <span class="o">&amp;</span> <span class="n">j2j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</div>
+</div>
+<p>For the same reason, we only look at junction-to-junction branches, which are more accurately identified by our method than junction-to-endpoint branches.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">j2j</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="n">datar</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ridges</span> <span class="o">&amp;</span> <span class="n">j2j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Finally, we make a new column of measurements in a more natural scale
-for our purpose.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e9</span>
+</div>
+</div>
+<p>Finally, we make a new column of measurements in a more natural scale for our purpose.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e9</span>
 </pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="making-the-figure">
 <h2>3. Making the figure<a class="headerlink" href="#making-the-figure" title="Permalink to this headline">¶</a></h2>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>If running in the IPython console, consider running <code class="docutils literal notranslate"><span class="pre">%matplotlib</span></code> to enable
-interactive plots.  If running in the Jupyter Notebook, use <code class="docutils literal notranslate"><span class="pre">%matplotlib</span>
-<span class="pre">inline</span></code>.</p>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">imageio</span> <span class="k">as</span> <span class="nn">iio</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan.pre</span> <span class="kn">import</span> <span class="n">threshold</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">imageio</span> <span class="k">as</span> <span class="nn">iio</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="kn">from</span> <span class="nn">skan.pre</span> <span class="kn">import</span> <span class="n">threshold</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># PANEL A</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># display an arbitrary image</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">crop</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">),)</span> <span class="o">*</span> <span class="mi">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image_raw</span> <span class="o">=</span> <span class="n">iio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;schizonts/schizont4_UninfRBC7_06.tif&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                       <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">image_raw</span><span class="p">[</span><span class="n">crop</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># add a 300nm scale bar</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scalenm</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;Scan&#39;</span><span class="p">][</span><span class="s1">&#39;PixelHeight&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mi">1096</span><span class="p">,</span> <span class="mi">1096</span> <span class="o">+</span> <span class="mi">300</span> <span class="o">/</span> <span class="n">scalenm</span><span class="p">),</span> <span class="p">(</span><span class="mi">940</span><span class="p">,</span> <span class="mi">940</span><span class="p">),</span>
-<span class="gp">... </span>           <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># PANEL B</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Next, show the smoothed binary image and corresponding skeleton</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">50</span><span class="o">/</span><span class="n">scalenm</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sigma</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="mf">0.1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">thresholded</span> <span class="o">=</span> <span class="n">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
-<span class="gp">... </span>                        <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.075</span><span class="p">,</span>
-<span class="gp">... </span>                        <span class="n">smooth_method</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">viz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">viz</span><span class="p">[</span><span class="n">thresholded</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">thresholded</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fat_skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">viz</span><span class="p">[</span><span class="n">fat_skeleton</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">viz</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mi">1096</span><span class="p">,</span> <span class="mi">1096</span> <span class="o">+</span> <span class="mi">300</span> <span class="o">/</span> <span class="n">scalenm</span><span class="p">),</span> <span class="p">(</span><span class="mi">940</span><span class="p">,</span> <span class="mi">940</span><span class="p">),</span>
-<span class="gp">... </span>           <span class="n">c</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># PANEL C</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add a panel with a histogram of all branch lengths by infection status</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">inf</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">... </span>                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)):</span>
-<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
-<span class="gp">... </span>               <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;density&#39;</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># PANEL D</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Finally, a panel grouping the data by cell, showing the difference</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># between infected and uninfected cells</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cellmeans</span> <span class="o">=</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="s1">&#39;cell number&#39;</span><span class="p">])</span>
-<span class="gp">... </span>                  <span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sns</span><span class="o">.</span><span class="n">stripplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">cellmeans</span><span class="p">,</span>
-<span class="gp">... </span>              <span class="n">jitter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;infected&#39;</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;infection status&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;mean branch distance</span><span class="se">\n</span><span class="s1">by cell (nm)&#39;</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use matplotlib&#39;s automatic layout algorithm</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="c1"># PANEL A</span>
+<span class="c1"># display an arbitrary image</span>
+<span class="n">crop</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">),)</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="n">image_raw</span> <span class="o">=</span> <span class="n">iio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;schizonts/schizont4_UninfRBC7_06.tif&#39;</span><span class="p">,</span>
+                       <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">image_raw</span><span class="p">[</span><span class="n">crop</span><span class="p">]</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+<span class="c1"># add a 300nm scale bar</span>
+<span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">scalenm</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;Scan&#39;</span><span class="p">][</span><span class="s1">&#39;PixelHeight&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mi">1096</span><span class="p">,</span> <span class="mi">1096</span> <span class="o">+</span> <span class="mi">300</span> <span class="o">/</span> <span class="n">scalenm</span><span class="p">),</span> <span class="p">(</span><span class="mi">940</span><span class="p">,</span> <span class="mi">940</span><span class="p">),</span>
+           <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="c1"># PANEL B</span>
+<span class="c1"># Next, show the smoothed binary image and corresponding skeleton</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">50</span><span class="o">/</span><span class="n">scalenm</span><span class="p">))</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="mf">0.1</span>
+<span class="n">thresholded</span> <span class="o">=</span> <span class="n">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+                        <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.075</span><span class="p">,</span>
+                        <span class="n">smooth_method</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+<span class="n">viz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">viz</span><span class="p">[</span><span class="n">thresholded</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">thresholded</span><span class="p">)</span>
+<span class="n">fat_skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
+<span class="n">viz</span><span class="p">[</span><span class="n">fat_skeleton</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">viz</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mi">1096</span><span class="p">,</span> <span class="mi">1096</span> <span class="o">+</span> <span class="mi">300</span> <span class="o">/</span> <span class="n">scalenm</span><span class="p">),</span> <span class="p">(</span><span class="mi">940</span><span class="p">,</span> <span class="mi">940</span><span class="p">),</span>
+           <span class="n">c</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># PANEL C</span>
+<span class="c1"># Add a panel with a histogram of all branch lengths by infection status</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">inf</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+               <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;density&#39;</span><span class="p">)</span>
+
+<span class="c1"># PANEL D</span>
+<span class="c1"># Finally, a panel grouping the data by cell, showing the difference</span>
+<span class="c1"># between infected and uninfected cells</span>
+<span class="n">cellmeans</span> <span class="o">=</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="s1">&#39;cell number&#39;</span><span class="p">])</span>
+                  <span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">stripplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">cellmeans</span><span class="p">,</span>
+              <span class="n">jitter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;infected&#39;</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+              
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;infection status&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;mean branch distance</span><span class="se">\n</span><span class="s1">by cell (nm)&#39;</span><span class="p">)</span>
+
+<span class="c1"># Use matplotlib&#39;s automatic layout algorithm</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<ul class="simple">
-<li><p><a class="reference download internal" href="complete_analysis.py">Download this page as a Python code file</a>;</p></li>
-<li><p><a class="reference download internal" href="complete_analysis.ipynb">Download this page as a Jupyter notebook (no outputs)</a>.</p></li>
-</ul>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/complete_analysis_19_0.png" src="_images/complete_analysis_19_0.png" />
+</div>
+</div>
 </section>
 </section>
 

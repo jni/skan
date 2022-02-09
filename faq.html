@@ -8,6 +8,8 @@
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -18,6 +20,8 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
+        <script src="_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -76,7 +80,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>FAQ</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/faq.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/faq.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -84,86 +88,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="faq">
+  <section class="tex2jax_ignore mathjax_ignore" id="faq">
 <h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
 <section id="i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives">
 <h2>I just upgraded from skan v0.8 or 0.9 and my measurements are slightly different. What gives?<a class="headerlink" href="#i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives" title="Permalink to this headline">¶</a></h2>
-<p>In skan v0.10, we added a new way to deal with junctions (see next
-question). This new method offered enough advantages that we decided to
-make it the default straight away. This should not affect the accuracy
-of the measurements provided by skan, but will result in small numerical
-differences of less than the pixel spacing of your dataset.</p>
+<p>In skan v0.10, we added a new way to deal with junctions (see next question). This new method offered enough advantages that we decided to make it the default straight away. This should not affect the accuracy of the measurements provided by skan, but will result in small numerical differences of less than the pixel spacing of your dataset.</p>
 </section>
 <section id="what-s-unique-junctions-or-junction-mode">
 <h2>What’s <code class="docutils literal notranslate"><span class="pre">unique_junctions</span></code> or <code class="docutils literal notranslate"><span class="pre">junction_mode</span></code>?<a class="headerlink" href="#what-s-unique-junctions-or-junction-mode" title="Permalink to this headline">¶</a></h2>
-<p>When looking at the pixel-pixel graph of a skeleton, things get a little
-complicated at the junctions, where three or more branches meet. That’s
-because junctions are defined as a pixel that has three or more
-neighbors, but topologically, these can occur in “clusters”. This was
-explained in the <a class="reference external" href="https://doi.org/10.7717/peerj.4312/supp-2">supplementary material of the original Skan
-paper</a>. See the figure
-below for an example.</p>
-<p>Prior to skan version 0.10, skan’s approach to this problem was to
-collapse all such “bundles” to the centroid of the points.</p>
-<p>This gives good results when making measurements on the branches and
-examining the topology of the network, but has the disadvantage that it
-breaks the link between skeleton graph nodes and the underlying pixels.
-For example, if we use the node coordinates to paint data on an image,
-we will not fill in all the pixel positions and we will end up with a
-disconnected skeleton.</p>
-<p>In skan 0.10, we added a new strategy for dealing with the clusters:
-replace each cluster with its minimum spanning tree (MST). See
-<a class="reference external" href="https://github.com/jni/skan/issues/133">#133</a>.</p>
+<p>When looking at the pixel-pixel graph of a skeleton, things get a little complicated at the junctions, where three or more branches meet. That’s because junctions are defined as a pixel that has three or more neighbors, but topologically, these can occur in “clusters”. This was explained in the <a class="reference external" href="https://doi.org/10.7717/peerj.4312/supp-2">supplementary material of the original Skan paper</a>. See the figure below for an example.</p>
+<p>Prior to skan version 0.10, skan’s approach to this problem was to collapse all such “bundles” to the centroid of the points.</p>
+<p>This gives good results when making measurements on the branches and examining the topology of the network, but has the disadvantage that it breaks the link between skeleton graph nodes and the underlying pixels. For example, if we use the node coordinates to paint data on an image, we will not fill in all the pixel positions and we will end up with a disconnected skeleton.</p>
+<p>In skan 0.10, we added a new strategy for dealing with the clusters: replace each cluster with its minimum spanning tree (MST). See <a class="reference external" href="https://github.com/jni/skan/issues/133">#133</a>.</p>
 <p>All three approaches are summarized in the figure below:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan.csr</span> <span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">draw</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">_testdata</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">skel</span> <span class="o">=</span> <span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">mode</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;centroid&#39;</span><span class="p">,</span> <span class="s1">&#39;mst&#39;</span><span class="p">)):</span>
-<span class="gp">... </span>    <span class="n">graph</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skel</span><span class="p">,</span> <span class="n">junction_mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_networkx</span><span class="p">(</span>
-<span class="gp">... </span>            <span class="n">graph</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">skel</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">ax</span>
-<span class="gp">... </span>            <span class="p">)</span>
-<span class="gp">... </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;junctions: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The MST is now the default and will become the only supported method in
-skan 0.11 and later. If you absolutely need the earlier strategies,
-please <a class="reference external" href="https://github.com/jni/skan/issues/new">raise an issue</a>.</p>
+<p><img alt="junction modes pre 0.11" src="_images/junctions-pre-0-11.png" /></p>
+<p>The MST is now the default and will become the only supported method in skan 0.11 and later. If you absolutely need the earlier strategies, please <a class="reference external" href="https://github.com/jni/skan/issues/new">raise an issue</a>.</p>
 </section>
 <section id="why-are-coordinates-floats-and-not-integers">
 <h2>Why are coordinates floats and not integers?<a class="headerlink" href="#why-are-coordinates-floats-and-not-integers" title="Permalink to this headline">¶</a></h2>
-<p>This is because in <code class="docutils literal notranslate"><span class="pre">junction_mode='centroid'</span></code>, coordinates of more
-than one pixel are collapsed into a single centroid value which is
-rarely an integer. In skan 0.11 and later, once MST is the only
-supported mode, coordinates will correspond 1-1 with pixel coordinates
-and be integer-valued.</p>
+<p>This is because in <code class="docutils literal notranslate"><span class="pre">junction_mode='centroid'</span></code>, coordinates of more than one pixel are collapsed into a single centroid value which is rarely an integer. In skan 0.11 and later, once MST is the only supported mode, coordinates will correspond 1-1 with pixel coordinates and be integer-valued.</p>
 </section>
 <section id="why-is-coordinate-0-0-0-always-in-my-coordinate-list-why-is-the-coordinate-array-larger-than-the-number-of-nodes-in-the-pixel-graph">
 <h2>Why is coordinate (0, 0, 0) always in my coordinate list? / Why is the coordinate array larger than the number of nodes in the pixel graph?<a class="headerlink" href="#why-is-coordinate-0-0-0-always-in-my-coordinate-list-why-is-the-coordinate-array-larger-than-the-number-of-nodes-in-the-pixel-graph" title="Permalink to this headline">¶</a></h2>
-<p>This is done for implementation convenience. The coordinates contain <em>at
-least</em> the coordinates for every node in the pixel graph. However: - The
-pixels in the skeleton are numbered 1..n. In order for each node ID to
-index directly into the coordinates array, the array must have a “dummy”
-coordinate at position 0. We considered using <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> as a sentinel
-value to indicate that that position contained dummy data, but that
-would have made it more difficult to work with NumPy functions such as
-<code class="docutils literal notranslate"><span class="pre">np.min</span></code>/<code class="docutils literal notranslate"><span class="pre">np.max</span></code>, which would always return <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> without
-special handling. - Additionally, look closely at the figure in <a class="reference external" href="#What's-unique_junctions-or-junction_mode?">What’s
-unique_junctions or
-junction_mode?</a>: during
-centroid-based junction consolidation, a bunch of pixel IDs are removed
-from the graph. However, we keep indexing using the original IDs, so the
-coordinates in the coordinate array now contain “unused” data.</p>
-<p>See these GitHub issues for more details:
-<a class="reference external" href="https://github.com/jni/skan/issues/93">#93</a> and
-<a class="reference external" href="https://github.com/jni/skan/issues/108">#108</a>.</p>
+<p>This is done for implementation convenience. The coordinates contain <em>at least</em> the coordinates for every node in the pixel graph. However:</p>
+<ul class="simple">
+<li><p>The pixels in the skeleton are numbered 1..n. In order for each node ID to index directly into the coordinates array, the array must have a “dummy” coordinate at position 0. We considered using <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> as a sentinel value to indicate that that position contained dummy data, but that would have made it more difficult to work with NumPy functions such as <code class="docutils literal notranslate"><span class="pre">np.min</span></code>/<code class="docutils literal notranslate"><span class="pre">np.max</span></code>, which would always return <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> without special handling.</p></li>
+<li><p>Additionally, look closely at the figure in <a class="reference external" href="#What%27s-unique_junctions-or-junction_mode?">What’s unique_junctions or junction_mode?</a>: during centroid-based junction consolidation, a bunch of pixel IDs are removed from the graph. However, we keep indexing using the original IDs, so the coordinates in the coordinate array now contain “unused” data.</p></li>
+</ul>
+<p>See these GitHub issues for more details: <a class="reference external" href="https://github.com/jni/skan/issues/93">#93</a> and <a class="reference external" href="https://github.com/jni/skan/issues/108">#108</a>.</p>
 </section>
 </section>
 
