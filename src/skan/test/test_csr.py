@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
+from skimage.draw import line
 
 from skan import csr
 from skan._testdata import (
@@ -153,3 +154,25 @@ def test_mst_junctions():
 
     np.testing.assert_equal(G, h.todense())
     np.testing.assert_equal(G, hprime.todense())
+
+
+def test_transpose_image():
+    image = np.zeros((10, 10))
+
+    rr, cc = line(4, 0, 4, 2)
+    image[rr, cc] = 1
+    rr, cc = line(3, 2, 3, 5)
+    image[rr, cc] = 1
+    rr, cc = line(1, 2, 8, 2)
+    image[rr, cc] = 1
+    rr, cc = line(1, 0, 1, 8)
+    image[rr, cc] = 1
+
+    skeleton1 = csr.Skeleton(image)
+    skeleton2 = csr.Skeleton(image.T)
+
+    assert (skeleton1.n_paths == skeleton2.n_paths)
+    np.testing.assert_allclose(
+            np.sort(skeleton1.path_lengths()),
+            np.sort(skeleton2.path_lengths()),
+            )
