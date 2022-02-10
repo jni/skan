@@ -101,7 +101,7 @@ draw.overlay_skeleton_2d(image0, skeleton0, dilate=1, axes=ax);
 Now that we have a skeleton, we can use Skan's primary functions: producing a network of skeleton pixels, and measuring the properties of branches along that network.
 
 ```{code-cell} ipython3
-from skan import skeleton_to_csgraph
+from skan.csr import skeleton_to_csgraph
 
 pixel_graph, coordinates = skeleton_to_csgraph(skeleton0)
 ```

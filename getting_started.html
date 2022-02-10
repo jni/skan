@@ -201,20 +201,9 @@
 <p>Now that we have a skeleton, we can use Skan’s primary functions: producing a network of skeleton pixels, and measuring the properties of branches along that network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan.csr</span> <span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
 
 <span class="n">pixel_graph</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
-<span class="n">Input</span> <span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">pixel_graph</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">)</span>
-
-<span class="ne">ImportError</span>: cannot import name &#39;skeleton_to_csgraph&#39; from &#39;skan&#39; (/opt/hostedtoolcache/Python/3.9.10/x64/lib/python3.9/site-packages/skan/__init__.py)
 </pre></div>
 </div>
 </div>
@@ -243,6 +232,12 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:&gt;
+</pre></div>
+</div>
+<img alt="_images/getting_started_17_1.png" src="_images/getting_started_17_1.png" />
+</div>
 </div>
 <p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates…) together.</p>
 <p>The function <code class="docutils literal notranslate"><span class="pre">skan.summarize</span></code> uses this class to trace the path from junctions (node 3 in the left graph, 8 and 13 in the right graph) to endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and other junctions. It then produces a junction graph and table in the form of a pandas DataFrame.</p>
@@ -255,6 +250,142 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>skeleton-id</th>
+      <th>node-id-src</th>
+      <th>node-id-dst</th>
+      <th>branch-distance</th>
+      <th>branch-type</th>
+      <th>mean-pixel-value</th>
+      <th>stdev-pixel-value</th>
+      <th>image-coord-src-0</th>
+      <th>image-coord-src-1</th>
+      <th>image-coord-dst-0</th>
+      <th>image-coord-dst-1</th>
+      <th>coord-src-0</th>
+      <th>coord-src-1</th>
+      <th>coord-dst-0</th>
+      <th>coord-dst-1</th>
+      <th>euclidean-distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>691</td>
+      <td>52.215399</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>64</td>
+      <td>13</td>
+      <td>21</td>
+      <td>0.0</td>
+      <td>69.06688</td>
+      <td>14.02921</td>
+      <td>22.66257</td>
+      <td>48.478642</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>740</td>
+      <td>41.608855</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>128</td>
+      <td>14</td>
+      <td>159</td>
+      <td>0.0</td>
+      <td>138.13376</td>
+      <td>15.10838</td>
+      <td>171.58803</td>
+      <td>36.707647</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>8</td>
+      <td>833</td>
+      <td>22.815959</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>281</td>
+      <td>16</td>
+      <td>292</td>
+      <td>0.0</td>
+      <td>303.24677</td>
+      <td>17.26672</td>
+      <td>315.11764</td>
+      <td>20.953691</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>11</td>
+      <td>899</td>
+      <td>59.769589</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>364</td>
+      <td>17</td>
+      <td>318</td>
+      <td>0.0</td>
+      <td>392.81788</td>
+      <td>18.34589</td>
+      <td>343.17606</td>
+      <td>52.923359</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2</td>
+      <td>17</td>
+      <td>907</td>
+      <td>30.893850</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>630</td>
+      <td>17</td>
+      <td>651</td>
+      <td>0.0</td>
+      <td>679.87710</td>
+      <td>18.34589</td>
+      <td>702.53967</td>
+      <td>29.157568</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <p>The branch distance is the sum of the distances along path nodes between two nodes, in natural scale (given by <code class="docutils literal notranslate"><span class="pre">spacing</span></code>).</p>
 <p>The branch type is coded by number as:</p>
@@ -272,6 +403,9 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="_images/getting_started_21_0.png" src="_images/getting_started_21_0.png" />
+</div>
 </div>
 <p>We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.</p>
 <p>We can also represent this visually with the <code class="docutils literal notranslate"><span class="pre">overlay_euclidean_skeleton</span></code>, which colormaps branches according to a user-selected attribute in the table:</p>
@@ -281,6 +415,9 @@
                                    <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;branch-type&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/getting_started_23_0.png" src="_images/getting_started_23_0.png" />
 </div>
 </div>
 </section>
@@ -339,6 +476,9 @@
               <span class="n">jitter</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/getting_started_27_0.png" src="_images/getting_started_27_0.png" />
 </div>
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>
