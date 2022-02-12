@@ -24,6 +24,7 @@ The napari Shapes layer allows displaying of 2D and 3D paths, and coloring them 
 
 ```{code-cell} ipython3
 import napari
+import numpy as np
 import skan
 from skimage.data import binary_blobs
 from skimage.morphology import skeletonize
