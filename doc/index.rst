@@ -18,7 +18,7 @@ Skan is a pure Python library to analyse skeleton images.
    getting_started
    gui
    complete_analysis
-   vizualizing_3d_skeletons
+   visualizing_3d_skeletons
    faq
    citing
    api/api
