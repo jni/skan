@@ -23,6 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: tlambert03/setup-qt-libs@v1
+
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v2
         with:
