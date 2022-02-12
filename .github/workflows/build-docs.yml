@@ -19,19 +19,10 @@ jobs:
       matrix:
         platform: [ubuntu-latest]
         python: [3.9]
-    env:
-      DISPLAY: ':99.0'
     steps:
       - uses: actions/checkout@v2
 
       - uses: tlambert03/setup-qt-libs@v1
-
-      - name: Create display
-        run: |
-          /sbin/start-stop-daemon --start --quiet \
-            --pidfile /tmp/custom_xvfb_99.pid --make-pidfile \
-            --background --exec /usr/bin/Xvfb \
-            -- :99 -screen 0 1920x1200x24 -ac +extension GLX
 
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v2
@@ -45,13 +36,15 @@ jobs:
           python -m pip install .[all,testing,docs]
 
       - name: Build docs
-        run: |
-          cd doc
-          if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then 
-            wget -q -O s.zip https://osf.io/7vyx3/download && unzip s.zip;
-          fi
-          make html
-          cd ..
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: |
+            cd doc
+            if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then
+              wget -q -O s.zip https://osf.io/7vyx3/download && unzip s.zip;
+            fi
+            make html
+            cd ..
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
