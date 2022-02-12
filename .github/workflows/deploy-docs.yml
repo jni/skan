@@ -23,7 +23,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: tlambert03/setup-qt-libs@v1
+      - name: Set up Qt
+        uses: tlambert03/setup-qt-libs@v1
+
+      - name: Create display
+        run: |
+          /sbin/start-stop-daemon --start --quiet \
+            --pidfile /tmp/custom_xvfb_99.pid --make-pidfile \
+            --background --exec /usr/bin/Xvfb \
+            -- :99 -screen 0 1920x1200x24 -ac +extension GLX
 
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v2
