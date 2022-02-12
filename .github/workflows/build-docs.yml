@@ -36,20 +36,17 @@ jobs:
           python -m pip install .[all,testing,docs]
 
       - name: Get data
+        working-directory: doc
         run: |
-          cd doc
           if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then
             wget -q -O s.zip https://osf.io/7vyx3/download && unzip s.zip;
           fi
-          cd ..
 
       - name: Build docs
         uses: GabrielBB/xvfb-action@v1
         with:
-          run: |
-            cd doc
-            make html
-            cd ..
+          working-directory: doc
+          run: make html
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
