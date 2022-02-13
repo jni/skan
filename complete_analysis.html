@@ -1,102 +1,354 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Complete analysis with Skan &mdash; Skan 0.11.0.dev documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
-        <script>let toggleHintShow = 'Click to show';</script>
-        <script>let toggleHintHide = 'Click to hide';</script>
-        <script>let toggleOpenOnPrint = 'true';</script>
-        <script src="_static/togglebutton.js"></script>
-        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/js/theme.js"></script>
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="_static/javascripts/modernizr.js"></script>
+  
+  
+  
+    <title>Complete analysis with Skan &#8212; Skan 0.11.0.dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/material.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Display 3D skeletons in napari" href="visualizing_3d_skeletons.html" />
-    <link rel="prev" title="Using Skan’s GUI" href="gui.html" /> 
-</head>
+    <link rel="prev" title="Using Skan’s GUI" href="gui.html" />
+  
+   
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Skan
-          </a>
-              <div class="version">
-                0.11.0.dev
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Skan</a></li>
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gui.html">Using Skan’s GUI</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Complete analysis with Skan</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#getting-the-data">0. Getting the data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#using-skan-pipe-to-get-a-branch-dataset-for-analysis">1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cleaning-up-the-data">2. Cleaning up the data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#making-the-figure">3. Making the figure</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="visualizing_3d_skeletons.html">Display 3D skeletons in napari</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing Skan</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/api.html">Skan API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release-notes/index.html">Skan release notes</a></li>
-</ul>
-
+  </head>
+  <body dir=ltr
+        data-md-color-primary=blue data-md-color-accent=light-blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#complete_analysis" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="index.html" title="Skan 0.11.0.dev documentation"
+           class="md-header-nav__button md-logo">
+          
+            &nbsp;
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">Skan 🦴📏</span>
+          <span class="md-header-nav__topic"> Complete analysis with Skan </span>
         </div>
       </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Skan</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Complete analysis with Skan</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/complete_analysis.md.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder="Search"
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/jni/skan/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    Skan
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = ""versions.json"",
+        target_loc = "../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+          <li class="md-tabs__item"><a href="index.html" class="md-tabs__link">Skan 0.11.0.dev documentation</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="index.html" title="Skan 0.11.0.dev documentation" class="md-nav__button md-logo">
+      
+        <img src="_static/" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="index.html"
+       title="Skan 0.11.0.dev documentation">Skan 🦴📏</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/jni/skan/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    Skan
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="install.html" class="md-nav__link">Installing Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="getting_started.html" class="md-nav__link">Getting started: Skeleton analysis with Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="gui.html" class="md-nav__link">Using Skan’s GUI</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> Complete analysis with Skan </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">Complete analysis with Skan</a>
+      
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">Contents</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#complete-analysis--page-root" class="md-nav__link">Complete analysis with Skan</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#getting-the-data" class="md-nav__link">0. Getting the data</a>
+        </li>
+        <li class="md-nav__item"><a href="#using-skan-pipe-to-get-a-branch-dataset-for-analysis" class="md-nav__link">1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis</a>
+        </li>
+        <li class="md-nav__item"><a href="#cleaning-up-the-data" class="md-nav__link">2. Cleaning up the data</a>
+        </li>
+        <li class="md-nav__item"><a href="#making-the-figure" class="md-nav__link">3. Making the figure</a>
+        </li></ul>
+            </nav>
+        </li>
+    
+<li class="md-nav__item"><a class="md-nav__extra_link" href="_sources/complete_analysis.md.txt">Show Source</a> </li>
+
+  </ul>
+</nav>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="visualizing_3d_skeletons.html" class="md-nav__link">Display 3D skeletons in napari</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="faq.html" class="md-nav__link">FAQ</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="citing.html" class="md-nav__link">Citing Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="api/api.html" class="md-nav__link">Skan API Reference</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="release-notes/index.html" class="md-nav__link">Skan release notes</a>
+      
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">Contents</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#complete-analysis--page-root" class="md-nav__link">Complete analysis with Skan</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#getting-the-data" class="md-nav__link">0. Getting the data</a>
+        </li>
+        <li class="md-nav__item"><a href="#using-skan-pipe-to-get-a-branch-dataset-for-analysis" class="md-nav__link">1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis</a>
+        </li>
+        <li class="md-nav__item"><a href="#cleaning-up-the-data" class="md-nav__link">2. Cleaning up the data</a>
+        </li>
+        <li class="md-nav__item"><a href="#making-the-figure" class="md-nav__link">3. Making the figure</a>
+        </li></ul>
+            </nav>
+        </li>
+    
+<li class="md-nav__item"><a class="md-nav__extra_link" href="_sources/complete_analysis.md.txt">Show Source</a> </li>
+
+<li id="searchbox" class="md-nav__item"></li>
+
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
   <section class="tex2jax_ignore mathjax_ignore" id="complete-analysis-with-skan">
-<h1>Complete analysis with Skan<a class="headerlink" href="#complete-analysis-with-skan" title="Permalink to this headline">¶</a></h1>
+<h1 id="complete-analysis--page-root">Complete analysis with Skan<a class="headerlink" href="#complete-analysis--page-root" title="Permalink to this headline">¶</a></h1>
 <p>In this notebook, we reproduce the analysis leading to Figure 2 of our paper, submitted to PeerJ.</p>
 <section id="getting-the-data">
-<h2>0. Getting the data<a class="headerlink" href="#getting-the-data" title="Permalink to this headline">¶</a></h2>
+<h2 id="getting-the-data">0. Getting the data<a class="headerlink" href="#getting-the-data" title="Permalink to this headline">¶</a></h2>
 <p>First, we need to download the input data, which is posted at the Open Science Framework (OSF) as a zip file. Many thanks to the OSF for providing hosting for scientific data. The data be downloaded at this URL:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>https://osf.io/7vyx3
 </pre></div>
@@ -104,15 +356,15 @@
 <p>Download and extract the zipfile, and make sure the <code class="docutils literal notranslate"><span class="pre">schizonts</span></code> folder contained within it is placed in this notebook’s working directory.</p>
 </section>
 <section id="using-skan-pipe-to-get-a-branch-dataset-for-analysis">
-<h2>1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis<a class="headerlink" href="#using-skan-pipe-to-get-a-branch-dataset-for-analysis" title="Permalink to this headline">¶</a></h2>
+<h2 id="using-skan-pipe-to-get-a-branch-dataset-for-analysis">1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis<a class="headerlink" href="#using-skan-pipe-to-get-a-branch-dataset-for-analysis" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
 
 
-<span class="n">schizont_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;schizonts/*.tif&#39;</span><span class="p">)</span>
-<span class="c1"># remove files ending with &#39;01.tif&#39;, which are low-res overview images</span>
-<span class="n">schizont_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;01.tif&#39;</span><span class="p">),</span>
+<span class="n">schizont_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">'schizonts/*.tif'</span><span class="p">)</span>
+<span class="c1"># remove files ending with '01.tif', which are low-res overview images</span>
+<span class="n">schizont_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'01.tif'</span><span class="p">),</span>
                              <span class="n">schizont_files</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -127,13 +379,13 @@
 
 <span class="n">data</span><span class="p">,</span> <span class="n">per_image_data</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">last</span><span class="p">(</span><span class="n">pipe</span><span class="o">.</span><span class="n">process_images</span><span class="p">(</span>
     <span class="n">schizont_files</span><span class="p">,</span>
-    <span class="n">image_format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">,</span>
+    <span class="n">image_format</span><span class="o">=</span><span class="s1">'fei'</span><span class="p">,</span>
     <span class="n">threshold_radius</span><span class="o">=</span><span class="mf">5e-8</span><span class="p">,</span>
     <span class="n">smooth_radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="n">brightness_offset</span><span class="o">=</span><span class="mf">0.075</span><span class="p">,</span>
-    <span class="n">scale_metadata_path</span><span class="o">=</span><span class="s1">&#39;Scan/PixelHeight&#39;</span><span class="p">,</span>
+    <span class="n">scale_metadata_path</span><span class="o">=</span><span class="s1">'Scan/PixelHeight'</span><span class="p">,</span>
     <span class="n">crop_radius</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">smooth_method</span><span class="o">=</span><span class="s1">&#39;Gaussian&#39;</span>
+    <span class="n">smooth_method</span><span class="o">=</span><span class="s1">'Gaussian'</span>
 <span class="p">))</span>
 </pre></div>
 </div>
@@ -143,13 +395,13 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">infection_status</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s1">&#39;Uninf&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;normal&#39;</span>
+    <span class="k">if</span> <span class="s1">'Uninf'</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'normal'</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;infected&#39;</span>
+        <span class="k">return</span> <span class="s1">'infected'</span>
 
 
-<span class="n">data</span><span class="p">[</span><span class="s1">&#39;infection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">infection_status</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">'infection'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'filename'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">infection_status</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -161,7 +413,7 @@
 
 
 <span class="k">def</span> <span class="nf">cell_number</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;.*RBC(\d+)_\d\d.tif&#39;</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'.*RBC(\d+)_\d\d.tif'</span>
     <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -170,7 +422,7 @@
         <span class="k">return</span> <span class="kc">None</span>
     
 <span class="k">def</span> <span class="nf">field_number</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;.*RBC\d+_(\d\d).tif&#39;</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'.*RBC\d+_(\d\d).tif'</span>
     <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -178,20 +430,20 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     
-<span class="n">data</span><span class="p">[</span><span class="s1">&#39;cell number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cell_number</span><span class="p">)</span>
-<span class="n">data</span><span class="p">[</span><span class="s1">&#39;field number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">field_number</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">'cell number'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'filename'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cell_number</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">'field number'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'filename'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">field_number</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
 <section id="cleaning-up-the-data">
-<h2>2. Cleaning up the data<a class="headerlink" href="#cleaning-up-the-data" title="Permalink to this headline">¶</a></h2>
+<h2 id="cleaning-up-the-data">2. Cleaning up the data<a class="headerlink" href="#cleaning-up-the-data" title="Permalink to this headline">¶</a></h2>
 <p>Next, we filter the branches by using the <a class="reference external" href="http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index"><em>shape index</em></a>. We have used a very simple method to extract skeletons (see <a class="reference internal" href="getting_started.html"><span class="doc std std-doc">Getting started</span></a>), which does an acceptable job but creates a lot of false branches. Since the goal of Skan is to analyse skeletons, rather than generate them, we attempt to filter the branches, and measure only those that look like ridges according to the shape index.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ridges</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean-shape-index&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.625</span><span class="p">)</span> <span class="o">&amp;</span>
-          <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mean-shape-index&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.125</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ridges</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="s1">'mean-shape-index'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.625</span><span class="p">)</span> <span class="o">&amp;</span>
+          <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'mean-shape-index'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.125</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -199,7 +451,7 @@
 <p>For the same reason, we only look at junction-to-junction branches, which are more accurately identified by our method than junction-to-endpoint branches.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">j2j</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">j2j</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'branch-type'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
 <span class="n">datar</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ridges</span> <span class="o">&amp;</span> <span class="n">j2j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -208,14 +460,14 @@
 <p>Finally, we make a new column of measurements in a more natural scale for our purpose.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e9</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datar</span><span class="p">[</span><span class="s1">'branch distance (nm)'</span><span class="p">]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="s1">'branch-distance'</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e9</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
 <section id="making-the-figure">
-<h2>3. Making the figure<a class="headerlink" href="#making-the-figure" title="Permalink to this headline">¶</a></h2>
+<h2 id="making-the-figure">3. Making the figure<a class="headerlink" href="#making-the-figure" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -238,17 +490,17 @@
 <span class="c1"># PANEL A</span>
 <span class="c1"># display an arbitrary image</span>
 <span class="n">crop</span> <span class="o">=</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">),)</span> <span class="o">*</span> <span class="mi">2</span>
-<span class="n">image_raw</span> <span class="o">=</span> <span class="n">iio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;schizonts/schizont4_UninfRBC7_06.tif&#39;</span><span class="p">,</span>
-                       <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">)</span>
+<span class="n">image_raw</span> <span class="o">=</span> <span class="n">iio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">'schizonts/schizont4_UninfRBC7_06.tif'</span><span class="p">,</span>
+                       <span class="nb">format</span><span class="o">=</span><span class="s1">'fei'</span><span class="p">)</span>
 <span class="n">image</span> <span class="o">=</span> <span class="n">image_raw</span><span class="p">[</span><span class="n">crop</span><span class="p">]</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
 
 <span class="c1"># add a 300nm scale bar</span>
 <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
-<span class="n">scalenm</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;Scan&#39;</span><span class="p">][</span><span class="s1">&#39;PixelHeight&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span>
+<span class="n">scalenm</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">'Scan'</span><span class="p">][</span><span class="s1">'PixelHeight'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mi">1096</span><span class="p">,</span> <span class="mi">1096</span> <span class="o">+</span> <span class="mi">300</span> <span class="o">/</span> <span class="n">scalenm</span><span class="p">),</span> <span class="p">(</span><span class="mi">940</span><span class="p">,</span> <span class="mi">940</span><span class="p">),</span>
-           <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+           <span class="n">c</span><span class="o">=</span><span class="s1">'k'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
 
 <span class="c1"># PANEL B</span>
 <span class="c1"># Next, show the smoothed binary image and corresponding skeleton</span>
@@ -256,7 +508,7 @@
 <span class="n">sigma</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="mf">0.1</span>
 <span class="n">thresholded</span> <span class="o">=</span> <span class="n">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
                         <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.075</span><span class="p">,</span>
-                        <span class="n">smooth_method</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+                        <span class="n">smooth_method</span><span class="o">=</span><span class="s1">'gaussian'</span><span class="p">)</span>
 <span class="n">viz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">viz</span><span class="p">[</span><span class="n">thresholded</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="n">skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">thresholded</span><span class="p">)</span>
@@ -265,72 +517,99 @@
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">viz</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mi">1096</span><span class="p">,</span> <span class="mi">1096</span> <span class="o">+</span> <span class="mi">300</span> <span class="o">/</span> <span class="n">scalenm</span><span class="p">),</span> <span class="p">(</span><span class="mi">940</span><span class="p">,</span> <span class="mi">940</span><span class="p">),</span>
-           <span class="n">c</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+           <span class="n">c</span><span class="o">=</span><span class="s1">'g'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="c1"># PANEL C</span>
 <span class="c1"># Add a panel with a histogram of all branch lengths by infection status</span>
-<span class="n">_</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">datar</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">inf</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">datar</span><span class="p">[</span><span class="s1">'branch distance (nm)'</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="s1">'auto'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">inf</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">'infection'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'infection'</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'branch distance (nm)'</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
                <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;density&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'branch distance (nm)'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'density'</span><span class="p">)</span>
 
 <span class="c1"># PANEL D</span>
 <span class="c1"># Finally, a panel grouping the data by cell, showing the difference</span>
 <span class="c1"># between infected and uninfected cells</span>
-<span class="n">cellmeans</span> <span class="o">=</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="s1">&#39;cell number&#39;</span><span class="p">])</span>
+<span class="n">cellmeans</span> <span class="o">=</span> <span class="p">(</span><span class="n">datar</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'infection'</span><span class="p">,</span> <span class="s1">'cell number'</span><span class="p">])</span>
                   <span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">stripplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;infection&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">cellmeans</span><span class="p">,</span>
-              <span class="n">jitter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;infected&#39;</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">stripplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">'infection'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">'branch distance (nm)'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">cellmeans</span><span class="p">,</span>
+              <span class="n">jitter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="s1">'normal'</span><span class="p">,</span> <span class="s1">'infected'</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
               
-<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;infection status&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;mean branch distance</span><span class="se">\n</span><span class="s1">by cell (nm)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'infection status'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'mean branch distance</span><span class="se">\n</span><span class="s1">by cell (nm)'</span><span class="p">)</span>
 
-<span class="c1"># Use matplotlib&#39;s automatic layout algorithm</span>
+<span class="c1"># Use matplotlib's automatic layout algorithm</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/complete_analysis_19_0.png" src="_images/complete_analysis_19_0.png" />
+<img alt="_images/complete_analysis_19_0.png" src="_images/complete_analysis_19_0.png"/>
 </div>
 </div>
 </section>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="gui.html" class="btn btn-neutral float-left" title="Using Skan’s GUI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="visualizing_3d_skeletons.html" class="btn btn-neutral float-right" title="Display 3D skeletons in napari" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          </article>
         </div>
       </div>
-    </section>
+    </main>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+            <a href="gui.html" title="Using Skan’s GUI"
+               class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               rel="prev">
+              <div class="md-flex__cell md-flex__cell--shrink">
+                <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+              </div>
+              <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+                <span class="md-flex__ellipsis">
+                  <span
+                      class="md-footer-nav__direction"> Previous </span> Using Skan’s GUI </span>
+              </div>
+            </a>
+          
+          
+            <a href="visualizing_3d_skeletons.html" title="Display 3D skeletons in napari"
+               class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
+                class="md-flex__ellipsis"> <span
+                class="md-footer-nav__direction"> Next </span> Display 3D skeletons in napari </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink"><i
+                class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
 </html>

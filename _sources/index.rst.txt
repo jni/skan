@@ -3,16 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Skan's documentation!
+Skeleton analysis with Skan 🦴📏
 ================================
 
 Skan is a pure Python library to analyse skeleton images.
 
-|Build Status| |Coverage Status|
-
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    install
    getting_started
