@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
+from scipy.spatial import distance_matrix
 from skimage import morphology
+from skimage.graph import central_pixel
 from skimage.util._map_array import map_array
 import numba
 
@@ -996,3 +998,120 @@ def make_degree_image(skeleton_image):
                     bool_skeleton.astype(int), degree_kernel, mode='constant'
                     )
     return degree_image
+
+
+def _path_distances(skeleton, center_point, path_id):
+    """Compute real world distances of specific skeleton path coordinates
+    from the center point.
+
+    Parameters
+    ----------
+    skeleton : skan.csr.Skeleton
+        A Skeleton object.
+    center_point : array
+        Real world coordinates of center.
+    path_id : int
+        Path ID of path to be traversed.
+
+    Returns
+    -------
+    ndarray
+        Distance from each pixel in the path to the central pixel in real
+        world units.
+    """
+    path = skeleton.path_coordinates(path_id)
+    path_scaled = path * skeleton.spacing
+    distances = np.ravel(distance_matrix(path_scaled, [center_point]))
+    return distances
+
+
+def sholl_analysis(
+        skeleton,
+        center=None,
+        shells=None
+        ):
+    """Sholl Analysis for Skeleton object.
+
+    Parameters
+    ----------
+    skeleton : skan.csr.Skeleton
+        A Skeleton object.
+    center : array-like of float or None, optional
+        Pixel coordinates of a point on the skeleton to use as the center
+        from which the concentric shells are computed. If None, the
+        geodesic center of skeleton is chosen.
+    shells : int or array of floats or None, optional
+        If an int, it is used as number of evenly spaced concentric shells. If
+        an array of floats, it is used directly as the different shell radii in
+        real world units. If None, the number of evenly spaced concentric
+        shells is automatically calculated.
+
+    Returns
+    -------
+    array
+        Radii in real world units for concentric shells used for analysis.
+    array
+        Number of intersections for corresponding shell radii.
+    """
+    imskeleton = skeleton.skeleton_image
+    skel_shape = np.asarray(imskeleton.shape)
+
+    if center is None:
+        g, nodes = pixel_graph(imskeleton, connectivity=imskeleton.ndim,
+                               spacing=skeleton.spacing)
+        center, _ = central_pixel(g, shape=skel_shape, nodes=nodes)
+
+    center = np.asarray(center)
+
+    # if soma doesn't lie on skeleton, find nearest point on skeleton
+    if not imskeleton[tuple(center)]:
+        center = skeleton.coordinates[
+            np.argmin(np.linalg.norm(skeleton.coordinates - center, axis=1))
+            ]
+
+    scaled_center = center * skeleton.spacing
+    leaf_node_val = 1
+
+    if isinstance(shells, (list, tuple, np.ndarray)):
+        # The real world radius of the smallest shell
+        start_radius = min(shells)
+        # The real world radius of the largest (last) shell
+        end_radius = max(shells)
+        shell_radii = shells
+    else:
+        # Calculate euclidean distance of soma from all the leaf nodes
+        leaf_nodes_mask = np.argwhere(skeleton.degrees == leaf_node_val)
+        leaf_nodes = np.squeeze(skeleton.coordinates[leaf_nodes_mask])
+        leaf_to_center_vec = leaf_nodes - center
+        leaf_to_center_px = np.linalg.norm(leaf_to_center_vec, axis=1)
+        leaf_to_center_real = np.linalg.norm(
+                leaf_to_center_vec * skeleton.spacing, axis=1
+                )
+
+        start_radius = 0
+        end_radius = np.max(leaf_to_center_real)  # largest possible radius
+
+        if shells is None:
+            shells = np.max(leaf_to_center_px) // 2
+            shells = shells.astype(np.int)
+
+        shell_radii = np.linspace(start_radius, end_radius, shells)
+
+    intersection_counts = np.zeros_like(shell_radii)
+
+    for i in range(skeleton.n_paths):
+        # Find distances of the path pixels
+        distances = _path_distances(skeleton, scaled_center, i)
+
+        # Find which shell bin each pixel sits in
+        shell_location = np.digitize(distances, shell_radii)
+
+        # Use np.diff to find where bins are crossed. The -1 accounts for
+        # 'shell 0' not existing.
+        crossings = shell_location[
+            np.flatnonzero(np.diff(shell_location))] - 1
+
+        # increment corresponding crossings
+        intersection_counts[crossings] += 1
+
+    return shell_radii, intersection_counts
