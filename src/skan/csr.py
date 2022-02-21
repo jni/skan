@@ -1115,6 +1115,6 @@ def sholl_analysis(skeleton, center=None, shells=None):
     shells = np.minimum(bins0[crossings], bins1[crossings])
     # we divide by 2 because the graph is undirected, so each edge appears
     # twice in the matrix
-    intersection_counts = np.bincount(shells) // 2
+    intersection_counts = np.bincount(shells, minlength=len(shell_radii)) // 2
 
     return shell_radii, intersection_counts
