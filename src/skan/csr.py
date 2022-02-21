@@ -7,6 +7,7 @@ from skimage import morphology
 from skimage.graph import central_pixel
 from skimage.util._map_array import map_array
 import numba
+import warnings
 
 from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
@@ -1061,6 +1062,14 @@ def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
             stepsize = (end_radius-start_radius) / shells
         epsilon = np.finfo(np.float32).eps
         shell_radii = np.arange(start_radius, end_radius + epsilon, stepsize)
+    if (sp := np.linalg.norm(spacing)) > (sh := np.min(np.diff(shell_radii))):
+        warnings.warn(
+                'This implementation of Sholl analysis may not be accurate if '
+                'the spacing between shells is smaller than the (diagonal) '
+                f'voxel spacing. The given voxel spacing is {sp}, and the '
+                f'smallest shell spacing is {sh}.',
+                stacklevel=2
+                )
     return shell_radii
 
 
