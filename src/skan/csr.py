@@ -1083,6 +1083,11 @@ def sholl_analysis(skeleton, center=None, shells=None):
 
     Returns
     -------
+    center : array of float
+        The scaled coordinates in real world units of the center of the shells.
+        (This might be provided as input, but it might also have been computed
+        within this function, and that computation is expensive, so we return
+        it just in case.)
     shell_radii : array of float
         Radii in real world units for concentric shells used for analysis.
     intersection_counts : array of int
@@ -1117,4 +1122,4 @@ def sholl_analysis(skeleton, center=None, shells=None):
     # twice in the matrix
     intersection_counts = np.bincount(shells, minlength=len(shell_radii)) // 2
 
-    return shell_radii, intersection_counts
+    return center, shell_radii, intersection_counts
