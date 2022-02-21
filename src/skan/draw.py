@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import collections
+from matplotlib.patches import Circle
 import networkx as nx
 from skimage import img_as_float, morphology
 from skimage.color import gray2rgb
@@ -240,6 +241,45 @@ def overlay_skeleton_2d_class(
     linecoll = collections.LineCollection(coordinates, colors=colors)
     axes.add_collection(linecoll)
     return axes, mappable
+
+
+def sholl_shells(center, radii, *, axes=None, **kwargs):
+    """Draw concentric circles around a center point.
+
+    Parameters
+    ----------
+    center : array of float, shape (2,)
+        The center of the circles. This should be in NumPy-style row/column
+        coordinates.
+    radii : array of float, shape (N,)
+        The radii of the concentric circles.
+    axes : matplotlib Axes, optional
+        The axes on which to draw the circles. If None, create a new instance.
+
+    Returns
+    -------
+    axes : matplotlib Axes
+        The axes on which the circles were drawn
+    patches : list of matplotlib Patches
+        The patch objects that were drawn.
+
+    Notes
+    -----
+    Additional keyword arguments are passed directly to the
+    `matplotlib.patches.Circle` call. Valid keywords include ``edgecolor``,
+    ``linestyle``, and `linewidth``. See matplotlib documentation for details.
+    """
+    row, col = center
+    color = kwargs.pop('edgecolor', 'cornflowerblue')
+    circles = [
+            Circle((col, row), radius=r, fill=False, edgecolor=color, **kwargs)
+            for r in radii
+            ]
+    if axes is not None:
+        _, axes = plt.subplots()
+    for c in circles:
+        axes.add_patch(c)
+    return axes, circles
 
 
 def pipeline_plot(
