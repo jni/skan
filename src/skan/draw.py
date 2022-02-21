@@ -210,10 +210,10 @@ def overlay_skeleton_2d_class(
         The mappable values corresponding to the line colors. This can be used
         to create a colorbar for the plot.
     """
-    image = skeleton.source_image
     if axes is None:
         fig, axes = plt.subplots()
-    axes.imshow(image, cmap=image_cmap)
+    if skeleton.source_image is not None:
+        axes.imshow(skeleton.source_image, cmap=image_cmap)
     if callable(skeleton_color_source):
         values = skeleton_color_source(skeleton)
     elif hasattr(skeleton, skeleton_color_source):
