@@ -275,7 +275,7 @@ def sholl_shells(center, radii, *, axes=None, **kwargs):
             Circle((col, row), radius=r, fill=False, edgecolor=color, **kwargs)
             for r in radii
             ]
-    if axes is not None:
+    if axes is None:
         _, axes = plt.subplots()
     for c in circles:
         axes.add_patch(c)
