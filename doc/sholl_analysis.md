@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 ```
 
 ```{code-cell} ipython3
+import numpy as np
 import zarr
 
 neuron = np.asarray(zarr.open('example-data/neuron.zarr.zip'))
@@ -37,6 +38,7 @@ plt.show()
 This is the skeletonized image of a neuron. The cell body, or soma, has been manually annotated by a researcher based on the source image. We can use the function `skan.sholl_analysis` to count the crossings of concentric circles, centered on the cell body, by the cell's processes.
 
 ```{code-cell} ipython3
+import pandas as pd
 from skan import Skeleton, sholl_analysis
 
 # make the skeleton object
