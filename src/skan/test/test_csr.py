@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+import pytest
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
 from skimage.draw import line
@@ -176,3 +177,35 @@ def test_transpose_image():
             np.sort(skeleton1.path_lengths()),
             np.sort(skeleton2.path_lengths()),
             )
+
+
+def test_sholl():
+    s = csr.Skeleton(skeleton0)
+    c, r, counts = csr.sholl_analysis(s, shells=np.arange(0, 5, 1.5))
+    np.testing.assert_equal(c, [3, 3])
+    np.testing.assert_equal(counts, [0, 3, 3, 0])
+
+
+def test_sholl_spacing():
+    s = csr.Skeleton(skeleton0, spacing=(1, 5))
+    with pytest.warns(UserWarning):
+        c, r, counts = csr.sholl_analysis(
+                s, center=[3, 15], shells=np.arange(17)
+                )
+        for i in range(4):
+            assert np.isin(i, counts)
+    c, r, counts = csr.sholl_analysis(
+            s, center=[3, 15], shells=np.arange(1, 20, 6)
+            )
+    np.testing.assert_equal(counts, [3, 2, 2, 0])
+
+
+def test_diagonal():
+    s = csr.Skeleton(skeleton4)
+    # We choose the shells so that we catch all three, then two, then one arm
+    # of the skeleton, while not triggering the "shell spacing too small"
+    # warning
+    c, r, counts = csr.sholl_analysis(
+            s, center=[1, 1], shells=np.arange(0.09, 5, 1.45)
+            )
+    np.testing.assert_equal(counts, [3, 2, 1, 0])
