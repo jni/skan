@@ -47,7 +47,7 @@
   
   
   
-    <title>skan.csr: CSR Graph representation of skeletons &#8212; Skan 0.11.0.dev documentation</title>
+    <title>skan.csr: CSR Graph representation of skeletons &#8212; Skan 0.11.0.dev0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -91,7 +91,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../index.html" title="Skan 0.11.0.dev documentation"
+        <a href="../index.html" title="Skan 0.11.0.dev0 documentation"
            class="md-header-nav__button md-logo">
           
             &nbsp;
@@ -177,7 +177,7 @@
   <nav class="md-tabs" data-md-component="tabs">
     <div class="md-tabs__inner md-grid">
       <ul class="md-tabs__list">
-          <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Skan 0.11.0.dev documentation</a></li>
+          <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Skan 0.11.0.dev0 documentation</a></li>
           <li class="md-tabs__item"><a href="api.html" class="md-tabs__link">Skan API Reference</a></li>
       </ul>
     </div>
@@ -190,13 +190,13 @@
               <div class="md-sidebar__inner">
                 <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="../index.html" title="Skan 0.11.0.dev documentation" class="md-nav__button md-logo">
+    <a href="../index.html" title="Skan 0.11.0.dev0 documentation" class="md-nav__button md-logo">
       
         <img src="../_static/" alt=" logo" width="48" height="48">
       
     </a>
     <a href="../index.html"
-       title="Skan 0.11.0.dev documentation">Skan 🦴📏</a>
+       title="Skan 0.11.0.dev0 documentation">Skan 🦴📏</a>
   </label>
     <div class="md-nav__source">
       <a href="https://github.com/jni/skan/" title="Go to repository" class="md-source" data-md-source="github">
@@ -249,6 +249,13 @@
     
     
       <a href="../visualizing_3d_skeletons.html" class="md-nav__link">Display 3D skeletons in napari</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../sholl_analysis.html" class="md-nav__link">Sholl analysis in Skan</a>
       
     
     </li>
@@ -603,6 +610,36 @@ orthogonal steps allowed to consider a pixel a neigbor. See
 are neighbors, 0 otherwise.</p></li>
 <li><p><strong>nodes</strong> (<em>array of int</em>) – The nodes of the graph. These correspond to the raveled indices of the
 nonzero pixels in the mask.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.sholl_analysis">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">sholl_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shells</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#sholl_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.sholl_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sholl Analysis for Skeleton object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skeleton</strong> (<a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><em>skan.csr.Skeleton</em></a>) – A Skeleton object.</p></li>
+<li><p><strong>center</strong> (<em>array-like of float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Scaled coordinates of a point on the skeleton to use as the center
+from which the concentric shells are computed. If None, the
+geodesic center of skeleton is chosen.</p></li>
+<li><p><strong>shells</strong> (<em>int</em><em> or </em><em>array of floats</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – If an int, it is used as number of evenly spaced concentric shells. If
+an array of floats, it is used directly as the different shell radii in
+real world units. If None, the number of evenly spaced concentric
+shells is automatically calculated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>center</strong> (<em>array of float</em>) – The scaled coordinates in real world units of the center of the shells.
+(This might be provided as input, but it might also have been computed
+within this function, and that computation is expensive, so we return
+it just in case.)</p></li>
+<li><p><strong>shell_radii</strong> (<em>array of float</em>) – Radii in real world units for concentric shells used for analysis.</p></li>
+<li><p><strong>intersection_counts</strong> (<em>array of int</em>) – Number of intersections for corresponding shell radii.</p></li>
 </ul>
 </p>
 </dd>

@@ -46,7 +46,7 @@
   
   
   
-    <title>skan.csr &#8212; Skan 0.11.0.dev documentation</title>
+    <title>skan.csr &#8212; Skan 0.11.0.dev0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/material.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
@@ -88,7 +88,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../../index.html" title="Skan 0.11.0.dev documentation"
+        <a href="../../index.html" title="Skan 0.11.0.dev0 documentation"
            class="md-header-nav__button md-logo">
           
             &nbsp;
@@ -174,7 +174,7 @@
   <nav class="md-tabs" data-md-component="tabs">
     <div class="md-tabs__inner md-grid">
       <ul class="md-tabs__list">
-          <li class="md-tabs__item"><a href="../../index.html" class="md-tabs__link">Skan 0.11.0.dev documentation</a></li>
+          <li class="md-tabs__item"><a href="../../index.html" class="md-tabs__link">Skan 0.11.0.dev0 documentation</a></li>
           <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Module code</a></li>
       </ul>
     </div>
@@ -187,13 +187,13 @@
               <div class="md-sidebar__inner">
                 <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="../../index.html" title="Skan 0.11.0.dev documentation" class="md-nav__button md-logo">
+    <a href="../../index.html" title="Skan 0.11.0.dev0 documentation" class="md-nav__button md-logo">
       
         <img src="../../_static/" alt=" logo" width="48" height="48">
       
     </a>
     <a href="../../index.html"
-       title="Skan 0.11.0.dev documentation">Skan 🦴📏</a>
+       title="Skan 0.11.0.dev0 documentation">Skan 🦴📏</a>
   </label>
     <div class="md-nav__source">
       <a href="https://github.com/jni/skan/" title="Go to repository" class="md-source" data-md-source="github">
@@ -246,6 +246,13 @@
     
     
       <a href="../../visualizing_3d_skeletons.html" class="md-nav__link">Display 3D skeletons in napari</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../../sholl_analysis.html" class="md-nav__link">Sholl analysis in Skan</a>
       
     
     </li>
@@ -308,9 +315,12 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span><span class="p">,</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csgraph</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">distance_matrix</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<span class="kn">from</span> <span class="nn">skimage.graph</span> <span class="kn">import</span> <span class="n">central_pixel</span>
 <span class="kn">from</span> <span class="nn">skimage.util._map_array</span> <span class="kn">import</span> <span class="n">map_array</span>
 <span class="kn">import</span> <span class="nn">numba</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">.nputil</span> <span class="kn">import</span> <span class="n">_raveled_offsets_and_distances</span>
 <span class="kn">from</span> <span class="nn">.summary_utils</span> <span class="kn">import</span> <span class="n">find_main_branches</span>
@@ -1302,6 +1312,114 @@
                     <span class="n">bool_skeleton</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">degree_kernel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'constant'</span>
                     <span class="p">)</span>
     <span class="k">return</span> <span class="n">degree_image</span></div>
+
+
+<span class="k">def</span> <span class="nf">_normalize_shells</span><span class="p">(</span><span class="n">shells</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">skeleton_coordinates</span><span class="p">,</span> <span class="n">spacing</span><span class="p">):</span>
+    <span class="sd">"""Normalize shells from any format allowed by `sholl_analysis` to radii.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    shells : int or sequence of floats, or None</span>
+<span class="sd">        If an int, it is used as number of evenly spaced concentric shells. If</span>
+<span class="sd">        an array of floats, it is used directly as the different shell radii in</span>
+<span class="sd">        real world units. If None, the number of evenly spaced concentric</span>
+<span class="sd">        shells is automatically calculated.</span>
+<span class="sd">    center : (D,) array of float</span>
+<span class="sd">        The scaled coordinates of the center point for Sholl analysis.</span>
+<span class="sd">    skeleton_coordinates : (N, D) array of float</span>
+<span class="sd">        The scaled coordinates of skeleton pixels. Used when shells is None or</span>
+<span class="sd">        int.</span>
+<span class="sd">    spacing : (D,) array of float</span>
+<span class="sd">        The pixel/voxel spacing of the skeleton data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    radii : array of float</span>
+<span class="sd">        The computed and normalized shell radii.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shells</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="n">shell_radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shells</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># shells is int, number of shells, or None</span>
+        <span class="c1"># Find max euclidean distance from center to all nodes</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">skeleton_coordinates</span> <span class="o">-</span> <span class="n">center</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">start_radius</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">end_radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>  <span class="c1"># largest possible radius</span>
+        <span class="k">if</span> <span class="n">shells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stepsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">spacing</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># scalar</span>
+            <span class="n">stepsize</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_radius</span><span class="o">-</span><span class="n">start_radius</span><span class="p">)</span> <span class="o">/</span> <span class="n">shells</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+        <span class="n">shell_radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_radius</span><span class="p">,</span> <span class="n">end_radius</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">stepsize</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sp</span> <span class="o">:=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">spacing</span><span class="p">))</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">sh</span> <span class="o">:=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">shell_radii</span><span class="p">))):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">'This implementation of Sholl analysis may not be accurate if '</span>
+                <span class="s1">'the spacing between shells is smaller than the (diagonal) '</span>
+                <span class="sa">f</span><span class="s1">'voxel spacing. The given voxel spacing is </span><span class="si">{</span><span class="n">sp</span><span class="si">}</span><span class="s1">, and the '</span>
+                <span class="sa">f</span><span class="s1">'smallest shell spacing is </span><span class="si">{</span><span class="n">sh</span><span class="si">}</span><span class="s1">.'</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">shell_radii</span>
+
+
+<div class="viewcode-block" id="sholl_analysis"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.sholl_analysis">[docs]</a><span class="k">def</span> <span class="nf">sholl_analysis</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shells</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Sholl Analysis for Skeleton object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skeleton : skan.csr.Skeleton</span>
+<span class="sd">        A Skeleton object.</span>
+<span class="sd">    center : array-like of float or None, optional</span>
+<span class="sd">        Scaled coordinates of a point on the skeleton to use as the center</span>
+<span class="sd">        from which the concentric shells are computed. If None, the</span>
+<span class="sd">        geodesic center of skeleton is chosen.</span>
+<span class="sd">    shells : int or array of floats or None, optional</span>
+<span class="sd">        If an int, it is used as number of evenly spaced concentric shells. If</span>
+<span class="sd">        an array of floats, it is used directly as the different shell radii in</span>
+<span class="sd">        real world units. If None, the number of evenly spaced concentric</span>
+<span class="sd">        shells is automatically calculated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    center : array of float</span>
+<span class="sd">        The scaled coordinates in real world units of the center of the shells.</span>
+<span class="sd">        (This might be provided as input, but it might also have been computed</span>
+<span class="sd">        within this function, and that computation is expensive, so we return</span>
+<span class="sd">        it just in case.)</span>
+<span class="sd">    shell_radii : array of float</span>
+<span class="sd">        Radii in real world units for concentric shells used for analysis.</span>
+<span class="sd">    intersection_counts : array of int</span>
+<span class="sd">        Number of intersections for corresponding shell radii.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># By default, find the geodesic center of the graph</span>
+        <span class="n">center_idx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">central_pixel</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">center_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">spacing</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+
+    <span class="n">scaled_coords</span> <span class="o">=</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">*</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">spacing</span>
+
+    <span class="n">shell_radii</span> <span class="o">=</span> <span class="n">_normalize_shells</span><span class="p">(</span>
+            <span class="n">shells</span><span class="p">,</span>
+            <span class="n">center</span><span class="o">=</span><span class="n">center</span><span class="p">,</span>
+            <span class="n">skeleton_coordinates</span><span class="o">=</span><span class="n">scaled_coords</span><span class="p">,</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="n">skeleton</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">tocoo</span><span class="p">()</span>
+    <span class="n">coords0</span> <span class="o">=</span> <span class="n">scaled_coords</span><span class="p">[</span><span class="n">edges</span><span class="o">.</span><span class="n">row</span><span class="p">]</span>
+    <span class="n">coords1</span> <span class="o">=</span> <span class="n">scaled_coords</span><span class="p">[</span><span class="n">edges</span><span class="o">.</span><span class="n">col</span><span class="p">]</span>
+    <span class="n">d0</span> <span class="o">=</span> <span class="n">distance_matrix</span><span class="p">(</span><span class="n">coords0</span><span class="p">,</span> <span class="p">[</span><span class="n">center</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">distance_matrix</span><span class="p">(</span><span class="n">coords1</span><span class="p">,</span> <span class="p">[</span><span class="n">center</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">bins0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">d0</span><span class="p">,</span> <span class="n">shell_radii</span><span class="p">)</span>
+    <span class="n">bins1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">shell_radii</span><span class="p">)</span>
+    <span class="n">crossings</span> <span class="o">=</span> <span class="n">bins0</span> <span class="o">!=</span> <span class="n">bins1</span>
+    <span class="n">shells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">bins0</span><span class="p">[</span><span class="n">crossings</span><span class="p">],</span> <span class="n">bins1</span><span class="p">[</span><span class="n">crossings</span><span class="p">])</span>
+    <span class="c1"># we divide by 2 because the graph is undirected, so each edge appears</span>
+    <span class="c1"># twice in the matrix</span>
+    <span class="n">intersection_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">shells</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">shell_radii</span><span class="p">))</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">center</span><span class="p">,</span> <span class="n">shell_radii</span><span class="p">,</span> <span class="n">intersection_counts</span></div>
 </pre></div>
 
           </article>

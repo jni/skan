@@ -46,7 +46,7 @@
   
   
   
-    <title>skan.draw &#8212; Skan 0.11.0.dev documentation</title>
+    <title>skan.draw &#8212; Skan 0.11.0.dev0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/material.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
@@ -88,7 +88,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../../index.html" title="Skan 0.11.0.dev documentation"
+        <a href="../../index.html" title="Skan 0.11.0.dev0 documentation"
            class="md-header-nav__button md-logo">
           
             &nbsp;
@@ -174,7 +174,7 @@
   <nav class="md-tabs" data-md-component="tabs">
     <div class="md-tabs__inner md-grid">
       <ul class="md-tabs__list">
-          <li class="md-tabs__item"><a href="../../index.html" class="md-tabs__link">Skan 0.11.0.dev documentation</a></li>
+          <li class="md-tabs__item"><a href="../../index.html" class="md-tabs__link">Skan 0.11.0.dev0 documentation</a></li>
           <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Module code</a></li>
       </ul>
     </div>
@@ -187,13 +187,13 @@
               <div class="md-sidebar__inner">
                 <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="../../index.html" title="Skan 0.11.0.dev documentation" class="md-nav__button md-logo">
+    <a href="../../index.html" title="Skan 0.11.0.dev0 documentation" class="md-nav__button md-logo">
       
         <img src="../../_static/" alt=" logo" width="48" height="48">
       
     </a>
     <a href="../../index.html"
-       title="Skan 0.11.0.dev documentation">Skan 🦴📏</a>
+       title="Skan 0.11.0.dev0 documentation">Skan 🦴📏</a>
   </label>
     <div class="md-nav__source">
       <a href="https://github.com/jni/skan/" title="Go to repository" class="md-source" data-md-source="github">
@@ -246,6 +246,13 @@
     
     
       <a href="../../visualizing_3d_skeletons.html" class="md-nav__link">Display 3D skeletons in napari</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../../sholl_analysis.html" class="md-nav__link">Sholl analysis in Skan</a>
       
     
     </li>
@@ -307,6 +314,7 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">collections</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Circle</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">img_as_float</span><span class="p">,</span> <span class="n">morphology</span>
 <span class="kn">from</span> <span class="nn">skimage.color</span> <span class="kn">import</span> <span class="n">gray2rgb</span>
@@ -516,10 +524,10 @@
 <span class="sd">        The mappable values corresponding to the line colors. This can be used</span>
 <span class="sd">        to create a colorbar for the plot.</span>
 <span class="sd">    """</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">source_image</span>
     <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">image_cmap</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">source_image</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">source_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">image_cmap</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">skeleton_color_source</span><span class="p">):</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">skeleton_color_source</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">skeleton_color_source</span><span class="p">):</span>
@@ -546,6 +554,45 @@
     <span class="n">linecoll</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">LineCollection</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">linecoll</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">axes</span><span class="p">,</span> <span class="n">mappable</span></div>
+
+
+<div class="viewcode-block" id="sholl_shells"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.sholl_shells">[docs]</a><span class="k">def</span> <span class="nf">sholl_shells</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">"""Draw concentric circles around a center point.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    center : array of float, shape (2,)</span>
+<span class="sd">        The center of the circles. This should be in NumPy-style row/column</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">    radii : array of float, shape (N,)</span>
+<span class="sd">        The radii of the concentric circles.</span>
+<span class="sd">    axes : matplotlib Axes, optional</span>
+<span class="sd">        The axes on which to draw the circles. If None, create a new instance.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    axes : matplotlib Axes</span>
+<span class="sd">        The axes on which the circles were drawn</span>
+<span class="sd">    patches : list of matplotlib Patches</span>
+<span class="sd">        The patch objects that were drawn.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Additional keyword arguments are passed directly to the</span>
+<span class="sd">    `matplotlib.patches.Circle` call. Valid keywords include ``edgecolor``,</span>
+<span class="sd">    ``linestyle``, and `linewidth``. See matplotlib documentation for details.</span>
+<span class="sd">    """</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">center</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'edgecolor'</span><span class="p">,</span> <span class="s1">'cornflowerblue'</span><span class="p">)</span>
+    <span class="n">circles</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Circle</span><span class="p">((</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">radii</span>
+            <span class="p">]</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">circles</span><span class="p">:</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axes</span><span class="p">,</span> <span class="n">circles</span></div>
 
 
 <div class="viewcode-block" id="pipeline_plot"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.pipeline_plot">[docs]</a><span class="k">def</span> <span class="nf">pipeline_plot</span><span class="p">(</span>
