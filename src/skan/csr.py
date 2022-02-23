@@ -1001,31 +1001,6 @@ def make_degree_image(skeleton_image):
     return degree_image
 
 
-def _path_distances(skeleton, center_point, path_id):
-    """Compute real world distances of specific skeleton path coordinates
-    from the center point.
-
-    Parameters
-    ----------
-    skeleton : skan.csr.Skeleton
-        A Skeleton object.
-    center_point : array
-        Real world coordinates of center.
-    path_id : int
-        Path ID of path to be traversed.
-
-    Returns
-    -------
-    ndarray
-        Distance from each pixel in the path to the central pixel in real
-        world units.
-    """
-    path = skeleton.path_coordinates(path_id)
-    path_scaled = path * skeleton.spacing
-    distances = np.ravel(distance_matrix(path_scaled, [center_point]))
-    return distances
-
-
 def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
     """Normalize shells from any format allowed by `sholl_analysis` to radii.
 
