@@ -1,3 +1,4 @@
+import networkx as nx
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -1001,6 +1002,76 @@ def make_degree_image(skeleton_image):
     return degree_image
 
 
+def _simplify_graph(graph):
+    """Iterative removal of all nodes of degree 2 while reconnecting their
+    edges.
+
+    Parameters
+    ----------
+    graph : scipy.sparse.csr_matrix
+        A sparse adjacency matrix of the graph to be simplified in which entry
+        (i, j) is 1 if nodes i and j are neighbors, 0 otherwise.
+
+    Returns
+    -------
+    simp_csgraph : scipy.sparse.csr_matrix
+        A sparse adjacency matrix of the simplified graph in which entry
+        (i, j) is 1 if nodes i and j are neighbors, 0 otherwise.
+    reduced_nodes : tuple of int
+        Nodes of simplified graph.
+    """
+    g = nx.DiGraph(graph)
+
+    while any(degree == 2 for _, degree in g.degree):
+        g0 = g.copy()
+        for node, degree in g.degree():
+            if degree == 2:
+                # Assuming directed graph
+                a0, b0 = list(g0.in_edges(node))[0]
+                a1, b1 = list(g0.out_edges(node))[0]
+
+                e0 = a0 if a0 != node else b0
+                e1 = a1 if a1 != node else b1
+
+                g0.remove_node(node)
+                g0.add_edge(e0, e1)
+        g = g0
+
+    simp_nxgraph = nx.Graph()
+
+    # Constrain degree > 0
+    constraint = lambda x: g.degree()[x[0]] > 0 and g.degree()[x[1]] > 0
+    filtered_edges = filter(constraint, g.edges())
+
+    simp_nxgraph.add_edges_from(filtered_edges)
+
+    simp_csgraph = nx.convert_matrix.to_scipy_sparse_matrix(simp_nxgraph)
+    reduced_nodes = tuple(simp_nxgraph.nodes())
+
+    return simp_csgraph, reduced_nodes
+
+
+def _fast_graph_center_idx(graph):
+    """Accelerated graph center finding using simplified graph.
+
+    Parameters
+    ----------
+    graph : scipy.sparse.csr_matrix
+        A sparse adjacency matrix of the graph whose center is to be found in
+        which entry (i, j) is 1 if nodes i and j are neighbors, 0 otherwise.
+
+    Returns
+    -------
+    original_center_idx : int
+        The index of central node of graph.
+    """
+    simp_csgraph, reduced_nodes = _simplify_graph(graph)
+    simp_center_idx, _ = central_pixel(simp_csgraph)
+    original_center_idx = reduced_nodes[simp_center_idx]
+
+    return original_center_idx
+
+
 def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
     """Normalize shells from any format allowed by `sholl_analysis` to radii.
 
@@ -1079,7 +1150,7 @@ def sholl_analysis(skeleton, center=None, shells=None):
     """
     if center is None:
         # By default, find the geodesic center of the graph
-        center_idx, _ = central_pixel(skeleton.graph)
+        center_idx = _fast_graph_center_idx(skeleton.graph)
         center = skeleton.coordinates[center_idx] * skeleton.spacing
     else:
         center = np.asarray(center)
