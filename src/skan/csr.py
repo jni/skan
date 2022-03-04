@@ -1,4 +1,3 @@
-import networkx as nx
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -6,6 +5,7 @@ from scipy.sparse import csgraph
 from scipy.spatial import distance_matrix
 from skimage import morphology
 from skimage.graph import central_pixel
+from skimage.segmentation import relabel_sequential
 from skimage.util._map_array import map_array
 import numba
 import warnings
@@ -1002,70 +1002,59 @@ def make_degree_image(skeleton_image):
     return degree_image
 
 
-def _simplify_graph(graph):
+def _simplify_graph(skel):
     """Iterative removal of all nodes of degree 2 while reconnecting their
     edges.
 
     Parameters
     ----------
-    graph : scipy.sparse.csr_matrix
-        A sparse adjacency matrix of the graph to be simplified in which entry
-        (i, j) is 1 if nodes i and j are neighbors, 0 otherwise.
+    skel : skan.csr.Skeleton
+        A Skeleton object containing graph to be simplified.
 
     Returns
     -------
     simp_csgraph : scipy.sparse.csr_matrix
-        A sparse adjacency matrix of the simplified graph in which entry
-        (i, j) is 1 if nodes i and j are neighbors, 0 otherwise.
+        A sparse adjacency matrix of the simplified graph.
     reduced_nodes : tuple of int
-        Nodes of simplified graph.
+        The index nodes of original graph in simplified graph.
     """
-    g = nx.DiGraph(graph)
+    summary = summarize(skel)
+    src = np.asarray(summary['node-id-src'])
+    dst = np.asarray(summary['node-id-dst'])
+    distance = np.asarray(summary['branch-distance'])
 
-    while any(degree == 2 for _, degree in g.degree):
-        g0 = g.copy()
-        for node, degree in g.degree():
-            if degree == 2:
-                # Assuming directed graph
-                a0, b0 = list(g0.in_edges(node))[0]
-                a1, b1 = list(g0.out_edges(node))[0]
+    # to reduce the size of simplified graph
+    _, fw, inv = relabel_sequential(np.append(src, dst))
+    src_relab, dst_relab = fw[src], fw[dst]
 
-                e0 = a0 if a0 != node else b0
-                e1 = a1 if a1 != node else b1
+    n_nodes = max(np.max(src_relab), np.max(dst_relab))
 
-                g0.remove_node(node)
-                g0.add_edge(e0, e1)
-        g = g0
+    edges = sparse.coo_matrix(
+            (distance, (src_relab - 1, dst_relab - 1)),
+            shape=(n_nodes, n_nodes)
+            )
+    dir_csgraph = edges.tocsr()
+    simp_csgraph = dir_csgraph + dir_csgraph.T  # make undirected
 
-    simp_nxgraph = nx.Graph()
-
-    # Constrain degree > 0
-    constraint = lambda x: g.degree()[x[0]] > 0 and g.degree()[x[1]] > 0
-    filtered_edges = filter(constraint, g.edges())
-
-    simp_nxgraph.add_edges_from(filtered_edges)
-
-    simp_csgraph = nx.convert_matrix.to_scipy_sparse_matrix(simp_nxgraph)
-    reduced_nodes = tuple(simp_nxgraph.nodes())
+    reduced_nodes = inv[np.arange(1, simp_csgraph.shape[0] + 1)]
 
     return simp_csgraph, reduced_nodes
 
 
-def _fast_graph_center_idx(graph):
+def _fast_graph_center_idx(skel):
     """Accelerated graph center finding using simplified graph.
 
     Parameters
     ----------
-    graph : scipy.sparse.csr_matrix
-        A sparse adjacency matrix of the graph whose center is to be found in
-        which entry (i, j) is 1 if nodes i and j are neighbors, 0 otherwise.
+    skel : skan.csr.Skeleton
+        A Skeleton object containing graph whose center is to be found.
 
     Returns
     -------
     original_center_idx : int
         The index of central node of graph.
     """
-    simp_csgraph, reduced_nodes = _simplify_graph(graph)
+    simp_csgraph, reduced_nodes = _simplify_graph(skel)
     simp_center_idx, _ = central_pixel(simp_csgraph)
     original_center_idx = reduced_nodes[simp_center_idx]
 
@@ -1150,7 +1139,7 @@ def sholl_analysis(skeleton, center=None, shells=None):
     """
     if center is None:
         # By default, find the geodesic center of the graph
-        center_idx = _fast_graph_center_idx(skeleton.graph)
+        center_idx = _fast_graph_center_idx(skeleton)
         center = skeleton.coordinates[center_idx] * skeleton.spacing
     else:
         center = np.asarray(center)
