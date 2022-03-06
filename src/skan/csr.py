@@ -5,8 +5,7 @@ from scipy.sparse import csgraph
 from scipy.spatial import distance_matrix
 from skimage import morphology
 from skimage.graph import central_pixel
-from skimage.segmentation import relabel_sequential
-from skimage.util._map_array import map_array
+from skimage.util._map_array import map_array, ArrayMap
 import numba
 import warnings
 
@@ -1024,19 +1023,23 @@ def _simplify_graph(skel):
     distance = np.asarray(summary['branch-distance'])
 
     # to reduce the size of simplified graph
-    _, fw, inv = relabel_sequential(np.append(src, dst))
-    src_relab, dst_relab = fw[src], fw[dst]
+    nodes = np.unique(np.append(src, dst))
+    n_nodes = len(nodes)
+    nodes_sequential = np.arange(n_nodes)
 
-    n_nodes = max(np.max(src_relab), np.max(dst_relab))
+    fw_map = ArrayMap(nodes, nodes_sequential)
+    inv_map = ArrayMap(nodes_sequential, nodes)
+
+    src_relab, dst_relab = fw_map[src], fw_map[dst]
 
     edges = sparse.coo_matrix(
-            (distance, (src_relab - 1, dst_relab - 1)),
+            (distance, (src_relab, dst_relab)),
             shape=(n_nodes, n_nodes)
             )
     dir_csgraph = edges.tocsr()
     simp_csgraph = dir_csgraph + dir_csgraph.T  # make undirected
 
-    reduced_nodes = inv[np.arange(1, simp_csgraph.shape[0] + 1)]
+    reduced_nodes = inv_map[np.arange(simp_csgraph.shape[0])]
 
     return simp_csgraph, reduced_nodes
 
