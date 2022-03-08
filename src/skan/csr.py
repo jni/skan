@@ -1017,6 +1017,10 @@ def _simplify_graph(skel):
     reduced_nodes : tuple of int
         The index nodes of original graph in simplified graph.
     """
+    if np.sum(skel.degrees > 2) == 0:  # no junctions
+        # don't reduce
+        return skel.graph, np.arange(skel.graph.shape[0])
+
     summary = summarize(skel)
     src = np.asarray(summary['node-id-src'])
     dst = np.asarray(summary['node-id-dst'])
