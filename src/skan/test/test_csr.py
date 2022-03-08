@@ -179,6 +179,15 @@ def test_transpose_image():
             )
 
 
+def test_fast_graph_center_idx():
+    s = csr.Skeleton(skeleton0)
+    i = csr._fast_graph_center_idx(s)
+    assert i == 6
+
+    s = csr.Skeleton(skeleton4)
+    i = csr._fast_graph_center_idx(s)
+    assert i == 1
+
 def test_sholl():
     s = csr.Skeleton(skeleton0)
     c, r, counts = csr.sholl_analysis(s, shells=np.arange(0, 5, 1.5))
