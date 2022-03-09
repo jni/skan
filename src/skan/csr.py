@@ -5,7 +5,7 @@ from scipy.sparse import csgraph
 from scipy.spatial import distance_matrix
 from skimage import morphology
 from skimage.graph import central_pixel
-from skimage.util._map_array import map_array
+from skimage.util._map_array import map_array, ArrayMap
 import numba
 import warnings
 
@@ -1001,6 +1001,73 @@ def make_degree_image(skeleton_image):
     return degree_image
 
 
+def _simplify_graph(skel):
+    """Iterative removal of all nodes of degree 2 while reconnecting their
+    edges.
+
+    Parameters
+    ----------
+    skel : skan.csr.Skeleton
+        A Skeleton object containing graph to be simplified.
+
+    Returns
+    -------
+    simp_csgraph : scipy.sparse.csr_matrix
+        A sparse adjacency matrix of the simplified graph.
+    reduced_nodes : tuple of int
+        The index nodes of original graph in simplified graph.
+    """
+    if np.sum(skel.degrees > 2) == 0:  # no junctions
+        # don't reduce
+        return skel.graph, np.arange(skel.graph.shape[0])
+
+    summary = summarize(skel)
+    src = np.asarray(summary['node-id-src'])
+    dst = np.asarray(summary['node-id-dst'])
+    distance = np.asarray(summary['branch-distance'])
+
+    # to reduce the size of simplified graph
+    nodes = np.unique(np.append(src, dst))
+    n_nodes = len(nodes)
+    nodes_sequential = np.arange(n_nodes)
+
+    fw_map = ArrayMap(nodes, nodes_sequential)
+    inv_map = ArrayMap(nodes_sequential, nodes)
+
+    src_relab, dst_relab = fw_map[src], fw_map[dst]
+
+    edges = sparse.coo_matrix(
+            (distance, (src_relab, dst_relab)),
+            shape=(n_nodes, n_nodes)
+            )
+    dir_csgraph = edges.tocsr()
+    simp_csgraph = dir_csgraph + dir_csgraph.T  # make undirected
+
+    reduced_nodes = inv_map[np.arange(simp_csgraph.shape[0])]
+
+    return simp_csgraph, reduced_nodes
+
+
+def _fast_graph_center_idx(skel):
+    """Accelerated graph center finding using simplified graph.
+
+    Parameters
+    ----------
+    skel : skan.csr.Skeleton
+        A Skeleton object containing graph whose center is to be found.
+
+    Returns
+    -------
+    original_center_idx : int
+        The index of central node of graph.
+    """
+    simp_csgraph, reduced_nodes = _simplify_graph(skel)
+    simp_center_idx, _ = central_pixel(simp_csgraph)
+    original_center_idx = reduced_nodes[simp_center_idx]
+
+    return original_center_idx
+
+
 def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
     """Normalize shells from any format allowed by `sholl_analysis` to radii.
 
@@ -1079,7 +1146,7 @@ def sholl_analysis(skeleton, center=None, shells=None):
     """
     if center is None:
         # By default, find the geodesic center of the graph
-        center_idx, _ = central_pixel(skeleton.graph)
+        center_idx = _fast_graph_center_idx(skeleton)
         center = skeleton.coordinates[center_idx] * skeleton.spacing
     else:
         center = np.asarray(center)
