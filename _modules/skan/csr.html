@@ -318,7 +318,7 @@
 <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">distance_matrix</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
 <span class="kn">from</span> <span class="nn">skimage.graph</span> <span class="kn">import</span> <span class="n">central_pixel</span>
-<span class="kn">from</span> <span class="nn">skimage.util._map_array</span> <span class="kn">import</span> <span class="n">map_array</span>
+<span class="kn">from</span> <span class="nn">skimage.util._map_array</span> <span class="kn">import</span> <span class="n">map_array</span><span class="p">,</span> <span class="n">ArrayMap</span>
 <span class="kn">import</span> <span class="nn">numba</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
@@ -1314,6 +1314,73 @@
     <span class="k">return</span> <span class="n">degree_image</span></div>
 
 
+<span class="k">def</span> <span class="nf">_simplify_graph</span><span class="p">(</span><span class="n">skel</span><span class="p">):</span>
+    <span class="sd">"""Iterative removal of all nodes of degree 2 while reconnecting their</span>
+<span class="sd">    edges.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skel : skan.csr.Skeleton</span>
+<span class="sd">        A Skeleton object containing graph to be simplified.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    simp_csgraph : scipy.sparse.csr_matrix</span>
+<span class="sd">        A sparse adjacency matrix of the simplified graph.</span>
+<span class="sd">    reduced_nodes : tuple of int</span>
+<span class="sd">        The index nodes of original graph in simplified graph.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">skel</span><span class="o">.</span><span class="n">degrees</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># no junctions</span>
+        <span class="c1"># don't reduce</span>
+        <span class="k">return</span> <span class="n">skel</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">skel</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">skel</span><span class="p">)</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">'node-id-src'</span><span class="p">])</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">'node-id-dst'</span><span class="p">])</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s1">'branch-distance'</span><span class="p">])</span>
+
+    <span class="c1"># to reduce the size of simplified graph</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">))</span>
+    <span class="n">n_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="n">nodes_sequential</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">)</span>
+
+    <span class="n">fw_map</span> <span class="o">=</span> <span class="n">ArrayMap</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">nodes_sequential</span><span class="p">)</span>
+    <span class="n">inv_map</span> <span class="o">=</span> <span class="n">ArrayMap</span><span class="p">(</span><span class="n">nodes_sequential</span><span class="p">,</span> <span class="n">nodes</span><span class="p">)</span>
+
+    <span class="n">src_relab</span><span class="p">,</span> <span class="n">dst_relab</span> <span class="o">=</span> <span class="n">fw_map</span><span class="p">[</span><span class="n">src</span><span class="p">],</span> <span class="n">fw_map</span><span class="p">[</span><span class="n">dst</span><span class="p">]</span>
+
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="p">(</span><span class="n">src_relab</span><span class="p">,</span> <span class="n">dst_relab</span><span class="p">)),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="n">dir_csgraph</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+    <span class="n">simp_csgraph</span> <span class="o">=</span> <span class="n">dir_csgraph</span> <span class="o">+</span> <span class="n">dir_csgraph</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># make undirected</span>
+
+    <span class="n">reduced_nodes</span> <span class="o">=</span> <span class="n">inv_map</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">simp_csgraph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+
+    <span class="k">return</span> <span class="n">simp_csgraph</span><span class="p">,</span> <span class="n">reduced_nodes</span>
+
+
+<span class="k">def</span> <span class="nf">_fast_graph_center_idx</span><span class="p">(</span><span class="n">skel</span><span class="p">):</span>
+    <span class="sd">"""Accelerated graph center finding using simplified graph.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skel : skan.csr.Skeleton</span>
+<span class="sd">        A Skeleton object containing graph whose center is to be found.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    original_center_idx : int</span>
+<span class="sd">        The index of central node of graph.</span>
+<span class="sd">    """</span>
+    <span class="n">simp_csgraph</span><span class="p">,</span> <span class="n">reduced_nodes</span> <span class="o">=</span> <span class="n">_simplify_graph</span><span class="p">(</span><span class="n">skel</span><span class="p">)</span>
+    <span class="n">simp_center_idx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">central_pixel</span><span class="p">(</span><span class="n">simp_csgraph</span><span class="p">)</span>
+    <span class="n">original_center_idx</span> <span class="o">=</span> <span class="n">reduced_nodes</span><span class="p">[</span><span class="n">simp_center_idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">original_center_idx</span>
+
+
 <span class="k">def</span> <span class="nf">_normalize_shells</span><span class="p">(</span><span class="n">shells</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">skeleton_coordinates</span><span class="p">,</span> <span class="n">spacing</span><span class="p">):</span>
     <span class="sd">"""Normalize shells from any format allowed by `sholl_analysis` to radii.</span>
 
@@ -1392,7 +1459,7 @@
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># By default, find the geodesic center of the graph</span>
-        <span class="n">center_idx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">central_pixel</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+        <span class="n">center_idx</span> <span class="o">=</span> <span class="n">_fast_graph_center_idx</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
         <span class="n">center</span> <span class="o">=</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">center_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">spacing</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
