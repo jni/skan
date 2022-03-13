@@ -45,13 +45,12 @@ class Skeleton:
 
     Attributes
     ----------
-    graph : scipy.sparse.csr_matrix, shape (N + 1, N + 1)
+    graph : scipy.sparse.csr_matrix, shape (N, N)
         The skeleton pixel graph, where each node is a non-zero pixel in the
         input image, and each edge connects adjacent pixels. The graph is
         represented as an adjacency matrix in SciPy sparse matrix format. For
         more information see the ``scipy.sparse`` documentation as well as
-        ``scipy.sparse.csgraph``. Note: pixel numbering starts at 1, so the
-        shape of this matrix is ``(N + 1, N + 1)`` instead of ``(N, N)``.
+        ``scipy.sparse.csgraph``.
     nbgraph : NBGraph
         A thin Numba wrapper around the ``csr_matrix`` format, this provides
         faster graph methods. For example, it is much faster to get a list of
@@ -59,17 +58,14 @@ class Skeleton:
     coordinates : array, shape (N, ndim)
         skeleton_pixel_id i -> coordinates[i]
         The image coordinates of each pixel in the skeleton.
-        Some values in this matrix are non-sensical — you should only access
-        them from node ids.
-    paths : scipy.sparse.csr_matrix, shape (P, N + 1)
+    paths : scipy.sparse.csr_matrix, shape (P, N)
         A csr_matrix where element [i, j] is on if node j is in path i. This
         includes path endpoints. The number of nonzero elements is N - J + Sd.
     n_paths : int
-        The number of paths, P. This is redundant information given `n_paths`,
+        The number of paths, P. This is redundant information given `paths`,
         but it is used often enough that it is worth keeping around.
     distances : array of float, shape (P,)
-        The distance of each path. Note: not initialized until `path_lengths()`
-        is called on the skeleton; use path_lengths() instead
+        The distance of each path.
     skeleton_image : array or None
         The input skeleton image. Only present if `keep_images` is True. Set to
         False to preserve memory.
