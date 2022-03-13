@@ -1002,8 +1002,7 @@ def make_degree_image(skeleton_image):
 
 
 def _simplify_graph(skel):
-    """Iterative removal of all nodes of degree 2 while reconnecting their
-    edges.
+    """Create junction graph from skeleton summary.
 
     Parameters
     ----------
@@ -1036,10 +1035,8 @@ def _simplify_graph(skel):
 
     src_relab, dst_relab = fw_map[src], fw_map[dst]
 
-    edges = sparse.coo_matrix(
-            (distance, (src_relab, dst_relab)),
-            shape=(n_nodes, n_nodes)
-            )
+    edges = sparse.coo_matrix((distance, (src_relab, dst_relab)),
+                              shape=(n_nodes, n_nodes))
     dir_csgraph = edges.tocsr()
     simp_csgraph = dir_csgraph + dir_csgraph.T  # make undirected
 
