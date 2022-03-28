@@ -1,7 +1,7 @@
 language: python
 sudo: false
 python:
-  - "3.5"
+  - "3.8"
 virtualenv:
   system_site_packages: false
 before_install:
@@ -62,7 +62,7 @@ script:
     fi
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then make numba-clean; export NUMBA_DISABLE_JIT=1; py.test --cov-report term-missing --cov . --ignore skan/gui.py; coveralls; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.8 ]]; then make numba-clean; export NUMBA_DISABLE_JIT=1; py.test --cov-report term-missing --cov . --ignore skan/gui.py; coveralls; fi
 
 env:
   global:
