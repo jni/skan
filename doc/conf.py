@@ -40,6 +40,7 @@ extensions = [
         'sphinx.ext.mathjax',
         'sphinx.ext.viewcode',
         'sphinx.ext.githubpages',
+        "sphinx_multiversion",
         'sphinx.ext.napoleon',
         'sphinxcontrib.bibtex',
         'sphinx_copybutton',
@@ -152,7 +153,10 @@ html_static_path = ['_static']
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
-    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+    "**": [
+            "logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html",
+            "html"
+    ]
 }
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -207,3 +211,11 @@ texinfo_documents = [
                 'Skeleton analysis in Python.', 'Miscellaneous'
                 ),
         ]
+
+# sphinx-multiversion configuration
+smv_tag_whitelist = r'^v.*$'
+smv_branch_whitelist = None
+smv_remote_whitelist = None
+smv_released_pattern = r'^tags/.*$'
+# Use tag name for output directory
+smv_outputdir_format = '{ref.name}'
