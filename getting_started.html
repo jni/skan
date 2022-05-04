@@ -51,8 +51,8 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/material.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -64,8 +64,6 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Using Skan’s GUI" href="gui.html" />
@@ -349,7 +347,7 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section class="tex2jax_ignore mathjax_ignore" id="getting-started-skeleton-analysis-with-skan">
+  <section id="getting-started-skeleton-analysis-with-skan">
 <h1 id="getting-started--page-root">Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started--page-root" title="Permalink to this headline">¶</a></h1>
 <p>Skeleton analysis allows us to measure fine structure in samples. In this case, we are going to measure the network formed by a protein called <em>spectrin</em> inside the membrane of a red blood cell, either infected by the malaria parasite <em>Plasmodium falciparum</em>, or uninfected.</p>
 <section id="extracting-a-skeleton-from-an-image">
@@ -381,7 +379,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/getting_started_3_0.png" src="_images/getting_started_3_0.png"/>
+<img alt="_images/619bb861cd4c9e5bc17f3bed3bf14b1a66c7b28726214e71c9b9792c1bb02e4d.png" src="_images/619bb861cd4c9e5bc17f3bed3bf14b1a66c7b28726214e71c9b9792c1bb02e4d.png"/>
 </div>
 </div>
 <p>As an aside, we can extract the pixel spacing in meters from the <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
@@ -402,7 +400,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/getting_started_5_0.png" src="_images/getting_started_5_0.png"/>
+<img alt="_images/418a0005b24a6545d1b6250059368fd30e4ed007a7b25a44daeb5e52469fadac.png" src="_images/418a0005b24a6545d1b6250059368fd30e4ed007a7b25a44daeb5e52469fadac.png"/>
 </div>
 </div>
 <p>This is an image of the inside of the membrane of a red blood cell. We want to measure the network of bright regions in this image, which is made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
@@ -427,7 +425,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/getting_started_7_0.png" src="_images/getting_started_7_0.png"/>
+<img alt="_images/3b7a2647c128462ef65fd7cd1bbdd51fc4c09ae0071bdd15b30708e5c571474b.png" src="_images/3b7a2647c128462ef65fd7cd1bbdd51fc4c09ae0071bdd15b30708e5c571474b.png"/>
 </div>
 </div>
 <p>(There are some thresholding artifacts around the left edge, due to the dark border caused by microscope imaging drift and alignment. We will ignore this in this document, but the Skan GUI allows for a “crop” parameter to filter out these regions.)</p>
@@ -452,7 +450,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/getting_started_11_0.png" src="_images/getting_started_11_0.png"/>
+<img alt="_images/3683ed2f4b68c00bd610a8da2f209c12df44097d46bef4481cee185d75cd2b0f.png" src="_images/3683ed2f4b68c00bd610a8da2f209c12df44097d46bef4481cee185d75cd2b0f.png"/>
 </div>
 </div>
 </section>
@@ -468,7 +466,7 @@
 </div>
 </div>
 </div>
-<p>The pixel graph is a SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html">CSR matrix</a> in which entry <span class="math notranslate nohighlight">\((i, j)\)</span> is 0 if pixels <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> are not connected, and otherwise is equal to the distance between pixels <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> in the skeleton. This will normally be 1 between adjacent pixels and <span class="math notranslate nohighlight">\(\sqrt{2}\)</span> between diagonally adjacent pixels, but in this can be scaled by a <code class="docutils literal notranslate"><span class="pre">spacing=</span></code> keyword argument that sets the scale (and this scale can be different for each image axis). In our case, we know the spacing between pixels, so we can measure our network in physical units instead of pixels:</p>
+<p>The pixel graph is a SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html">CSR matrix</a> in which entry $(i, j)$ is 0 if pixels $i$ and $j$ are not connected, and otherwise is equal to the distance between pixels $i$ and $j$ in the skeleton. This will normally be 1 between adjacent pixels and $\sqrt{2}$ between diagonally adjacent pixels, but in this can be scaled by a <code class="docutils literal notranslate"><span class="pre">spacing=</span></code> keyword argument that sets the scale (and this scale can be different for each image axis). In our case, we know the spacing between pixels, so we can measure our network in physical units instead of pixels:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pixel_graph0</span><span class="p">,</span> <span class="n">coordinates0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">)</span>
@@ -496,7 +494,7 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:&gt;
 </pre></div>
 </div>
-<img alt="_images/getting_started_17_1.png" src="_images/getting_started_17_1.png"/>
+<img alt="_images/c381ddae010c73e07736d2e158620a2bb51bd2650ea051181b168dc38c7899c2.png" src="_images/c381ddae010c73e07736d2e158620a2bb51bd2650ea051181b168dc38c7899c2.png"/>
 </div>
 </div>
 <p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates…) together.</p>
@@ -551,97 +549,97 @@
 <tr>
 <th>0</th>
 <td>0</td>
-<td>0</td>
-<td>1103</td>
-<td>51.875395</td>
+<td>3</td>
+<td>999</td>
+<td>36.213005</td>
 <td>1</td>
 <td>1.0</td>
 <td>0.0</td>
-<td>0</td>
-<td>198</td>
-<td>21</td>
-<td>170</td>
-<td>0.0</td>
-<td>267.09408</td>
-<td>28.32816</td>
-<td>229.32320</td>
-<td>47.213600</td>
+<td>7</td>
+<td>182</td>
+<td>32</td>
+<td>167</td>
+<td>7.55419</td>
+<td>196.40894</td>
+<td>34.53344</td>
+<td>180.22139</td>
+<td>31.462942</td>
 </tr>
 <tr>
 <th>1</th>
-<td>0</td>
-<td>2</td>
-<td>649</td>
-<td>34.474493</td>
+<td>1</td>
+<td>4</td>
+<td>2439</td>
+<td>102.872853</td>
 <td>1</td>
 <td>1.0</td>
 <td>0.0</td>
-<td>0</td>
-<td>262</td>
-<td>11</td>
-<td>241</td>
-<td>0.0</td>
-<td>353.42752</td>
-<td>14.83856</td>
-<td>325.09936</td>
-<td>31.979173</td>
+<td>7</td>
+<td>315</td>
+<td>81</td>
+<td>330</td>
+<td>7.55419</td>
+<td>339.93855</td>
+<td>87.41277</td>
+<td>356.12610</td>
+<td>81.482695</td>
 </tr>
 <tr>
 <th>2</th>
-<td>1</td>
-<td>3</td>
-<td>329</td>
-<td>16.842145</td>
+<td>2</td>
+<td>10</td>
+<td>247</td>
+<td>13.026734</td>
 <td>1</td>
 <td>1.0</td>
 <td>0.0</td>
-<td>0</td>
-<td>385</td>
-<td>6</td>
-<td>395</td>
-<td>0.0</td>
-<td>519.34960</td>
-<td>8.09376</td>
-<td>532.83920</td>
-<td>15.731442</td>
+<td>7</td>
+<td>624</td>
+<td>13</td>
+<td>615</td>
+<td>7.55419</td>
+<td>673.40208</td>
+<td>14.02921</td>
+<td>663.68955</td>
+<td>11.673008</td>
 </tr>
 <tr>
 <th>3</th>
-<td>1</td>
-<td>7</td>
-<td>1054</td>
-<td>64.016035</td>
+<td>3</td>
+<td>27</td>
+<td>208</td>
+<td>15.185074</td>
 <td>1</td>
 <td>1.0</td>
 <td>0.0</td>
-<td>0</td>
-<td>460</td>
-<td>20</td>
-<td>496</td>
-<td>0.0</td>
-<td>620.52160</td>
-<td>26.97920</td>
-<td>669.08416</td>
-<td>55.553573</td>
+<td>7</td>
+<td>1068</td>
+<td>12</td>
+<td>1056</td>
+<td>7.55419</td>
+<td>1152.55356</td>
+<td>12.95004</td>
+<td>1139.60352</td>
+<td>14.029210</td>
 </tr>
 <tr>
 <th>4</th>
-<td>1</td>
-<td>20</td>
-<td>618</td>
-<td>20.426135</td>
+<td>4</td>
+<td>28</td>
+<td>549</td>
+<td>48.977889</td>
 <td>1</td>
 <td>1.0</td>
 <td>0.0</td>
-<td>0</td>
-<td>541</td>
-<td>10</td>
-<td>530</td>
-<td>0.0</td>
-<td>729.78736</td>
-<td>13.48960</td>
-<td>714.94880</td>
-<td>20.053732</td>
+<td>7</td>
+<td>1383</td>
+<td>20</td>
+<td>1423</td>
+<td>7.55419</td>
+<td>1492.49211</td>
+<td>21.58340</td>
+<td>1535.65891</td>
+<td>45.389331</td>
 </tr>
 </tbody>
 </table>
@@ -664,7 +662,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/getting_started_21_0.png" src="_images/getting_started_21_0.png"/>
+<img alt="_images/d55982c3b94a673a356e2086478c8bdbbd142cfd0bdc49af9ca86d97f9820d93.png" src="_images/d55982c3b94a673a356e2086478c8bdbbd142cfd0bdc49af9ca86d97f9820d93.png"/>
 </div>
 </div>
 <p>We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.</p>
@@ -677,7 +675,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/getting_started_23_0.png" src="_images/getting_started_23_0.png"/>
+<img alt="_images/11d59914c16431e66eebced7beed37a200e8fb689557ce944ba997aeab2367af.png" src="_images/11d59914c16431e66eebced7beed37a200e8fb689557ce944ba997aeab2367af.png"/>
 </div>
 </div>
 </section>
@@ -738,7 +736,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/getting_started_27_0.png" src="_images/getting_started_27_0.png"/>
+<img alt="_images/7712af6c18d36806958c64d525125b162fa57f56e4d7fb88785422c9e2be4d0a.png" src="_images/7712af6c18d36806958c64d525125b162fa57f56e4d7fb88785422c9e2be4d0a.png"/>
 </div>
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>

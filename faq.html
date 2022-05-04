@@ -51,8 +51,8 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/material.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -351,7 +351,7 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section class="tex2jax_ignore mathjax_ignore" id="faq">
+  <section id="faq">
 <h1 id="faq--page-root">FAQ<a class="headerlink" href="#faq--page-root" title="Permalink to this headline">¶</a></h1>
 <section id="i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives">
 <h2 id="i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives">I just upgraded from skan v0.8 or 0.9 and my measurements are slightly different. What gives?<a class="headerlink" href="#i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives" title="Permalink to this headline">¶</a></h2>
@@ -376,7 +376,7 @@
 <p>This is done for implementation convenience. The coordinates contain <em>at least</em> the coordinates for every node in the pixel graph. However:</p>
 <ul class="simple">
 <li><p>The pixels in the skeleton are numbered 1..n. In order for each node ID to index directly into the coordinates array, the array must have a “dummy” coordinate at position 0. We considered using <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> as a sentinel value to indicate that that position contained dummy data, but that would have made it more difficult to work with NumPy functions such as <code class="docutils literal notranslate"><span class="pre">np.min</span></code>/<code class="docutils literal notranslate"><span class="pre">np.max</span></code>, which would always return <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> without special handling.</p></li>
-<li><p>Additionally, look closely at the figure in <a class="reference external" href="#What%27s-unique_junctions-or-junction_mode?">What’s unique_junctions or junction_mode?</a>: during centroid-based junction consolidation, a bunch of pixel IDs are removed from the graph. However, we keep indexing using the original IDs, so the coordinates in the coordinate array now contain “unused” data.</p></li>
+<li><p>Additionally, look closely at the figure in <span class="xref myst">What’s unique_junctions or junction_mode?</span>: during centroid-based junction consolidation, a bunch of pixel IDs are removed from the graph. However, we keep indexing using the original IDs, so the coordinates in the coordinate array now contain “unused” data.</p></li>
 </ul>
 <p>See these GitHub issues for more details: <a class="reference external" href="https://github.com/jni/skan/issues/93">#93</a> and <a class="reference external" href="https://github.com/jni/skan/issues/108">#108</a>.</p>
 </section>
