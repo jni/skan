@@ -34,6 +34,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install 'setuptools<50.0'
           python -m pip install .[all,testing,docs]
+          python -m pip install sphinx_multiversion
 
       - name: Get data
         working-directory: doc
@@ -46,7 +47,7 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           working-directory: doc
-          run: sphinx-multiversion docs build/html
+          run: @NAPARI_APPLICATION_IPY_INTERACTIVE=0 python sphinx-multiversion . _build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2

@@ -5,6 +5,5 @@ tqdm>=4.11
 nb2plots>=0.5
 sphinxcontrib-bibtex
 sphinx<2
-sphinx_multiversion
 sphinx_rtd_theme
 seaborn>=0.9
