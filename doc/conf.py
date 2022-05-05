@@ -155,7 +155,7 @@ html_static_path = ['_static']
 html_sidebars = {
     "**": [
             "logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html",
-            "html"
+            "versioning.html",
     ]
 }
 
