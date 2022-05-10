@@ -54,6 +54,8 @@ jobs:
         with:
           branch: gh-pages
           folder: doc/_build/html
+          target-folder: dev
+          clean: true
 
       - name: Cache
         uses: actions/cache@v2
