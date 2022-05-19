@@ -22,6 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get TAG
+        run: echo "TAG=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Get DOC_DIR
+        run: |
+          DOC_DIR="${TAG%.*}".x
+          echo "DOC_DIR=${DOC_DIR:1}" >> $GITHUB_ENV
+
       - name: Set up Qt
         uses: tlambert03/setup-qt-libs@v1
 
@@ -59,11 +67,11 @@ jobs:
 
       - name: Deploy stable docs 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
-        if: startsWith(${{ github.ref_name }}, 'v*')
+        if: startsWith(env.TAG, 'v')
         with:
           branch: gh-pages
           folder: doc/_build/html
-          target-folder: ${{ github.ref_name }}
+          target-folder: ${{ env.DOC_DIR }}
           clean: true
 
       - name: Cache
