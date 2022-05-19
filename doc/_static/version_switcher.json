@@ -1,0 +1,34 @@
+[
+    {
+        "version": "0.1.x",
+        "url": "https://jni.github.io/skan/0.1.x"
+    },
+    {
+        "version": "0.3.x",
+        "url": "https://jni.github.io/skan/0.3.x"
+    },
+    {
+        "version": "0.5.x",
+        "url": "https://jni.github.io/skan/0.5.x"
+    },
+    {
+        "version": "0.6.x",
+        "url": "https://jni.github.io/skan/0.6.x"
+    },
+    {
+        "version": "0.7.x",
+        "url": "https://jni.github.io/skan/0.7.x"
+    },
+    {
+        "version": "0.8.x",
+        "url": "https://jni.github.io/skan/0.8.x"
+    },
+    {
+        "version": "0.9.x",
+        "url": "https://jni.github.io/skan/0.9.x"
+    },
+    {
+        "version": "0.10.x",
+        "url": "https://jni.github.io/skan/0.10.x"
+    }
+]

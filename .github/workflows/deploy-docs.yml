@@ -27,8 +27,8 @@ jobs:
 
       - name: Get DOC_DIR
         run: |
-          DOC_DIR="${TAG%.*}".x
-          echo "DOC_DIR=${DOC_DIR:1}" >> $GITHUB_ENV
+          DOC_DIR="$(cut -d '.' -f 1,2 <<< "$TAG")"
+          echo "DOC_DIR=${DOC_DIR:1}".x >> $GITHUB_ENV
 
       - name: Set up Qt
         uses: tlambert03/setup-qt-libs@v1

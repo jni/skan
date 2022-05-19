@@ -104,20 +104,25 @@ bibtex_bibfiles = ['publications.bib']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = 'sphinx_material'
+html_theme = 'pydata_sphinx_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 
-html_theme = 'sphinx_material'
+version = skan.__version__.replace('dev0', '')
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
     'nav_title': 'Skan 🦴📏',
-
+    # pydata theme version switcher config
+    'navbar_end': ['version-switcher', 'navbar-icon-links'],
+    'switcher': {
+        'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json',
+        'version_match': version,
+    },
     # Set you GA account ID to enable tracking
     # 'google_analytics_account': 'UA-XXXXX',
 
