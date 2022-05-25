@@ -22,6 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get TAG
+        run: echo "TAG=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Get DOC_DIR
+        run: |
+          DOC_DIR="$(cut -d '.' -f 1,2 <<< "$TAG")"
+          echo "DOC_DIR=${DOC_DIR:1}".x >> $GITHUB_ENV
+
       - name: Set up Qt
         uses: tlambert03/setup-qt-libs@v1
 
