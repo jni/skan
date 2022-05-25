@@ -49,11 +49,22 @@ jobs:
           working-directory: doc
           run: make html
 
-      - name: Deploy docs 🚀
+      - name: Deploy dev docs 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
           folder: doc/_build/html
+          target-folder: dev
+          clean: true
+
+      - name: Deploy stable docs 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        if: startsWith(env.TAG, 'v')
+        with:
+          branch: gh-pages
+          folder: doc/_build/html
+          target-folder: ${{ env.DOC_DIR }}
+          clean: true
 
       - name: Cache
         uses: actions/cache@v2
