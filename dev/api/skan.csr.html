@@ -1,0 +1,796 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
+  
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="../_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="../_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="../_static/javascripts/modernizr.js"></script>
+  
+  
+  
+    <title>skan.csr: CSR Graph representation of skeletons &#8212; Skan 0.11.0.dev0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/material.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skan.draw: Skeleton visualisation" href="skan.draw.html" />
+    <link rel="prev" title="Skan API Reference" href="api.html" />
+  
+   
+
+  </head>
+  <body dir=ltr
+        data-md-color-primary=blue data-md-color-accent=light-blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#api/skan.csr" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../index.html" title="Skan 0.11.0.dev0 documentation"
+           class="md-header-nav__button md-logo">
+          
+            &nbsp;
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">Skan 🦴📏</span>
+          <span class="md-header-nav__topic"> skan.csr: CSR Graph representation of skeletons </span>
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="../search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder="Search"
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/jni/skan/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    Skan
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="../_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = "../"versions.json"",
+        target_loc = "../../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+          <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Skan 0.11.0.dev0 documentation</a></li>
+          <li class="md-tabs__item"><a href="api.html" class="md-tabs__link">Skan API Reference</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../index.html" title="Skan 0.11.0.dev0 documentation" class="md-nav__button md-logo">
+      
+        <img src="../_static/" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="../index.html"
+       title="Skan 0.11.0.dev0 documentation">Skan 🦴📏</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/jni/skan/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    Skan
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="../install.html" class="md-nav__link">Installing Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../getting_started.html" class="md-nav__link">Getting started: Skeleton analysis with Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../gui.html" class="md-nav__link">Using Skan’s GUI</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../complete_analysis.html" class="md-nav__link">Complete analysis with Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../visualizing_3d_skeletons.html" class="md-nav__link">Display 3D skeletons in napari</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../sholl_analysis.html" class="md-nav__link">Sholl analysis in Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../faq.html" class="md-nav__link">FAQ</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../citing.html" class="md-nav__link">Citing Skan</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="api.html" class="md-nav__link">Skan API Reference</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../release-notes/index.html" class="md-nav__link">Skan release notes</a>
+      
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+<li class="md-nav__item"><a class="md-nav__extra_link" href="../_sources/api/skan.csr.rst.txt">Show Source</a> </li>
+
+<li id="searchbox" class="md-nav__item"></li>
+
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
+  <section id="module-skan.csr">
+<span id="skan-csr-csr-graph-representation-of-skeletons"></span><h1 id="api-skan-csr--page-root">skan.csr: CSR Graph representation of skeletons<a class="headerlink" href="#api-skan-csr--page-root" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="skan.csr.Skeleton">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">Skeleton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object to group together all the properties of a skeleton.</p>
+<p>In the text below, we use the following notation:</p>
+<ul class="simple">
+<li><p>N: the number of points in the pixel skeleton,</p></li>
+<li><p>ndim: the dimensionality of the skeleton</p></li>
+<li><p>P: the number of paths in the skeleton (also the number of links in the
+junction graph).</p></li>
+<li><p>J: the number of junction nodes</p></li>
+<li><p>Sd: the sum of the degrees of all the junction nodes</p></li>
+<li><p>[Nt], [Np], Nr, Nc: the dimensions of the source image</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skeleton_image</strong> (<em>array</em>) – The input skeleton (1-pixel/voxel thick skeleton, all other values 0).</p></li>
+<li><p><strong>spacing</strong> (float or array of float, shape <code class="docutils literal notranslate"><span class="pre">(ndim,)</span></code>) – The scale of the pixel spacing along each axis.</p></li>
+<li><p><strong>source_image</strong> (array of float, same shape as <cite>skeleton_image</cite>) – The image that <cite>skeleton_image</cite> represents / summarizes / was generated
+from. This is used to produce visualizations as well as statistical
+properties of paths.</p></li>
+<li><p><strong>keep_images</strong> (<em>bool</em>) – Whether or not to keep the original input images. These can be useful
+for visualization, but they may take up a lot of memory.</p></li>
+<li><p><strong>value_is_height</strong> (<em>bool</em>) – Whether to consider the value of a float skeleton to be the “height”
+of the image. This can be useful e.g. when measuring lengths along
+ridges in AFM images.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#skan.csr.Skeleton.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The skeleton pixel graph, where each node is a non-zero pixel in the
+input image, and each edge connects adjacent pixels. The graph is
+represented as an adjacency matrix in SciPy sparse matrix format. For
+more information see the <code class="docutils literal notranslate"><span class="pre">scipy.sparse</span></code> documentation as well as
+<code class="docutils literal notranslate"><span class="pre">scipy.sparse.csgraph</span></code>. Note: pixel numbering starts at 1, so the
+shape of this matrix is <code class="docutils literal notranslate"><span class="pre">(N</span> <span class="pre">+</span> <span class="pre">1,</span> <span class="pre">N</span> <span class="pre">+</span> <span class="pre">1)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">N)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>scipy.sparse.csr_matrix, shape (N + 1, N + 1)</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.nbgraph">
+<span class="sig-name descname"><span class="pre">nbgraph</span></span><a class="headerlink" href="#skan.csr.Skeleton.nbgraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>A thin Numba wrapper around the <code class="docutils literal notranslate"><span class="pre">csr_matrix</span></code> format, this provides
+faster graph methods. For example, it is much faster to get a list of
+neighbors, or test for the presence of a specific edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>NBGraph</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.coordinates">
+<span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#skan.csr.Skeleton.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>skeleton_pixel_id i -&gt; coordinates[i]
+The image coordinates of each pixel in the skeleton.
+Some values in this matrix are non-sensical — you should only access
+them from node ids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array, shape (N, ndim)</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.paths">
+<span class="sig-name descname"><span class="pre">paths</span></span><a class="headerlink" href="#skan.csr.Skeleton.paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>A csr_matrix where element [i, j] is on if node j is in path i. This
+includes path endpoints. The number of nonzero elements is N - J + Sd.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>scipy.sparse.csr_matrix, shape (P, N + 1)</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.n_paths">
+<span class="sig-name descname"><span class="pre">n_paths</span></span><a class="headerlink" href="#skan.csr.Skeleton.n_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of paths, P. This is redundant information given <cite>n_paths</cite>,
+but it is used often enough that it is worth keeping around.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.distances">
+<span class="sig-name descname"><span class="pre">distances</span></span><a class="headerlink" href="#skan.csr.Skeleton.distances" title="Permalink to this definition">¶</a></dt>
+<dd><p>The distance of each path. Note: not initialized until <cite>path_lengths()</cite>
+is called on the skeleton; use path_lengths() instead</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array of float, shape (P,)</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.skeleton_image">
+<span class="sig-name descname"><span class="pre">skeleton_image</span></span><a class="headerlink" href="#skan.csr.Skeleton.skeleton_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>The input skeleton image. Only present if <cite>keep_images</cite> is True. Set to
+False to preserve memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array or None</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.source_image">
+<span class="sig-name descname"><span class="pre">source_image</span></span><a class="headerlink" href="#skan.csr.Skeleton.source_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>The image from which the skeleton was derived. Only present if
+<cite>keep_images</cite> is True. This is useful for visualization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array or None</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path">
+<span class="sig-name descname"><span class="pre">path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the pixel indices of path number <cite>index</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – The desired path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>path</strong> – The indices of the pixels belonging to the path, including
+endpoints.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array of int</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_coordinates">
+<span class="sig-name descname"><span class="pre">path_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the image coordinates of the pixels in the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – The desired path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>path_coords</strong> – The (image) coordinates of points on the path, including endpoints.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array of float</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_label_image">
+<span class="sig-name descname"><span class="pre">path_label_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_label_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_label_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image like self.skeleton_image with path_ids as values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>label_image</strong> – Image of the same shape as self.skeleton_image where each pixel
+has the value of its branch id + 1.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>array of ints</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_lengths">
+<span class="sig-name descname"><span class="pre">path_lengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_lengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of each path on the skeleton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>lengths</strong> – The length of all the paths in the skeleton.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>array of float</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_means">
+<span class="sig-name descname"><span class="pre">path_means</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_means"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_means" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mean pixel value along each path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>means</strong> – The average pixel value along each path in the skeleton.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>array of float</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_stdev">
+<span class="sig-name descname"><span class="pre">path_stdev</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_stdev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_stdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the standard deviation of values along each path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>stdevs</strong> – The standard deviation of pixel values along each path.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>array of float</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.path_with_data">
+<span class="sig-name descname"><span class="pre">path_with_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.path_with_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.path_with_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return pixel indices and corresponding pixel values on a path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – The desired path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>path</strong> (<em>array of int</em>) – The indices of pixels on the path, including endpoints.</p></li>
+<li><p><strong>data</strong> (<em>array of float</em>) – The values of pixels on the path.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="skan.csr.Skeleton.paths_list">
+<span class="sig-name descname"><span class="pre">paths_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#Skeleton.paths_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.Skeleton.paths_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all the paths in the skeleton, including endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>paths</strong> – The list containing all the paths in the skeleton.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of array of int</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.make_degree_image">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">make_degree_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton_image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#make_degree_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.make_degree_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a array showing the degree of connectivity of each pixel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>skeleton_image</strong> (<em>array</em>) – An input image in which every nonzero pixel is considered part of
+the skeleton, and links between pixels are determined by a full
+n-dimensional neighborhood.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>degree_image</strong> – An image containing the degree of connectivity of each pixel in the
+skeleton to neighboring pixels.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array of int, same shape as skeleton_image</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.pixel_graph">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">pixel_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connectivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#pixel_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.pixel_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an adjacency graph of pixels in an image.</p>
+<p>Pixels where the mask is True are nodes in the returned graph, and they are
+connected by edges to their neighbors according to the connectivity
+parameter. By default, the <em>value</em> of an edge when a mask is given, or when
+the image is itself the mask, is the euclidean distance betwene the pixels.</p>
+<p>However, if an int- or float-valued image is given with no mask, the value
+of the edges is the absolute difference in intensity between adjacent
+pixels, weighted by the euclidean distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em>) – The input image. If the image is of type bool, it will be used as the
+mask as well.</p></li>
+<li><p><strong>mask</strong> (<em>array of bool</em>) – Which pixels to use. If None, the graph for the whole image is used.</p></li>
+<li><p><strong>edge_function</strong> (<em>callable</em>) – A function taking an array of pixel values, and an array of neighbor
+pixel values, and an array of distances, and returning a value for the
+edge. If no function is given, the value of an edge is just the
+distance.</p></li>
+<li><p><strong>connectivity</strong> (<em>int</em>) – The square connectivity of the pixel neighborhood: the number of
+orthogonal steps allowed to consider a pixel a neigbor. See
+<cite>scipy.ndimage.generate_binary_structure</cite> for details.</p></li>
+<li><p><strong>spacing</strong> (<em>tuple of float</em>) – The spacing between pixels along each axis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>graph</strong> (<em>scipy.sparse.csr_matrix</em>) – A sparse adjacency matrix in which entry (i, j) is 1 if nodes i and j
+are neighbors, 0 otherwise.</p></li>
+<li><p><strong>nodes</strong> (<em>array of int</em>) – The nodes of the graph. These correspond to the raveled indices of the
+nonzero pixels in the mask.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.sholl_analysis">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">sholl_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shells</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#sholl_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.sholl_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sholl Analysis for Skeleton object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skeleton</strong> (<a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><em>skan.csr.Skeleton</em></a>) – A Skeleton object.</p></li>
+<li><p><strong>center</strong> (<em>array-like of float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Scaled coordinates of a point on the skeleton to use as the center
+from which the concentric shells are computed. If None, the
+geodesic center of skeleton is chosen.</p></li>
+<li><p><strong>shells</strong> (<em>int</em><em> or </em><em>array of floats</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – If an int, it is used as number of evenly spaced concentric shells. If
+an array of floats, it is used directly as the different shell radii in
+real world units. If None, the number of evenly spaced concentric
+shells is automatically calculated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>center</strong> (<em>array of float</em>) – The scaled coordinates in real world units of the center of the shells.
+(This might be provided as input, but it might also have been computed
+within this function, and that computation is expensive, so we return
+it just in case.)</p></li>
+<li><p><strong>shell_radii</strong> (<em>array of float</em>) – Radii in real world units for concentric shells used for analysis.</p></li>
+<li><p><strong>intersection_counts</strong> (<em>array of int</em>) – Number of intersections for corresponding shell radii.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.skeleton_to_csgraph">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">skeleton_to_csgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#skeleton_to_csgraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.skeleton_to_csgraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a skeleton image of thin lines to a graph of neighbor pixels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skel</strong> (<em>array</em>) – An input image in which every nonzero pixel is considered part of
+the skeleton, and links between pixels are determined by a full
+n-dimensional neighborhood.</p></li>
+<li><p><strong>spacing</strong> (float, or array-like of float, shape <cite>(skel.ndim,)</cite>) – A value indicating the distance between adjacent pixels. This can
+either be a single value if the data has the same resolution along
+all axes, or it can be an array of the same shape as <cite>skel</cite> to
+indicate spacing along each axis.</p></li>
+<li><p><strong>value_is_height</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <cite>True</cite>, the pixel value at each point of the skeleton will be
+considered to be a height measurement, and this height will be
+incorporated into skeleton branch lengths. Used for analysis of
+atomic force microscopy (AFM) images.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>graph</strong> (<em>sparse.csr_matrix</em>) – A graph of shape (Nnz, Nnz), where Nnz is the number of
+nonzero pixels in <cite>skel</cite>. The value graph[i, j] is the distance
+between adjacent pixels i and j. In a 2D image, that would be
+1 for immediately adjacent pixels and sqrt(2) for diagonally
+adjacent ones.</p></li>
+<li><p><strong>pixel_coordinates</strong> (<em>array of float</em>) – An array of shape (Nnz, skel.ndim), mapping indices in <cite>graph</cite>
+to pixel coordinates in <cite>skel</cite>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.submatrix">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">submatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#submatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.submatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the outer-index product submatrix, <cite>M[idxs, :][:, idxs]</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<em>scipy.sparse.spmatrix</em>) – Input (square) matrix</p></li>
+<li><p><strong>idxs</strong> (<em>array of int</em>) – The indices to subset. No index in <cite>idxs</cite> should exceed the
+number of rows of <cite>M</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Msub</strong> – The subsetted matrix.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>scipy.sparse.spmatrix</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Md</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">M</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">Md</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">submatrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+<span class="go">[[ 0  2]</span>
+<span class="go"> [ 8 10]]</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="skan.csr.summarize">
+<span class="sig-prename descclassname"><span class="pre">skan.csr.</span></span><span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><span class="pre">skan.csr.Skeleton</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_is_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">find_main_branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/csr.html#summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.csr.summarize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute statistics for every skeleton and branch in <code class="docutils literal notranslate"><span class="pre">skel</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skel</strong> (<a class="reference internal" href="#skan.csr.Skeleton" title="skan.csr.Skeleton"><em>skan.csr.Skeleton</em></a>) – A Skeleton object.</p></li>
+<li><p><strong>value_is_height</strong> (<em>bool</em>) – Whether to consider the value of a float skeleton to be the “height”
+of the image. This can be useful e.g. when measuring lengths along
+ridges in AFM images.</p></li>
+<li><p><strong>find_main_branch</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to compute main branches. A main branch is defined as the
+longest shortest path within a skeleton. This step is very expensive
+as it involves computing the shortest paths between all pairs of branch
+endpoints, so it is off by default.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>summary</strong> – A summary of the branches including branch length, mean branch value,
+branch euclidean distance, etc.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+
+
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+            <a href="api.html" title="Skan API Reference"
+               class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               rel="prev">
+              <div class="md-flex__cell md-flex__cell--shrink">
+                <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+              </div>
+              <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+                <span class="md-flex__ellipsis">
+                  <span
+                      class="md-footer-nav__direction"> Previous </span> Skan API Reference </span>
+              </div>
+            </a>
+          
+          
+            <a href="skan.draw.html" title="skan.draw: Skeleton visualisation"
+               class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
+                class="md-flex__ellipsis"> <span
+                class="md-footer-nav__direction"> Next </span> skan.draw: Skeleton visualisation </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink"><i
+                class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
+</html>
