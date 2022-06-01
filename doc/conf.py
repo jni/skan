@@ -136,12 +136,6 @@ html_theme_options = {
     'repo_url': 'https://github.com/jni/skan/',
     'repo_name': 'Skan',
 
-#     # Visible levels of the global TOC; -1 means unlimited
-#     'globaltoc_depth': 1,
-#     # If False, expand all TOC entries
-#     'globaltoc_collapse': False,
-#     # If True, show hidden TOC entries
-#     'globaltoc_includehidden': False,
 }
 
 if 'dev' in version:
