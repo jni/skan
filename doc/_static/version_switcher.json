@@ -1,0 +1,16 @@
+[
+    {
+        "name": "dev",
+        "version": "0.11.0.dev0",
+        "url": "https://jni.github.io/skan/dev"
+    },
+    {
+        "name": "0.10.x (stable)",
+        "version": "0.10.x",
+        "url": "https://jni.github.io/skan/0.10.x"
+    },
+    {
+        "version": "0.9.x",
+        "url": "https://jni.github.io/skan/0.9.x"
+    }
+]
