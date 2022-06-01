@@ -25,7 +25,7 @@ First, we load the images. These images were produced by an FEI scanning electro
 from glob import glob
 import imageio as iio
 
-files = glob('example-data/*.tif')
+files = glob('../example-data/*.tif')
 image0 = iio.imread(files[0], format='fei')
 ```
 
