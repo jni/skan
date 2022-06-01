@@ -111,8 +111,6 @@ html_theme = 'pydata_sphinx_theme'
 # documentation.
 #
 
-version = skan.__version__.replace('dev0', '')
-
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
@@ -145,6 +143,9 @@ html_theme_options = {
 #     # If True, show hidden TOC entries
 #     'globaltoc_includehidden': False,
 }
+
+if 'dev' in version:
+    html_theme_options["switcher"]["version_match"] = "dev"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
