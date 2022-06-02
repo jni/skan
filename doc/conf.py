@@ -116,12 +116,10 @@ html_theme = 'pydata_sphinx_theme'
 # Version match must match the 'version' key in version_swticher.json
 pattern = re.compile(r'^[0-9]+\.[0-9]+')
 version_match = pattern.search(version)
-if version_match:
-    version_match = version_match.group() + ".x"
-elif 'dev' in version:
-    version_match = "dev"
-else:
+if 'dev' in version:
     version_match = version
+elif version_match:
+    version_match = version_match.group() + ".x"
 
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
@@ -129,7 +127,7 @@ html_theme_options = {
     # pydata theme version switcher config
     'navbar_end': ['version-switcher', 'navbar-icon-links'],
     'switcher': {
-        'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json',
+        'json_url': 'https://skeleton-analysis.org/skan/dev/_static/version_switcher.json',
         'version_match': version_match,
     },
     # Set you GA account ID to enable tracking
