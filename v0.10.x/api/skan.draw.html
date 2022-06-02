@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>skan.draw: Skeleton visualisation &#8212; Skan 0.10.0 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/styles/pydata-sphinx-theme.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >let toggleHintShow = 'Click to show';</script>
+    <script >let toggleHintHide = 'Click to hide';</script>
+    <script >let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skan.pipe:: Pipeline functions for skeleton analysis" href="skan.pipe.html" />
+    <link rel="prev" title="skan.csr: CSR Graph representation of skeletons" href="skan.csr.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../index.html">
+<p class="title">Skan</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started/index.html">
+  Getting started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../gui.html">
+  Using Skan’s GUI
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../complete_analysis.html">
+  Complete analysis with Skan
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../misc/index.html">
+  Miscellaneous
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="api.html">
+  Skan API Reference
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        0.10.0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables api/skan.draw and {'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json', 'version_match': '0.10.0'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "api/skan.draw.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://jni.github.io/skan/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "api/skan.draw.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.10.0 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "0.10.0") {
+                node.classList.add("active");
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="skan.csr.html">
+   skan.csr: CSR Graph representation of skeletons
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   skan.draw: Skeleton visualisation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="skan.pipe.html">
+   skan.pipe:: Pipeline functions for skeleton analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="skan.pre.html">
+   skan.pre: Image preprocessing
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+
+<nav id="bd-toc-nav">
+    
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="module-skan.draw">
+<span id="skan-draw-skeleton-visualisation"></span><h1>skan.draw: Skeleton visualisation<a class="headerlink" href="#module-skan.draw" title="Permalink to this headline">#</a></h1>
+<dl class="py function">
+<dt id="skan.draw.overlay_euclidean_skeleton_2d">
+<code class="sig-prename descclassname"><span class="pre">skan.draw.</span></code><code class="sig-name descname"><span class="pre">overlay_euclidean_skeleton_2d</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton_color_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'branch-type'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton_colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_euclidean_skeleton_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.draw.overlay_euclidean_skeleton_2d" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the image, and overlay the straight-line skeleton over it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>)</em>) – The input image.</p></li>
+<li><p><strong>stats</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>)</em>) – Skeleton statistics.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>image_cmap</strong> (<em>matplotlib colormap name or object, optional</em>) – The colormap to use for the input image. Defaults to grayscale.</p></li>
+<li><p><strong>skeleton_color_source</strong> (<em>string, optional</em>) – The name of the column to use for the skeleton edge color. See the
+output of <cite>skan.summarise</cite> for valid choices. Most common choices
+would be:</p>
+<ul>
+<li><p>skeleton-id: each individual skeleton (connected component) will
+have a different colour.</p></li>
+<li><p>branch-type: each branch type (tip-tip, tip-junction,
+junction-junction, path-path). This is the default.</p></li>
+<li><p>branch-distance: the curved length of the skeleton branch.</p></li>
+<li><p>euclidean-distance: the straight-line length of the skeleton branch.</p></li>
+</ul>
+</li>
+<li><p><strong>skeleton_colormap</strong> (<em>matplotlib colormap name or object, optional</em>) – The colormap for the skeleton values.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib Axes object, optional</em>) – An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>axes</strong> – The Axes on which the plot is drawn.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib Axes object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skan.draw.overlay_skeleton_2d">
+<code class="sig-prename descclassname"><span class="pre">skan.draw.</span></code><code class="sig-name descname"><span class="pre">overlay_skeleton_2d</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dilate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d" title="Permalink to this definition">#</a></dt>
+<dd><p>Overlay the skeleton pixels on the input image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>[</em><em>, </em><em>3</em><em>]</em><em>)</em>) – The input image. Can be grayscale or RGB.</p></li>
+<li><p><strong>skeleton</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>)</em>) – The input 1-pixel-wide skeleton.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>image_cmap</strong> (<em>matplotlib colormap name or object, optional</em>) – If the input image is grayscale, colormap it with this colormap.
+The default is grayscale.</p></li>
+<li><p><strong>color</strong> (<em>tuple of float in [0, 1], optional</em>) – The RGB color for the skeleton pixels.</p></li>
+<li><p><strong>alpha</strong> (<em>float, optional</em>) – Blend the skeleton pixels with the given alpha.</p></li>
+<li><p><strong>dilate</strong> (<em>int, optional</em>) – Dilate the skeleton by this amount. This is useful when rendering
+large images where aliasing may cause some pixels of the skeleton
+not to be drawn.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib Axes</em>) – The Axes on which to plot the image. If None, new ones are created.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>axes</strong> – The Axis on which the image is drawn.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skan.draw.overlay_skeleton_2d_class">
+<code class="sig-prename descclassname"><span class="pre">skan.draw.</span></code><code class="sig-name descname"><span class="pre">overlay_skeleton_2d_class</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton_color_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'path_means'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton_colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_2d_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_2d_class" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the image, and overlay the skeleton over it.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>skeleton</strong> (<em>skan.Skeleton object</em>) – The input skeleton, which contains both the skeleton and the source
+image.</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul>
+<li><p><strong>image_cmap</strong> (<em>matplotlib colormap name or object, optional</em>) – The colormap to use for the input image. Defaults to grayscale.</p></li>
+<li><p><strong>skeleton_color_source</strong> (<em>string or callable, optional</em>) – The name of the method to use for the skeleton edge color. See the
+documentation of <cite>skan.Skeleton</cite> for valid choices. Most common choices
+would be:</p>
+<ul class="simple">
+<li><p>path_means: the mean value of the skeleton along each path.</p></li>
+<li><p>path_lengths: the length of each path.</p></li>
+<li><p>path_stdev: the standard deviation of pixel values along the path.</p></li>
+</ul>
+<p>Alternatively, a callable can be provided that takes as input a
+Skeleton object and outputs a list of floating point values of the same
+length as the number of paths.</p>
+</li>
+<li><p><strong>skeleton_colormap</strong> (<em>matplotlib colormap name or object, optional</em>) – The colormap for the skeleton values.</p></li>
+<li><p><strong>vmin, vmax</strong> (<em>float, optional</em>) – The minimum and maximum values for the colormap. Use this to pin the
+colormapped values to a certain range.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib Axes object, optional</em>) – An Axes object on which to draw. If <cite>None</cite>, a new one is created.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>axes</strong> (<em>matplotlib Axes object</em>) – The Axes on which the plot is drawn.</p></li>
+<li><p><strong>mappable</strong> (<em>matplotlib ScalarMappable object</em>) – The mappable values corresponding to the line colors. This can be used
+to create a colorbar for the plot.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skan.draw.overlay_skeleton_networkx">
+<code class="sig-prename descclassname"><span class="pre">skan.draw.</span></code><code class="sig-name descname"><span class="pre">overlay_skeleton_networkx</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csr_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#overlay_skeleton_networkx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.draw.overlay_skeleton_networkx" title="Permalink to this definition">#</a></dt>
+<dd><p>Draw the skeleton as a NetworkX graph, optionally overlaid on an image.</p>
+<p>Due to the size of NetworkX drawing elements, this is only recommended
+for very small skeletons.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>csr_graph</strong> (<em>SciPy Sparse matrix</em>) – The skeleton graph in SciPy CSR format.</p></li>
+<li><p><strong>coordinates</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>N_points</em><em>, </em><em>2</em><em>)</em>) – The coordinates of each point in the skeleton. <code class="docutils literal notranslate"><span class="pre">coordinates.shape[0]</span></code>
+should be equal to <code class="docutils literal notranslate"><span class="pre">csr_graph.shape[0]</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>axis</strong> (<em>Matplotlib Axes object, optional</em>) – The Axes on which to plot the data. If None, a new figure and axes will
+be created.</p></li>
+<li><p><strong>image</strong> (<em>array, shape (M, N[, 3])</em>) – An image on which to overlay the skeleton. <code class="docutils literal notranslate"><span class="pre">image.shape</span></code> should be
+greater than <code class="docutils literal notranslate"><span class="pre">np.max(coordinates,</span> <span class="pre">axis=0)</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> (<em>keyword arguments</em>) – Arguments passed on to <cite>nx.draw_networkx</cite>. Particularly useful ones
+include <code class="docutils literal notranslate"><span class="pre">node_size=</span></code> and <code class="docutils literal notranslate"><span class="pre">font_size=</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skan.draw.pipeline_plot">
+<code class="sig-prename descclassname"><span class="pre">skan.draw.</span></code><code class="sig-name descname"><span class="pre">pipeline_plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholded</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(9,</span> <span class="pre">9)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pipeline_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.draw.pipeline_plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Draw the image, the thresholded version, and its skeleton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>, </em><em>..</em><em>[</em><em>, </em><em>3</em><em>]</em><em>)</em>) – Input image, conformant with scikit-image data type
+specification <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.</p></li>
+<li><p><strong>thresholded</strong> (<em>array</em><em>, </em><em>same shape as image</em>) – Binarized version of the input image.</p></li>
+<li><p><strong>skeleton</strong> (<em>array</em><em>, </em><em>same shape as image</em>) – Skeletonized version of the input image.</p></li>
+<li><p><strong>stats</strong> (<em>pandas DataFrame</em>) – Skeleton statistics from the input image/skeleton.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>figure</strong> (<em>matplotlib Figure, optional</em>) – If given, where to make the plots.</p></li>
+<li><p><strong>axes</strong> (<em>array of matplotlib Axes, optional</em>) – If given, use these axes to draw the plots. Should have len 4.</p></li>
+<li><p><strong>figsize</strong> (<em>2-tuple of float, optional</em>) – The width and height of the figure.</p></li>
+<li><p><strong>smooth_method</strong> (<em>{‘Gaussian’, ‘TV’, ‘NL’}, optional</em>) – Which denoising method to use on the image.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib Figure</em>) – The Figure containing all the plots</p></li>
+<li><p><strong>axes</strong> (<em>array of matplotlib Axes</em>) – The four axes containing the drawn images.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p><a class="reference external" href="http://scikit-image.org/docs/dev/user_guide/data_types.html">http://scikit-image.org/docs/dev/user_guide/data_types.html</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="skan.draw.pixel_perfect_figsize">
+<code class="sig-prename descclassname"><span class="pre">skan.draw.</span></code><code class="sig-name descname"><span class="pre">pixel_perfect_figsize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skan/draw.html#pixel_perfect_figsize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#skan.draw.pixel_perfect_figsize" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the Matplotlib figure size tuple (w, h) for given image and dpi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>array</em><em>, </em><em>shape</em><em> (</em><em>M</em><em>, </em><em>N</em><em>[</em><em>, </em><em>3</em><em>]</em><em>)</em>) – The image to be plotted.</p></li>
+<li><p><strong>dpi</strong> (<em>int</em><em>, </em><em>optional</em>) – The desired figure dpi.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>figsize</strong> – The desired figure size.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">768</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pixel_perfect_figsize</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go">(12.8, 9.6)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="skan.csr.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">skan.csr: CSR Graph representation of skeletons</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="skan.pipe.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">skan.pipe:: Pipeline functions for skeleton analysis</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
