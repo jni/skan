@@ -19,6 +19,7 @@
 # Add the local code to the Python path, so docs are generated for
 # current working copy
 import os
+import re
 import sys
 
 rundir = os.path.dirname(__file__)
@@ -104,20 +105,33 @@ bibtex_bibfiles = ['publications.bib']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = 'sphinx_material'
+html_theme = 'pydata_sphinx_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 
-html_theme = 'sphinx_material'
+# Version match must match the 'version' key in version_swticher.json
+pattern = re.compile(r'^[0-9]+\.[0-9]+')
+version_match = pattern.search(version)
+if version_match:
+    version_match = version_match.group() + ".x"
+elif 'dev' in version:
+    version_match = "dev"
+else:
+    version_match = version
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
     'nav_title': 'Skan 🦴📏',
-
+    # pydata theme version switcher config
+    'navbar_end': ['version-switcher', 'navbar-icon-links'],
+    'switcher': {
+        'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json',
+        'version_match': version_match,
+    },
     # Set you GA account ID to enable tracking
     # 'google_analytics_account': 'UA-XXXXX',
 
@@ -133,27 +147,12 @@ html_theme_options = {
     'repo_url': 'https://github.com/jni/skan/',
     'repo_name': 'Skan',
 
-    # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 1,
-    # If False, expand all TOC entries
-    'globaltoc_collapse': False,
-    # If True, show hidden TOC entries
-    'globaltoc_includehidden': False,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# This is required for the alabaster theme
-# refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
-}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
