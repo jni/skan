@@ -19,6 +19,7 @@
 # Add the local code to the Python path, so docs are generated for
 # current working copy
 import os
+import re
 import sys
 
 rundir = os.path.dirname(__file__)
@@ -111,6 +112,17 @@ html_theme = 'pydata_sphinx_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
+
+# Version match must match the 'version' key in version_swticher.json
+pattern = re.compile(r'^v[0-9]+\.[0-9]+')
+version_match = pattern.search(version).group()
+if version_match:
+    version_match = version_match[1:] + ".x"
+elif 'dev' in version:
+    version_match = "dev"
+else:
+    version_match = version
+
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
     'nav_title': 'Skan 🦴📏',
@@ -136,8 +148,6 @@ html_theme_options = {
     'repo_name': 'Skan',
 }
 
-if 'dev' in version:
-    html_theme_options["switcher"]["version_match"] = "dev"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
