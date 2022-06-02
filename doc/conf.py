@@ -116,7 +116,7 @@ html_theme = 'pydata_sphinx_theme'
 pattern = re.compile(r'^v[0-9]+\.[0-9]+')
 version_match = pattern.search(version)
 if version_match.group():
-    version_match = version_match.group[1:] + ".x"
+    version_match = version_match.group()[1:] + ".x"
 elif 'dev' in version:
     version_match = "dev"
 else:
