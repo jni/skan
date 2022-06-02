@@ -118,7 +118,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.11.x  <!-- this text may get changed later by javascript -->
+        0.11.0.dev0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -128,7 +128,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables getting_started/getting_started and {'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json', 'version_match': '0.11.x'}.
+     variables getting_started/getting_started and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.0.dev0'}.
 -->
 
 <script type="text/javascript">
@@ -155,7 +155,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://jni.github.io/skan/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://skeleton-analysis.org/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "getting_started/getting_started.html";
         // create links to the corresponding page in the other docs versions
         $.each(data, function(index, entry) {
@@ -182,7 +182,7 @@ function checkPageExistsAndRedirect(event) {
             // this version, rather than using sphinx's 0.11.0.dev0 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.11.x") {
+            if (entry.version == "0.11.0.dev0") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -304,7 +304,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3373/1840275138.py:5: DeprecationWarning: Starting with ImageIO v3 the behavior of this function will switch to that of iio.v3.imread. To keep the current behavior (and make this warning dissapear) use `import imageio.v2 as imageio` or call `imageio.v2.imread` directly.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3176/1840275138.py:5: DeprecationWarning: Starting with ImageIO v3 the behavior of this function will switch to that of iio.v3.imread. To keep the current behavior (and make this warning dissapear) use `import imageio.v2 as imageio` or call `imageio.v2.imread` directly.
   image0 = iio.imread(files[0], format=&#39;fei&#39;)
 </pre></div>
 </div>
@@ -661,7 +661,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3373/3422548294.py:3: DeprecationWarning: Starting with ImageIO v3 the behavior of this function will switch to that of iio.v3.imread. To keep the current behavior (and make this warning dissapear) use `import imageio.v2 as imageio` or call `imageio.v2.imread` directly.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3176/3422548294.py:3: DeprecationWarning: Starting with ImageIO v3 the behavior of this function will switch to that of iio.v3.imread. To keep the current behavior (and make this warning dissapear) use `import imageio.v2 as imageio` or call `imageio.v2.imread` directly.
   images = [iio.imread(file, format=&#39;fei&#39;)
 </pre></div>
 </div>
@@ -687,7 +687,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f0ce20713124de7905f10cdf8d26e29b2f24bbf4c615dc592e08b3e7e7084c9a.png" src="../_images/f0ce20713124de7905f10cdf8d26e29b2f24bbf4c615dc592e08b3e7e7084c9a.png" />
+<img alt="../_images/9198c1f911bdd6c57f0a36a8c2bb5d153bc2f0465e72ae3f77dfe1e76d7d2687.png" src="../_images/9198c1f911bdd6c57f0a36a8c2bb5d153bc2f0465e72ae3f77dfe1e76d7d2687.png" />
 </div>
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>
