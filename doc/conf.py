@@ -115,9 +115,9 @@ html_theme = 'pydata_sphinx_theme'
 
 # Version match must match the 'version' key in version_swticher.json
 pattern = re.compile(r'^v[0-9]+\.[0-9]+')
-version_match = pattern.search(version).group()
-if version_match:
-    version_match = version_match[1:] + ".x"
+version_match = pattern.search(version)
+if version_match.group():
+    version_match = version_match.group()[1:] + ".x"
 elif 'dev' in version:
     version_match = "dev"
 else:
@@ -130,7 +130,7 @@ html_theme_options = {
     'navbar_end': ['version-switcher', 'navbar-icon-links'],
     'switcher': {
         'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json',
-        'version_match': version,
+        'version_match': version_match,
     },
     # Set you GA account ID to enable tracking
     # 'google_analytics_account': 'UA-XXXXX',
