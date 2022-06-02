@@ -117,7 +117,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.10.0  <!-- this text may get changed later by javascript -->
+        0.10.x  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -127,7 +127,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api/skan.pre and {'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json', 'version_match': '0.10.0'}.
+     variables api/skan.pre and {'json_url': 'https://jni.github.io/skan/dev/_static/version_switcher.json', 'version_match': '0.10.x'}.
 -->
 
 <script type="text/javascript">
@@ -181,7 +181,7 @@ function checkPageExistsAndRedirect(event) {
             // this version, rather than using sphinx's 0.10.0 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.10.0") {
+            if (entry.version == "0.10.x") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
