@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>skan v0.10.0rc0 &mdash; Skan 0.10.0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="skan v0.9" href="release-v0.9.html" />
+    <link rel="prev" title="Skan release notes" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Skan
+          </a>
+              <div class="version">
+                0.10.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started: Skeleton analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui.html">Using Skan’s GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../complete_analysis.html">Complete analysis with Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing Skan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/api.html">Skan API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Skan release notes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">skan v0.10.0rc0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#api-changes">API changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#improvements">Improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="release-v0.9.html">skan v0.9</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Skan</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Skan release notes</a> &raquo;</li>
+      <li>skan v0.10.0rc0</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/release-notes/release-v0.10.0.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="skan-v0-10-0rc0">
+<h1>skan v0.10.0rc0<a class="headerlink" href="#skan-v0-10-0rc0" title="Permalink to this headline">¶</a></h1>
+<p>This is a major release of skan that changes, removes, or deprecates much
+functionality. As skan has grown in popularity, we’ve been working hard to
+clean out the warts and kinks in the API, improve compatibility with libraries
+such as dask, and fix several bugs reported by users. This has brought one
+major change in how skan computes branch lengths
+(<a class="reference external" href="https://github.com/jni/skan/pull/135">#135</a>): junctions are now cleaned up by
+computing their minimum spanning tree rather than by computing their centroid
+(see the <a class="reference external" href="https://jni.github.io/skan/faq.html">FAQ</a>). This change can be
+reverted with a keyword argument in this version (<code class="docutils literal notranslate"><span class="pre">junction_mode='centroid'</span></code>),
+but <strong>will be mandatory in upcoming versions</strong>. If you need to preserve the old
+results, pin skan to &lt;v0.11.</p>
+<p>Thanks to <a class="reference external" href="https://github.com/GenevieveBuckley">Genevieve Buckley</a>, <a class="reference external" href="https://github.com/mkcor">Marianne
+Corvellec</a>, <a class="reference external" href="https://github.com/CsatiZoltan">Zoltan
+Csati</a>, <a class="reference external" href="https://github.com/marlenedavitoria">Marlene da Vitoria
+Lobo</a>, and <a class="reference external" href="https://github.com/kevinyamauchi">Kevin
+Yamauchi</a> for their contributions!</p>
+<div class="section" id="api-changes">
+<h2>API changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/135">#135</a>: the <code class="docutils literal notranslate"><span class="pre">unique_junctions</span></code> keyword
+argument to the Skeleton class is deprecated. Use instead <code class="docutils literal notranslate"><span class="pre">junction_mode</span></code>.
+Note however that this option will be removed in 0.11, so you should pin your
+skan dependency if you need this behavior.</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/139">#139</a>: the skan GUI and corresponding
+skan.gui module and skan command have all been removed. A new, much more
+sophisticated napari plugin is in development at
+https://github.com/kevinyamauchi/napari-skeleton-curator and will be folded
+into a future version of skan (probably v0.11).</p></li>
+</ul>
+</div>
+<div class="section" id="improvements">
+<h2>Improvements<a class="headerlink" href="#improvements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>skan tests now pass on GitHub Actions on all platforms
+(<a class="reference external" href="https://github.com/jni/skan/pull/139">#139</a>).</p></li>
+<li><p>skan documentation is now built and deployed on GitHub Actions
+(<a class="reference external" href="https://github.com/jni/skan/pull/140">#140</a>).</p></li>
+<li><p>skan releases are created using GitHub Actions
+(<a class="reference external" href="https://github.com/jni/skan/pull/141">#141</a>).</p></li>
+<li><p>the skan code base is now formatted by yapf
+(<a class="reference external" href="https://github.com/jni/skan/pull/136">#136</a>).</p></li>
+<li><p>skan is now easier to adapt for dask arrays (though there is still much work
+to be done here) ((<a class="reference external" href="https://github.com/jni/skan/pull/107">#107</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/112">#112</a> and
+<a class="reference external" href="https://github.com/jni/skan/pull/123">#123</a>).</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Skan release notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="release-v0.9.html" class="btn btn-neutral float-right" title="skan v0.9" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
