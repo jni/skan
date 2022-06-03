@@ -118,7 +118,7 @@ version_match = pattern.search(version)
 if 'dev' in version:
     version_match = version
 elif version_match:
-    version_match = version_match.group() + ".x"
+    version_match = "v" + version_match.group() + ".x"
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
