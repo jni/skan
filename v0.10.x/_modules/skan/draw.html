@@ -116,7 +116,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.10.x  <!-- this text may get changed later by javascript -->
+        v0.10.x  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -126,7 +126,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables _modules/skan/draw and {'json_url': 'https://skeleton-analysis.org/skan/dev/_static/version_switcher.json', 'version_match': '0.10.x'}.
+     variables _modules/skan/draw and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': 'v0.10.x'}.
 -->
 
 <script type="text/javascript">
@@ -153,7 +153,7 @@ function checkPageExistsAndRedirect(event) {
 
 // Populate the version switcher from the JSON config file
 (function () {
-    $.getJSON("https://skeleton-analysis.org/skan/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
+    $.getJSON("https://skeleton-analysis.org/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
         const currentFilePath = "_modules/skan/draw.html";
         // create links to the corresponding page in the other docs versions
         $.each(data, function(index, entry) {
@@ -180,7 +180,7 @@ function checkPageExistsAndRedirect(event) {
             // this version, rather than using sphinx's 0.10.0 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.10.x") {
+            if (entry.version == "v0.10.x") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
