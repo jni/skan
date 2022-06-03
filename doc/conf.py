@@ -119,7 +119,7 @@ version_match = pattern.search(version)
 if 'dev' in version:
     version_match = version
 elif version_match:
-    version_match = version_match.group() + ".x"
+    version_match = "v" + version_match.group() + ".x"
 
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
