@@ -1,0 +1,12 @@
+name: skan
+schema_version: 0.1.0
+contributions:
+  commands:
+  - id: skan.hello_world
+    title: Hello world
+    python_name: napari_skan.napari_skan:hello_world
+
+  widgets:
+  - command: skan.hello_world
+    display_name: Hello World
+    autogenerate: true
