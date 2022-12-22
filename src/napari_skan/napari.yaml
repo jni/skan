@@ -2,11 +2,11 @@ name: skan
 schema_version: 0.1.0
 contributions:
   commands:
-  - id: skan.hello_world
-    title: Hello world
-    python_name: napari_skan.napari_skan:hello_world
+  - id: skan.skeletonize_labels
+    title: Skeletonize labels...
+    python_name: napari_skan.napari_skan:skeletonize_labels
 
   widgets:
-  - command: skan.hello_world
-    display_name: Hello World
+  - command: skan.skeletonize_labels
+    display_name: Skeletonize labels...
     autogenerate: true
