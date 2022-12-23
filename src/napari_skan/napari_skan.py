@@ -9,5 +9,5 @@ class SkeletonizeMethod(Enum):
 
 def skeletonize_labels(labels: "napari.types.LabelsData", method: SkeletonizeMethod) -> "napari.types.LabelsData":
     binary_labels = (labels > 0).astype(np.uint8)
-    skeletonized = skeletonize(binary_labels, method=method)
+    skeletonized = skeletonize(binary_labels, method=method.value)
     return skeletonized
