@@ -4,7 +4,7 @@ contributions:
   commands:
   - id: skan.skeletonize_labels
     title: Skeletonize labels...
-    python_name: napari_skan.napari_skan:skeletonize_labels
+    python_name: skan.napari_skan:skeletonize_labels
 
   widgets:
   - command: skan.skeletonize_labels
