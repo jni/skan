@@ -1,197 +1,188 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>Getting started: Skeleton analysis with Skan &#8212; Skan 0.11.0.dev0 documentation</title>
-    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
 
-    
-  <link rel="stylesheet"
-    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script>let toggleHintShow = 'Click to show';</script>
-    <script>let toggleHintHide = 'Click to hide';</script>
-    <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/getting_started';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.0.dev0';
+        </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Examples" href="../examples/index.html" />
     <link rel="prev" title="Installing Skan" href="install.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
   <div id="navbar-start">
     
     
-<a class="navbar-brand" href="../index.html">
-<p class="title">Skan</p>
-</a>
+  
 
+
+<a class="navbar-brand logo" href="../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+    <p class="title logo__title">Skan 0.11.0.dev0 documentation</p>
+  
+</a>
     
   </div>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
   
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+  <div class="col-lg-9 navbar-header-items">
     <div id="navbar-center" class="mr-auto">
       
       <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="index.html">
-  Getting started
- </a>
-</li>
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../examples/index.html">
-  Examples
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../api/api.html">
-  Skan API Reference
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api/api.html">
+                        Skan API Reference
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../gui.html">
-  Using Skan’s GUI
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../gui.html">
+                        Using Skan’s GUI
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../misc/index.html">
-  Miscellaneous
- </a>
-</li>
-
-    
-</ul>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../misc/index.html">
+                        Miscellaneous
+                      </a>
+                    </li>
+                
+    </ul>
+</nav>
       </div>
       
     </div>
 
     <div id="navbar-end">
       
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
       <div class="navbar-end-item">
-        <div class="dropdown" id="version_switcher">
-    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
         0.11.0.dev0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
-    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
 </div>
-
-<!-- NOTE: this JS must live here (not in our global JS file) because it relies
-     on being processed by Jinja before it is run (specifically for replacing
-     variables getting_started/getting_started and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.0.dev0'}.
--->
-
-<script type="text/javascript">
-// Check if corresponding page path exists in other version of docs
-// and, if so, go there instead of the homepage of the other docs version
-function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "getting_started/getting_started.html",
-          tryUrl = event.target.getAttribute("href");
-    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
-    $.ajax({
-        type: 'HEAD',
-        url: tryUrl,
-        // if the page exists, go there
-        success: function() {
-            location.href = tryUrl;
-        }
-    }).fail(function() {
-        location.href = otherDocsHomepage;
-    });
-    // this prevents the browser from following the href of the clicked node
-    // (which is fine because this function takes care of redirecting)
-    return false;
-}
-
-// Populate the version switcher from the JSON config file
-(function () {
-    $.getJSON("https://skeleton-analysis.org/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "getting_started/getting_started.html";
-        // create links to the corresponding page in the other docs versions
-        $.each(data, function(index, entry) {
-            // if no custom name specified (e.g., "latest"), use version string
-            if (!("name" in entry)) {
-                entry.name = entry.version;
-            }
-            // create the node
-            const node = document.createElement("a");
-            node.setAttribute("class", "list-group-item list-group-item-action py-1");
-            node.textContent = `${entry.name}`;
-            node.setAttribute("href", `${entry.url}${currentFilePath}`);
-            // on click, AJAX calls will check if the linked page exists before
-            // trying to redirect, and if not, will redirect to the homepage
-            // for that version of the docs.
-            node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
-            $("#version_switcher_menu").append(node);
-            // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.11.0.dev0 variable.
-            // also highlight the dropdown entry for the currently-viewed
-            // version's entry
-            if (entry.version == "0.11.0.dev0") {
-                node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
-            }
-        });
-    });
-})();
-</script>
       </div>
       
       <div class="navbar-end-item">
@@ -201,96 +192,157 @@ function checkPageExistsAndRedirect(event) {
       
     </div>
   </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
 </div>
-    </nav>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api/api.html">
+                        Skan API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../gui.html">
+                        Using Skan’s GUI
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../misc/index.html">
+                        Miscellaneous
+                      </a>
+                    </li>
+                
+    </ul>
+</nav>
+      </div>
+      
+      </div>
     
 
-    <div class="container-xl">
-      <div class="row">
-          
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.11.0.dev0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="install.html">
-   Installing Skan
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Getting started: Skeleton analysis with Skan
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Skan</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Getting started: Skeleton analysis with Skan</a></li>
 </ul>
 
   </div>
 </nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
             </div>
             
-          
-
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
             
+            <article class="bd-article" role="main">
               
-              <div class="toc-item">
-                
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
-    <i class="fas fa-list"></i> On this page
-</div>
-
-<nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#extracting-a-skeleton-from-an-image">
-   0. Extracting a skeleton from an image
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#measuring-the-length-of-skeleton-branches">
-   1. Measuring the length of skeleton branches
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#comparing-different-skeletons">
-   2. Comparing different skeletons
-  </a>
- </li>
-</ul>
-
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-              </div>
-              
-            
-          </div>
-          
-
-          
-          
-            
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
-              <div>
-                
   <section id="getting-started-skeleton-analysis-with-skan">
-<h1>Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started-skeleton-analysis-with-skan" title="Permalink to this headline">#</a></h1>
+<h1>Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started-skeleton-analysis-with-skan" title="Permalink to this heading">#</a></h1>
 <p>Skeleton analysis allows us to measure fine structure in samples. In this case, we are going to measure the network formed by a protein called <em>spectrin</em> inside the membrane of a red blood cell, either infected by the malaria parasite <em>Plasmodium falciparum</em>, or uninfected.</p>
 <section id="extracting-a-skeleton-from-an-image">
-<h2>0. Extracting a skeleton from an image<a class="headerlink" href="#extracting-a-skeleton-from-an-image" title="Permalink to this headline">#</a></h2>
+<h2>0. Extracting a skeleton from an image<a class="headerlink" href="#extracting-a-skeleton-from-an-image" title="Permalink to this heading">#</a></h2>
 <p>Skan’s primary purpose is to analyse skeletons. (It primarily mimics the <a class="reference external" href="https://imagej.net/AnalyzeSkeleton">“Analyze Skeleton” Fiji plugin</a>.) In this section, we will run some simple preprocessing on our source images to extract a skeleton, provided by Skan and <a class="reference external" href="https://scikit-image.org">scikit-image</a>, but this is far from the optimal way of extracting a skeleton from an image. Skip to section 1 for Skan’s primary functionality.</p>
 <p>First, we load the images. These images were produced by an FEI scanning electron microscope. <a class="reference external" href="https://imageio.github.io">ImageIO</a> provides a method to read these images, including metadata.</p>
 <div class="cell docutils container">
@@ -304,7 +356,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3176/1840275138.py:5: DeprecationWarning: Starting with ImageIO v3 the behavior of this function will switch to that of iio.v3.imread. To keep the current behavior (and make this warning dissapear) use `import imageio.v2 as imageio` or call `imageio.v2.imread` directly.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3208/1840275138.py:5: DeprecationWarning: Starting with ImageIO v3 the behavior of this function will switch to that of iio.v3.imread. To keep the current behavior (and make this warning disappear) use `import imageio.v2 as imageio` or call `imageio.v2.imread` directly.
   image0 = iio.imread(files[0], format=&#39;fei&#39;)
 </pre></div>
 </div>
@@ -324,7 +376,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/c02ae130e525d915c75a2c831b38a99d446860871c68d8c77e0e0f0cf7c058c2.png" src="../_images/c02ae130e525d915c75a2c831b38a99d446860871c68d8c77e0e0f0cf7c058c2.png" />
+<img alt="../_images/346a93555419c9083b83429c6bf6b2e28c992f035573556155dc471d18503c5e.png" src="../_images/346a93555419c9083b83429c6bf6b2e28c992f035573556155dc471d18503c5e.png" />
 </div>
 </div>
 <p>As an aside, we can extract the pixel spacing in meters from the <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
@@ -345,7 +397,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/70ed38b4701855c35b0ac49ee4fa4174023cd1b1613b0ccf028eeafba85d31bf.png" src="../_images/70ed38b4701855c35b0ac49ee4fa4174023cd1b1613b0ccf028eeafba85d31bf.png" />
+<img alt="../_images/256aaa12fe9d1a56706d971c7025329038f3f36558cc20f72f54b4d3af7a07c7.png" src="../_images/256aaa12fe9d1a56706d971c7025329038f3f36558cc20f72f54b4d3af7a07c7.png" />
 </div>
 </div>
 <p>This is an image of the inside of the membrane of a red blood cell. We want to measure the network of bright regions in this image, which is made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
@@ -370,7 +422,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/ffe289dfede4e40954456ab41c69acff08ba37649706f096806aff8ef4c79d06.png" src="../_images/ffe289dfede4e40954456ab41c69acff08ba37649706f096806aff8ef4c79d06.png" />
+<img alt="../_images/958ecbbb6b3bdab9b64d26053d2d45ae1826498a887d6f75fa1801b823cddf2b.png" src="../_images/958ecbbb6b3bdab9b64d26053d2d45ae1826498a887d6f75fa1801b823cddf2b.png" />
 </div>
 </div>
 <p>(There are some thresholding artifacts around the left edge, due to the dark border caused by microscope imaging drift and alignment. We will ignore this in this document, but the Skan GUI allows for a “crop” parameter to filter out these regions.)</p>
@@ -395,12 +447,12 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/9d0d0a7e358a4daf6fc3b2eadfe600d12ebc7195e2a58bb9172454cbaa316683.png" src="../_images/9d0d0a7e358a4daf6fc3b2eadfe600d12ebc7195e2a58bb9172454cbaa316683.png" />
+<img alt="../_images/dcf93558139e8f71114a33a10d34bb95814cd0ea8c2f0fbf997091e1c1d70a67.png" src="../_images/dcf93558139e8f71114a33a10d34bb95814cd0ea8c2f0fbf997091e1c1d70a67.png" />
 </div>
 </div>
 </section>
 <section id="measuring-the-length-of-skeleton-branches">
-<h2>1. Measuring the length of skeleton branches<a class="headerlink" href="#measuring-the-length-of-skeleton-branches" title="Permalink to this headline">#</a></h2>
+<h2>1. Measuring the length of skeleton branches<a class="headerlink" href="#measuring-the-length-of-skeleton-branches" title="Permalink to this heading">#</a></h2>
 <p>Now that we have a skeleton, we can use Skan’s primary functions: producing a network of skeleton pixels, and measuring the properties of branches along that network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -436,10 +488,28 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:&gt;
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">6</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">g1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton1</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">6</span> <span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_networkx</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">c0</span><span class="p">),</span> <span class="n">image</span><span class="o">=</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>                                <span class="n">axis</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_networkx</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">c1</span><span class="p">),</span> <span class="n">image</span><span class="o">=</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton1</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span>                                <span class="n">axis</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/skan/draw.py:402,</span> in <span class="ni">overlay_skeleton_networkx</span><span class="nt">(csr_graph, coordinates, axis, image, cmap, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">400</span>     <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="ow">or</span> <span class="s1">&#39;gray&#39;</span>
+<span class="g g-Whitespace">    </span><span class="mi">401</span>     <span class="n">axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">402</span> <span class="n">gnx</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_scipy_sparse_matrix</span><span class="p">(</span><span class="n">csr_graph</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">403</span> <span class="c1"># Note: we invert the positions because Matplotlib uses x/y for</span>
+<span class="g g-Whitespace">    </span><span class="mi">404</span> <span class="c1"># scatterplot, but the coordinates are row/column NumPy indexing</span>
+<span class="g g-Whitespace">    </span><span class="mi">405</span> <span class="n">positions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="ne">AttributeError</span>: module &#39;networkx&#39; has no attribute &#39;from_scipy_sparse_matrix&#39;
 </pre></div>
 </div>
-<img alt="../_images/c381ddae010c73e07736d2e158620a2bb51bd2650ea051181b168dc38c7899c2.png" src="../_images/c381ddae010c73e07736d2e158620a2bb51bd2650ea051181b168dc38c7899c2.png" />
+<img alt="../_images/6814a6d867b56a6fe785089667f7c6e2e4a7d75ccaabc0837864af49016f3937.png" src="../_images/6814a6d867b56a6fe785089667f7c6e2e4a7d75ccaabc0837864af49016f3937.png" />
 </div>
 </div>
 <p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates…) together.</p>
@@ -453,142 +523,6 @@ function checkPageExistsAndRedirect(event) {
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>skeleton-id</th>
-      <th>node-id-src</th>
-      <th>node-id-dst</th>
-      <th>branch-distance</th>
-      <th>branch-type</th>
-      <th>mean-pixel-value</th>
-      <th>stdev-pixel-value</th>
-      <th>image-coord-src-0</th>
-      <th>image-coord-src-1</th>
-      <th>image-coord-dst-0</th>
-      <th>image-coord-dst-1</th>
-      <th>coord-src-0</th>
-      <th>coord-src-1</th>
-      <th>coord-dst-0</th>
-      <th>coord-dst-1</th>
-      <th>euclidean-distance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-      <td>0</td>
-      <td>1103</td>
-      <td>51.875395</td>
-      <td>1</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0</td>
-      <td>198</td>
-      <td>21</td>
-      <td>170</td>
-      <td>0.0</td>
-      <td>267.09408</td>
-      <td>28.32816</td>
-      <td>229.32320</td>
-      <td>47.213600</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0</td>
-      <td>2</td>
-      <td>649</td>
-      <td>34.474493</td>
-      <td>1</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0</td>
-      <td>262</td>
-      <td>11</td>
-      <td>241</td>
-      <td>0.0</td>
-      <td>353.42752</td>
-      <td>14.83856</td>
-      <td>325.09936</td>
-      <td>31.979173</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1</td>
-      <td>3</td>
-      <td>329</td>
-      <td>16.842145</td>
-      <td>1</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0</td>
-      <td>385</td>
-      <td>6</td>
-      <td>395</td>
-      <td>0.0</td>
-      <td>519.34960</td>
-      <td>8.09376</td>
-      <td>532.83920</td>
-      <td>15.731442</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1</td>
-      <td>7</td>
-      <td>1054</td>
-      <td>64.016035</td>
-      <td>1</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0</td>
-      <td>460</td>
-      <td>20</td>
-      <td>496</td>
-      <td>0.0</td>
-      <td>620.52160</td>
-      <td>26.97920</td>
-      <td>669.08416</td>
-      <td>55.553573</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1</td>
-      <td>20</td>
-      <td>618</td>
-      <td>20.426135</td>
-      <td>1</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0</td>
-      <td>541</td>
-      <td>10</td>
-      <td>530</td>
-      <td>0.0</td>
-      <td>729.78736</td>
-      <td>13.48960</td>
-      <td>714.94880</td>
-      <td>20.053732</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
 </div>
 <p>The branch distance is the sum of the distances along path nodes between two nodes, in natural scale (given by <code class="docutils literal notranslate"><span class="pre">spacing</span></code>).</p>
 <p>The branch type is coded by number as:</p>
@@ -606,9 +540,6 @@ function checkPageExistsAndRedirect(event) {
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="../_images/bba136755c05a9e190a49c01bfc93443a76fb72f13558938ae3194cccf6ea6f4.png" src="../_images/bba136755c05a9e190a49c01bfc93443a76fb72f13558938ae3194cccf6ea6f4.png" />
-</div>
 </div>
 <p>We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.</p>
 <p>We can also represent this visually with the <code class="docutils literal notranslate"><span class="pre">overlay_euclidean_skeleton</span></code>, which colormaps branches according to a user-selected attribute in the table:</p>
@@ -619,13 +550,10 @@ function checkPageExistsAndRedirect(event) {
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="../_images/37738837320af89c5308408994488ee731f2f0a8a775a17cdbf4e9d779ea0ee1.png" src="../_images/37738837320af89c5308408994488ee731f2f0a8a775a17cdbf4e9d779ea0ee1.png" />
-</div>
 </div>
 </section>
 <section id="comparing-different-skeletons">
-<h2>2. Comparing different skeletons<a class="headerlink" href="#comparing-different-skeletons" title="Permalink to this headline">#</a></h2>
+<h2>2. Comparing different skeletons<a class="headerlink" href="#comparing-different-skeletons" title="Permalink to this heading">#</a></h2>
 <p>Now we can use Python’s data analysis tools to answer a scientific question: do malaria-infected red blood cells differ in their spectrin skeleton?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -660,12 +588,6 @@ function checkPageExistsAndRedirect(event) {
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3176/3422548294.py:3: DeprecationWarning: Starting with ImageIO v3 the behavior of this function will switch to that of iio.v3.imread. To keep the current behavior (and make this warning dissapear) use `import imageio.v2 as imageio` or call `imageio.v2.imread` directly.
-  images = [iio.imread(file, format=&#39;fei&#39;)
-</pre></div>
-</div>
-</div>
 </div>
 <p>This analysis is quite verbose, which is why the <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> module exists. It will be covered in a separate document.</p>
 <p>Now, however, we have a tidy data table with information about the sample origin of the data, allowing us to analyse the effects of treatment on our skeleton measurement. We will use only junction-to-junction branches.</p>
@@ -686,9 +608,6 @@ function checkPageExistsAndRedirect(event) {
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="../_images/9198c1f911bdd6c57f0a36a8c2bb5d153bc2f0465e72ae3f77dfe1e76d7d2687.png" src="../_images/9198c1f911bdd6c57f0a36a8c2bb5d153bc2f0465e72ae3f77dfe1e76d7d2687.png" />
-</div>
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>
 <p>This is of course a toy example. For the full dataset and analysis, see:</p>
@@ -705,51 +624,133 @@ at the the SciPy 2019 conference.</p>
 </section>
 
 
-              </div>
-              
-              
-              <!-- Previous / next buttons -->
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="install.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Installing Skan</p>
-        </div>
-    </a>
-    <a class='right-next' id="next-link" href="../examples/index.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Examples</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+  <a class='left-prev' id="prev-link" href="install.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Installing Skan</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="../examples/index.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Examples</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#extracting-a-skeleton-from-an-image">
+   0. Extracting a skeleton from an image
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#measuring-the-length-of-skeleton-branches">
+   1. Measuring the length of skeleton branches
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#comparing-different-skeletons">
+   2. Comparing different skeletons
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+</div>
+
+<div class="toc-item">
+  
+<div class="tocsection sourcelink">
+    <a href="../_sources/getting_started/getting_started.md.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
 </div>
-              
-          </main>
-          
 
-      </div>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
     </div>
-  
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.<br>
-</p>
-    </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
   </div>
-</footer>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="theme-version">
+    Built with the
+    <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">
+        PyData Sphinx Theme
+    </a>
+    0.12.0.
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
   </body>
 </html>

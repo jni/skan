@@ -1,0 +1,51 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/nbclient/client.py", line 1204, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/asyncio/base_events.py", line 647, in run_until_complete
+    return future.result()
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/nbclient/client.py", line 663, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/nbclient/client.py", line 965, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/nbclient/client.py", line 862, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from skan import _testdata
+g0, c0 = skeleton_to_csgraph(_testdata.skeleton0)
+g1, c1 = skeleton_to_csgraph(_testdata.skeleton1)
+fig, axes = plt.subplots(1, 2)
+
+draw.overlay_skeleton_networkx(g0, np.transpose(c0), image=_testdata.skeleton0,
+                               axis=axes[0])
+draw.overlay_skeleton_networkx(g1, np.transpose(c1), image=_testdata.skeleton1,
+                               axis=axes[1])
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mAttributeError[0m                            Traceback (most recent call last)
+Cell [0;32mIn[9], line 6[0m
+[1;32m      3[0m g1, c1 [38;5;241m=[39m skeleton_to_csgraph(_testdata[38;5;241m.[39mskeleton1)
+[1;32m      4[0m fig, axes [38;5;241m=[39m plt[38;5;241m.[39msubplots([38;5;241m1[39m, [38;5;241m2[39m)
+[0;32m----> 6[0m [43mdraw[49m[38;5;241;43m.[39;49m[43moverlay_skeleton_networkx[49m[43m([49m[43mg0[49m[43m,[49m[43m [49m[43mnp[49m[38;5;241;43m.[39;49m[43mtranspose[49m[43m([49m[43mc0[49m[43m)[49m[43m,[49m[43m [49m[43mimage[49m[38;5;241;43m=[39;49m[43m_testdata[49m[38;5;241;43m.[39;49m[43mskeleton0[49m[43m,[49m
+[1;32m      7[0m [43m                               [49m[43maxis[49m[38;5;241;43m=[39;49m[43maxes[49m[43m[[49m[38;5;241;43m0[39;49m[43m][49m[43m)[49m
+[1;32m      8[0m draw[38;5;241m.[39moverlay_skeleton_networkx(g1, np[38;5;241m.[39mtranspose(c1), image[38;5;241m=[39m_testdata[38;5;241m.[39mskeleton1,
+[1;32m      9[0m                                axis[38;5;241m=[39maxes[[38;5;241m1[39m])
+
+File [0;32m/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/skan/draw.py:402[0m, in [0;36moverlay_skeleton_networkx[0;34m(csr_graph, coordinates, axis, image, cmap, **kwargs)[0m
+[1;32m    400[0m     cmap [38;5;241m=[39m cmap [38;5;129;01mor[39;00m [38;5;124m'[39m[38;5;124mgray[39m[38;5;124m'[39m
+[1;32m    401[0m     axis[38;5;241m.[39mimshow(image, cmap[38;5;241m=[39mcmap)
+[0;32m--> 402[0m gnx [38;5;241m=[39m [43mnx[49m[38;5;241;43m.[39;49m[43mfrom_scipy_sparse_matrix[49m(csr_graph)
+[1;32m    403[0m [38;5;66;03m# Note: we invert the positions because Matplotlib uses x/y for[39;00m
+[1;32m    404[0m [38;5;66;03m# scatterplot, but the coordinates are row/column NumPy indexing[39;00m
+[1;32m    405[0m positions [38;5;241m=[39m [38;5;28mdict[39m([38;5;28mzip[39m([38;5;28mrange[39m(coordinates[38;5;241m.[39mshape[[38;5;241m0[39m]), coordinates[:, ::[38;5;241m-[39m[38;5;241m1[39m]))
+
+[0;31mAttributeError[0m: module 'networkx' has no attribute 'from_scipy_sparse_matrix'
+AttributeError: module 'networkx' has no attribute 'from_scipy_sparse_matrix'
+
