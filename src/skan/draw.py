@@ -399,7 +399,7 @@ def overlay_skeleton_networkx(
     if image is not None:
         cmap = cmap or 'gray'
         axis.imshow(image, cmap=cmap)
-    gnx = nx.from_scipy_sparse_matrix(csr_graph)
+    gnx = nx.from_scipy_sparse_array(csr_graph)
     # Note: we invert the positions because Matplotlib uses x/y for
     # scatterplot, but the coordinates are row/column NumPy indexing
     positions = dict(zip(range(coordinates.shape[0]), coordinates[:, ::-1]))
