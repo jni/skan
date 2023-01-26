@@ -1,0 +1,12 @@
+name: skan
+schema_version: 0.1.0
+contributions:
+  commands:
+  - id: skan.skeletonize_labels
+    title: Skeletonize labels...
+    python_name: skan.napari_skan:skeletonize_labels
+
+  widgets:
+  - command: skan.skeletonize_labels
+    display_name: Skeletonize labels...
+    autogenerate: true
