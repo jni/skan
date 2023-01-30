@@ -49,7 +49,7 @@ The parameters relate to this pipeline.
   equation (see [here]()), or to a value subtracted from the Otsu-computed
   threshold before thresholding.
 - *Image format:* The file format of the input images. This corresponds to the
-  ``format`` keyword argument in the ``imageio.imread`` function.
+  ``format`` keyword argument in the ``imageio.v2.imread`` function.
 - *Scale metadata path:* The location in the metadata hierarchy of the pixel
   scale. The default is correct for FEI electron microscopes
   (``format='fei'``).
