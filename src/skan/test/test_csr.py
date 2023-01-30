@@ -218,3 +218,26 @@ def test_diagonal():
             s, center=[1, 1], shells=np.arange(0.09, 5, 1.45)
             )
     np.testing.assert_equal(counts, [3, 2, 1, 0])
+
+
+def test_zero_degree_nodes():
+    """Test that graphs with 0-degree nodes don't have allocation errors.
+
+    In skan commits 7498831 or prior, isolated pixels, which have degree 0,
+    would count as *negative* values when counting the total number of edges,
+    resulting in a buffer too small to hold the edge info.
+
+    See issue jni/skan#182.
+    """
+    x = np.array([1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1]).astype(bool)
+
+    # the try/except causes an early segfault if the buffer overflows
+    try:
+        s = csr.Skeleton(x)
+    except Exception as e:
+        print(e)
+
+    assert s.n_paths == 2
+    np.testing.assert_equal(
+            np.ravel(s.coordinates), [0, 1, 3, 5, 7, 9, 11, 12]
+            )
