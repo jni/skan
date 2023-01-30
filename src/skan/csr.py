@@ -404,7 +404,7 @@ def _build_skeleton_path_graph(graph):
     # the number of cycles ahead of time, but it is bounded by one quarter
     # of the number of points.
     n_points = (
-            graph.indices.size + np.sum(endpoint_degrees - 1)
+            graph.indices.size + np.sum(np.maximum(0, endpoint_degrees - 1))
             + buffer_size_offset
             )
     path_indices = np.zeros(n_points, dtype=int)
