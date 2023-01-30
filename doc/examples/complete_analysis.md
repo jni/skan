@@ -128,11 +128,13 @@ datar['branch distance (nm)'] = datar['branch-distance'] * 1e9
 ## 3. Making the figure
 
 ```{code-cell} ipython3
+%matplotlib inline
+%config InlineBackend.figure_format='retina'
+
 import numpy as np
 import imageio as iio
 from skimage import morphology
 import matplotlib.pyplot as plt
-%matplotlib inline
 import seaborn as sns
 
 from skan.pre import threshold
@@ -199,4 +201,6 @@ ax[3].set_ylabel('mean branch distance\nby cell (nm)')
 
 # Use matplotlib's automatic layout algorithm
 fig.tight_layout()
+
+plt.show()
 ```
