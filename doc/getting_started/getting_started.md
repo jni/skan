@@ -26,7 +26,7 @@ from glob import glob
 import imageio as iio
 
 files = glob('../example-data/*.tif')
-image0 = iio.imread(files[0], format='fei')
+image0 = iio.v2.imread(files[0], format='fei')
 ```
 
 We display the images with [Matplotlib](http://matplotlib.org).
@@ -175,7 +175,7 @@ Now we can use Python's data analysis tools to answer a scientific question: do 
 ```{code-cell} ipython3
 import pandas as pd
 
-images = [iio.imread(file, format='fei')
+images = [iio.v2.imread(file, format='fei')
           for file in files]
 spacings = [image.meta['Scan']['PixelHeight']
             for image in images]
