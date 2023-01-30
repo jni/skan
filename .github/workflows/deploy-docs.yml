@@ -45,7 +45,7 @@ jobs:
           python -m pip install .[all,testing,docs]
 
       - name: Get data
-        working-directory: doc
+        working-directory: doc/examples
         run: |
           if [[ ! -f schizonts/schizont4_UninfRBC1_01.tif ]]; then
             wget -q -O s.zip https://osf.io/7vyx3/download && unzip s.zip;
