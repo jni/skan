@@ -45,8 +45,9 @@ jobs:
       - name: Build docs
         uses: aganders3/headless-gui@v1
         with:
-          working-directory: doc
-          run: make html
+          run: |
+            cd doc
+            make html
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
