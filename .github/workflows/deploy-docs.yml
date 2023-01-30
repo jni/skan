@@ -52,7 +52,7 @@ jobs:
           fi
 
       - name: Build docs
-        uses: GabrielBB/xvfb-action@v1
+        uses: aganders3/headless-gui@v1
         with:
           working-directory: doc
           run: make html
