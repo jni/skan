@@ -18,14 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ubuntu-latest]
-        python: [3.9]
+        python: ["3.10"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: tlambert03/setup-qt-libs@v1
 
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
 
@@ -54,8 +54,8 @@ jobs:
           path: doc/_build/html
 
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
-            doc/schizonts
+            doc/examples/schizonts
           key: full-data
