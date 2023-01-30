@@ -54,9 +54,7 @@ jobs:
       - name: Build docs
         uses: aganders3/headless-gui@v1
         with:
-          run: |
-            cd doc
-            make html
+          run: make -C doc html
 
       - name: Deploy dev docs 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
