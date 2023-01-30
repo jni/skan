@@ -2,7 +2,7 @@
 Examples
 ========
 
-skan examples.
+Longer usage examples of how to use skan to analyze and visualize real data.
 
 
 .. toctree::
