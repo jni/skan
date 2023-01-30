@@ -33,7 +33,7 @@ Download and extract the zipfile, and make sure the `schizonts` folder contained
 from glob import glob
 
 
-schizont_files = glob('../schizonts/*.tif')
+schizont_files = glob('schizonts/*.tif')
 # remove files ending with '01.tif', which are low-res overview images
 schizont_files = list(filter(lambda x: not x.endswith('01.tif'),
                              schizont_files))
@@ -151,7 +151,7 @@ ax = axes.ravel()
 # PANEL A
 # display an arbitrary image
 crop = (slice(20, -20),) * 2
-image_raw = iio.v2.imread('../schizonts/schizont4_UninfRBC7_06.tif',
+image_raw = iio.v2.imread('schizonts/schizont4_UninfRBC7_06.tif',
                           format='fei')
 image = image_raw[crop]
 ax[0].imshow(image, cmap='gray')
