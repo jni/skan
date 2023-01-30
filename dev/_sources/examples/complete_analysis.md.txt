@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.13.6
+    jupytext_version: 1.14.4
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -37,6 +37,10 @@ schizont_files = glob('schizonts/*.tif')
 # remove files ending with '01.tif', which are low-res overview images
 schizont_files = list(filter(lambda x: not x.endswith('01.tif'),
                              schizont_files))
+```
+
+```{code-cell} ipython3
+len(schizont_files)
 ```
 
 Now we process all 96 images. This should take about a minute on a modern laptop, but could be faster on a multicore machine, as it processes images using as many CPUs as are avaliable.
@@ -105,7 +109,7 @@ data['field number'] = data['filename'].apply(field_number)
 
 +++
 
-Next, we filter the branches by using the [*shape index*](http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index). We have used a very simple method to extract skeletons (see [Getting started](getting_started)), which does an acceptable job but creates a lot of false branches. Since the goal of Skan is to analyse skeletons, rather than generate them, we attempt to filter the branches, and measure only those that look like ridges according to the shape index.
+Next, we filter the branches by using the [*shape index*](http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index). We have used a very simple method to extract skeletons (see [Getting started](../getting_started/getting_started)), which does an acceptable job but creates a lot of false branches. Since the goal of Skan is to analyse skeletons, rather than generate them, we attempt to filter the branches, and measure only those that look like ridges according to the shape index.
 
 ```{code-cell} ipython3
 ridges = ((data['mean-shape-index'] < 0.625) &
@@ -128,11 +132,13 @@ datar['branch distance (nm)'] = datar['branch-distance'] * 1e9
 ## 3. Making the figure
 
 ```{code-cell} ipython3
+%matplotlib inline
+%config InlineBackend.figure_format='retina'
+
 import numpy as np
 import imageio as iio
 from skimage import morphology
 import matplotlib.pyplot as plt
-%matplotlib inline
 import seaborn as sns
 
 from skan.pre import threshold
@@ -145,8 +151,8 @@ ax = axes.ravel()
 # PANEL A
 # display an arbitrary image
 crop = (slice(20, -20),) * 2
-image_raw = iio.imread('schizonts/schizont4_UninfRBC7_06.tif',
-                       format='fei')
+image_raw = iio.v2.imread('schizonts/schizont4_UninfRBC7_06.tif',
+                          format='fei')
 image = image_raw[crop]
 ax[0].imshow(image, cmap='gray')
 ax[0].set_axis_off()
@@ -199,4 +205,6 @@ ax[3].set_ylabel('mean branch distance\nby cell (nm)')
 
 # Use matplotlib's automatic layout algorithm
 fig.tight_layout()
+
+plt.show()
 ```

@@ -26,7 +26,7 @@ from glob import glob
 import imageio as iio
 
 files = glob('../example-data/*.tif')
-image0 = iio.imread(files[0], format='fei')
+image0 = iio.v2.imread(files[0], format='fei')
 ```
 
 We display the images with [Matplotlib](http://matplotlib.org).
@@ -175,7 +175,7 @@ Now we can use Python's data analysis tools to answer a scientific question: do 
 ```{code-cell} ipython3
 import pandas as pd
 
-images = [iio.imread(file, format='fei')
+images = [iio.v2.imread(file, format='fei')
           for file in files]
 spacings = [image.meta['Scan']['PixelHeight']
             for image in images]
@@ -227,7 +227,7 @@ We now have a hint that infection by the malaria-causing parasite, *Plasmodium f
 This is of course a toy example. For the full dataset and analysis, see:
 
 - our [PeerJ paper](https://peerj.com/articles/4312/) (and [please cite it](https://ilovesymposia.com/2019/05/02/why-you-should-cite-open-source-tools/) if you publish using skan!),
-- the ["Complete analysis with skan"](complete_analysis) page, and
+- the ["Complete analysis with skan"](../examples/complete_analysis) page, and
 - the [skan-scripts](https://github.com/jni/skan-scripts) repository.
 
 But we hope this minimal example will serve for inspiration for your future analysis of skeleton images.
@@ -235,5 +235,4 @@ But we hope this minimal example will serve for inspiration for your future anal
 +++
 
 If you are interested in how we used [numba](https://numba.pydata.org)
-to accelerate some parts of Skan, check out [Juan's talk at the SciPy 2019 conference](https://www.youtube.com/watch?v=0pUPNMglnaE)
-at the the SciPy 2019 conference.
+to accelerate some parts of Skan, check out [Juan's talk at the SciPy 2019 conference](https://www.youtube.com/watch?v=0pUPNMglnaE).
