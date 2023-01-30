@@ -33,7 +33,7 @@ In skan 0.10, we added a new strategy for dealing with the clusters: replace eac
 
 All three approaches are summarized in the figure below:
 
-![junction modes pre 0.11](_images/junctions-pre-0-11.png)
+![junction modes pre 0.11](../_images/junctions-pre-0-11.png)
 
 The MST is now the default and will become the only supported method in skan 0.11 and later. If you absolutely need the earlier strategies, please [raise an issue](https://github.com/jni/skan/issues/new).
 

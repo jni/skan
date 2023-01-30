@@ -1,4 +1,4 @@
-# skan v0.10.0rc0
+# skan v0.10.0
 
 This is a major release of skan that changes, removes, or deprecates much
 functionality. As skan has grown in popularity, we've been working hard to

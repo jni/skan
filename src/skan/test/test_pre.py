@@ -12,7 +12,7 @@ from skan import pre
 def image():
     rundir = os.path.abspath(os.path.dirname(__file__))
     datadir = os.path.join(rundir, 'data')
-    image = imageio.imread(os.path.join(datadir, 'retic.tif'), format='fei')
+    image = imageio.v2.imread(os.path.join(datadir, 'retic.tif'), format='fei')
     return image
 
 

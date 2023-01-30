@@ -64,7 +64,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Skan'
+project = 'Skan 🦴📏'
 copyright = '2021, Juan Nunez-Iglesias & skan contributors'
 author = 'Juan Nunez-Iglesias'
 
@@ -120,31 +120,19 @@ if 'dev' in version:
 elif version_match:
     version_match = version_match.group() + ".x"
 
-# Material theme options (see theme.conf for more information)
+# PyData theme options (see theme.conf for more information)
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
-    'nav_title': 'Skan 🦴📏',
-    # pydata theme version switcher config
     'navbar_end': ['version-switcher', 'navbar-icon-links'],
+    # pydata theme version switcher config
     'switcher': {
         'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json',
         'version_match': version_match,
     },
-    # Set you GA account ID to enable tracking
-    # 'google_analytics_account': 'UA-XXXXX',
-
-    # Specify a base_url used to generate sitemap.xml. If not
-    # specified, then no sitemap will be built.
-    'base_url': 'https://jni.github.io/skan/',
-
-    # Set the color and the accent color
-    'color_primary': 'blue',
-    'color_accent': 'light-blue',
-
-    # Set the repo location to get a badge with stats
-    'repo_url': 'https://github.com/jni/skan/',
-    'repo_name': 'Skan',
-
+    # footer
+    'footer_items': ['copyright'],
+    'icon_links': [{'name': 'GitHub', 'url': 'https://github.com/jni/skan',
+            'icon': 'fa-brands fa-square-github', 'type': 'fontawesome'}]
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

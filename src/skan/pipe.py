@@ -48,7 +48,7 @@ def process_single_image(
         filename, image_format, scale_metadata_path, threshold_radius,
         smooth_radius, brightness_offset, crop_radius, smooth_method
         ):
-    image = imageio.imread(filename, format=image_format)
+    image = imageio.v2.imread(filename, format=image_format)
     scale = _get_scale(image, scale_metadata_path)
     if crop_radius > 0:
         c = crop_radius
