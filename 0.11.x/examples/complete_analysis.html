@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Complete analysis with Skan &#8212; Skan 🦴📏 0.11.0.dev0 documentation</title>
+    <title>Complete analysis with Skan &#8212; Skan 🦴📏 0.11.0rc2 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -106,7 +106,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.11.0.dev0  <!-- this text may get changed later by javascript -->
+        0.11.x  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -116,7 +116,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables examples/complete_analysis and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.0.dev0'}.
+     variables examples/complete_analysis and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.x'}.
 -->
 
 <script type="text/javascript">
@@ -167,10 +167,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.11.0.dev0 variable.
+            // this version, rather than using sphinx's 0.11.0rc2 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.11.0.dev0") {
+            if (entry.version == "0.11.x") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -514,11 +514,11 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3919/507528217.py:52: FutureWarning: The default value of numeric_only in DataFrameGroupBy.mean is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3805/507528217.py:52: FutureWarning: The default value of numeric_only in DataFrameGroupBy.mean is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
   .mean().reset_index())
 </pre></div>
 </div>
-<img alt="../_images/03f51dd85c7237ca02351d0843605e99d0719cb2fc7bb3fffcbd55eaac95c963.png" src="../_images/03f51dd85c7237ca02351d0843605e99d0719cb2fc7bb3fffcbd55eaac95c963.png" />
+<img alt="../_images/f86e48076947605305ac643d1f8be78ad40b1dd3c2df4ba6e0e353473f285cb5.png" src="../_images/f86e48076947605305ac643d1f8be78ad40b1dd3c2df4ba6e0e353473f285cb5.png" />
 </div>
 </div>
 </section>
