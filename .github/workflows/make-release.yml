@@ -31,21 +31,13 @@ jobs:
           password: ${{ secrets.pypi_password }}
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@latest
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ env.tag }}
           body_path: release-latest.md
-          draft: false
+          draft: ${{ contains(github.ref, 'rc') }}
           prerelease: ${{ contains(github.ref, 'rc') }}
-      - name: Upload GitHub Release Asset
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/skan-${{ env.tag }}.tar.gz
-          asset_name: dist-${{ env.tag }}.tar.gz
-          asset_content_type: application/gzip
+          files: ./dist/skan-${{ env.tag }}.tar.gz
