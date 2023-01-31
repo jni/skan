@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Skan release notes &#8212; Skan 🦴📏 0.11.0.dev0 documentation</title>
+    <title>skan v0.11.0 &#8212; Skan 🦴📏 0.11.0.dev0 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -35,8 +35,8 @@
     <script src="../../_static/copybutton.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="skan v0.11.0" href="release-v0.11.0.html" />
-    <link rel="prev" title="FAQ" href="../faq.html" />
+    <link rel="next" title="skan v0.10.0" href="release-v0.10.0.html" />
+    <link rel="prev" title="Skan release notes" href="index.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -116,14 +116,14 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables misc/release-notes/index and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.0.dev0'}.
+     variables misc/release-notes/release-v0.11.0 and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.0.dev0'}.
 -->
 
 <script type="text/javascript">
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "misc/release-notes/index.html",
+    const currentFilePath = "misc/release-notes/release-v0.11.0.html",
           tryUrl = event.target.getAttribute("href");
     let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
     $.ajax({
@@ -144,7 +144,7 @@ function checkPageExistsAndRedirect(event) {
 // Populate the version switcher from the JSON config file
 (function () {
     $.getJSON("https://skeleton-analysis.org/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "misc/release-notes/index.html";
+        const currentFilePath = "misc/release-notes/release-v0.11.0.html";
         // create links to the corresponding page in the other docs versions
         $.each(data, function(index, entry) {
             // if no custom name specified (e.g., "latest"), use version string
@@ -215,7 +215,7 @@ function checkPageExistsAndRedirect(event) {
   </a>
  </li>
  <li class="toctree-l1 current active has-children">
-  <a class="current reference internal" href="#">
+  <a class="reference internal" href="index.html">
    Skan release notes
   </a>
   <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
@@ -223,9 +223,9 @@ function checkPageExistsAndRedirect(event) {
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="release-v0.11.0.html">
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      skan v0.11.0
     </a>
    </li>
@@ -263,9 +263,39 @@ function checkPageExistsAndRedirect(event) {
               
               <div class="toc-item">
                 
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#api-changes">
+   API changes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#new-features">
+   New features
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#bug-fixes">
+   Bug fixes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#documentation">
+   Documentation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#misc">
+   Misc
+  </a>
+ </li>
+</ul>
+
 </nav>
               </div>
               
@@ -285,26 +315,91 @@ function checkPageExistsAndRedirect(event) {
               
               <div>
                 
-  <section id="skan-release-notes">
-<h1>Skan release notes<a class="headerlink" href="#skan-release-notes" title="Permalink to this headline">#</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="release-v0.11.0.html">skan v0.11.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="release-v0.11.0.html#api-changes">API changes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release-v0.11.0.html#new-features">New features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release-v0.11.0.html#bug-fixes">Bug fixes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release-v0.11.0.html#documentation">Documentation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release-v0.11.0.html#misc">Misc</a></li>
+  <section id="skan-v0-11-0">
+<h1>skan v0.11.0<a class="headerlink" href="#skan-v0-11-0" title="Permalink to this headline">#</a></h1>
+<p>This release of skan incorporates several bug fixes, new API features, and
+documentation improvements. It also finalizes an API change started in 0.10.0:
+now junction points are always resolved using a minimum spanning tree, and the
+<code class="docutils literal notranslate"><span class="pre">uniquify_junctions</span></code> and <code class="docutils literal notranslate"><span class="pre">junction_mode</span></code> arguments to <code class="docutils literal notranslate"><span class="pre">Skeleton</span></code> are
+deprecated (see our <a class="reference internal" href="../faq.html"><span class="doc std std-doc">FAQ</span></a>). Finally, this is the first release
+containing a <a class="reference external" href="https://napari.org/stable/plugins/index.html">napari plugin</a>!
+Currently all it does is skeletonize a Labels layer, but this is just the
+beginning for GUI-based skeleton analysis.</p>
+<p>Thanks to everyone who has helped make this release possible, including
+<a class="reference external" href="https://github.com/kushaangupta">Kushaan Gupta</a>, <a class="reference external" href="https://github.com/lucyleeow">Lucy
+Liu</a>, <a class="reference external" href="https://github.com/rly">Ryan Ly</a>,
+<a class="reference external" href="https://github.com/jamesyan-git">James Ryan</a>, and
+<a class="reference external" href="https://github.com/ssavary">Simon Savary</a>! Not to speak of all the
+contributors who make our upstream libraries possible! 🙏</p>
+<section id="api-changes">
+<h2>API changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/143">#143</a>: the <code class="docutils literal notranslate"><span class="pre">unique_junctions</span></code> and
+<code class="docutils literal notranslate"><span class="pre">junction_mode</span></code> keyword arguments are removed. Junctions are always resolved
+by finding the minimum spanning tree of the junction pixels. This PR also
+speeds up building of the pixel graph.</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="release-v0.10.0.html">skan v0.10.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="release-v0.10.0.html#api-changes">API changes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="release-v0.10.0.html#improvements">Improvements</a></li>
+</section>
+<section id="new-features">
+<h2>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/150">#150</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/164">#164</a>: add Sholl analysis. (Thanks to
+<a class="reference external" href="https://github.com/kushaangupta">Kushaan Gupta</a> for the collaboration that
+led to this feature!)</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/184">#184</a>: add napari plugin.</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="release-v0.9.html">skan v0.9</a></li>
+</section>
+<section id="bug-fixes">
+<h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/152">#152</a>: Some pixel graphs had missing
+paths in their skeletons because of a mistake in how the graphs were
+traversed. Thanks <a class="reference external" href="https://github.com/ssavary">Simon Savary</a> for the detailed
+report that led to the fix! (<a class="reference external" href="https://github.com/jni/skan/issues/147">#147</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/193">#193</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/183">#183</a>: fix the calculation of the
+buffer size needed for the pixel path graph in the presence of 0-degree
+nodes (isolated pixels).</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/135">#135</a>: the <code class="docutils literal notranslate"><span class="pre">unique_junctions</span></code> keyword
+argument to the Skeleton class is deprecated. Use instead <code class="docutils literal notranslate"><span class="pre">junction_mode</span></code>.
+Note however that this option will be removed in 0.11, so you should pin your
+skan dependency if you need this behavior.</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/139">#139</a>: the skan GUI and corresponding
+skan.gui module and skan command have all been removed. A new, much more
+sophisticated napari plugin is in development at
+https://github.com/kevinyamauchi/napari-skeleton-curator and will be folded
+into a future version of skan (probably v0.11).</p></li>
 </ul>
-</div>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/155">#155</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/156">#156</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/159">#159</a>: Add documentation on 3D display
+of skeletons in napari.</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/173">#173</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/">#175</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/177">#177</a>: support multiple versions of
+documentation. (!) (This series of PRs in particular is close to my heart
+because deprecations and API changes like those listed above are much more
+painful if the old versions are just <em>erased</em>! Thanks to <a class="reference external" href="https://github.com/lucyleeow">Lucy
+Liu</a> for her efforts and expertise here!)</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/194">#194</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/195">#195</a>: overhaul of documentation and
+build infrastructure.</p></li>
+</ul>
+</section>
+<section id="misc">
+<h2>Misc<a class="headerlink" href="#misc" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/167">#167</a>: drop Python 3.7 support.</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/188">#188</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/189">#189</a>,
+<a class="reference external" href="https://github.com/jni/skan/pull/190">#190</a>: update requirements.</p></li>
+</ul>
+</section>
 </section>
 
 
@@ -313,17 +408,17 @@ function checkPageExistsAndRedirect(event) {
               
               <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="../faq.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">FAQ</p>
+            <p class="prev-next-title">Skan release notes</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="release-v0.11.0.html" title="next page">
+    <a class='right-next' id="next-link" href="release-v0.10.0.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">skan v0.11.0</p>
+        <p class="prev-next-title">skan v0.10.0</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
