@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>FAQ &#8212; Skan 🦴📏 0.11.0.dev0 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Skan release notes" href="release-notes/index.html" />
+    <link rel="prev" title="Miscellaneous" href="index.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../index.html">
+<p class="title">Skan 🦴📏</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../getting_started/index.html">
+  Getting started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../examples/index.html">
+  Examples
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api/api.html">
+  Skan API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="index.html">
+  Miscellaneous
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        0.11.0.dev0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables misc/faq and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.0.dev0'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "misc/faq.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://skeleton-analysis.org/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "misc/faq.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.11.0.dev0 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "0.11.0.dev0") {
+                node.classList.add("active");
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/jni/skan" rel="noopener" target="_blank" title="GitHub"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   FAQ
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="release-notes/index.html">
+   Skan release notes
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="release-notes/release-v0.11.0.html">
+     skan v0.11.0
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="release-notes/release-v0.10.0.html">
+     skan v0.10.0
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="release-notes/release-v0.9.html">
+     skan v0.9
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="citing.html">
+   Citing Skan
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives">
+   I just upgraded from skan v0.8 or 0.9 and my measurements are slightly different. What gives?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-s-unique-junctions-or-junction-mode">
+   What’s
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     unique_junctions
+    </span>
+   </code>
+   or
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     junction_mode
+    </span>
+   </code>
+   ?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#why-are-coordinates-floats-and-not-integers">
+   Why are coordinates floats and not integers?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#why-is-coordinate-0-0-0-always-in-my-coordinate-list-why-is-the-coordinate-array-larger-than-the-number-of-nodes-in-the-pixel-graph">
+   Why is coordinate (0, 0, 0) always in my coordinate list? / Why is the coordinate array larger than the number of nodes in the pixel graph?
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">#</a></h1>
+<section id="i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives">
+<h2>I just upgraded from skan v0.8 or 0.9 and my measurements are slightly different. What gives?<a class="headerlink" href="#i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives" title="Permalink to this headline">#</a></h2>
+<p>In skan v0.10, we added a new way to deal with junctions (see next question). This new method offered enough advantages that we decided to make it the default straight away. This should not affect the accuracy of the measurements provided by skan, but will result in small numerical differences of less than the pixel spacing of your dataset.</p>
+</section>
+<section id="what-s-unique-junctions-or-junction-mode">
+<h2>What’s <code class="docutils literal notranslate"><span class="pre">unique_junctions</span></code> or <code class="docutils literal notranslate"><span class="pre">junction_mode</span></code>?<a class="headerlink" href="#what-s-unique-junctions-or-junction-mode" title="Permalink to this headline">#</a></h2>
+<p>When looking at the pixel-pixel graph of a skeleton, things get a little complicated at the junctions, where three or more branches meet. That’s because junctions are defined as a pixel that has three or more neighbors, but topologically, these can occur in “clusters”. This was explained in the <a class="reference external" href="https://doi.org/10.7717/peerj.4312/supp-2">supplementary material of the original Skan paper</a>. See the figure below for an example.</p>
+<p>Prior to skan version 0.10, skan’s approach to this problem was to collapse all such “bundles” to the centroid of the points.</p>
+<p>This gives good results when making measurements on the branches and examining the topology of the network, but has the disadvantage that it breaks the link between skeleton graph nodes and the underlying pixels. For example, if we use the node coordinates to paint data on an image, we will not fill in all the pixel positions and we will end up with a disconnected skeleton.</p>
+<p>In skan 0.10, we added a new strategy for dealing with the clusters: replace each cluster with its minimum spanning tree (MST). See <a class="reference external" href="https://github.com/jni/skan/issues/133">#133</a>.</p>
+<p>All three approaches are summarized in the figure below:</p>
+<p><img alt="junction modes pre 0.11" src="../_images/junctions-pre-0-11.png" /></p>
+<p>The MST is now the default and will become the only supported method in skan 0.11 and later. If you absolutely need the earlier strategies, please <a class="reference external" href="https://github.com/jni/skan/issues/new">raise an issue</a>.</p>
+</section>
+<section id="why-are-coordinates-floats-and-not-integers">
+<h2>Why are coordinates floats and not integers?<a class="headerlink" href="#why-are-coordinates-floats-and-not-integers" title="Permalink to this headline">#</a></h2>
+<p>This is because in <code class="docutils literal notranslate"><span class="pre">junction_mode='centroid'</span></code>, coordinates of more than one pixel are collapsed into a single centroid value which is rarely an integer. In skan 0.11 and later, once MST is the only supported mode, coordinates will correspond 1-1 with pixel coordinates and be integer-valued.</p>
+</section>
+<section id="why-is-coordinate-0-0-0-always-in-my-coordinate-list-why-is-the-coordinate-array-larger-than-the-number-of-nodes-in-the-pixel-graph">
+<h2>Why is coordinate (0, 0, 0) always in my coordinate list? / Why is the coordinate array larger than the number of nodes in the pixel graph?<a class="headerlink" href="#why-is-coordinate-0-0-0-always-in-my-coordinate-list-why-is-the-coordinate-array-larger-than-the-number-of-nodes-in-the-pixel-graph" title="Permalink to this headline">#</a></h2>
+<p>This is done for implementation convenience. The coordinates contain <em>at least</em> the coordinates for every node in the pixel graph. However:</p>
+<ul class="simple">
+<li><p>The pixels in the skeleton are numbered 1..n. In order for each node ID to index directly into the coordinates array, the array must have a “dummy” coordinate at position 0. We considered using <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> as a sentinel value to indicate that that position contained dummy data, but that would have made it more difficult to work with NumPy functions such as <code class="docutils literal notranslate"><span class="pre">np.min</span></code>/<code class="docutils literal notranslate"><span class="pre">np.max</span></code>, which would always return <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> without special handling.</p></li>
+<li><p>Additionally, look closely at the figure in <span class="xref myst">What’s unique_junctions or junction_mode?</span>: during centroid-based junction consolidation, a bunch of pixel IDs are removed from the graph. However, we keep indexing using the original IDs, so the coordinates in the coordinate array now contain “unused” data.</p></li>
+</ul>
+<p>See these GitHub issues for more details: <a class="reference external" href="https://github.com/jni/skan/issues/93">#93</a> and <a class="reference external" href="https://github.com/jni/skan/issues/108">#108</a>.</p>
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Miscellaneous</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="release-notes/index.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Skan release notes</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

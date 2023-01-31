@@ -1,0 +1,670 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>skan.draw &#8212; Skan 🦴📏 0.11.0.dev0 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../../index.html">
+<p class="title">Skan 🦴📏</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../getting_started/index.html">
+  Getting started
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../examples/index.html">
+  Examples
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../api/api.html">
+  Skan API Reference
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../misc/index.html">
+  Miscellaneous
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        0.11.0.dev0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables _modules/skan/draw and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.0.dev0'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "_modules/skan/draw.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://skeleton-analysis.org/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "_modules/skan/draw.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's 0.11.0.dev0 variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "0.11.0.dev0") {
+                node.classList.add("active");
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/jni/skan" rel="noopener" target="_blank" title="GitHub"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for skan.draw</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">collections</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Circle</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">img_as_float</span><span class="p">,</span> <span class="n">morphology</span>
+<span class="kn">from</span> <span class="nn">skimage.color</span> <span class="kn">import</span> <span class="n">gray2rgb</span>
+
+
+<span class="k">def</span> <span class="nf">_normalise_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">image_cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">img_as_float</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">image_cmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">gray2rgb</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">image_cmap</span><span class="p">)(</span><span class="n">image</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">image</span>
+
+
+<div class="viewcode-block" id="pixel_perfect_figsize"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.pixel_perfect_figsize">[docs]</a><span class="k">def</span> <span class="nf">pixel_perfect_figsize</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the Matplotlib figure size tuple (w, h) for given image and dpi.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : array, shape (M, N[, 3])</span>
+<span class="sd">        The image to be plotted.</span>
+<span class="sd">    dpi : int, optional</span>
+<span class="sd">        The desired figure dpi.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    figsize : tuple of float</span>
+<span class="sd">        The desired figure size.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; image = np.empty((768, 1024))</span>
+<span class="sd">    &gt;&gt;&gt; pixel_perfect_figsize(image)</span>
+<span class="sd">    (12.8, 9.6)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hpix</span><span class="p">,</span> <span class="n">wpix</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">wpix</span> <span class="o">/</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">hpix</span> <span class="o">/</span> <span class="n">dpi</span></div>
+
+
+<div class="viewcode-block" id="overlay_skeleton_2d"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.overlay_skeleton_2d">[docs]</a><span class="k">def</span> <span class="nf">overlay_skeleton_2d</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">,</span>
+        <span class="n">skeleton</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">image_cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">dilate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">axes</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Overlay the skeleton pixels on the input image.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : array, shape (M, N[, 3])</span>
+<span class="sd">        The input image. Can be grayscale or RGB.</span>
+<span class="sd">    skeleton : array, shape (M, N)</span>
+<span class="sd">        The input 1-pixel-wide skeleton.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    image_cmap : matplotlib colormap name or object, optional</span>
+<span class="sd">        If the input image is grayscale, colormap it with this colormap.</span>
+<span class="sd">        The default is grayscale.</span>
+<span class="sd">    color : tuple of float in [0, 1], optional</span>
+<span class="sd">        The RGB color for the skeleton pixels.</span>
+<span class="sd">    alpha : float, optional</span>
+<span class="sd">        Blend the skeleton pixels with the given alpha.</span>
+<span class="sd">    dilate : int, optional</span>
+<span class="sd">        Dilate the skeleton by this amount. This is useful when rendering</span>
+<span class="sd">        large images where aliasing may cause some pixels of the skeleton</span>
+<span class="sd">        not to be drawn.</span>
+<span class="sd">    axes : matplotlib Axes</span>
+<span class="sd">        The Axes on which to plot the image. If None, new ones are created.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    axes : matplotlib Axes</span>
+<span class="sd">        The Axis on which the image is drawn.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">_normalise_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">image_cmap</span><span class="o">=</span><span class="n">image_cmap</span><span class="p">)</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dilate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">selem</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">disk</span><span class="p">(</span><span class="n">dilate</span><span class="p">)</span>
+        <span class="n">skeleton</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">selem</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">image</span><span class="p">[</span><span class="n">skeleton</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">image</span><span class="p">[</span><span class="n">skeleton</span><span class="p">]</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axes</span></div>
+
+
+<div class="viewcode-block" id="overlay_euclidean_skeleton_2d"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.overlay_euclidean_skeleton_2d">[docs]</a><span class="k">def</span> <span class="nf">overlay_euclidean_skeleton_2d</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">,</span>
+        <span class="n">stats</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">image_cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;branch-type&#39;</span><span class="p">,</span>
+        <span class="n">skeleton_colormap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span>
+        <span class="n">axes</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the image, and overlay the straight-line skeleton over it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : array, shape (M, N)</span>
+<span class="sd">        The input image.</span>
+<span class="sd">    stats : array, shape (M, N)</span>
+<span class="sd">        Skeleton statistics.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    image_cmap : matplotlib colormap name or object, optional</span>
+<span class="sd">        The colormap to use for the input image. Defaults to grayscale.</span>
+<span class="sd">    skeleton_color_source : string, optional</span>
+<span class="sd">        The name of the column to use for the skeleton edge color. See the</span>
+<span class="sd">        output of `skan.summarise` for valid choices. Most common choices</span>
+<span class="sd">        would be:</span>
+
+<span class="sd">        - skeleton-id: each individual skeleton (connected component) will</span>
+<span class="sd">          have a different colour.</span>
+<span class="sd">        - branch-type: each branch type (tip-tip, tip-junction,</span>
+<span class="sd">          junction-junction, path-path). This is the default.</span>
+<span class="sd">        - branch-distance: the curved length of the skeleton branch.</span>
+<span class="sd">        - euclidean-distance: the straight-line length of the skeleton branch.</span>
+
+<span class="sd">    skeleton_colormap : matplotlib colormap name or object, optional</span>
+<span class="sd">        The colormap for the skeleton values.</span>
+<span class="sd">    axes : matplotlib Axes object, optional</span>
+<span class="sd">        An Axes object on which to draw. If `None`, a new one is created.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    axes : matplotlib Axes object</span>
+<span class="sd">        The Axes on which the plot is drawn.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">_normalise_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">image_cmap</span><span class="o">=</span><span class="n">image_cmap</span><span class="p">)</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">stats</span>
+    <span class="c1"># transforming from row, col to x, y</span>
+    <span class="n">coords_cols</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;image-coord-src-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+                   <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;image-coord-dst-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">summary</span><span class="p">[</span><span class="n">coords_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">color_values</span> <span class="o">=</span> <span class="n">summary</span><span class="p">[</span><span class="n">skeleton_color_source</span><span class="p">]</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span>
+            <span class="n">skeleton_colormap</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">color_values</span><span class="p">)),</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="n">colormapped</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">((</span><span class="n">color_values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">color_values</span><span class="p">))</span> <span class="o">/</span>
+                       <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">color_values</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">color_values</span><span class="p">)))</span>
+    <span class="n">linecoll</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">LineCollection</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colormapped</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">linecoll</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axes</span></div>
+
+
+<div class="viewcode-block" id="overlay_skeleton_2d_class"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.overlay_skeleton_2d_class">[docs]</a><span class="k">def</span> <span class="nf">overlay_skeleton_2d_class</span><span class="p">(</span>
+        <span class="n">skeleton</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">image_cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+        <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;path_means&#39;</span><span class="p">,</span>
+        <span class="n">skeleton_colormap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">axes</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the image, and overlay the skeleton over it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    skeleton : skan.Skeleton object</span>
+<span class="sd">        The input skeleton, which contains both the skeleton and the source</span>
+<span class="sd">        image.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    image_cmap : matplotlib colormap name or object, optional</span>
+<span class="sd">        The colormap to use for the input image. Defaults to grayscale.</span>
+<span class="sd">    skeleton_color_source : string or callable, optional</span>
+<span class="sd">        The name of the method to use for the skeleton edge color. See the</span>
+<span class="sd">        documentation of `skan.Skeleton` for valid choices. Most common choices</span>
+<span class="sd">        would be:</span>
+
+<span class="sd">        - path_means: the mean value of the skeleton along each path.</span>
+<span class="sd">        - path_lengths: the length of each path.</span>
+<span class="sd">        - path_stdev: the standard deviation of pixel values along the path.</span>
+
+<span class="sd">        Alternatively, a callable can be provided that takes as input a</span>
+<span class="sd">        Skeleton object and outputs a list of floating point values of the same</span>
+<span class="sd">        length as the number of paths.</span>
+
+<span class="sd">    skeleton_colormap : matplotlib colormap name or object, optional</span>
+<span class="sd">        The colormap for the skeleton values.</span>
+<span class="sd">    vmin, vmax : float, optional</span>
+<span class="sd">        The minimum and maximum values for the colormap. Use this to pin the</span>
+<span class="sd">        colormapped values to a certain range.</span>
+<span class="sd">    axes : matplotlib Axes object, optional</span>
+<span class="sd">        An Axes object on which to draw. If `None`, a new one is created.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    axes : matplotlib Axes object</span>
+<span class="sd">        The Axes on which the plot is drawn.</span>
+<span class="sd">    mappable : matplotlib ScalarMappable object</span>
+<span class="sd">        The mappable values corresponding to the line colors. This can be used</span>
+<span class="sd">        to create a colorbar for the plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">skeleton</span><span class="o">.</span><span class="n">source_image</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">source_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">image_cmap</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">skeleton_color_source</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">skeleton_color_source</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">skeleton_color_source</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">skeleton_color_source</span><span class="p">)()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Unknown skeleton color source: </span><span class="si">%s</span><span class="s1">. Provide an &#39;</span>
+                <span class="s1">&#39;attribute of skan.csr.Skeleton or a callable.&#39;</span>
+                <span class="o">%</span> <span class="n">skeleton_color_source</span>
+                <span class="p">)</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">skeleton_colormap</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">values</span><span class="p">)),</span> <span class="mi">256</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">mapping_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">values</span><span class="o">-</span><span class="n">vmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">vmax</span><span class="o">-</span><span class="n">vmin</span><span class="p">)</span>
+    <span class="n">mappable</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">),</span> <span class="n">cmap</span><span class="p">)</span>
+    <span class="n">mappable</span><span class="o">.</span><span class="n">_A</span> <span class="o">=</span> <span class="n">mapping_values</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">mapping_values</span><span class="p">)</span>
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">skeleton</span><span class="o">.</span><span class="n">path_coordinates</span><span class="p">(</span><span class="n">i</span><span class="p">)[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">n_paths</span><span class="p">)</span>
+            <span class="p">]</span>
+    <span class="n">linecoll</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">LineCollection</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">linecoll</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axes</span><span class="p">,</span> <span class="n">mappable</span></div>
+
+
+<div class="viewcode-block" id="sholl_shells"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.sholl_shells">[docs]</a><span class="k">def</span> <span class="nf">sholl_shells</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw concentric circles around a center point.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    center : array of float, shape (2,)</span>
+<span class="sd">        The center of the circles. This should be in NumPy-style row/column</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">    radii : array of float, shape (N,)</span>
+<span class="sd">        The radii of the concentric circles.</span>
+<span class="sd">    axes : matplotlib Axes, optional</span>
+<span class="sd">        The axes on which to draw the circles. If None, create a new instance.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    axes : matplotlib Axes</span>
+<span class="sd">        The axes on which the circles were drawn</span>
+<span class="sd">    patches : list of matplotlib Patches</span>
+<span class="sd">        The patch objects that were drawn.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Additional keyword arguments are passed directly to the</span>
+<span class="sd">    `matplotlib.patches.Circle` call. Valid keywords include ``edgecolor``,</span>
+<span class="sd">    ``linestyle``, and `linewidth``. See matplotlib documentation for details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">center</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;edgecolor&#39;</span><span class="p">,</span> <span class="s1">&#39;cornflowerblue&#39;</span><span class="p">)</span>
+    <span class="n">circles</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Circle</span><span class="p">((</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">radii</span>
+            <span class="p">]</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">circles</span><span class="p">:</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axes</span><span class="p">,</span> <span class="n">circles</span></div>
+
+
+<div class="viewcode-block" id="pipeline_plot"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.pipeline_plot">[docs]</a><span class="k">def</span> <span class="nf">pipeline_plot</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">,</span>
+        <span class="n">thresholded</span><span class="p">,</span>
+        <span class="n">skeleton</span><span class="p">,</span>
+        <span class="n">stats</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">figure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw the image, the thresholded version, and its skeleton.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : array, shape (M, N, ...[, 3])</span>
+<span class="sd">        Input image, conformant with scikit-image data type</span>
+<span class="sd">        specification [1]_.</span>
+<span class="sd">    thresholded : array, same shape as image</span>
+<span class="sd">        Binarized version of the input image.</span>
+<span class="sd">    skeleton : array, same shape as image</span>
+<span class="sd">        Skeletonized version of the input image.</span>
+<span class="sd">    stats : pandas DataFrame</span>
+<span class="sd">        Skeleton statistics from the input image/skeleton.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    figure : matplotlib Figure, optional</span>
+<span class="sd">        If given, where to make the plots.</span>
+<span class="sd">    axes : array of matplotlib Axes, optional</span>
+<span class="sd">        If given, use these axes to draw the plots. Should have len 4.</span>
+<span class="sd">    figsize : 2-tuple of float, optional</span>
+<span class="sd">        The width and height of the figure.</span>
+<span class="sd">    smooth_method : {&#39;Gaussian&#39;, &#39;TV&#39;, &#39;NL&#39;}, optional</span>
+<span class="sd">        Which denoising method to use on the image.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib Figure</span>
+<span class="sd">        The Figure containing all the plots</span>
+<span class="sd">    axes : array of matplotlib Axes</span>
+<span class="sd">        The four axes containing the drawn images.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] http://scikit-image.org/docs/dev/user_guide/data_types.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">figure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+                <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span>
+        <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+                    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax0</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax0</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+                    <span class="p">]</span>
+
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">thresholded</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+    <span class="n">overlay_skeleton_2d</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="n">overlay_euclidean_skeleton_2d</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span></div>
+
+
+<span class="k">def</span> <span class="nf">_clean_positions_dict</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">g</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="overlay_skeleton_networkx"><a class="viewcode-back" href="../../api/skan.draw.html#skan.draw.overlay_skeleton_networkx">[docs]</a><span class="k">def</span> <span class="nf">overlay_skeleton_networkx</span><span class="p">(</span>
+        <span class="n">csr_graph</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw the skeleton as a NetworkX graph, optionally overlaid on an image.</span>
+
+<span class="sd">    Due to the size of NetworkX drawing elements, this is only recommended</span>
+<span class="sd">    for very small skeletons.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    csr_graph : SciPy Sparse matrix</span>
+<span class="sd">        The skeleton graph in SciPy CSR format.</span>
+<span class="sd">    coordinates : array, shape (N_points, 2)</span>
+<span class="sd">        The coordinates of each point in the skeleton. ``coordinates.shape[0]``</span>
+<span class="sd">        should be equal to ``csr_graph.shape[0]``.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    axis : Matplotlib Axes object, optional</span>
+<span class="sd">        The Axes on which to plot the data. If None, a new figure and axes will</span>
+<span class="sd">        be created.</span>
+<span class="sd">    image : array, shape (M, N[, 3])</span>
+<span class="sd">        An image on which to overlay the skeleton. ``image.shape`` should be</span>
+<span class="sd">        greater than ``np.max(coordinates, axis=0)``.</span>
+<span class="sd">    **kwargs : keyword arguments</span>
+<span class="sd">        Arguments passed on to `nx.draw_networkx`. Particularly useful ones</span>
+<span class="sd">        include ``node_size=`` and ``font_size=``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">cmap</span> <span class="ow">or</span> <span class="s1">&#39;gray&#39;</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+    <span class="n">gnx</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_scipy_sparse_array</span><span class="p">(</span><span class="n">csr_graph</span><span class="p">)</span>
+    <span class="c1"># Note: we invert the positions because Matplotlib uses x/y for</span>
+    <span class="c1"># scatterplot, but the coordinates are row/column NumPy indexing</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">coordinates</span><span class="p">[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">_clean_positions_dict</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">gnx</span><span class="p">)</span>  <span class="c1"># remove nodes not in Graph</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span><span class="n">gnx</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axis</span></div>
+</pre></div>
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
