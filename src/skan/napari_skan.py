@@ -23,6 +23,7 @@ def skeletonize_labels(labels: "napari.types.LabelsData", method: SkeletonizeMet
         Labels layer depecting the extracted skeleton
     """
     binary_labels = (labels > 0).astype(np.uint8)
-    # skeletonize returns a binary array, so we can just iltiply it with the labels to get appropriate colours
+    # skeletonize returns a binary array, so we can just multiply it with the
+    # labels to get appropriate colors
     skeletonized = skeletonize(binary_labels, method=method.value) * labels
     return skeletonized
