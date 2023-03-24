@@ -5,8 +5,19 @@ contributions:
   - id: skan.skeletonize_labels
     title: Skeletonize labels...
     python_name: skan.napari_skan:skeletonize_labels
-
+  - id: skan.analyse_skeleton
+    title: Analyse Skeleton...
+    python_name: skan.napari_skan:analyse_skeleton
+  - id: skan.analyse_widg
+    title: Skeleton analysis
+    python_name: skan.napari_skan:AnalyzeSkeletonWidget
   widgets:
   - command: skan.skeletonize_labels
     display_name: Skeletonize labels...
     autogenerate: true
+  - command: skan.analyse_skeleton
+    display_name: Analyse Skeleton...
+    autogenerate: true
+  - command: skan.analyse_widg
+    display_name: Analyse Skeleton Widg...
+
