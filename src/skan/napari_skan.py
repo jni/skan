@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
 from skimage.morphology import skeletonize
-from skan import summarize, Skeleton # is this wrong?? should i not be importing from myself??
+from skan import summarize, Skeleton
 import napari
 from magicgui.widgets import Container, ComboBox, PushButton, Label
 
@@ -26,43 +26,49 @@ def skeletonize_labels(labels: "napari.types.LabelsData", method: SkeletonizeMet
         Labels layer depecting the extracted skeleton
     """
     binary_labels = (labels > 0).astype(np.uint8)
-    # skeletonize returns a binary array, so we can just multiply it with the
-    # labels to get appropriate colors
+
     skeletonized = skeletonize(binary_labels, method=method.value) * labels
     return skeletonized
 
 
-def analyse_skeleton(labels: "napari.types.LabelsData"):
-    # TODO: change 'analyse' to 'analyze' (and in napari.yaml)
-    # TODO: change colour to color
+def analyze_skeleton(labels: "napari.types.LabelsData"):
     binary_labels = (labels > 0).astype(np.uint8)
     binary_skeleton = skeletonize(binary_labels)
     
     skeleton = skeletonize(binary_skeleton)
     paths_table = summarize(skeleton)
-    colour_options = paths_table.features
+    color_options = paths_table.features
     
 class AnalyzeSkeletonWidget(Container):
     def __init__(self, viewer: "napari.viewer.Viewer"):
-        """Widget for 
+        """Widget for skeletonizing labels layer. 
 
-        Parameters
+        Parameters 
         ----------
         viewer : napari.viewer.Viewer
             napari viewer to add the widget to
         """
         super().__init__()
         self.viewer = viewer
+        self.current_label_layer = None
         self.labels_combo = ComboBox(
                 name='Labels Layer', choices=self.get_labels_layers
                 )
+        # self.labels_combo.changed.connect(self.set_current_layer)
 
-        labels = viewer.layers[self.labels_combo.current_choice].data
 
-        binary_labels = (labels > 0).astype(np.uint8)
+
+        self.skeletonize_button = PushButton(name='Skeletonize')
+        self.skeletonize_button.clicked.connect(self.make_skeleton_layer)
+        
+        self.extend([self.labels_combo, self.skeletonize_button])
+
+    def make_skeleton_layer(self):
+        layer_name = self.labels_combo.current_choice
+        self.current_label_layer = self.viewer.layers[layer_name].data
+        binary_labels = (self.current_label_layer > 0).astype(np.uint8)
         binary_skeleton = skeletonize(binary_labels)
         skeleton = Skeleton(binary_skeleton)
-        # paths_table = summarize(binary_skeleton)
         all_paths = [skeleton.path_coordinates(i) 
                      for i in range(skeleton.n_paths)]
 
@@ -71,21 +77,25 @@ class AnalyzeSkeletonWidget(Container):
                 name='feature', choices=paths_table[:1]
                 )
         self.features_combo.changed.connect(self.update_edge_color)
-        self.skeleton_layer = viewer.add_shapes(
+        self.skeleton_layer = self.viewer.add_shapes(
             all_paths,
             shape_type='path',
-            properties=paths_table,
+            properties=paths_table ,
             edge_width=0.5,
             edge_color='skeleton-id',
             edge_colormap='tab10',
             )
-        self.extend([self.labels_combo, self.features_combo])
+        self.extend([self.features_combo])
+
+    def set_current_layer(self):
+        #TODO: error test
+        self.current_label_layer = self.viewer.layers[self.labels_combo.current_choice].data
 
     def update_edge_color(self, value):
         self.skeleton_layer.edge_color = value
 
     def get_labels_layers(self, combo):
-        """Returns a list of existing labels to display
+        """Returns a list of existing labels to display 
 
         Parameters
         ----------
