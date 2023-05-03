@@ -8,9 +8,12 @@ contributions:
   - id: skan.analyse_skeleton
     title: Analyse Skeleton...
     python_name: skan.napari_skan:analyse_skeleton
-  - id: skan.analyse_widg
-    title: Skeleton analysis
-    python_name: skan.napari_skan:AnalyzeSkeletonWidget
+  - id: skan.skeletonize_widg
+    title: Make Skeleton
+    python_name: skan.napari_skan:SkeletonizeWidget
+  - id: skan.analyze_skeleton_widg
+    title: Analyse skeleton
+    python_name: skan.napari_skan:AnalyseSkeleton
   widgets:
   - command: skan.skeletonize_labels
     display_name: Skeletonize labels...
@@ -18,6 +21,8 @@ contributions:
   - command: skan.analyse_skeleton
     display_name: Analyse Skeleton...
     autogenerate: true
-  - command: skan.analyse_widg
+  - command: skan.skeletonize_widg
+    display_name: Make Skeleton Widg...
+  - command: skan.analyze_skeleton_widg
     display_name: Analyse Skeleton Widg...
 

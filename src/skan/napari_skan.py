@@ -39,7 +39,7 @@ def analyze_skeleton(labels: "napari.types.LabelsData"):
     paths_table = summarize(skeleton)
     color_options = paths_table.features
     
-class AnalyzeSkeletonWidget(Container):
+class SkeletonizeWidget(Container):
     def __init__(self, viewer: "napari.viewer.Viewer"):
         """Widget for skeletonizing labels layer. 
 
@@ -54,9 +54,6 @@ class AnalyzeSkeletonWidget(Container):
         self.labels_combo = ComboBox(
                 name='Labels Layer', choices=self.get_labels_layers
                 )
-        # self.labels_combo.changed.connect(self.set_current_layer)
-
-
 
         self.skeletonize_button = PushButton(name='Skeletonize')
         self.skeletonize_button.clicked.connect(self.make_skeleton_layer)
@@ -68,31 +65,24 @@ class AnalyzeSkeletonWidget(Container):
         self.current_label_layer = self.viewer.layers[layer_name].data
         binary_labels = (self.current_label_layer > 0).astype(np.uint8)
         binary_skeleton = skeletonize(binary_labels)
+        
         skeleton = Skeleton(binary_skeleton)
-        all_paths = [skeleton.path_coordinates(i) 
-                     for i in range(skeleton.n_paths)]
 
-        paths_table = summarize(skeleton)
-        self.features_combo = ComboBox(
-                name='feature', choices=paths_table[:1]
-                )
-        self.features_combo.changed.connect(self.update_edge_color)
+        all_paths = [skeleton.path_coordinates(i) 
+                for i in range(skeleton.n_paths)]
         self.skeleton_layer = self.viewer.add_shapes(
             all_paths,
             shape_type='path',
-            properties=paths_table ,
-            edge_width=0.5,
-            edge_color='skeleton-id',
-            edge_colormap='tab10',
-            )
-        self.extend([self.features_combo])
+            # features=paths_table ,
+            # edge_width=0.5,
+            # edge_color='skeleton-id',
+            # edge_colormap='tab10',
+            metadata={"skeleton": skeleton}
+        )
 
     def set_current_layer(self):
         #TODO: error test
         self.current_label_layer = self.viewer.layers[self.labels_combo.current_choice].data
-
-    def update_edge_color(self, value):
-        self.skeleton_layer.edge_color = value
 
     def get_labels_layers(self, combo):
         """Returns a list of existing labels to display 
@@ -113,9 +103,42 @@ class AnalyzeSkeletonWidget(Container):
                 ]
 
 
-if __name__ == "__main__":
-    viewer = napari.Viewer()
-    napari.run()
-    
+class AnalyseSkeleton(Container):
+    def __init__(self, viewer: "napari.viewer.Viewer"):
+        """Widget for skeletonizing labels layer. 
 
-# TODO: make sure the widget doesnt crash when no data 
+        Parameters 
+        ----------
+        viewer : napari.viewer.Viewer
+            napari viewer to add the widget to
+        """
+        super().__init__()
+        self.viewer = viewer
+        self.shapes_combo = ComboBox(
+            name='Shapes Layer', 
+            choices=self.get_shapes_layers
+        )
+        self.analyze_button = PushButton(name='Analyze')
+        self.analyze_button.clicked.connect(self.analyze_shapes_layer)
+
+        self.extend([self.shapes_combo,self.analyze_button])
+
+    def analyze_shapes_layer(self, combo):
+        paths_table = summarize(self.viewer.layers[self.shapes_combo.current_choice].metadata["skeleton"])
+
+        self.features_combo = ComboBox(
+                name='feature', 
+                choices=paths_table[:1]
+                )
+        self.features_combo.changed.connect(self.update_edge_color)
+
+        self.extend([self.features_combo])
+
+    def get_shapes_layers(self, combo):
+        return [
+                layer for layer in self.viewer.layers
+                if isinstance(layer, napari.layers.Shapes)
+                ]
+
+    def update_edge_color(self, value):
+        self.viewer.layers[self.shapes_combo.current_choice].edge_color = value
