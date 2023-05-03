@@ -73,10 +73,10 @@ class SkeletonizeWidget(Container):
         self.skeleton_layer = self.viewer.add_shapes(
             all_paths,
             shape_type='path',
-            # features=paths_table ,
+            # features=paths_table,
             # edge_width=0.5,
             # edge_color='skeleton-id',
-            # edge_colormap='tab10',
+            edge_colormap='tab10',
             metadata={"skeleton": skeleton}
         )
 
@@ -125,11 +125,14 @@ class AnalyseSkeleton(Container):
 
     def analyze_shapes_layer(self, combo):
         paths_table = summarize(self.viewer.layers[self.shapes_combo.current_choice].metadata["skeleton"])
-
+        self.viewer.layers[self.shapes_combo.current_choice].features = paths_table
         self.features_combo = ComboBox(
                 name='feature', 
                 choices=paths_table[:1]
                 )
+        
+        #TODO: upadte shapes parameters
+
         self.features_combo.changed.connect(self.update_edge_color)
 
         self.extend([self.features_combo])
@@ -141,4 +144,10 @@ class AnalyseSkeleton(Container):
                 ]
 
     def update_edge_color(self, value):
+        print(value)
+        
         self.viewer.layers[self.shapes_combo.current_choice].edge_color = value
+
+if __name__ == "__main__":
+    viewer = napari.Viewer()
+    napari.run()
