@@ -6,8 +6,8 @@ import napari
 from magicgui.widgets import Container, ComboBox, PushButton, Label
 
 class SkeletonizeMethod(Enum):
-    Zhang = "zhang"
-    Lee = "lee"
+    zhang = "zhang"
+    lee = "lee"
 
 
 def skeletonize_labels(labels: "napari.types.LabelsData", method: SkeletonizeMethod) -> "napari.types.LabelsData":
@@ -54,21 +54,23 @@ class SkeletonizeWidget(Container):
         self.labels_combo = ComboBox(
                 name='Labels Layer', choices=self.get_labels_layers
                 )
-
+        self.methods_combo = ComboBox(
+                name="Method", choices = SkeletonizeMethod
+        )
         self.skeletonize_button = PushButton(name='Skeletonize')
         self.skeletonize_button.clicked.connect(self.make_skeleton_layer)
         
-        self.extend([self.labels_combo, self.skeletonize_button])
+        self.extend([self.labels_combo, self.methods_combo, self.skeletonize_button])
 
     def make_skeleton_layer(self):
         layer_name = self.labels_combo.current_choice
         self.current_label_layer = self.viewer.layers[layer_name].data
         binary_labels = (self.current_label_layer > 0).astype(np.uint8)
-        binary_skeleton = skeletonize(binary_labels)
+        binary_skeleton = skeletonize(binary_labels, method=self.methods_combo.current_choice)
         
         skeleton = Skeleton(binary_skeleton)
 
-        all_paths = [skeleton.path_coordinates(i) 
+        all_paths = [skeleton.path_coordinates(i)  
                 for i in range(skeleton.n_paths)]
         self.skeleton_layer = self.viewer.add_shapes(
             all_paths,
