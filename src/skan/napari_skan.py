@@ -107,7 +107,7 @@ class SkeletonizeWidget(Container):
 
 class AnalyseSkeleton(Container):
     def __init__(self, viewer: "napari.viewer.Viewer"):
-        """Widget for skeletonizing labels layer. 
+        """Widget for analyzing skeleton of an existing shapes layer 
 
         Parameters 
         ----------
@@ -126,28 +126,33 @@ class AnalyseSkeleton(Container):
         self.extend([self.shapes_combo,self.analyze_button])
 
     def analyze_shapes_layer(self, combo):
+        """Perfom the analysis on the shape/skeleton layer and color the shape layer
+
+        Parameters
+        ----------
+        combo : magicgui ComboBox
+            A dropdown to dispaly the layers
+        """
         paths_table = summarize(self.viewer.layers[self.shapes_combo.current_choice].metadata["skeleton"])
         self.viewer.layers[self.shapes_combo.current_choice].features = paths_table
         self.features_combo = ComboBox(
                 name='feature', 
                 choices=paths_table[:1]
                 )
-        
-        #TODO: upadte shapes parameters
 
         self.features_combo.changed.connect(self.update_edge_color)
 
         self.extend([self.features_combo])
 
     def get_shapes_layers(self, combo):
+        """return a list of shapes layers"""
         return [
                 layer for layer in self.viewer.layers
                 if isinstance(layer, napari.layers.Shapes)
                 ]
 
     def update_edge_color(self, value):
-        print(value)
-        
+        """update the color of the currently selected shapes layer"""        
         self.viewer.layers[self.shapes_combo.current_choice].edge_color = value
 
 if __name__ == "__main__":
