@@ -35,10 +35,11 @@ class AnalyseSkeleton(Container):
         """
         super().__init__()
         self.viewer = viewer
-        self.shapes_combo = ComboBox(
-            name='Shapes Layer', 
-            choices=self.get_shapes_layers
-        )
+        # self.shapes_combo = ComboBox(
+        #     name='Shapes Layer', 
+        #     choices=self.get_shapes_layers
+        # )
+        self.shapes_combo = create_widget(annotation = Shapes)
         self.analyze_button = PushButton(name='Analyze')
         self.analyze_button.clicked.connect(self.analyze_shapes_layer)
 
