@@ -2,27 +2,19 @@ name: skan
 schema_version: 0.1.0
 contributions:
   commands:
-  - id: skan.skeletonize_labels
-    title: Skeletonize labels...
-    python_name: skan.napari_skan:skeletonize_labels
-  - id: skan.analyse_skeleton
-    title: Analyse Skeleton...
-    python_name: skan.napari_skan:analyse_skeleton
-  - id: skan.skeletonize_widg
+  - id: skan.skeletonize
     title: Make Skeleton
-    python_name: skan.napari_skan:SkeletonizeWidget
+    python_name: skan.napari_skan:get_skeleton
   - id: skan.analyze_skeleton_widg
     title: Analyse skeleton
     python_name: skan.napari_skan:AnalyseSkeleton
   widgets:
-  - command: skan.skeletonize_labels
-    display_name: Skeletonize labels...
+  # - command: skan.skeletonize_widg
+  #   display_name: Make Skeleton Widg...
+  - command: skan.skeletonize
+    display_name: Skeleton Widg...
     autogenerate: true
-  - command: skan.analyse_skeleton
-    display_name: Analyse Skeleton...
-    autogenerate: true
-  - command: skan.skeletonize_widg
-    display_name: Make Skeleton Widg...
   - command: skan.analyze_skeleton_widg
     display_name: Analyse Skeleton Widg...
+    
 
