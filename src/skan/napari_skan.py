@@ -40,10 +40,13 @@ class AnalyseSkeleton(Container):
         #     choices=self.get_shapes_layers
         # )
         self.shapes_combo = create_widget(annotation = Shapes)
-        self.analyze_button = PushButton(name='Analyze')
-        self.analyze_button.clicked.connect(self.analyze_shapes_layer)
+        self.features_combo = ComboBox(
+                name='feature', 
+                )
+        self.get_features_button = PushButton(name='Get features')
+        self.get_features_button.clicked.connect(self.analyze_shapes_layer)
 
-        self.extend([self.shapes_combo,self.analyze_button])
+        self.extend([self.shapes_combo,self.features_combo, self.get_features_button])
 
     def analyze_shapes_layer(self, combo):
         """Perfom the analysis on the shape/skeleton layer and color the shape layer
@@ -53,23 +56,18 @@ class AnalyseSkeleton(Container):
         combo : magicgui ComboBox
             A dropdown to dispaly the layers
         """
-        paths_table = summarize(self.viewer.layers[self.shapes_combo.current_choice].metadata["skeleton"])
-        self.viewer.layers[self.shapes_combo.current_choice].features = paths_table
-        self.features_combo = ComboBox(
-                name='feature', 
-                choices=paths_table[:1]
-                )
+        current_layer = self.viewer.layers[self.shapes_combo.current_choice]
+        if current_layer.features.empty:
+            paths_table = summarize(self.viewer.layers[self.shapes_combo.current_choice].metadata["skeleton"])
+            current_layer.features = paths_table
+        else:
+            paths_table = current_layer.features
+        self.features_combo.choices = paths_table[:1]
 
         self.features_combo.changed.connect(self.update_edge_color)
 
-        self.extend([self.features_combo])
+        # self.extend([self.features_combo])
 
-    def get_shapes_layers(self, combo):
-        """return a list of shapes layers"""
-        return [
-                layer for layer in self.viewer.layers
-                if isinstance(layer, napari.layers.Shapes)
-                ]
 
     def update_edge_color(self, value):
         """update the color of the currently selected shapes layer """        
