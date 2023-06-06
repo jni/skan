@@ -2,14 +2,13 @@ import numpy as np
 from enum import Enum
 from skimage.morphology import skeletonize
 from skan import summarize, Skeleton
-import napari
 from magicgui.widgets import Container, ComboBox, PushButton, Label, create_widget
-from napari.layers import Shapes 
+
 class SkeletonizeMethod(Enum):
     zhang = "zhang"
     lee = "lee"
 
-def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "napari.layers.Shapes":
+def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "napari.types.LayerDataTuple":
     binary_labels = (labels.data > 0).astype(np.uint8)
     binary_skeleton = skeletonize(binary_labels, method=choice.value)
     
@@ -18,10 +17,10 @@ def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "
     all_paths = [skeleton.path_coordinates(i)  
             for i in range(skeleton.n_paths)]
 
-    return Shapes(all_paths,
-        shape_type='path',
-        edge_colormap='tab10',
-        metadata={"skeleton": skeleton}
+    return (
+        all_paths,
+        {'shape_type': 'path', 'edge_colormap': 'tab10', 'metadata': {'skeleton': skeleton}},
+        'shapes',
         )
 
 class AnalyseSkeleton(Container):
@@ -66,13 +65,6 @@ class AnalyseSkeleton(Container):
 
         self.features_combo.changed.connect(self.update_edge_color)
 
-        # self.extend([self.features_combo])
-
-
     def update_edge_color(self, value):
         """update the color of the currently selected shapes layer """        
         self.viewer.layers[self.shapes_combo.current_choice].edge_color = value
-
-if __name__ == "__main__":
-    viewer = napari.Viewer()
-    napari.run()
