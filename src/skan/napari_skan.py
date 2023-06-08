@@ -1,8 +1,10 @@
+from magicgui import magicgui
 import numpy as np
 from enum import Enum
 from skimage.morphology import skeletonize
 from skan import summarize, Skeleton
 from magicgui.widgets import Container, ComboBox, PushButton, Label, create_widget
+
 
 class SkeletonizeMethod(Enum):
     zhang = "zhang"
@@ -16,12 +18,16 @@ def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "
 
     all_paths = [skeleton.path_coordinates(i)  
             for i in range(skeleton.n_paths)]
+    
+    paths_table = summarize(skeleton)
+
 
     return (
         all_paths,
-        {'shape_type': 'path', 'edge_colormap': 'tab10', 'metadata': {'skeleton': skeleton}},
+        {'shape_type': 'path', 'edge_colormap': 'tab10', 'metadata': {'skeleton': skeleton, 'features': paths_table}},
         'shapes',
         )
+
 
 class AnalyseSkeleton(Container):
     def __init__(self, viewer: "napari.viewer.Viewer"):
@@ -34,11 +40,8 @@ class AnalyseSkeleton(Container):
         """
         super().__init__()
         self.viewer = viewer
-        # self.shapes_combo = ComboBox(
-        #     name='Shapes Layer', 
-        #     choices=self.get_shapes_layers
-        # )
-        self.shapes_combo = create_widget(annotation = Shapes)
+        self.shapes_combo = create_widget(annotation = "napari.layers.Shapes", name = "skeleton")
+
         self.features_combo = ComboBox(
                 name='feature', 
                 )
@@ -56,15 +59,17 @@ class AnalyseSkeleton(Container):
             A dropdown to dispaly the layers
         """
         current_layer = self.viewer.layers[self.shapes_combo.current_choice]
-        if current_layer.features.empty:
-            paths_table = summarize(self.viewer.layers[self.shapes_combo.current_choice].metadata["skeleton"])
-            current_layer.features = paths_table
-        else:
-            paths_table = current_layer.features
-        self.features_combo.choices = paths_table[:1]
+        current_layer.features = current_layer.metadata["features"]
+        self.features_combo.choices = current_layer.features.columns
 
         self.features_combo.changed.connect(self.update_edge_color)
 
     def update_edge_color(self, value):
         """update the color of the currently selected shapes layer """        
         self.viewer.layers[self.shapes_combo.current_choice].edge_color = value
+
+
+if __name__ == "__main__":
+    import napari
+    viewer = napari.Viewer()
+    napari.run()
