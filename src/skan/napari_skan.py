@@ -5,7 +5,8 @@ from skimage.morphology import skeletonize
 from skan import summarize, Skeleton
 from magicgui.widgets import Container, ComboBox, PushButton, Label, create_widget
 
-
+CAT_COLOR = "tab10"
+CONTINUOUS_COLOR = "viridis"
 class SkeletonizeMethod(Enum):
     zhang = "zhang"
     lee = "lee"
@@ -19,7 +20,7 @@ def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "
     all_paths = [skeleton.path_coordinates(i)  
             for i in range(skeleton.n_paths)]
     
-    paths_table = summarize(skeleton)
+    paths_table = summarize(skeleton) # option to have main_path = True (or something) changing header
 
 
     return (
@@ -41,33 +42,32 @@ class AnalyseSkeleton(Container):
         super().__init__()
         self.viewer = viewer
         self.shapes_combo = create_widget(annotation = "napari.layers.Shapes", name = "skeleton")
+        # removed button, connected instead to Shapes changing to populate the features
+        self.shapes_combo.changed.connect(self._populate_features_combo)
 
-        self.features_combo = ComboBox(
-                name='feature', 
-                )
-        self.get_features_button = PushButton(name='Get features')
-        self.get_features_button.clicked.connect(self.analyze_shapes_layer)
+        self.features_combo = ComboBox(name='feature')
+        # added function call to populate combo
+        self._populate_features_combo(True)
+        self.extend([self.shapes_combo,self.features_combo])
 
-        self.extend([self.shapes_combo,self.features_combo, self.get_features_button])
+    def update_edge_color(self, value):
+        """update the color of the currently selected shapes layer """       
+        shapes_layer = self.viewer.layers[self.shapes_combo.current_choice]
+        current_column_type = shapes_layer.features[value].dtype
+        if current_column_type == "float64":
+            shapes_layer.edge_colormap = CONTINUOUS_COLOR
+        else:
+            shapes_layer.edge_colormap = CAT_COLOR
+        shapes_layer.edge_color = value
 
-    def analyze_shapes_layer(self, combo):
-        """Perfom the analysis on the shape/skeleton layer and color the shape layer
-
-        Parameters
-        ----------
-        combo : magicgui ComboBox
-            A dropdown to dispaly the layers
-        """
+    def _populate_features_combo(self, event):
+        print(self.shapes_combo.current_choice)
         current_layer = self.viewer.layers[self.shapes_combo.current_choice]
         current_layer.features = current_layer.metadata["features"]
         self.features_combo.choices = current_layer.features.columns
-
+        # the choises exist at this point, but gui is not updating hence to labeled changed (hoping event emission)
+        self.features_combo.label_changed(current_layer.name)
         self.features_combo.changed.connect(self.update_edge_color)
-
-    def update_edge_color(self, value):
-        """update the color of the currently selected shapes layer """        
-        self.viewer.layers[self.shapes_combo.current_choice].edge_color = value
-
 
 if __name__ == "__main__":
     import napari
