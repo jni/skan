@@ -61,4 +61,17 @@ def color_by_feature(shapes_layer:"napari.layers.Shapes", feature_name):
 if __name__ == "__main__":
     import napari
     viewer = napari.Viewer()
+    data = np.zeros(dtype="int", shape=(10,10))
+    data[1,:] = 1
+
+    binary_labels = (data > 0).astype(np.uint8)
+    binary_skeleton = skeletonize(binary_labels, method="zhang")
+    
+    skeleton = Skeleton(binary_skeleton)
+
+    all_paths = [skeleton.path_coordinates(i)  
+            for i in range(skeleton.n_paths)]
+    
+    paths_table = summarize(skeleton)
+    skele = viewer.add_shapes(all_paths, shape_type="path", metadata= {'skeleton': skeleton, 'features': paths_table})
     napari.run()
