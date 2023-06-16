@@ -60,18 +60,21 @@ def color_by_feature(shapes_layer:"napari.layers.Shapes", feature_name):
 
 if __name__ == "__main__":
     import napari
+    from skimage import data, morphology
+    from skan import Skeleton
+    from skan.napari_skan import get_skeleton, SkeletonizeMethod
+
     viewer = napari.Viewer()
-    data = np.zeros(dtype="int", shape=(10,10))
-    data[1,:] = 1
+    horse = np.logical_not(data.horse().astype(bool))
 
-    binary_labels = (data > 0).astype(np.uint8)
-    binary_skeleton = skeletonize(binary_labels, method="zhang")
-    
-    skeleton = Skeleton(binary_skeleton)
+    labels_layer = viewer.add_labels(horse)
 
-    all_paths = [skeleton.path_coordinates(i)  
-            for i in range(skeleton.n_paths)]
-    
-    paths_table = summarize(skeleton)
-    skele = viewer.add_shapes(all_paths, shape_type="path", metadata= {'skeleton': skeleton, 'features': paths_table})
+    ldt = get_skeleton(labels_layer, SkeletonizeMethod.zhang)
+    (skel_layer,) = viewer._add_layer_from_data(*ldt)
+
+    dw, widget = viewer.window.add_plugin_dock_widget(
+            'skan', 'Color Skeleton Widg...'
+            )
+
     napari.run()
+    
