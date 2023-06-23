@@ -1,3 +1,15 @@
+# skan v0.11.1
+
+This is a bugfix release. It adds napari.yaml to the manifest so that it
+is correctly shipped with skan, and it fixes compatibility issues with
+more recent versions of openpyxl. With thanks to
+[James Ryan](https://github.com/jamesyan-git)!
+
+## Bug fixes
+
+- [#202](https://github.com/jni/skan/pull/202): 🐞 Bug Fix: Include napari.yaml in build
+- [#203](https://github.com/jni/skan/pull/203): Remove deprecated code from `io.py`
+
 # skan v0.11.0
 
 This release of skan incorporates several bug fixes, new API features, and
