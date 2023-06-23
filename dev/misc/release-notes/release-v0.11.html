@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>skan v0.11.0 &#8212; Skan 🦴📏 0.12.0.dev0 documentation</title>
+    <title>skan v0.11.1 &#8212; Skan 🦴📏 0.11.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -106,7 +106,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.12.0.dev0  <!-- this text may get changed later by javascript -->
+        0.11.x  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -116,14 +116,14 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables misc/release-notes/release-v0.11.0 and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.12.0.dev0'}.
+     variables misc/release-notes/release-v0.11 and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.x'}.
 -->
 
 <script type="text/javascript">
 // Check if corresponding page path exists in other version of docs
 // and, if so, go there instead of the homepage of the other docs version
 function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "misc/release-notes/release-v0.11.0.html",
+    const currentFilePath = "misc/release-notes/release-v0.11.html",
           tryUrl = event.target.getAttribute("href");
     let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
     $.ajax({
@@ -144,7 +144,7 @@ function checkPageExistsAndRedirect(event) {
 // Populate the version switcher from the JSON config file
 (function () {
     $.getJSON("https://skeleton-analysis.org/dev/_static/version_switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "misc/release-notes/release-v0.11.0.html";
+        const currentFilePath = "misc/release-notes/release-v0.11.html";
         // create links to the corresponding page in the other docs versions
         $.each(data, function(index, entry) {
             // if no custom name specified (e.g., "latest"), use version string
@@ -167,10 +167,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.12.0.dev0 variable.
+            // this version, rather than using sphinx's 0.11.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.12.0.dev0") {
+            if (entry.version == "0.11.x") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -226,7 +226,7 @@ function checkPageExistsAndRedirect(event) {
   <ul class="current">
    <li class="toctree-l2 current active">
     <a class="current reference internal" href="#">
-     skan v0.11.0
+     skan v0.11.1
     </a>
    </li>
    <li class="toctree-l2">
@@ -269,30 +269,49 @@ function checkPageExistsAndRedirect(event) {
 
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#api-changes">
-   API changes
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   skan v0.11.1
   </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bug-fixes">
+     Bug fixes
+    </a>
+   </li>
+  </ul>
  </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#new-features">
-   New features
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#skan-v0-11-0">
+   skan v0.11.0
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#bug-fixes">
-   Bug fixes
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#documentation">
-   Documentation
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#misc">
-   Misc
-  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#api-changes">
+     API changes
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#new-features">
+     New features
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Bug fixes
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#documentation">
+     Documentation
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#misc">
+     Misc
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -315,7 +334,21 @@ function checkPageExistsAndRedirect(event) {
               
               <div>
                 
-  <section id="skan-v0-11-0">
+  <section id="skan-v0-11-1">
+<h1>skan v0.11.1<a class="headerlink" href="#skan-v0-11-1" title="Permalink to this headline">#</a></h1>
+<p>This is a bugfix release. It adds napari.yaml to the manifest so that it
+is correctly shipped with skan, and it fixes compatibility issues with
+more recent versions of openpyxl. With thanks to
+<a class="reference external" href="https://github.com/jamesyan-git">James Ryan</a>!</p>
+<section id="bug-fixes">
+<h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/202">#202</a>: 🐞 Bug Fix: Include napari.yaml in build</p></li>
+<li><p><a class="reference external" href="https://github.com/jni/skan/pull/203">#203</a>: Remove deprecated code from <code class="docutils literal notranslate"><span class="pre">io.py</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="skan-v0-11-0">
 <h1>skan v0.11.0<a class="headerlink" href="#skan-v0-11-0" title="Permalink to this headline">#</a></h1>
 <p>This release of skan incorporates several bug fixes, new API features, and
 documentation improvements. It also finalizes an API change started in 0.10.0:
@@ -350,8 +383,8 @@ led to this feature!)</p></li>
 <li><p><a class="reference external" href="https://github.com/jni/skan/pull/184">#184</a>: add napari plugin.</p></li>
 </ul>
 </section>
-<section id="bug-fixes">
-<h2>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">#</a></h2>
+<section id="id1">
+<h2>Bug fixes<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/jni/skan/pull/152">#152</a>: Some pixel graphs had missing
 paths in their skeletons because of a mistake in how the graphs were

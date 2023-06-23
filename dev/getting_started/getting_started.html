@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.12.0.dev0 documentation</title>
+    <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.11.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -106,7 +106,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.12.0.dev0  <!-- this text may get changed later by javascript -->
+        0.11.x  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -116,7 +116,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables getting_started/getting_started and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.12.0.dev0'}.
+     variables getting_started/getting_started and {'json_url': 'https://skeleton-analysis.org/dev/_static/version_switcher.json', 'version_match': '0.11.x'}.
 -->
 
 <script type="text/javascript">
@@ -167,10 +167,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.12.0.dev0 variable.
+            // this version, rather than using sphinx's 0.11.1 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.12.0.dev0") {
+            if (entry.version == "0.11.x") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -310,7 +310,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/06c92c1b6e7a7e22be15137e2b0b643f026ad85a3b019972ac9d18276a98fbcf.png" src="../_images/06c92c1b6e7a7e22be15137e2b0b643f026ad85a3b019972ac9d18276a98fbcf.png" />
+<img alt="../_images/a359e4b7633f30cee387167800dad439e29919cff590e7334ef3691f22bfe2eb.png" src="../_images/a359e4b7633f30cee387167800dad439e29919cff590e7334ef3691f22bfe2eb.png" />
 </div>
 </div>
 <p>As an aside, we can extract the pixel spacing in meters from the <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
@@ -331,7 +331,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/3874f28cb50faee56bd01dfa04c5d6b4ebf11c93a65517c2398754ee717c6cb6.png" src="../_images/3874f28cb50faee56bd01dfa04c5d6b4ebf11c93a65517c2398754ee717c6cb6.png" />
+<img alt="../_images/8ba88bba7f255a226b4df9ce3f5f47a36f75c82fb1665d133dca5953cbd24bd4.png" src="../_images/8ba88bba7f255a226b4df9ce3f5f47a36f75c82fb1665d133dca5953cbd24bd4.png" />
 </div>
 </div>
 <p>This is an image of the inside of the membrane of a red blood cell. We want to measure the network of bright regions in this image, which is made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
@@ -356,7 +356,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/3798d013ea62e4f3151a10281e9f980bd4a02eae7ddfe6866b5dfc7fd9e79870.png" src="../_images/3798d013ea62e4f3151a10281e9f980bd4a02eae7ddfe6866b5dfc7fd9e79870.png" />
+<img alt="../_images/67d3de0e300f1cd9dda682077df07961026f05b7949f754243f4d22d74c29126.png" src="../_images/67d3de0e300f1cd9dda682077df07961026f05b7949f754243f4d22d74c29126.png" />
 </div>
 </div>
 <p>(There are some thresholding artifacts around the left edge, due to the dark border caused by microscope imaging drift and alignment. We will ignore this in this document, but the Skan GUI allows for a “crop” parameter to filter out these regions.)</p>
@@ -381,7 +381,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/4e1db1067dfeebf7d12116a138ebb14c03f3a4237f4ef37e7e15457ad71190e3.png" src="../_images/4e1db1067dfeebf7d12116a138ebb14c03f3a4237f4ef37e7e15457ad71190e3.png" />
+<img alt="../_images/ed2f9bb3a9ebf8d89749265a31fa8a61a2a27f756b980880a067689a6753ae2c.png" src="../_images/ed2f9bb3a9ebf8d89749265a31fa8a61a2a27f756b980880a067689a6753ae2c.png" />
 </div>
 </div>
 </section>
@@ -480,97 +480,97 @@ function checkPageExistsAndRedirect(event) {
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>2</td>
-      <td>378</td>
-      <td>30.100300</td>
+      <td>0</td>
+      <td>1103</td>
+      <td>51.875395</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
       <td>0</td>
-      <td>979</td>
-      <td>8</td>
-      <td>960</td>
-      <td>0.00000</td>
-      <td>1320.63184</td>
-      <td>10.79168</td>
-      <td>1295.00160</td>
-      <td>27.809523</td>
+      <td>198</td>
+      <td>21</td>
+      <td>170</td>
+      <td>0.0</td>
+      <td>267.09408</td>
+      <td>28.32816</td>
+      <td>229.32320</td>
+      <td>47.213600</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>1</td>
-      <td>3</td>
-      <td>233</td>
-      <td>33.588423</td>
       <td>0</td>
+      <td>2</td>
+      <td>649</td>
+      <td>34.474493</td>
+      <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
       <td>0</td>
-      <td>1042</td>
-      <td>5</td>
-      <td>1020</td>
-      <td>0.00000</td>
-      <td>1405.61632</td>
-      <td>6.74480</td>
-      <td>1375.93920</td>
-      <td>30.433925</td>
+      <td>262</td>
+      <td>11</td>
+      <td>241</td>
+      <td>0.0</td>
+      <td>353.42752</td>
+      <td>14.83856</td>
+      <td>325.09936</td>
+      <td>31.979173</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2</td>
-      <td>4</td>
-      <td>51</td>
-      <td>39.543020</td>
-      <td>0</td>
+      <td>1</td>
+      <td>3</td>
+      <td>329</td>
+      <td>16.842145</td>
+      <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
       <td>0</td>
-      <td>1446</td>
-      <td>2</td>
-      <td>1420</td>
-      <td>0.00000</td>
-      <td>1950.59616</td>
-      <td>2.69792</td>
-      <td>1915.52320</td>
-      <td>35.176573</td>
+      <td>385</td>
+      <td>6</td>
+      <td>395</td>
+      <td>0.0</td>
+      <td>519.34960</td>
+      <td>8.09376</td>
+      <td>532.83920</td>
+      <td>15.731442</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>3</td>
-      <td>5</td>
-      <td>482</td>
-      <td>26.053420</td>
+      <td>1</td>
+      <td>7</td>
+      <td>1054</td>
+      <td>64.016035</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
       <td>0</td>
-      <td>1533</td>
-      <td>10</td>
-      <td>1519</td>
-      <td>0.00000</td>
-      <td>2067.95568</td>
-      <td>13.48960</td>
-      <td>2049.07024</td>
-      <td>23.208385</td>
+      <td>460</td>
+      <td>20</td>
+      <td>496</td>
+      <td>0.0</td>
+      <td>620.52160</td>
+      <td>26.97920</td>
+      <td>669.08416</td>
+      <td>55.553573</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0</td>
-      <td>7</td>
-      <td>847</td>
-      <td>39.966200</td>
+      <td>1</td>
+      <td>20</td>
+      <td>618</td>
+      <td>20.426135</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>1</td>
-      <td>175</td>
-      <td>19</td>
-      <td>154</td>
-      <td>1.34896</td>
-      <td>236.06800</td>
-      <td>25.63024</td>
-      <td>207.73984</td>
-      <td>37.310390</td>
+      <td>0</td>
+      <td>541</td>
+      <td>10</td>
+      <td>530</td>
+      <td>0.0</td>
+      <td>729.78736</td>
+      <td>13.48960</td>
+      <td>714.94880</td>
+      <td>20.053732</td>
     </tr>
   </tbody>
 </table>
@@ -593,7 +593,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/a4626fcc0df76263edb3c5363a07308815dfd57dbe4842f32527c30d29ea6d62.png" src="../_images/a4626fcc0df76263edb3c5363a07308815dfd57dbe4842f32527c30d29ea6d62.png" />
+<img alt="../_images/335a867b4726a4e6f802e367f8633cd84a178c7bcb8752a715ebcd384deb9cdf.png" src="../_images/335a867b4726a4e6f802e367f8633cd84a178c7bcb8752a715ebcd384deb9cdf.png" />
 </div>
 </div>
 <p>We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.</p>
@@ -606,7 +606,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/1020322763ea064296f63724d5a0405eecd0b6ead0dcbf68c5a87a3d500973c2.png" src="../_images/1020322763ea064296f63724d5a0405eecd0b6ead0dcbf68c5a87a3d500973c2.png" />
+<img alt="../_images/55b4b8c0092a69075f25c9daead473cc633880db3e2e126be79e1d428f0c8c8e.png" src="../_images/55b4b8c0092a69075f25c9daead473cc633880db3e2e126be79e1d428f0c8c8e.png" />
 </div>
 </div>
 </section>
@@ -667,7 +667,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/7e75eab988edf194ad665b9e7504d3bb06b2ec7eed557c7650a224ed46408051.png" src="../_images/7e75eab988edf194ad665b9e7504d3bb06b2ec7eed557c7650a224ed46408051.png" />
+<img alt="../_images/2cf0543f81911d277e609a2c1be03b1fee874a1fffddbb44a1b847e72b0692b3.png" src="../_images/2cf0543f81911d277e609a2c1be03b1fee874a1fffddbb44a1b847e72b0692b3.png" />
 </div>
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>
