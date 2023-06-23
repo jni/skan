@@ -38,16 +38,18 @@ def populate_feature_choices(color_by_feature_widget):
 
 def _update_feature_names(color_by_feature_widget):
     shapes_layer = color_by_feature_widget.shapes_layer.value
-    shapes_layer.features = shapes_layer.metadata["features"]
-    color_by_feature_widget.feature_name.choices = shapes_layer.features.columns
-    with color_by_feature_widget.feature_name.changed.blocked():
-        color_by_feature_widget.feature_name.value = shapes_layer.features.columns[0]
+    if shapes_layer.features.empty and "features" in shapes_layer.metadata:
+        shapes_layer.features = shapes_layer.metadata["features"]
+
+    def get_choices(features_combo):
+        return shapes_layer.features.columns
+
+    color_by_feature_widget.feature_name.choices = get_choices
         
 
 @magic_factory(
         widget_init=populate_feature_choices,
         feature_name = {"widget_type": "ComboBox"}
-
 )
 def color_by_feature(shapes_layer:"napari.layers.Shapes", feature_name):
     current_column_type = shapes_layer.features[feature_name].dtype
@@ -77,4 +79,3 @@ if __name__ == "__main__":
             )
 
     napari.run()
-    
