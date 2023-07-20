@@ -8,7 +8,7 @@ from skimage.graph import central_pixel
 from skimage.util._map_array import map_array, ArrayMap
 import numba
 import warnings
-
+from typing import Tuple
 from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
 
@@ -520,6 +520,7 @@ class Skeleton:
                 np.full(skeleton_image.ndim, spacing)
                 )
         if keep_images:
+            self.keep_images = keep_images
             self.skeleton_image = skeleton_image
             self.source_image = source_image
 
@@ -667,6 +668,7 @@ class Skeleton:
                 new_skeleton,
                 spacing=self.spacing,
                 source_image=self.source_image,
+                keep_images=self.keep_images
                 )
 
     def __array__(self, dtype=None):
@@ -1036,10 +1038,8 @@ def _simplify_graph(skel):
 
     src_relab, dst_relab = fw_map[src], fw_map[dst]
 
-    edges = sparse.coo_matrix(
-            (distance, (src_relab, dst_relab)),
-            shape=(n_nodes, n_nodes)
-            )
+    edges = sparse.coo_matrix((distance, (src_relab, dst_relab)),
+                              shape=(n_nodes, n_nodes))
     dir_csgraph = edges.tocsr()
     simp_csgraph = dir_csgraph + dir_csgraph.T  # make undirected
 
@@ -1174,3 +1174,98 @@ def sholl_analysis(skeleton, center=None, shells=None):
     intersection_counts = np.bincount(shells, minlength=len(shell_radii)) // 2
 
     return center, shell_radii, intersection_counts
+
+
+def iteratively_prune_paths(
+        skeleton: np.ndarray | Skeleton,
+        min_skeleton: int = 1,
+        spacing: int = 1,
+        source_image: np.ndarray = None,
+        keep_images: bool = True,
+        value_is_height: bool = False
+        ) -> Skeleton:
+    """Iteratively prune a skeleton leaving the specified number of paths.
+
+    Will repeatedly remove branches of type 1 and 3 until there are none left on the Skeleton.
+
+          0 endpoint-to-endpoint (isolated branch)
+          1 junction-to-endpoint
+          2 juntciont-to-junction
+          3 isolated cycle
+
+    Parameters
+    ----------
+    skeleton: np.ndarray | Skeleton
+        Skeleton object to be pruned, may be a binary Numpy array or a Skeleton.
+    min_skeleton: int
+        Minimum paths for a skeleton, default is 1 but you may wish to retain more.
+    spacing: int
+        Scale of pixel spacing passed to Skeleton
+    source_image: np.ndarray
+        Image from which the skeleton was generated passed to Skeleton.
+    keep_images: bool
+        Whether or not to keep the original input images (passed to Skeleton).
+    value_is_height: bool
+        Whether to consider the value of a float skeleton to be the "height" of the image (passed to Skeleton).
+
+    Returns
+    -------
+    Skeleton
+        Returns a new Skeleton instance.
+    """
+    kwargs = {
+            "spacing": spacing, "source_image": source_image, "keep_images":
+                    keep_images, "value_is_height": value_is_height
+            }
+    pruned = Skeleton(skeleton, **kwargs
+                      ) if isinstance(skeleton, np.ndarray) else skeleton
+    branch_data = summarize(pruned)
+
+    while branch_data.shape[0] > min_skeleton:
+        # Remove branches that have endpoint (branch_type == 1)
+        n_paths = branch_data.shape[0]
+        print(f"n_paths : {n_paths}")
+        pruned, branch_data = _remove_branch_type(
+                pruned, branch_data, branch_type=1, **kwargs
+                )
+        # We now need to check whether we have just a single path, if so we're done pruning
+        if branch_data.shape[0] == min_skeleton:
+            break
+        # If not we need to remove any small side loops (branch_type == 3)
+        pruned, branch_data = _remove_branch_type(
+                pruned, branch_data, branch_type=3, **kwargs
+                )
+        # We don't need to check if we have a single path as that is the control check for the while loop, however we do
+        # need to check if we are removing anything as some skeletons of closed loops have internal branches that won't
+        # ever get pruned. In these instances there will be more than one branch/path but the number won't have changed
+        # after pruning as they are all of type 2.
+        if branch_data.shape[0] == n_paths:
+            break
+    return pruned
+
+
+def _remove_branch_type(
+        skeleton: Skeleton, branch_data: pd.DataFrame, branch_type: int,
+        **kwargs
+        ) -> Tuple[Skeleton, pd.DataFrame]:
+    """Helper function to remove branches of a specific type
+
+    Parameters
+    ----------
+    skeleton: Skeleton
+        Skeleton to be pruned.
+    branch_data: pd.DataFrame
+        Pandas data frame summarising the skeleton, should include 'branch-type' as a column. Produced by summarize().
+    branch_type: int
+        Branch type to be removed.
+
+    Returns
+    -------
+    Tuple: Skeleton, pd.DataFrame
+        Returns a pruned skeleton and its summary data frame.
+    """
+    skeleton = skeleton.prune_paths(
+            branch_data.loc[branch_data["branch-type"] == branch_type].index
+            )
+    skeleton = Skeleton(skeleton.skeleton_image, **kwargs)
+    return skeleton, summarize(skeleton)

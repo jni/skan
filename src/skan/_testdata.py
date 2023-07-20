@@ -1,5 +1,6 @@
 import numpy as np
-
+from skimage.draw import random_shapes
+from skimage.morphology import skeletonize
 
 tinycycle = np.array([[0, 1, 0],
                       [1, 0, 1],
@@ -64,3 +65,20 @@ junction_first = np.array([[0, 1, 1, 1, 1],
                            [1, 0, 1, 0, 0],
                            [1, 0, 0, 1, 0],
                            [1, 0, 0, 0, 1]], dtype=bool)
+
+# Generate a random skeletons, first is a skeleton with a closed loop with side branches
+kwargs = {"image_shape": (128, 128),
+          "max_shapes": 20,
+          "channel_axis": None,
+          "shape": None,
+          "rng": 1,
+          "allow_overlap": True,
+          "min_size": 20}
+random_images, _ = random_shapes(**kwargs)
+mask = np.where(random_images != 255, 1, 0)
+skeleton_loop = skeletonize(mask)
+# Then a linear skeleton with side-branches
+kwargs["rng"] = 13588686514
+random_images, _ = random_shapes(**kwargs)
+mask = np.where(random_images != 255, 1, 0)
+skeleton_linear = skeletonize(mask)

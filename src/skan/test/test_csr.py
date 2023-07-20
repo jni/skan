@@ -3,12 +3,12 @@ from collections import defaultdict
 import pytest
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
-from skimage.draw import line
+from skimage.draw import line, random_shapes
 
 from skan import csr
 from skan._testdata import (
         tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
-        topograph1d, skeleton4
+        topograph1d, skeleton4, skeleton_loop, skeleton_linear
         )
 
 
@@ -188,6 +188,7 @@ def test_fast_graph_center_idx():
     i = csr._fast_graph_center_idx(s)
     assert i == 1
 
+
 def test_sholl():
     s = csr.Skeleton(skeleton0)
     c, r, counts = csr.sholl_analysis(s, shells=np.arange(0, 5, 1.5))
@@ -241,3 +242,15 @@ def test_zero_degree_nodes():
     np.testing.assert_equal(
             np.ravel(s.coordinates), [0, 1, 3, 5, 7, 9, 11, 12]
             )
+
+
+@pytest.mark.parametrize(
+        "skeleton, paths", [[skeleton_loop, 1], [skeleton_linear, 1]]
+        )
+def test_iteratively_prune_paths(skeleton: np.ndarray, paths: int) -> None:
+    """Test iteratively pruning a skeleton."""
+    pruned_skeleton = csr.iteratively_prune_paths(skeleton)
+    skeleton_summary = csr.summarize(pruned_skeleton)
+    assert isinstance(pruned_skeleton, csr.Skeleton)
+    assert skeleton_summary.shape[0] == 1
+    # TODO - Further checks of metrics but need pruning to correctly return the largest/longest skeleton
