@@ -1264,7 +1264,8 @@ def iteratively_prune_paths(
                     )
             branch_data = summarize(pruned, find_main_branch=find_main_branch)
 
-        # We now need to check whether we have the desired number of branches (often 1)
+        # We now need to check whether we have the desired number of branches (often 1), have to check before removing
+        # branches of type 3 in case this is the final, clean, loop.
         if branch_data.shape[0] == min_skeleton:
             break
         # If not we need to remove any small side loops (branch_type == 3)
@@ -1277,10 +1278,20 @@ def iteratively_prune_paths(
                 )
         # We don't need to check if we have a single path as that is the control check for the while loop, however we do
         # need to check if we are removing anything as some skeletons of closed loops have internal branches that won't
-        # ever get pruned. In these instances there will be more than one branch/path but the number won't have changed
-        # after pruning as they are all of type 2.
+        # ever get pruned. This happens when there are internal loops to the main one so we never observe a loop with a
+        # single branch. The remaining branches ARE part of the main branch which is why they haven't (yet) been
+        # removed. We now prune those and check whether we have reduced the number of paths, if not we're done pruning.
         if branch_data.shape[0] == n_paths:
-            break
+            pruned, branch_data = _remove_branch_type(
+                    pruned,
+                    branch_data,
+                    branch_type=1,
+                    find_main_branch=False,
+                    **kwargs
+                    )
+            # If this HASN'T removed any more branches we are done
+            if branch_data.shape[0] == n_paths:
+                break
     return pruned
 
 
@@ -1317,10 +1328,15 @@ def _remove_branch_type(
                             )
                     )
             ) - 1
-    if unique_regions != 2:
+    if find_main_branch == True and unique_regions != 2:
         to_remove = branch_data.loc[
                 (branch_data["branch-type"] == branch_type)
                 & (branch_data["main"] == False)]
+    # This is the final prune of looped skeletons to remove branches of type 1 that persist when there are internal
+    # loops to the main loop. We re-enable find_main_branch so that we can pass through subsequent iterations if needed.
+    elif find_main_branch == False and unique_regions != 2:
+        to_remove = branch_data.loc[(branch_data["branch-type"] == 1)]
+        find_main_branch = True
     else:
         to_remove = branch_data.loc[
                 (branch_data["branch-type"] == branch_type)]

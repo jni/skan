@@ -72,11 +72,11 @@ skeleton = Skeleton(raw_skeleton, keep_images=True)
 skeleton_summary = skan.summarize(skeleton)
 # Extract the indices of paths of type
 junction_to_endpoint = skeleton_summary[skeleton_summary["branch-type"] == 1].index
-skeleton_pruned = skeleton.prune_paths(junction_to_end_point).skeleton_image
+skeleton_pruned = skeleton.prune_paths(junction_to_endpoint).skeleton_image
 plt.imshow(skeleton_pruned)
 ```
 
-However because some of the branches have branches themselves which were not removed since they didn't terminate in an
+However because some of the branches have branches themselves which were not removed since they dodn't terminate in an
 end-point. Further we observe some small loops that also need removing.
 
 ## Iteratively Prune Paths
@@ -87,8 +87,8 @@ single path remains, whether that is circular or linear.
 ```{code-cell} ipython3
 from skan import iteratively_prune_paths
 
-skeleton_pruned_iteratively = iteratively_prune_paths(skeleton).skeleton_image
-plt.imshow(skeleton_pruned_iteratively)
+skeleton_pruned_iteratively = iteratively_prune_paths(skeleton)
+plt.imshow(skeleton_pruned_iteratively.skeleton_image)
 ```
 
 This has worked fairly well, it has removed all the side branches and small loops but there are a number of internal
@@ -133,36 +133,3 @@ plt.imshow(skeleton_smoothed_pruned_iteratively)
 ```
 
 We now have a single path for the skeleton which represents the loop of DNA.
-
-## Ridge based Skeletonisation and Pruning
-
-AFM images are more complex than binary masks though, each pixel represents the height and it is often desirable to
-define the skeleton based on the maximum height of a molecule. This can be achieved using the [shape
-index](https://scikit-image.org/docs/stable/auto_examples/features_detection/plot_shape_index.html) feature of the image
-which is...
-
-> _a single valued measure of local curvature, derived from the eigen values of the Hessian, defined by [Koenderink &
-> can Doorn](https://doi.org/10.1016/0262-8856(92)90076-F).
->
-> It can be used to find structures based on their apparent local shape._
-
-We use Gaussian blurring to smooth the image and remove noise before generating the shape index across the image. The
-shape index is a value in the range -1 to 1 and the value indicates the type of shape. Ridges are in the [range of 3/8
-to 5/8th](https://scikit-image.org/docs/stable/api/skimage.feature.html#skimage.feature.shape_index).
-
-```{code-cell} ipython3
-from skimage import feature
-
-shape_index_smoothed = feature.shape_index(raw_smoothed)
-plt.imshow(shape_index_smoothed)
-```
-
-
-As you can see there are still a number of features highlighted outside of the target area we wish to skeletonise. We
-therefore use the binary mask to select the shape index for the regions of interest only.
-
-```{code-cell} ipython3
-skeleton_ridge_pruned = iteratively_prune_paths(mask_smoothed * shape_index_smoothed).skeleton_image
-```
-
-**TODO** - How to use the
