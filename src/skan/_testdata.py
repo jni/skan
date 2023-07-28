@@ -74,11 +74,31 @@ kwargs = {"image_shape": (128, 128),
           "rng": 1,
           "allow_overlap": True,
           "min_size": 20}
+# Skeleton with loop to be retained and side-branches
 random_images, _ = random_shapes(**kwargs)
 mask = np.where(random_images != 255, 1, 0)
-skeleton_loop = skeletonize(mask)
-# Then a linear skeleton with side-branches
+skeleton_loop1 = skeletonize(mask)
+# Skeleton with loop to be retained and side-branches
+kwargs["rng"] = 165103
+kwargs["min_size"] = 60
+random_images, _ = random_shapes(**kwargs)
+mask = np.where(random_images != 255, 1, 0)
+skeleton_loop2 = skeletonize(mask)
+# Linear skeleton with lots of large side-branches, some forked
 kwargs["rng"] = 13588686514
+kwargs["min_size"] = 20
 random_images, _ = random_shapes(**kwargs)
 mask = np.where(random_images != 255, 1, 0)
-skeleton_linear = skeletonize(mask)
+skeleton_linear1 = skeletonize(mask)
+# Linear Skeleton with simple fork at one end
+kwargs["rng"] = 21
+kwargs["min_size"] = 20
+random_images, _ = random_shapes(**kwargs)
+mask = np.where(random_images != 255, 1, 0)
+skeleton_linear2 = skeletonize(mask)
+# Linear Skeletons (i.e. multiple) with branches
+kwargs["rng"] = 894632511
+kwargs["min_size"] = 20
+random_images, _ = random_shapes(**kwargs)
+mask = np.where(random_images != 255, 1, 0)
+skeleton_linear3 = skeletonize(mask)

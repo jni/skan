@@ -3,12 +3,13 @@ from collections import defaultdict
 import pytest
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
-from skimage.draw import line, random_shapes
+from skimage.draw import line
 
 from skan import csr
 from skan._testdata import (
         tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
-        topograph1d, skeleton4, skeleton_loop, skeleton_linear
+        topograph1d, skeleton4, skeleton_loop1, skeleton_loop2,
+        skeleton_linear1, skeleton_linear2, skeleton_linear3
         )
 
 
@@ -245,12 +246,46 @@ def test_zero_degree_nodes():
 
 
 @pytest.mark.parametrize(
-        "skeleton, paths", [[skeleton_loop, 1], [skeleton_linear, 1]]
+        "skeleton, paths, branch_type, branch_distance, euclidean_distance", [
+                [skeleton_loop1, 1, 3, 159.23759005323606, 0],
+                [skeleton_loop2, 1, 3, 161.33809511662434, 0],
+                [
+                        skeleton_linear1, 1, 0, 154.09545442950505,
+                        114.84337159801605
+                        ],
+                [skeleton_linear2, 1, 0, 84.15432893255064, 71.30918594402827],
+                ]
         )
-def test_iteratively_prune_paths(skeleton: np.ndarray, paths: int) -> None:
+def test_iteratively_prune_paths(
+        skeleton: np.ndarray, paths: int, branch_type: int,
+        branch_distance: float, euclidean_distance: float
+        ) -> None:
     """Test iteratively pruning a skeleton."""
     pruned_skeleton = csr.iteratively_prune_paths(skeleton)
     skeleton_summary = csr.summarize(pruned_skeleton)
     assert isinstance(pruned_skeleton, csr.Skeleton)
-    assert skeleton_summary.shape[0] == 1
-    # TODO - Further checks of metrics but need pruning to correctly return the largest/longest skeleton
+    assert skeleton_summary.shape[0] == paths
+    assert skeleton_summary["branch-type"][0] == branch_type
+    assert skeleton_summary["branch-distance"][0] == branch_distance
+    assert skeleton_summary["euclidean-distance"][0] == euclidean_distance
+
+
+@pytest.mark.parametrize(
+        "skeleton, paths, branch_type, branch_distance, euclidean_distance", [[
+                skeleton_linear3, 3, [0, 0, 0],
+                [164.05382386916244, 20.656854249492383, 29.485281374238575],
+                [110.11357772772621, 19.4164878389476, 24.186773244895647]
+                ]]
+        )
+def test_iteratively_prune_multiple_paths(
+        skeleton: np.ndarray, paths: int, branch_type: int,
+        branch_distance: float, euclidean_distance: float
+        ) -> None:
+    """Test iteratively pruning a image with multiple skeletons."""
+    pruned_skeleton = csr.iteratively_prune_paths(skeleton)
+    skeleton_summary = csr.summarize(pruned_skeleton)
+    assert isinstance(pruned_skeleton, csr.Skeleton)
+    assert skeleton_summary.shape[0] == paths
+    assert list(skeleton_summary["branch-type"]) == branch_type
+    assert list(skeleton_summary["branch-distance"]) == branch_distance
+    assert list(skeleton_summary["euclidean-distance"]) == euclidean_distance

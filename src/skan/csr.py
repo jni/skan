@@ -12,6 +12,8 @@ from typing import Tuple
 from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
 
+import matplotlib.pyplot as plt
+
 
 def _weighted_abs_diff(values0, values1, distances):
     """A default edge function for complete image graphs.
@@ -1182,7 +1184,9 @@ def iteratively_prune_paths(
         spacing: int = 1,
         source_image: np.ndarray = None,
         keep_images: bool = True,
-        value_is_height: bool = False
+        value_is_height: bool = False,
+        find_main_branch: bool = True,
+        imgname: str = None
         ) -> Skeleton:
     """Iteratively prune a skeleton leaving the specified number of paths.
 
@@ -1207,6 +1211,9 @@ def iteratively_prune_paths(
         Whether or not to keep the original input images (passed to Skeleton).
     value_is_height: bool
         Whether to consider the value of a float skeleton to be the "height" of the image (passed to Skeleton).
+    find_main_branch: bool
+        Whether to find the main branch of a skeleton. If False then skeletons can be pruned more than might be
+    expected. If True the longest path is identified using the find_main_branches() utility.
 
     Returns
     -------
@@ -1219,21 +1226,54 @@ def iteratively_prune_paths(
             }
     pruned = Skeleton(skeleton, **kwargs
                       ) if isinstance(skeleton, np.ndarray) else skeleton
-    branch_data = summarize(pruned)
+    branch_data = summarize(pruned, find_main_branch=find_main_branch)
 
     while branch_data.shape[0] > min_skeleton:
         # Remove branches that have endpoint (branch_type == 1)
         n_paths = branch_data.shape[0]
-        print(f"n_paths : {n_paths}")
         pruned, branch_data = _remove_branch_type(
-                pruned, branch_data, branch_type=1, **kwargs
+                pruned,
+                branch_data,
+                branch_type=1,
+                find_main_branch=find_main_branch,
+                **kwargs
                 )
-        # We now need to check whether we have just a single path, if so we're done pruning
+        # Check to see if we have a looped path with a branches, if so and the branch is shorter than the loop we
+        # remove it and break. Can either look for whether there are just two branches
+        # if branch_data.shape[0] == 2:
+        #     length_branch_type1 = branch_data.loc[branch_data["branch-type"] ==
+        #                                           1,
+        #                                           "branch-distance"].values[0]
+        #     length_branch_type3 = branch_data.loc[branch_data["branch-type"] ==
+        #                                           3,
+        #                                           "branch-distance"].values[0]
+        #     if length_branch_type3 > length_branch_type1:
+        #         pruned, branch_data = _remove_branch_type(
+        #                 pruned, branch_data, branch_type=1, find_main_branch=find_main_branch, **kwargs
+        #                 )
+        # ...or perhaps more generally whether we have just one loop left and if its length is less than other branches
+        if branch_data.loc[branch_data["branch-type"] == 3].shape[0] == 1:
+            # Extract the length of a loop
+            length_branch_type3 = branch_data.loc[branch_data["branch-type"] ==
+                                                  3,
+                                                  "branch-distance"].values[0]
+            # Extract indices for branches lengths less than this and prune them
+            pruned = pruned.prune_paths(
+                    branch_data.loc[branch_data["branch-distance"] <
+                                    length_branch_type3].index
+                    )
+            branch_data = summarize(pruned, find_main_branch=find_main_branch)
+
+        # We now need to check whether we have the desired number of branches (often 1)
         if branch_data.shape[0] == min_skeleton:
             break
         # If not we need to remove any small side loops (branch_type == 3)
         pruned, branch_data = _remove_branch_type(
-                pruned, branch_data, branch_type=3, **kwargs
+                pruned,
+                branch_data,
+                branch_type=3,
+                find_main_branch=find_main_branch,
+                **kwargs
                 )
         # We don't need to check if we have a single path as that is the control check for the while loop, however we do
         # need to check if we are removing anything as some skeletons of closed loops have internal branches that won't
@@ -1246,7 +1286,7 @@ def iteratively_prune_paths(
 
 def _remove_branch_type(
         skeleton: Skeleton, branch_data: pd.DataFrame, branch_type: int,
-        **kwargs
+        find_main_branch: bool, **kwargs
         ) -> Tuple[Skeleton, pd.DataFrame]:
     """Helper function to remove branches of a specific type
 
@@ -1258,14 +1298,35 @@ def _remove_branch_type(
         Pandas data frame summarising the skeleton, should include 'branch-type' as a column. Produced by summarize().
     branch_type: int
         Branch type to be removed.
+    find_main_branch: bool
+        Whether to find the main branch of a skeleton. Without this
 
-    Returns
-    -------
+    Retursn    -------
     Tuple: Skeleton, pd.DataFrame
         Returns a pruned skeleton and its summary data frame.
     """
-    skeleton = skeleton.prune_paths(
-            branch_data.loc[branch_data["branch-type"] == branch_type].index
-            )
+    # We want to retain the main_branch but get rid of branches of other types, but only for linear objects which have
+    # only a single labeled region (other than the skeleton itself), grains with loops as main body have two such
+    # regions one outside of the loop and one within
+    unique_regions = len(
+            np.unique(
+                    morphology.label(
+                            skeleton.skeleton_image,
+                            background=1,
+                            connectivity=1
+                            )
+                    )
+            ) - 1
+    if unique_regions != 2:
+        to_remove = branch_data.loc[
+                (branch_data["branch-type"] == branch_type)
+                & (branch_data["main"] == False)]
+    else:
+        to_remove = branch_data.loc[
+                (branch_data["branch-type"] == branch_type)]
+    # Now prune the skeleton
+    skeleton = skeleton.prune_paths(to_remove.index)
+    # Might not need this line, it is included to add the **kwargs to the returned item but that may well be
+    # redundant as the prune() method has been modified to include these attributes.
     skeleton = Skeleton(skeleton.skeleton_image, **kwargs)
-    return skeleton, summarize(skeleton)
+    return skeleton, summarize(skeleton, find_main_branch=find_main_branch)
