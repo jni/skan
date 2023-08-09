@@ -513,6 +513,7 @@ class Skeleton:
         self.distances = np.empty(self.n_paths, dtype=float)
         self._distances_initialized = False
         self.skeleton_image = None
+        self.skeleton_shape = skeleton_image.shape
         self.source_image = None
         self.degrees = np.diff(self.graph.indptr)
         self.spacing = (
@@ -618,7 +619,7 @@ class Skeleton:
             Image of the same shape as self.skeleton_image where each pixel
             has the value of its branch id + 1.
         """
-        image_out = np.zeros(self.skeleton_image.shape, dtype=int)
+        image_out = np.zeros(self.skeleton_shape, dtype=int)
         for i in range(self.n_paths):
             coords_to_wipe = self.path_coordinates(i)
             coords_idxs = tuple(np.round(coords_to_wipe).astype(int).T)
