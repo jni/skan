@@ -13,6 +13,21 @@ class SkeletonizeMethod(Enum):
     lee = "lee"
 
 def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "napari.types.LayerDataTuple":
+    """Takes in a napari shapes layer and a skeletonization method (for skan.morphology),
+    genertates a skeleton structure and places it on a shapes layer
+
+    Parameters
+    ----------
+    labels : napari.layers.Labels
+        Labels layer containing data to skeletonize
+    choice : SkeletonizeMethod
+        Enum containing string corresponding to skeletonization method
+
+    Returns
+    -------
+    napari.types.LayerDataTuple
+        Layer data with skeleton
+    """
     binary_labels = (labels.data > 0).astype(np.uint8)
     binary_skeleton = skeletonize(binary_labels, method=choice.value)
     
@@ -31,12 +46,27 @@ def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "
 
 
 def populate_feature_choices(color_by_feature_widget):
+    """Runs on widget init, connects combobox to function to update
+    combobox options
+
+    Parameters
+    ----------
+    color_by_feature_widget : _type_
+        _description_
+    """
     color_by_feature_widget.shapes_layer.changed.connect(
         lambda _: _update_feature_names(color_by_feature_widget)
     )
     _update_feature_names(color_by_feature_widget)
 
 def _update_feature_names(color_by_feature_widget):
+    """Search for a shapes layer with approptiate metadata for skeletons
+
+    Parameters
+    ----------
+    color_by_feature_widget : magicgui Widget
+        widget that contains reference to shapes layers
+    """
     shapes_layer = color_by_feature_widget.shapes_layer.value
     if shapes_layer.features.empty and "features" in shapes_layer.metadata:
         shapes_layer.features = shapes_layer.metadata["features"]
@@ -52,30 +82,19 @@ def _update_feature_names(color_by_feature_widget):
         feature_name = {"widget_type": "ComboBox"}
 )
 def color_by_feature(shapes_layer:"napari.layers.Shapes", feature_name):
+    """Check the currently selected feature and update edge colors
+    Can be any color from matplotlib.colormap
+
+    Parameters
+    ----------
+    shapes_layer : napari.layers.Shapes
+        The shapes layer currently selected in the Layers combobox
+    feature_name : String
+        The feature name currently selected in the features combobox
+    """
     current_column_type = shapes_layer.features[feature_name].dtype
     if current_column_type == "float64":
         shapes_layer.edge_colormap = CONTINUOUS_COLOR
     else:
         shapes_layer.edge_colormap = CAT_COLOR
     shapes_layer.edge_color = feature_name
-
-
-if __name__ == "__main__":
-    import napari
-    from skimage import data, morphology
-    from skan import Skeleton
-    from skan.napari_skan import get_skeleton, SkeletonizeMethod
-
-    viewer = napari.Viewer()
-    horse = np.logical_not(data.horse().astype(bool))
-
-    labels_layer = viewer.add_labels(horse)
-
-    ldt = get_skeleton(labels_layer, SkeletonizeMethod.zhang)
-    (skel_layer,) = viewer._add_layer_from_data(*ldt)
-
-    dw, widget = viewer.window.add_plugin_dock_widget(
-            'skan', 'Color Skeleton Widg...'
-            )
-
-    napari.run()
