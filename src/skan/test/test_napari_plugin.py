@@ -1,10 +1,11 @@
-from skan.napari_skan import get_skeleton
-from skimage import data
+from skan.napari_skan import get_skeleton, _update_feature_names
+from skimage import data, morphology
 from napari.layers import Labels
 import numpy as np
 from skan.napari_skan import SkeletonizeMethod
 from skan.csr import Skeleton
 import pandas as pd
+import napari
 
 
 def make_trivial_labels_layer():
@@ -37,3 +38,22 @@ def test_get_skeleton_horse():
     assert len(shapes_data) == 24  # 24 line segments in the horse skeleton
     assert 'features' in layer_kwargs
     assert type(layer_kwargs["features"]) is pd.DataFrame
+
+
+def test_gui(make_napari_viewer):
+    viewer = make_napari_viewer()
+    horse = np.logical_not(data.horse().astype(bool))
+
+    labels_layer = viewer.add_labels(horse)
+
+    ldt = get_skeleton(labels_layer, SkeletonizeMethod.zhang)
+    (skel_layer,) = viewer._add_layer_from_data(*ldt)
+
+    dw, widget = viewer.window.add_plugin_dock_widget(
+            'skan', 'Color Skeleton Widg...'
+            )
+    widget.feature_name.value = "euclidean-distance"
+    widget()
+    layer = viewer.layers[-1]
+    assert layer.edge_colormap.name == 'viridis'
+    assert len(layer.data) == 24
