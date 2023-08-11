@@ -24,5 +24,4 @@ def write_excel(filename, **kwargs):
             obj = _params_dict_to_dataframe(obj)
         if isinstance(obj, pd.DataFrame):
             obj.to_excel(writer, sheet_name=sheet_name)
-    writer.save()
     writer.close()
