@@ -8,6 +8,8 @@ from magicgui.widgets import Container, ComboBox, PushButton, Label, create_widg
 
 CAT_COLOR = "tab10"
 CONTINUOUS_COLOR = "viridis"
+#TODOL maybe this is a bad idea beacuse why cant i test skeeltonize using astring,
+# why do i also have to import enums
 class SkeletonizeMethod(Enum):
     zhang = "zhang"
     lee = "lee"
@@ -51,7 +53,7 @@ def populate_feature_choices(color_by_feature_widget):
 
     Parameters
     ----------
-    color_by_feature_widget : _type_
+    color_by_feature_widget : _type_ #:TODO
         _description_
     """
     color_by_feature_widget.shapes_layer.changed.connect(
