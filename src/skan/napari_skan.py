@@ -42,7 +42,11 @@ def get_skeleton(labels: "napari.layers.Labels", choice: SkeletonizeMethod) -> "
 
     return (
         all_paths,
-        {'shape_type': 'path', 'edge_colormap': 'tab10', 'metadata': {'skeleton': skeleton, 'features': paths_table}},
+        {'shape_type': 'path',
+         'edge_colormap': 'tab10',
+         'features': paths_table,
+         'metadata': {'skeleton': skeleton},
+        },
         'shapes',
         )
 
