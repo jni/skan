@@ -77,8 +77,6 @@ def _update_feature_names(color_by_feature_widget):
         widget that contains reference to shapes layers
     """
     shapes_layer = color_by_feature_widget.shapes_layer.value
-    if shapes_layer.features.empty and "features" in shapes_layer.metadata:
-        shapes_layer.features = shapes_layer.metadata["features"]
 
     def get_choices(features_combo):
         """Closure to use the current shapes layer to update given combobox."""
