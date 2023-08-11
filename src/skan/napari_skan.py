@@ -1,9 +1,8 @@
-from magicgui import magicgui, magic_factory
+from magicgui import magic_factory
 import numpy as np
 from enum import Enum
 from skimage.morphology import skeletonize
 from skan import summarize, Skeleton
-from magicgui.widgets import Container, ComboBox, PushButton, Label, create_widget
 
 CAT_COLOR = "tab10"
 CONTINUOUS_COLOR = "viridis"
