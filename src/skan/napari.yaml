@@ -5,16 +5,14 @@ contributions:
   - id: skan.skeletonize
     title: Make Skeleton
     python_name: skan.napari_skan:get_skeleton
-  - id: skan.analyze_skeleton_widg
-    title: Analyse skeleton
-    python_name: skan.napari_skan:AnalyseSkeleton
+  - id: skan.color_widget
+    title: Color Widget
+    python_name: skan.napari_skan:color_by_feature
   widgets:
-  # - command: skan.skeletonize_widg
-  #   display_name: Make Skeleton Widg...
   - command: skan.skeletonize
     display_name: Skeleton Widg...
     autogenerate: true
-  - command: skan.analyze_skeleton_widg
-    display_name: Analyse Skeleton Widg...
+  - command: skan.color_widget
+    display_name: Color Skeleton Widg...
     
 
