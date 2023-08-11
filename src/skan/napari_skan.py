@@ -39,20 +39,16 @@ def get_skeleton(
 
     all_paths = [skeleton.path_coordinates(i) for i in range(skeleton.n_paths)]
 
-    paths_table = summarize(
-            skeleton
-            )  # option to have main_path = True (or something) changing header
+    # option to have main_path = True (or something) changing header
+    paths_table = summarize(skeleton)
+    layer_kwargs = {
+            'shape_type': 'path',
+            'edge_colormap': 'tab10',
+            'features': paths_table,
+            'metadata': {'skeleton': skeleton},
+            }
 
-    return (
-            all_paths,
-            {
-                    'shape_type': 'path',
-                    'edge_colormap': 'tab10',
-                    'features': paths_table,
-                    'metadata': {'skeleton': skeleton},
-                    },
-            'shapes',
-            )
+    return all_paths, layer_kwargs, 'shapes'
 
 
 def populate_feature_choices(color_by_feature_widget):
