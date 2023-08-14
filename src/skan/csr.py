@@ -1312,7 +1312,8 @@ def _remove_branch_type(
     find_main_branch: bool
         Whether to find the main branch of a skeleton. Without this
 
-    Retursn    -------
+    Returns
+    -------
     Tuple: Skeleton, pd.DataFrame
         Returns a pruned skeleton and its summary data frame.
     """
