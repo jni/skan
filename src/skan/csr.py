@@ -520,6 +520,7 @@ class Skeleton:
                 np.full(skeleton_image.ndim, spacing)
                 )
         if keep_images:
+            self.keep_images = keep_images
             self.skeleton_image = skeleton_image
             self.source_image = source_image
 
@@ -655,7 +656,13 @@ class Skeleton:
         # warning: slow
         image_cp = np.copy(self.skeleton_image)
         for i in indices:
-            pixel_ids_to_wipe = self.path(i)
+            try:
+                pixel_ids_to_wipe = self.path(i)
+            except ValueError as e:
+                raise ValueError(
+                        f'The path index {i} does not exist in the '
+                        'summary dataframe. Resummarise the skeleton.'
+                        ) from e
             junctions = self.degrees[pixel_ids_to_wipe] > 2
             pixel_ids_to_wipe = pixel_ids_to_wipe[~junctions]
             coords_to_wipe = self.coordinates[pixel_ids_to_wipe]
@@ -667,6 +674,7 @@ class Skeleton:
                 new_skeleton,
                 spacing=self.spacing,
                 source_image=self.source_image,
+                keep_images=self.keep_images
                 )
 
     def __array__(self, dtype=None):
@@ -1036,10 +1044,8 @@ def _simplify_graph(skel):
 
     src_relab, dst_relab = fw_map[src], fw_map[dst]
 
-    edges = sparse.coo_matrix(
-            (distance, (src_relab, dst_relab)),
-            shape=(n_nodes, n_nodes)
-            )
+    edges = sparse.coo_matrix((distance, (src_relab, dst_relab)),
+                              shape=(n_nodes, n_nodes))
     dir_csgraph = edges.tocsr()
     simp_csgraph = dir_csgraph + dir_csgraph.T  # make undirected
 

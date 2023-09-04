@@ -5,7 +5,7 @@ import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal
 from skimage.draw import line
 
-from skan import csr
+from skan import csr, summarize
 from skan._testdata import (
         tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
         topograph1d, skeleton4
@@ -179,6 +179,62 @@ def test_transpose_image():
             )
 
 
+@pytest.mark.parametrize(
+        "skeleton,prune_branch,target",
+        [
+                (
+                        skeleton1, 1,
+                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
+                                  [0, 1, 1, 0, 1, 1, 0], [0, 0, 0, 1, 0, 0, 0],
+                                  [0, 0, 0, 0, 0, 0, 0]])
+                        ),
+                (
+                        skeleton1, 2,
+                        np.array([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                                  [0, 1, 0, 0, 0, 0, 0], [1, 0, 0, 2, 0, 0, 0],
+                                  [1, 0, 0, 0, 2, 2, 2]])
+                        ),
+                # There are no isolated cycles to be pruned
+                (
+                        skeleton1, 3,
+                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
+                                  [0, 3, 2, 0, 1, 1, 0], [3, 0, 0, 4, 0, 0, 0],
+                                  [3, 0, 0, 0, 4, 4, 4]])
+                        ),
+                ]
+        )
+def test_prune_paths(
+        skeleton: np.ndarray, prune_branch: int, target: np.ndarray
+        ) -> None:
+    """Test pruning of paths."""
+    s = csr.Skeleton(skeleton, keep_images=True)
+    summary = summarize(s)
+    indices_to_remove = summary.loc[summary['branch-type'] == prune_branch
+                                    ].index
+    pruned = s.prune_paths(indices_to_remove)
+    np.testing.assert_array_equal(pruned, target)
+
+
+def test_prune_paths_exception_single_point() -> None:
+    """Test exceptions raised when pruning leaves a single point and Skeleton object
+    can not be created and returned."""
+    s = csr.Skeleton(skeleton0)
+    summary = summarize(s)
+    indices_to_remove = summary.loc[summary['branch-type'] == 1].index
+    with pytest.raises(ValueError):
+        s.prune_paths(indices_to_remove)
+
+
+def test_prune_paths_exception_invalid_path_index() -> None:
+    """Test exceptions raised when trying to prune paths that do not exist in the summary. This can arise if skeletons
+    are not updated correctly during iterative pruning."""
+    s = csr.Skeleton(skeleton0)
+    summary = summarize(s)
+    indices_to_remove = [6]
+    with pytest.raises(ValueError):
+        s.prune_paths(indices_to_remove)
+
+
 def test_fast_graph_center_idx():
     s = csr.Skeleton(skeleton0)
     i = csr._fast_graph_center_idx(s)
@@ -187,6 +243,7 @@ def test_fast_graph_center_idx():
     s = csr.Skeleton(skeleton4)
     i = csr._fast_graph_center_idx(s)
     assert i == 1
+
 
 def test_sholl():
     s = csr.Skeleton(skeleton0)
