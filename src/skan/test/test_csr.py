@@ -188,6 +188,7 @@ def test_fast_graph_center_idx():
     i = csr._fast_graph_center_idx(s)
     assert i == 1
 
+
 def test_sholl():
     s = csr.Skeleton(skeleton0)
     c, r, counts = csr.sholl_analysis(s, shells=np.arange(0, 5, 1.5))
@@ -241,3 +242,16 @@ def test_zero_degree_nodes():
     np.testing.assert_equal(
             np.ravel(s.coordinates), [0, 1, 3, 5, 7, 9, 11, 12]
             )
+
+
+def test_skeleton_path_image_no_keep_image():
+    """See #208: "Skeleton.path_label_image requires keep_images=True."
+
+    Before PR #210, it was an implicit requirement of path_label_image
+    to create a Skeleton with keep_images=True. However, we only needed
+    the shape of the image. This makes sure that the method works even
+    when keep_images=False.
+    """
+    s = csr.Skeleton(skeleton2, keep_images=False)
+    pli = s.path_label_image()
+    assert np.max(pli) == s.n_paths
