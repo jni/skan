@@ -1,0 +1,99 @@
+[build-system]
+requires = [
+  "setuptools>=45",
+  "setuptools_scm[toml]>=6.2",
+  "wheel"
+  ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = skan
+dynamic = ["version"]
+url = https://jni.github.io/skan
+download_url = https://github.com/jni/skan
+license =  {text = "BSD 3-Clause"}
+description = Skeleton analysis in Python
+readme = "README.md"
+authors = [ (name = "Juan Nunez-Iglesias", email = "juan.nunez-iglesias@monash.edu")]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Scientific/Engineering",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Operating System :: Unix",
+  "Operating System :: MacOS",
+  "Framework :: napari",
+]
+keywords = [
+  "image processing",
+  "skeletons"
+]
+requires-python = ">=3.8"
+dependencies = [
+  "imageio>=2.10.1",
+  "matplotlib>=3.4",
+  "networkx>=2.7",
+  "numba>=0.53",
+  "numpy>=1.21",
+  "pandas>=2.0.2",
+  "openpyxl>=2.6",
+  "scikit-image>=0.17.1",
+  "scipy>=1.7",
+  "toolz>=0.10.0",
+  "tqdm>=4.57.0"
+]
+
+[project.optional-dependencies]
+all = [
+  "scikit-image[data]",
+]
+testing =[
+  "coverage",
+  "hypothesis",
+  "pytest",
+  "pytest-cov",
+  "seaborn<1.0",
+  "tifffile",
+]
+docs = [
+  "napari[all]<0.4.18",
+  "sphinx",
+  "jupyter",
+  "notebook",
+  "seaborn<1.0",
+  "sphinx-toggleprompt",
+  "sphinx-copybutton",
+  "sphinxcontrib-bibtex",
+  "myst-nb",
+  "zarr",
+  "pydata-sphinx-theme==0.8.1"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src"]
+
+[tool.setuptools.package-data]
+* = [
+  "*.tif",
+  "*.zarr",
+  "*.zip",
+  "*napari.yaml"
+]
+
+[tool.setuptools_scm]
+write_to = "src/skan/_version.py"
+
+[project.scripts]
+napari.manifest = ""
+skan = "skan:napari.yaml"
