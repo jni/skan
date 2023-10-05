@@ -6,6 +6,7 @@ from scipy.spatial import distance_matrix
 from skimage import morphology
 from skimage.graph import central_pixel
 from skimage.util._map_array import map_array, ArrayMap
+from typing import List
 import numba
 import warnings
 
@@ -13,7 +14,7 @@ from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
 
 
-def _weighted_abs_diff(values0, values1, distances):
+def _weighted_abs_diff(values0: np.ndarray, values1: np.ndarray, distances: np.ndarray) -> np.ndarray:
     """A default edge function for complete image graphs.
 
     A pixel graph on an image with no edge values and no mask is a very
@@ -551,7 +552,7 @@ class Skeleton:
         start, stop = self.paths.indptr[index:index + 2]
         return self.paths.indices[start:stop]
 
-    def path_coordinates(self, index):
+    def path_coordinates(self, index: int):
         """Return the image coordinates of the pixels in the path.
 
         Parameters
@@ -567,7 +568,7 @@ class Skeleton:
         path_indices = self.path(index)
         return self.coordinates[path_indices]
 
-    def path_with_data(self, index):
+    def path_with_data(self, index: int):
         """Return pixel indices and corresponding pixel values on a path.
 
         Parameters
@@ -653,17 +654,28 @@ class Skeleton:
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
 
-    def prune_paths(self, indices) -> 'Skeleton':
+    def prune_paths(self, indices: List[int]) -> 'Skeleton':
+        """Prune nodes from the skeleton.
+
+        Parameters
+        ----------
+        indices: List[int]
+            List of indices to be removed.
+
+        Retruns
+        -------
+        Skeleton
+            A new Skeleton object pruned.
+        """
         # warning: slow
         image_cp = np.copy(self.skeleton_image)
-        for i in indices:
-            try:
-                pixel_ids_to_wipe = self.path(i)
-            except ValueError as e:
-                raise ValueError(
+        if np.any(np.array(indices) > self.paths.shape[1]):
+            raise ValueError(
                         f'The path index {i} does not exist in the '
                         'summary dataframe. Resummarise the skeleton.'
-                        ) from e
+                        )
+        for i in indices:
+            pixel_ids_to_wipe = self.path(i)
             junctions = self.degrees[pixel_ids_to_wipe] > 2
             pixel_ids_to_wipe = pixel_ids_to_wipe[~junctions]
             coords_to_wipe = self.coordinates[pixel_ids_to_wipe]
@@ -684,8 +696,8 @@ class Skeleton:
 
 
 def summarize(
-        skel: Skeleton, *, value_is_height=False, find_main_branch=False
-        ):
+        skel: Skeleton, *, value_is_height: bool=False, find_main_branch: bool=False
+        ) -> pd.DataFrame:
     """Compute statistics for every skeleton and branch in ``skel``.
 
     Parameters
