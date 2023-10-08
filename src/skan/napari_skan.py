@@ -14,7 +14,7 @@ class SkeletonizeMethod(Enum):
     lee = "lee"
 
 
-def get_skeleton(
+def labels_to_skeleton_shapes(
         labels: "napari.layers.Labels", choice: SkeletonizeMethod
         ) -> "napari.types.LayerDataTuple":
     """Skeletonize a labels layer using given method and export as Shapes.
@@ -50,7 +50,7 @@ def get_skeleton(
     return all_paths, layer_kwargs, 'shapes'
 
 
-def populate_feature_choices(color_by_feature_widget):
+def _populate_feature_choices(color_by_feature_widget):
     """Update feature names combobox when source layer is changed.
 
     This runs on widget initialization and on every change of Shapes layer
@@ -85,7 +85,7 @@ def _update_feature_names(color_by_feature_widget):
 
 
 @magic_factory(
-        widget_init=populate_feature_choices,
+        widget_init=_populate_feature_choices,
         feature_name={"widget_type": "ComboBox"}
         )
 def color_by_feature(shapes_layer: "napari.layers.Shapes", feature_name):
