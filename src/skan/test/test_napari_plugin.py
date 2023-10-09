@@ -1,4 +1,4 @@
-from skan.napari_skan import get_skeleton, _update_feature_names
+from skan.napari_skan import labels_to_skeleton_shapes, _update_feature_names
 from skimage import data, morphology
 from napari.layers import Labels
 import numpy as np
@@ -18,7 +18,9 @@ def make_trivial_labels_layer():
 def test_get_skeleton_simple():
     labels_layer = make_trivial_labels_layer()
     skeleton_type = SkeletonizeMethod.zhang
-    shapes_data, layer_kwargs, _ = get_skeleton(labels_layer, skeleton_type)
+    shapes_data, layer_kwargs, _ = labels_to_skeleton_shapes(
+            labels_layer, skeleton_type
+            )
 
     assert type(layer_kwargs["metadata"]["skeleton"]) is Skeleton
     np.testing.assert_array_equal(
@@ -34,7 +36,9 @@ def test_get_skeleton_horse():
     horse = np.logical_not(data.horse().astype(bool))
     labels_layer = Labels(horse)
     skeleton_type = SkeletonizeMethod.zhang
-    shapes_data, layer_kwargs, _ = get_skeleton(labels_layer, skeleton_type)
+    shapes_data, layer_kwargs, _ = labels_to_skeleton_shapes(
+            labels_layer, skeleton_type
+            )
     assert len(shapes_data) == 24  # 24 line segments in the horse skeleton
     assert 'features' in layer_kwargs
     assert type(layer_kwargs["features"]) is pd.DataFrame
@@ -46,11 +50,11 @@ def test_gui(make_napari_viewer):
 
     labels_layer = viewer.add_labels(horse)
 
-    ldt = get_skeleton(labels_layer, SkeletonizeMethod.zhang)
+    ldt = labels_to_skeleton_shapes(labels_layer, SkeletonizeMethod.zhang)
     (skel_layer,) = viewer._add_layer_from_data(*ldt)
 
     dw, widget = viewer.window.add_plugin_dock_widget(
-            'skan', 'Color Skeleton Widg...'
+            'skan', 'Color Skeleton Widget'
             )
     widget.feature_name.value = "euclidean-distance"
     widget()
