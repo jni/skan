@@ -51,8 +51,8 @@ jobs:
 
       - name: Test
         uses: aganders3/headless-gui@v1
-        run: |
-          pytest --pyargs skan --doctest-modules -s -v
+        with:
+          run: pytest --pyargs skan --doctest-modules -s -v
 
       - name: Coverage
         if: runner.os == 'Linux' && matrix.python == '3.10'
