@@ -91,7 +91,7 @@ def overlay_skeleton_2d(
         fig, axes = plt.subplots()
     image[skeleton] = alpha * np.array(color) + (1-alpha) * image[skeleton]
     axes.imshow(image)
-    axes.axis('off')
+    axes.axis("off")
     return axes
 
 
@@ -100,8 +100,8 @@ def overlay_euclidean_skeleton_2d(
         stats,
         *,
         image_cmap=None,
-        skeleton_color_source='branch-type',
-        skeleton_colormap='viridis',
+        skeleton_color_source="branch_type",
+        skeleton_colormap="viridis",
         axes=None
         ):
     """Plot the image, and overlay the straight-line skeleton over it.
@@ -124,7 +124,7 @@ def overlay_euclidean_skeleton_2d(
 
         - skeleton-id: each individual skeleton (connected component) will
           have a different colour.
-        - branch-type: each branch type (tip-tip, tip-junction,
+        - branch_type: each branch type (tip-tip, tip-junction,
           junction-junction, path-path). This is the default.
         - branch-distance: the curved length of the skeleton branch.
         - euclidean-distance: the straight-line length of the skeleton branch.
@@ -142,13 +142,13 @@ def overlay_euclidean_skeleton_2d(
     image = _normalise_image(image, image_cmap=image_cmap)
     summary = stats
     # transforming from row, col to x, y
-    coords_cols = (['image-coord-src-%i' % i for i in [1, 0]]
-                   + ['image-coord-dst-%i' % i for i in [1, 0]])
+    coords_cols = ["image_coord_src_%i" % i for i in [1, 0]
+                   ] + ["image_coord_dst_%i" % i for i in [1, 0]]
     coords = summary[coords_cols].values.reshape((-1, 2, 2))
     if axes is None:
         fig, axes = plt.subplots()
     axes.imshow(image)
-    axes.axis('off')
+    axes.axis("off")
     color_values = summary[skeleton_color_source]
     cmap = plt.get_cmap(
             skeleton_colormap, min(len(np.unique(color_values)), 256)
@@ -163,9 +163,9 @@ def overlay_euclidean_skeleton_2d(
 def overlay_skeleton_2d_class(
         skeleton,
         *,
-        image_cmap='gray',
-        skeleton_color_source='path_means',
-        skeleton_colormap='viridis',
+        image_cmap="gray",
+        skeleton_color_source="path_means",
+        skeleton_colormap="viridis",
         vmin=None,
         vmax=None,
         axes=None
@@ -221,8 +221,8 @@ def overlay_skeleton_2d_class(
         values = getattr(skeleton, skeleton_color_source)()
     else:
         raise ValueError(
-                'Unknown skeleton color source: %s. Provide an '
-                'attribute of skan.csr.Skeleton or a callable.'
+                "Unknown skeleton color source: %s. Provide an "
+                "attribute of skan.csr.Skeleton or a callable."
                 % skeleton_color_source
                 )
     cmap = plt.get_cmap(skeleton_colormap, min(len(np.unique(values)), 256))
@@ -270,7 +270,7 @@ def sholl_shells(center, radii, *, axes=None, **kwargs):
     ``linestyle``, and `linewidth``. See matplotlib documentation for details.
     """
     row, col = center
-    color = kwargs.pop('edgecolor', 'cornflowerblue')
+    color = kwargs.pop("edgecolor", "cornflowerblue")
     circles = [
             Circle((col, row), radius=r, fill=False, edgecolor=color, **kwargs)
             for r in radii
@@ -343,11 +343,11 @@ def pipeline_plot(
                     ]
 
     axes = np.ravel(axes)
-    axes[0].imshow(image, cmap='gray')
-    axes[0].axis('off')
+    axes[0].imshow(image, cmap="gray")
+    axes[0].axis("off")
 
-    axes[1].imshow(thresholded, cmap='gray')
-    axes[1].axis('off')
+    axes[1].imshow(thresholded, cmap="gray")
+    axes[1].axis("off")
 
     overlay_skeleton_2d(image, skeleton, axes=axes[2])
 
@@ -397,7 +397,7 @@ def overlay_skeleton_networkx(
     if axis is None:
         _, axis = plt.subplots()
     if image is not None:
-        cmap = cmap or 'gray'
+        cmap = cmap or "gray"
         axis.imshow(image, cmap=cmap)
     gnx = nx.from_scipy_sparse_array(csr_graph)
     # Note: we invert the positions because Matplotlib uses x/y for

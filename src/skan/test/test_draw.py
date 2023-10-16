@@ -12,12 +12,12 @@ import pytest
 from skan import pre, draw, csr, _testdata, Skeleton
 
 rundir = os.path.abspath(os.path.dirname(__file__))
-datadir = os.path.join(rundir, 'data')
+datadir = os.path.join(rundir, "data")
 
 
 @pytest.fixture
 def test_image():
-    image = io.imread(os.path.join(datadir, 'skeleton.tif'))
+    image = io.imread(os.path.join(datadir, "skeleton.tif"))
     return image
 
 
@@ -41,14 +41,14 @@ def test_stats(test_skeleton):
 
 def test_overlay_skeleton(test_image, test_skeleton):
     draw.overlay_skeleton_2d(test_image, test_skeleton)
-    draw.overlay_skeleton_2d(test_image, test_skeleton, image_cmap='viridis')
+    draw.overlay_skeleton_2d(test_image, test_skeleton, image_cmap="viridis")
     draw.overlay_skeleton_2d(test_image, test_skeleton, dilate=1)
 
 
 def test_overlay_euclidean_skeleton(test_image, test_stats):
     draw.overlay_euclidean_skeleton_2d(test_image, test_stats)
     draw.overlay_euclidean_skeleton_2d(
-            test_image, test_stats, skeleton_color_source='branch-distance'
+            test_image, test_stats, skeleton_color_source="branch_distance"
             )
 
 
@@ -84,7 +84,7 @@ def test_skeleton_class_overlay(test_image, test_skeleton):
     fig, axes = plt.subplots()
     skeleton = Skeleton(test_skeleton, source_image=test_image)
     draw.overlay_skeleton_2d_class(
-            skeleton, skeleton_color_source='path_lengths'
+            skeleton, skeleton_color_source="path_lengths"
             )
 
     def filtered(skeleton):
@@ -100,7 +100,7 @@ def test_skeleton_class_overlay(test_image, test_skeleton):
             )
     with pytest.raises(ValueError):
         draw.overlay_skeleton_2d_class(
-                skeleton, skeleton_color_source='filtered'
+                skeleton, skeleton_color_source="filtered"
                 )
 
 

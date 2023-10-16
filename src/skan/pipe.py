@@ -10,7 +10,7 @@ from skimage.feature import shape_index
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import multiprocessing as mp
 
-CPU_COUNT = int(os.environ.get('CPU_COUNT', mp.cpu_count()))
+CPU_COUNT = int(os.environ.get("CPU_COUNT", mp.cpu_count()))
 
 
 def _get_scale(image, md_path_or_scale):
@@ -33,7 +33,7 @@ def _get_scale(image, md_path_or_scale):
     except ValueError:
         pass
     if md_path_or_scale is not None and scale is None:
-        md_path = md_path_or_scale.split(sep='/')
+        md_path = md_path_or_scale.split(sep="/")
         meta = image.meta
         for key in md_path:
             meta = meta[key]
@@ -45,8 +45,14 @@ def _get_scale(image, md_path_or_scale):
 
 
 def process_single_image(
-        filename, image_format, scale_metadata_path, threshold_radius,
-        smooth_radius, brightness_offset, crop_radius, smooth_method
+        filename,
+        image_format,
+        scale_metadata_path,
+        threshold_radius,
+        smooth_radius,
+        brightness_offset,
+        crop_radius,
+        smooth_method,
         ):
     image = imageio.v2.imread(filename, format=image_format)
     scale = _get_scale(image, scale_metadata_path)
@@ -61,21 +67,21 @@ def process_single_image(
             sigma=pixel_smoothing_radius,
             radius=pixel_threshold_radius,
             offset=brightness_offset,
-            smooth_method=smooth_method
+            smooth_method=smooth_method,
             )
-    quality = shape_index(image, sigma=pixel_smoothing_radius, mode='reflect')
+    quality = shape_index(image, sigma=pixel_smoothing_radius, mode="reflect")
     skeleton = morphology.skeletonize(thresholded) * quality
     framedata = csr.summarize(csr.Skeleton(skeleton, spacing=scale))
-    framedata['squiggle'] = np.log2(
-            framedata['branch-distance'] / framedata['euclidean-distance']
+    framedata["squiggle"] = np.log2(
+            framedata["branch_distance"] / framedata["euclidean_distance"]
             )
-    framedata['scale'] = scale
+    framedata["scale"] = scale
     framedata.rename(
-            columns={'mean-pixel-value': 'mean-shape-index'},
+            columns={"mean_pixel_value": "mean_shape_index"},
             inplace=True,
-            errors='raise',
+            errors="raise",
             )
-    framedata['filename'] = filename
+    framedata["filename"] = filename
     return image, thresholded, skeleton, framedata
 
 
@@ -87,8 +93,8 @@ def process_images(
         brightness_offset,
         scale_metadata_path,
         crop_radius=0,
-        smooth_method='Gaussian',
-        num_threads=CPU_COUNT
+        smooth_method="Gaussian",
+        num_threads=CPU_COUNT,
         ):
     """Full pipeline from images to skeleton stats with local median threshold.
 
@@ -128,15 +134,21 @@ def process_images(
         Finally, after all the images have been processed, the pipeline yields
         a DataFrame containing all the collated branch-level results.
     """
-    image_format = None if image_format == 'auto' else image_format
+    image_format = None if image_format == "auto" else image_format
     results = []
     image_results = []
     with ThreadPoolExecutor(max_workers=num_threads) as ex:
         future_data = {
                 ex.submit(
-                        process_single_image, filename, image_format,
-                        scale_metadata_path, threshold_radius, smooth_radius,
-                        brightness_offset, crop_radius, smooth_method
+                        process_single_image,
+                        filename,
+                        image_format,
+                        scale_metadata_path,
+                        threshold_radius,
+                        smooth_radius,
+                        brightness_offset,
+                        crop_radius,
+                        smooth_method,
                         ): filename
                 for filename in filenames
                 }
@@ -146,16 +158,14 @@ def process_images(
             filename = future_data[completed_data]
             results.append(framedata)
             image_stats = image_summary(
-                    skeleton, spacing=framedata['scale'][0]
+                    skeleton, spacing=framedata["scale"][0]
                     )
-            image_stats['filename'] = filename
-            image_stats['branch density'] = (
-                    framedata.shape[0] / image_stats['area']
-                    )
-            j2j = framedata[framedata['branch-type'] == 2]
-            image_stats['mean J2J branch distance'] = (
-                    j2j['branch-distance'].mean()
-                    )
+            image_stats["filename"] = filename
+            image_stats["branch density"
+                        ] = framedata.shape[0] / image_stats["area"]
+            j2j = framedata[framedata["branch_type"] == 2]
+            image_stats["mean J2J branch distance"] = j2j["branch_distance"
+                                                          ].mean()
             image_results.append(image_stats)
             yield filename, image, thresholded, skeleton, framedata
     yield pd.concat(results), pd.concat(image_results)

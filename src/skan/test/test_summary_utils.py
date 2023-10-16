@@ -11,12 +11,11 @@ def test_find_main():
     non_main_edge_start = [2, 1]
     non_main_edge_finish = [3, 3]
 
-    non_main_df = summary_df.loc[summary_df['main'] == False]
+    non_main_df = summary_df.loc[summary_df["main"] == False]
     assert non_main_df.shape[0] == 1
     coords = non_main_df[[
-            'coord-src-0', 'coord-src-1', 'coord-dst-0', 'coord-dst-1'
+            "coord_src_0", "coord_src_1", "coord_dst_0", "coord_dst_1"
             ]].to_numpy()
-    assert (
-            np.all(coords == non_main_edge_start + non_main_edge_finish)
-            or np.all(coords == non_main_edge_finish + non_main_edge_start)
-            )
+    assert np.all(
+            coords == non_main_edge_start + non_main_edge_finish
+            ) or np.all(coords == non_main_edge_finish + non_main_edge_start)

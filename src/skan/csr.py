@@ -112,7 +112,7 @@ def pixel_graph(
     # Note, we use map_array to map the raveled coordinates in the padded
     # image to the ones in the original image, and those are the returned
     # nodes.
-    padded = np.pad(mask, 1, mode='constant', constant_values=False)
+    padded = np.pad(mask, 1, mode="constant", constant_values=False)
     nodes_padded = np.flatnonzero(padded)
     neighbor_offsets_padded, distances_padded = _raveled_offsets_and_distances(
             padded.shape, connectivity=connectivity, spacing=spacing
@@ -152,20 +152,20 @@ def pixel_graph(
 
 
 csr_spec_float = [
-        ('indptr', numba.int32[:]),
-        ('indices', numba.int32[:]),
-        ('data', numba.float64[:]),
-        ('shape', numba.int32[:]),
-        ('node_properties', numba.float64[:]),
-        ]  # yapf: disable
+    ("indptr", numba.int32[:]),
+    ("indices", numba.int32[:]),
+    ("data", numba.float64[:]),
+    ("shape", numba.int32[:]),
+    ("node_properties", numba.float64[:]),
+]  # yapf: disable
 
 csr_spec_bool = [
-        ('indptr', numba.int32[:]),
-        ('indices', numba.int32[:]),
-        ('data', numba.bool_[:]),
-        ('shape', numba.int32[:]),
-        ('node_properties', numba.float64[:]),
-        ]  # yapf: disable
+    ("indptr", numba.int32[:]),
+    ("indices", numba.int32[:]),
+    ("data", numba.bool_[:]),
+    ("shape", numba.int32[:]),
+    ("node_properties", numba.float64[:]),
+]  # yapf: disable
 
 
 class NBGraphBase:
@@ -197,7 +197,7 @@ NBGraphBool = numba.experimental.jitclass(NBGraphBase, csr_spec_bool)
 
 def csr_to_nbgraph(csr, node_props=None):
     if node_props is None:
-        node_props = np.broadcast_to(1., csr.shape[0])
+        node_props = np.broadcast_to(1.0, csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
             csr.indptr, csr.indices, csr.data,
@@ -393,9 +393,9 @@ def _build_skeleton_path_graph(graph):
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
             graph.indptr, graph.indices, visited_data, graph.shape,
-            np.broadcast_to(1., graph.shape[0])
+            np.broadcast_to(1.0, graph.shape[0])
             )
-    endpoints = (degrees != 2)
+    endpoints = degrees != 2
     endpoint_degrees = degrees[endpoints]
     num_paths = np.sum(endpoint_degrees)
     path_indptr = np.zeros(num_paths + buffer_size_offset, dtype=int)
@@ -406,10 +406,9 @@ def _build_skeleton_path_graph(graph):
     # cycles (since each cycle has one index repeated). We don't know
     # the number of cycles ahead of time, but it is bounded by one quarter
     # of the number of points.
-    n_points = (
-            graph.indices.size + np.sum(np.maximum(0, endpoint_degrees - 1))
-            + buffer_size_offset
-            )
+    n_points = graph.indices.size + np.sum(
+            np.maximum(0, endpoint_degrees - 1)
+            ) + buffer_size_offset
     path_indices = np.zeros(n_points, dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
     m, n = _build_paths(
@@ -519,10 +518,10 @@ class Skeleton:
         self.skeleton_shape = skeleton_image.shape
         self.source_image = None
         self.degrees = np.diff(self.graph.indptr)
-        self.spacing = (
-                np.asarray(spacing) if not np.isscalar(spacing) else
-                np.full(skeleton_image.ndim, spacing)
-                )
+        self.spacing = np.asarray(spacing
+                                  ) if not np.isscalar(spacing) else np.full(
+                                          skeleton_image.ndim, spacing
+                                          )
         if keep_images:
             self.keep_images = keep_images
             self.skeleton_image = skeleton_image
@@ -656,7 +655,7 @@ class Skeleton:
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
 
-    def prune_paths(self, indices: npt.ArrayLike) -> 'Skeleton':
+    def prune_paths(self, indices: npt.ArrayLike) -> "Skeleton":
         """Prune nodes from the skeleton.
 
         Parameters
@@ -673,10 +672,10 @@ class Skeleton:
         image_cp = np.copy(self.skeleton_image)
         if not np.all(np.array(indices) < self.n_paths):
             raise ValueError(
-                    f'The path index {np.max(indices)} does not exist in this '
-                    f'skeleton. (The highest path index is {self.n_paths}.)\n'
-                    'If you obtained the index from a summary table, you '
-                    'probably need to resummarize the skeleton.'
+                    f"The path index {np.max(indices)} does not exist in this "
+                    f"skeleton. (The highest path index is {self.n_paths}.)\n"
+                    "If you obtained the index from a summary table, you "
+                    "probably need to resummarize the skeleton."
                     )
         for i in indices:
             pixel_ids_to_wipe = self.path(i)
@@ -732,52 +731,52 @@ def summarize(
     _, skeleton_ids = csgraph.connected_components(skel.graph, directed=False)
     endpoints_src = skel.paths.indices[skel.paths.indptr[:-1]]
     endpoints_dst = skel.paths.indices[skel.paths.indptr[1:] - 1]
-    summary['skeleton-id'] = skeleton_ids[endpoints_src]
-    summary['node-id-src'] = endpoints_src
-    summary['node-id-dst'] = endpoints_dst
-    summary['branch-distance'] = skel.path_lengths()
+    summary["skeleton_id"] = skeleton_ids[endpoints_src]
+    summary["node_id_src"] = endpoints_src
+    summary["node_id_dst"] = endpoints_dst
+    summary["branch_distance"] = skel.path_lengths()
     deg_src = skel.degrees[endpoints_src]
     deg_dst = skel.degrees[endpoints_dst]
     kind = np.full(deg_src.shape, 2)  # default: junction-to-junction
     kind[(deg_src == 1) | (deg_dst == 1)] = 1  # tip-junction
     kind[(deg_src == 1) & (deg_dst == 1)] = 0  # tip-tip
     kind[endpoints_src == endpoints_dst] = 3  # cycle
-    summary['branch-type'] = kind
-    summary['mean-pixel-value'] = skel.path_means()
-    summary['stdev-pixel-value'] = skel.path_stdev()
+    summary["branch_type"] = kind
+    summary["mean_pixel_value"] = skel.path_means()
+    summary["stdev_pixel_value"] = skel.path_stdev()
     for i in range(ndim):  # keep loops separate for best insertion order
-        summary[f'image-coord-src-{i}'] = skel.coordinates[endpoints_src, i]
+        summary[f"image_coord_src_{i}"] = skel.coordinates[endpoints_src, i]
     for i in range(ndim):
-        summary[f'image-coord-dst-{i}'] = skel.coordinates[endpoints_dst, i]
+        summary[f"image_coord_dst_{i}"] = skel.coordinates[endpoints_dst, i]
     coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
     for i in range(ndim):
-        summary[f'coord-src-{i}'] = coords_real_src[:, i]
+        summary[f"coord_src_{i}"] = coords_real_src[:, i]
     if value_is_height:
         values_src = skel.pixel_values[endpoints_src]
-        summary[f'coord-src-{ndim}'] = values_src
+        summary[f"coord_src_{ndim}"] = values_src
         coords_real_src = np.concatenate(
                 [coords_real_src, values_src[:, np.newaxis]],
                 axis=1,
                 )  # yapf: ignore
     coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
     for i in range(ndim):
-        summary[f'coord-dst-{i}'] = coords_real_dst[:, i]
+        summary[f"coord_dst_{i}"] = coords_real_dst[:, i]
     if value_is_height:
         values_dst = skel.pixel_values[endpoints_dst]
-        summary[f'coord-dst-{ndim}'] = values_dst
+        summary[f"coord_dst_{ndim}"] = values_dst
         coords_real_dst = np.concatenate(
                 [coords_real_dst, values_dst[:, np.newaxis]],
                 axis=1,
                 )  # yapf: ignore
-    summary['euclidean-distance'] = (
-            np.sqrt((coords_real_dst - coords_real_src)**2
-                    @ np.ones(ndim + int(value_is_height)))
+    summary["euclidean_distance"] = np.sqrt(
+            (coords_real_dst - coords_real_src)**2
+            @ np.ones(ndim + int(value_is_height))
             )
     df = pd.DataFrame(summary)
 
     if find_main_branch:
         # define main branch as longest shortest path within a single skeleton
-        df['main'] = find_main_branches(df)
+        df["main"] = find_main_branches(df)
     return df
 
 
@@ -791,7 +790,7 @@ def _compute_distances(graph, path_indptr, path_indices, distances):
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
 def _path_distance(graph, path):
-    d = 0.
+    d = 0.0
     n = len(path)
     for i in range(n - 1):
         u, v = path[i], path[i + 1]
@@ -931,7 +930,7 @@ def _csrget(indices, indptr, data, row, col):
     for i in range(start, end):
         if indices[i] == col:
             return data[i]
-    return 0.
+    return 0.0
 
 
 @numba.jit(nopython=True, cache=True)
@@ -1012,19 +1011,22 @@ def make_degree_image(skeleton_image):
     degree_kernel = np.ones((3,) * bool_skeleton.ndim)
     degree_kernel[(1,) * bool_skeleton.ndim] = 0  # remove centre pixel
     if isinstance(bool_skeleton, np.ndarray):
-        degree_image = ndi.convolve(
-                bool_skeleton.astype(int),
-                degree_kernel,
-                mode='constant',
-                ) * bool_skeleton
+        degree_image = (
+                ndi.convolve(
+                        bool_skeleton.astype(int),
+                        degree_kernel,
+                        mode="constant",
+                        ) * bool_skeleton
+                )
     # use dask image for any array other than a numpy array (which isn't
     # supported yet anyway)
     else:
         import dask.array as da
         from dask_image.ndfilters import convolve as dask_convolve
+
         if isinstance(bool_skeleton, da.Array):
             degree_image = bool_skeleton * dask_convolve(
-                    bool_skeleton.astype(int), degree_kernel, mode='constant'
+                    bool_skeleton.astype(int), degree_kernel, mode="constant"
                     )
     return degree_image
 
@@ -1050,9 +1052,9 @@ def _simplify_graph(skel):
         return skel.graph, np.arange(skel.graph.shape[0])
 
     summary = summarize(skel)
-    src = np.asarray(summary['node-id-src'])
-    dst = np.asarray(summary['node-id-dst'])
-    distance = np.asarray(summary['branch-distance'])
+    src = np.asarray(summary["node_id_src"])
+    dst = np.asarray(summary["node_id_dst"])
+    distance = np.asarray(summary["branch_distance"])
 
     # to reduce the size of simplified graph
     nodes = np.unique(np.append(src, dst))
@@ -1132,11 +1134,11 @@ def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
         shell_radii = np.arange(start_radius, end_radius + epsilon, stepsize)
     if (sp := np.linalg.norm(spacing)) > (sh := np.min(np.diff(shell_radii))):
         warnings.warn(
-                'This implementation of Sholl analysis may not be accurate if '
-                'the spacing between shells is smaller than the (diagonal) '
-                f'voxel spacing. The given voxel spacing is {sp}, and the '
-                f'smallest shell spacing is {sh}.',
-                stacklevel=2
+                "This implementation of Sholl analysis may not be accurate if "
+                "the spacing between shells is smaller than the (diagonal) "
+                f"voxel spacing. The given voxel spacing is {sp}, and the "
+                f"smallest shell spacing is {sh}.",
+                stacklevel=2,
                 )
     return shell_radii
 
