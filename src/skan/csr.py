@@ -6,7 +6,7 @@ from scipy.spatial import distance_matrix
 from skimage import morphology
 from skimage.graph import central_pixel
 from skimage.util._map_array import map_array, ArrayMap
-from typing import List
+import numpy.typing as npt
 import numba
 import warnings
 
@@ -656,7 +656,7 @@ class Skeleton:
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
 
-    def prune_paths(self, indices: List[int]) -> 'Skeleton':
+    def prune_paths(self, indices: npt.ArrayLike) -> 'Skeleton':
         """Prune nodes from the skeleton.
 
         Parameters
