@@ -124,8 +124,7 @@ plt.imshow(skeleton_smoothed)
 ```
 
 In this instance the Gaussian blurring has been so effective we only have a single branch to prune and there are no
-internal loops, but we will use the `iteratively_prune_paths()` function to remove these.
-iterative approach to tidy this up
+internal loops, but we will use the `iteratively_prune_paths()` function to tidy this up
 
 ```{code-cell} ipython3
 skeleton_smoothed_pruned_iteratively = iteratively_prune_paths(skeleton).skeleton_image
