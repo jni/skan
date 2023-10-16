@@ -238,6 +238,7 @@ function checkPageExistsAndRedirect(event) {
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
 <span class="kn">from</span> <span class="nn">skimage.graph</span> <span class="kn">import</span> <span class="n">central_pixel</span>
 <span class="kn">from</span> <span class="nn">skimage.util._map_array</span> <span class="kn">import</span> <span class="n">map_array</span><span class="p">,</span> <span class="n">ArrayMap</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
 <span class="kn">import</span> <span class="nn">numba</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
@@ -245,7 +246,9 @@ function checkPageExistsAndRedirect(event) {
 <span class="kn">from</span> <span class="nn">.summary_utils</span> <span class="kn">import</span> <span class="n">find_main_branches</span>
 
 
-<span class="k">def</span> <span class="nf">_weighted_abs_diff</span><span class="p">(</span><span class="n">values0</span><span class="p">,</span> <span class="n">values1</span><span class="p">,</span> <span class="n">distances</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_weighted_abs_diff</span><span class="p">(</span>
+        <span class="n">values0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">values1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">distances</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A default edge function for complete image graphs.</span>
 
 <span class="sd">    A pixel graph on an image with no edge values and no mask is a very</span>
@@ -753,6 +756,7 @@ function checkPageExistsAndRedirect(event) {
                 <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">spacing</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">if</span> <span class="n">keep_images</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keep_images</span> <span class="o">=</span> <span class="n">keep_images</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">skeleton_image</span> <span class="o">=</span> <span class="n">skeleton_image</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="o">=</span> <span class="n">source_image</span>
 
@@ -782,7 +786,7 @@ function checkPageExistsAndRedirect(event) {
         <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Skeleton.path_coordinates"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">path_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="Skeleton.path_coordinates"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">path_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the image coordinates of the pixels in the path.</span>
 
 <span class="sd">        Parameters</span>
@@ -798,7 +802,7 @@ function checkPageExistsAndRedirect(event) {
         <span class="n">path_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="n">path_indices</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Skeleton.path_with_data"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_with_data">[docs]</a>    <span class="k">def</span> <span class="nf">path_with_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="Skeleton.path_with_data"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path_with_data">[docs]</a>    <span class="k">def</span> <span class="nf">path_with_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return pixel indices and corresponding pixel values on a path.</span>
 
 <span class="sd">        Parameters</span>
@@ -884,9 +888,28 @@ function checkPageExistsAndRedirect(event) {
         <span class="n">means</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_means</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">sumsq</span><span class="o">/</span><span class="n">lengths</span> <span class="o">-</span> <span class="n">means</span><span class="o">*</span><span class="n">means</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">prune_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Skeleton&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="Skeleton.prune_paths"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.prune_paths">[docs]</a>    <span class="k">def</span> <span class="nf">prune_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Skeleton&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prune nodes from the skeleton.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices: List[int]</span>
+<span class="sd">            List of indices to be removed.</span>
+
+<span class="sd">        Retruns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Skeleton</span>
+<span class="sd">            A new Skeleton object pruned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># warning: slow</span>
         <span class="n">image_cp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skeleton_image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_paths</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;The path index </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="si">}</span><span class="s1"> does not exist in this &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;skeleton. (The highest path index is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_paths</span><span class="si">}</span><span class="s1">.)</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;If you obtained the index from a summary table, you &#39;</span>
+                    <span class="s1">&#39;probably need to resummarize the skeleton.&#39;</span>
+                    <span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
             <span class="n">pixel_ids_to_wipe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="n">junctions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">degrees</span><span class="p">[</span><span class="n">pixel_ids_to_wipe</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span>
@@ -900,7 +923,8 @@ function checkPageExistsAndRedirect(event) {
                 <span class="n">new_skeleton</span><span class="p">,</span>
                 <span class="n">spacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
                 <span class="n">source_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_image</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="n">keep_images</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">keep_images</span>
+                <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Array representation of the skeleton path labels.&quot;&quot;&quot;</span>
@@ -908,8 +932,11 @@ function checkPageExistsAndRedirect(event) {
 
 
 <div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span>
-        <span class="n">skel</span><span class="p">:</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">value_is_height</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">find_main_branch</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">):</span>
+        <span class="n">skel</span><span class="p">:</span> <span class="n">Skeleton</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">value_is_height</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">find_main_branch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute statistics for every skeleton and branch in ``skel``.</span>
 
 <span class="sd">    Parameters</span>
@@ -1269,10 +1296,8 @@ function checkPageExistsAndRedirect(event) {
 
     <span class="n">src_relab</span><span class="p">,</span> <span class="n">dst_relab</span> <span class="o">=</span> <span class="n">fw_map</span><span class="p">[</span><span class="n">src</span><span class="p">],</span> <span class="n">fw_map</span><span class="p">[</span><span class="n">dst</span><span class="p">]</span>
 
-    <span class="n">edges</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="p">(</span><span class="n">src_relab</span><span class="p">,</span> <span class="n">dst_relab</span><span class="p">)),</span>
-            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">)</span>
-            <span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">((</span><span class="n">distance</span><span class="p">,</span> <span class="p">(</span><span class="n">src_relab</span><span class="p">,</span> <span class="n">dst_relab</span><span class="p">)),</span>
+                              <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">))</span>
     <span class="n">dir_csgraph</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
     <span class="n">simp_csgraph</span> <span class="o">=</span> <span class="n">dir_csgraph</span> <span class="o">+</span> <span class="n">dir_csgraph</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># make undirected</span>
 
