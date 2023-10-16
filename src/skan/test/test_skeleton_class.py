@@ -43,8 +43,8 @@ def test_skeleton_coordinates():
 
 
 @pytest.mark.skipif(
-        sys.platform.startswith("win"),
-        reason="caching not working on Windows CI for mysterious reasons",
+        sys.platform.startswith('win'),
+        reason='caching not working on Windows CI for mysterious reasons',
         )
 def test_path_length_caching():
     skeleton = Skeleton(skeleton3d)
@@ -100,9 +100,11 @@ def test_skeleton_summarize():
     image[skeleton2] = 1 + np.random.random(np.sum(skeleton2))
     skeleton = Skeleton(image)
     summary = summarize(skeleton)
-    assert set(summary["skeleton_id"]) == {0, 1}
-    assert np.all(summary["mean_pixel_value"] < 2
-                  ) and np.all(summary["mean_pixel_value"] > 1)
+    assert set(summary['skeleton_id']) == {0, 1}
+    assert (
+            np.all(summary['mean_pixel_value'] < 2)
+            and np.all(summary['mean_pixel_value'] > 1)
+            )
 
 
 def test_skeleton_label_image_strict():
@@ -124,7 +126,7 @@ def test_skeleton_label_image_strict():
             [0, 3, 0, 0, 0],
             [0, 3, 0, 0, 0],
             ])
-    non_junction_pixels = skeleton.degrees < 3
+    non_junction_pixels = (skeleton.degrees < 3)
     non_junction_coords = tuple(
             np.transpose(skeleton.coordinates[non_junction_pixels])
             )
