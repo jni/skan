@@ -1,3 +1,4 @@
+import networkx as nx
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -1202,6 +1203,21 @@ def sholl_analysis(skeleton, center=None, shells=None):
     intersection_counts = np.bincount(shells, minlength=len(shell_radii)) // 2
 
     return center, shell_radii, intersection_counts
+
+
+def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
+    """Convert a Skeleton object to a networkx Graph."""
+    if summary is None:
+        summary = summarize(skeleton)
+    summary_future = summary.rename(columns=lambda s: s.replace('-', '_'))
+    g = nx.Graph()
+    for row in summary_future.itertuples(name='Edge'):
+        i, j = row.node_id_src, row.node_id_dst
+        g.add_edge(i, j, **row._asdict())
+        g.edges[i, j]['path'] = skeleton.path_coordinates(row.Index)
+        g.nodes[i]['pos'] = skeleton.coordinates[i]
+        g.nodes[j]['pos'] = skeleton.coordinates[j]
+    return g
 
 
 def iteratively_prune_paths(
