@@ -6,6 +6,7 @@ from scipy.spatial import distance_matrix
 from skimage import morphology
 from skimage.graph import central_pixel
 from skimage.util._map_array import map_array, ArrayMap
+import numpy.typing as npt
 import numba
 import warnings
 
@@ -13,7 +14,9 @@ from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
 
 
-def _weighted_abs_diff(values0, values1, distances):
+def _weighted_abs_diff(
+        values0: np.ndarray, values1: np.ndarray, distances: np.ndarray
+        ) -> np.ndarray:
     """A default edge function for complete image graphs.
 
     A pixel graph on an image with no edge values and no mask is a very
@@ -521,6 +524,7 @@ class Skeleton:
                 np.full(skeleton_image.ndim, spacing)
                 )
         if keep_images:
+            self.keep_images = keep_images
             self.skeleton_image = skeleton_image
             self.source_image = source_image
 
@@ -550,7 +554,7 @@ class Skeleton:
         start, stop = self.paths.indptr[index:index + 2]
         return self.paths.indices[start:stop]
 
-    def path_coordinates(self, index):
+    def path_coordinates(self, index: int):
         """Return the image coordinates of the pixels in the path.
 
         Parameters
@@ -566,7 +570,7 @@ class Skeleton:
         path_indices = self.path(index)
         return self.coordinates[path_indices]
 
-    def path_with_data(self, index):
+    def path_with_data(self, index: int):
         """Return pixel indices and corresponding pixel values on a path.
 
         Parameters
@@ -652,9 +656,28 @@ class Skeleton:
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
 
-    def prune_paths(self, indices) -> 'Skeleton':
+    def prune_paths(self, indices: npt.ArrayLike) -> 'Skeleton':
+        """Prune nodes from the skeleton.
+
+        Parameters
+        ----------
+        indices: List[int]
+            List of indices to be removed.
+
+        Retruns
+        -------
+        Skeleton
+            A new Skeleton object pruned.
+        """
         # warning: slow
         image_cp = np.copy(self.skeleton_image)
+        if not np.all(np.array(indices) < self.n_paths):
+            raise ValueError(
+                    f'The path index {np.max(indices)} does not exist in this '
+                    f'skeleton. (The highest path index is {self.n_paths}.)\n'
+                    'If you obtained the index from a summary table, you '
+                    'probably need to resummarize the skeleton.'
+                    )
         for i in indices:
             pixel_ids_to_wipe = self.path(i)
             junctions = self.degrees[pixel_ids_to_wipe] > 2
@@ -668,6 +691,7 @@ class Skeleton:
                 new_skeleton,
                 spacing=self.spacing,
                 source_image=self.source_image,
+                keep_images=self.keep_images
                 )
 
     def __array__(self, dtype=None):
@@ -676,8 +700,11 @@ class Skeleton:
 
 
 def summarize(
-        skel: Skeleton, *, value_is_height=False, find_main_branch=False
-        ):
+        skel: Skeleton,
+        *,
+        value_is_height: bool = False,
+        find_main_branch: bool = False
+        ) -> pd.DataFrame:
     """Compute statistics for every skeleton and branch in ``skel``.
 
     Parameters
@@ -1037,10 +1064,8 @@ def _simplify_graph(skel):
 
     src_relab, dst_relab = fw_map[src], fw_map[dst]
 
-    edges = sparse.coo_matrix(
-            (distance, (src_relab, dst_relab)),
-            shape=(n_nodes, n_nodes)
-            )
+    edges = sparse.coo_matrix((distance, (src_relab, dst_relab)),
+                              shape=(n_nodes, n_nodes))
     dir_csgraph = edges.tocsr()
     simp_csgraph = dir_csgraph + dir_csgraph.T  # make undirected
 
