@@ -7,14 +7,14 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = skan
+name = "skan"
 dynamic = ["version"]
-url = https://jni.github.io/skan
-download_url = https://github.com/jni/skan
 license =  {text = "BSD 3-Clause"}
-description = Skeleton analysis in Python
+description = "Skeleton analysis in Python"
 readme = "README.md"
-authors = [ (name = "Juan Nunez-Iglesias", email = "juan.nunez-iglesias@monash.edu")]
+authors = [
+  {name = "Juan Nunez-Iglesias", email = "juan.nunez-iglesias@monash.edu"}
+]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
@@ -79,12 +79,20 @@ docs = [
   "pydata-sphinx-theme==0.8.1"
 ]
 
+[project.urls]
+Source = "https://github.com/jni/skan"
+Bug_Tracker = "https://github.com/jni//issues"
+Documentation = "https://skeleton-analysis.org/stable/"
+
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["src"]
+#include = ["src"]
 
 [tool.setuptools.package-data]
-* = [
+skan = [
   "*.tif",
   "*.zarr",
   "*.zip",
@@ -94,6 +102,5 @@ include = ["src"]
 [tool.setuptools_scm]
 write_to = "src/skan/_version.py"
 
-[project.scripts]
-napari.manifest = ""
-skan = "skan:napari.yaml"
+[project.entry-points."napari.manifest"]
+skan-napari = "skan:napari.yaml"
