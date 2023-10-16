@@ -14,7 +14,9 @@ from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
 
 
-def _weighted_abs_diff(values0: np.ndarray, values1: np.ndarray, distances: np.ndarray) -> np.ndarray:
+def _weighted_abs_diff(
+        values0: np.ndarray, values1: np.ndarray, distances: np.ndarray
+        ) -> np.ndarray:
     """A default edge function for complete image graphs.
 
     A pixel graph on an image with no edge values and no mask is a very
@@ -671,9 +673,9 @@ class Skeleton:
         image_cp = np.copy(self.skeleton_image)
         if np.any(np.array(indices) > self.paths.shape[1]):
             raise ValueError(
-                        f'The path index {i} does not exist in the '
-                        'summary dataframe. Resummarise the skeleton.'
-                        )
+                    f'The path index {i} does not exist in the '
+                    'summary dataframe. Resummarise the skeleton.'
+                    )
         for i in indices:
             pixel_ids_to_wipe = self.path(i)
             junctions = self.degrees[pixel_ids_to_wipe] > 2
@@ -696,7 +698,10 @@ class Skeleton:
 
 
 def summarize(
-        skel: Skeleton, *, value_is_height: bool=False, find_main_branch: bool=False
+        skel: Skeleton,
+        *,
+        value_is_height: bool = False,
+        find_main_branch: bool = False
         ) -> pd.DataFrame:
     """Compute statistics for every skeleton and branch in ``skel``.
 
