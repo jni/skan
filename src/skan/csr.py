@@ -671,10 +671,12 @@ class Skeleton:
         """
         # warning: slow
         image_cp = np.copy(self.skeleton_image)
-        if np.any(np.array(indices) > self.paths.shape[1]):
+        if not np.all(np.array(indices) < self.n_paths):
             raise ValueError(
-                    f'The path index {i} does not exist in the '
-                    'summary dataframe. Resummarise the skeleton.'
+                    f'The path index {np.max(indices)} does not exist in this '
+                    f'skeleton. (The highest path index is {self.n_paths}.)\n'
+                    'If you obtained the index from a summary table, you '
+                    'probably need to resummarize the skeleton.'
                     )
         for i in indices:
             pixel_ids_to_wipe = self.path(i)
