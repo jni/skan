@@ -87,7 +87,7 @@ def process_images(
         brightness_offset,
         scale_metadata_path,
         crop_radius=0,
-        smooth_method="Gaussian",
+        smooth_method='Gaussian',
         num_threads=CPU_COUNT,
         ):
     """Full pipeline from images to skeleton stats with local median threshold.
@@ -150,7 +150,7 @@ def process_images(
                     )
             image_stats['filename'] = filename
             image_stats['branch density'] = (
-                    framedata.shape[0] / image_stats["area"]
+                    framedata.shape[0] / image_stats['area']
                     )
             j2j = framedata[framedata['branch_type'] == 2]
             image_stats['mean J2J branch distance'] = (
