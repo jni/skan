@@ -1,15 +1,28 @@
 from collections import defaultdict
 
 import pytest
+import networkx as nx
 import numpy as np
+import numpy.typing as npt
 from numpy.testing import assert_equal, assert_almost_equal
+import pandas as pd
 from skimage.draw import line
 
 from skan import csr, summarize
 from skan._testdata import (
-        tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
-        topograph1d, skeleton4, skeleton_loop1, skeleton_loop2,
-        skeleton_linear1, skeleton_linear2, skeleton_linear3
+        tinycycle,
+        tinyline,
+        skeleton0,
+        skeleton1,
+        skeleton2,
+        skeleton3d,
+        topograph1d,
+        skeleton4,
+        skeleton_loop1,
+        skeleton_loop2,
+        skeleton_linear1,
+        skeleton_linear2,
+        skeleton_linear3,
         )
 
 
@@ -20,7 +33,7 @@ def _old_branch_statistics(
             skeleton_image, spacing=spacing, value_is_height=value_is_height
             )
     summary = csr.summarize(skel, value_is_height=value_is_height)
-    columns = ['node-id-src', 'node-id-dst', 'branch-distance', 'branch-type']
+    columns = ["node-id-src", "node-id-dst", "branch-distance", "branch-type"]
     return summary[columns].to_numpy()
 
 
@@ -56,22 +69,22 @@ def test_skeleton1_stats():
 
 def test_2skeletons():
     df = csr.summarize(csr.Skeleton(skeleton2))
-    assert_almost_equal(np.unique(df['euclidean-distance']), np.sqrt([5, 10]))
-    assert_equal(np.unique(df['skeleton-id']), [0, 1])
-    assert_equal(np.bincount(df['branch-type']), [0, 4, 4])
+    assert_almost_equal(np.unique(df["euclidean-distance"]), np.sqrt([5, 10]))
+    assert_equal(np.unique(df["skeleton-id"]), [0, 1])
+    assert_equal(np.bincount(df["branch-type"]), [0, 4, 4])
 
 
 def test_summarize_spacing():
     df = csr.summarize(csr.Skeleton(skeleton2))
     df2 = csr.summarize(csr.Skeleton(skeleton2, spacing=2))
-    assert_equal(np.array(df['node-id-src']), np.array(df2['node-id-src']))
+    assert_equal(np.array(df["node-id-src"]), np.array(df2["node-id-src"]))
     assert_almost_equal(
-            np.array(df2['euclidean-distance']),
-            np.array(2 * df['euclidean-distance'])
+            np.array(df2["euclidean-distance"]),
+            np.array(2 * df["euclidean-distance"])
             )
     assert_almost_equal(
-            np.array(df2['branch-distance']),
-            np.array(2 * df['branch-distance'])
+            np.array(df2["branch-distance"]),
+            np.array(2 * df["branch-distance"])
             )
 
 
@@ -109,8 +122,8 @@ def test_topograph_summary():
             csr.Skeleton(topograph1d, spacing=2.5, value_is_height=True),
             value_is_height=True,
             )
-    assert stats.loc[0, 'euclidean-distance'] == 5.0
-    columns = ['coord-src-0', 'coord-src-1', 'coord-dst-0', 'coord-dst-1']
+    assert stats.loc[0, "euclidean-distance"] == 5.0
+    columns = ["coord-src-0", "coord-src-1", "coord-dst-0", "coord-dst-1"]
     assert_almost_equal(sorted(stats.loc[0, columns]), [0, 3, 3, 5])
 
 
@@ -125,12 +138,12 @@ def test_multiplicity_stats():
     stats1 = csr.summarize(csr.Skeleton(skeleton0))
     stats2 = csr.summarize(csr.Skeleton(skeleton0, spacing=2))
     assert_almost_equal(
-            2 * stats1['branch-distance'].values,
-            stats2['branch-distance'].values
+            2 * stats1["branch-distance"].values,
+            stats2["branch-distance"].values
             )
     assert_almost_equal(
-            2 * stats1['euclidean-distance'].values,
-            stats2['euclidean-distance'].values
+            2 * stats1["euclidean-distance"].values,
+            stats2["euclidean-distance"].values
             )
 
 
@@ -138,7 +151,7 @@ def test_pixel_values():
     image = np.random.random((45,))
     expected = np.mean(image)
     stats = csr.summarize(csr.Skeleton(image))
-    assert_almost_equal(stats.loc[0, 'mean-pixel-value'], expected)
+    assert_almost_equal(stats.loc[0, "mean-pixel-value"], expected)
 
 
 def test_tip_junction_edges():
@@ -173,7 +186,7 @@ def test_transpose_image():
     skeleton1 = csr.Skeleton(image)
     skeleton2 = csr.Skeleton(image.T)
 
-    assert (skeleton1.n_paths == skeleton2.n_paths)
+    assert skeleton1.n_paths == skeleton2.n_paths
     np.testing.assert_allclose(
             np.sort(skeleton1.path_lengths()),
             np.sort(skeleton2.path_lengths()),
@@ -184,25 +197,40 @@ def test_transpose_image():
         "skeleton,prune_branch,target",
         [
                 (
-                        skeleton1, 1,
-                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
-                                  [0, 1, 1, 0, 1, 1, 0], [0, 0, 0, 1, 0, 0, 0],
-                                  [0, 0, 0, 0, 0, 0, 0]])
+                        skeleton1,
+                        1,
+                        np.array([
+                                [0, 1, 1, 1, 1, 1, 0],
+                                [1, 0, 0, 0, 0, 0, 1],
+                                [0, 1, 1, 0, 1, 1, 0],
+                                [0, 0, 0, 1, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0],
+                                ]),
                         ),
                 (
-                        skeleton1, 2,
-                        np.array([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
-                                  [0, 1, 0, 0, 0, 0, 0], [1, 0, 0, 2, 0, 0, 0],
-                                  [1, 0, 0, 0, 2, 2, 2]])
+                        skeleton1,
+                        2,
+                        np.array([
+                                [0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0],
+                                [0, 1, 0, 0, 0, 0, 0],
+                                [1, 0, 0, 2, 0, 0, 0],
+                                [1, 0, 0, 0, 2, 2, 2],
+                                ]),
                         ),
                 # There are no isolated cycles to be pruned
                 (
-                        skeleton1, 3,
-                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
-                                  [0, 3, 2, 0, 1, 1, 0], [3, 0, 0, 4, 0, 0, 0],
-                                  [3, 0, 0, 0, 4, 4, 4]])
+                        skeleton1,
+                        3,
+                        np.array([
+                                [0, 1, 1, 1, 1, 1, 0],
+                                [1, 0, 0, 0, 0, 0, 1],
+                                [0, 3, 2, 0, 1, 1, 0],
+                                [3, 0, 0, 4, 0, 0, 0],
+                                [3, 0, 0, 0, 4, 4, 4],
+                                ]),
                         ),
-                ]
+                ],
         )
 def test_prune_paths(
         skeleton: np.ndarray, prune_branch: int, target: np.ndarray
@@ -210,7 +238,7 @@ def test_prune_paths(
     """Test pruning of paths."""
     s = csr.Skeleton(skeleton, keep_images=True)
     summary = summarize(s)
-    indices_to_remove = summary.loc[summary['branch-type'] == prune_branch
+    indices_to_remove = summary.loc[summary["branch-type"] == prune_branch
                                     ].index
     pruned = s.prune_paths(indices_to_remove)
     np.testing.assert_array_equal(pruned, target)
@@ -221,7 +249,7 @@ def test_prune_paths_exception_single_point() -> None:
     can not be created and returned."""
     s = csr.Skeleton(skeleton0)
     summary = summarize(s)
-    indices_to_remove = summary.loc[summary['branch-type'] == 1].index
+    indices_to_remove = summary.loc[summary["branch-type"] == 1].index
     with pytest.raises(ValueError):
         s.prune_paths(indices_to_remove)
 
@@ -302,7 +330,8 @@ def test_zero_degree_nodes():
 
 
 @pytest.mark.parametrize(
-        "skeleton, paths, branch_type, branch_distance, euclidean_distance", [
+        "skeleton, paths, branch_type, branch_distance, euclidean_distance",
+        [
                 [skeleton_loop1, 1, 3, 159.23759005323606, 0],
                 [skeleton_loop2, 1, 3, 161.33809511662434, 0],
                 [
@@ -310,7 +339,7 @@ def test_zero_degree_nodes():
                         114.84337159801605
                         ],
                 [skeleton_linear2, 1, 0, 84.15432893255064, 71.30918594402827],
-                ]
+                ],
         )
 def test_iteratively_prune_paths(
         skeleton: np.ndarray, paths: int, branch_type: int,
@@ -327,11 +356,14 @@ def test_iteratively_prune_paths(
 
 
 @pytest.mark.parametrize(
-        "skeleton, paths, branch_type, branch_distance, euclidean_distance", [[
-                skeleton_linear3, 3, [0, 0, 0],
+        "skeleton, paths, branch_type, branch_distance, euclidean_distance",
+        [[
+                skeleton_linear3,
+                3,
+                [0, 0, 0],
                 [164.05382386916244, 20.656854249492383, 29.485281374238575],
-                [110.11357772772621, 19.4164878389476, 24.186773244895647]
-                ]]
+                [110.11357772772621, 19.4164878389476, 24.186773244895647],
+                ]],
         )
 def test_iteratively_prune_multiple_paths(
         skeleton: np.ndarray, paths: int, branch_type: int,
@@ -346,6 +378,7 @@ def test_iteratively_prune_multiple_paths(
     assert list(skeleton_summary["branch-distance"]) == branch_distance
     assert list(skeleton_summary["euclidean-distance"]) == euclidean_distance
 
+
 def test_skeleton_path_image_no_keep_image():
     """See #208: "Skeleton.path_label_image requires keep_images=True."
 
@@ -357,3 +390,62 @@ def test_skeleton_path_image_no_keep_image():
     s = csr.Skeleton(skeleton2, keep_images=False)
     pli = s.path_label_image()
     assert np.max(pli) == s.n_paths
+
+
+@pytest.mark.parametrize(
+        ("np_skeleton", "n"),
+        [
+                (tinycycle, 3),
+                #        (tinyline, 5),
+                (skeleton0, 7),
+                (skeleton1, 7),
+                (skeleton2, 14),
+                (np.random.choice((0, 1), size=(2, 18)), 18),
+                (np.random.choice((0, 1), size=(37, 4)), 37),
+                (np.random.choice((0, 1), size=(42, 42)), 42),
+                ]
+        )
+def test_pad_non_square_arrays(np_skeleton: npt.NDArray, n: int) -> None:
+    """Test padding of non-square arrays."""
+    padded_array = csr._pad_non_square_arrays(np_skeleton)
+    padded_nrows, padded_ncols = padded_array.shape
+    assert padded_nrows == n
+    assert padded_ncols == n
+
+
+@pytest.mark.parametrize(
+        ("np_skeleton", "summary", "nodes", "edges"),
+        [
+                (skeleton0, summarize(csr.Skeleton(skeleton0)), 4, 3),
+                # (skeleton1, None, 4, 3),
+                # (skeleton1, summarize(csr.Skeleton(skeleton1)), 4, 3),
+                # (skeleton2, summarize(csr.Skeleton(skeleton2)), 8, 6),
+                # (skeleton3d, None, 7, 7),
+                # (skeleton_loop1, None, 10, 10),
+                # (skeleton_linear1, None, 24, 23),
+                ],
+        )
+def test_skeleton_to_nx(
+        np_skeleton: npt.NDArray, summary: pd.DataFrame, nodes: int, edges: int
+        ) -> None:
+    """Test creation of NetworkX Graph from skeletons arrays and summary."""
+    print(f"np_skeleton : \n{np_skeleton}")
+    skeleton = csr.Skeleton(np_skeleton)
+    # skan_nx = csr.skeleton_to_nx(skeleton, summary)
+    skan_nx = csr.skeleton_to_nx(skeleton.skeleton_image)
+    assert skan_nx.number_of_nodes() == nodes
+    assert skan_nx.number_of_edges() == edges
+    assert False
+
+
+@pytest.mark.parametrize("np_skeleton", [(skeleton0)])
+def test_nx_to_skeleton(np_skeleton: npt.NDArray) -> None:
+    """Test converting Networkx graph to Skeleton object."""
+    skeleton = csr.Skeleton(np_skeleton)
+    summary = summarize(skeleton)
+    # skan_nx = csr.skeleton_to_nx(skeleton, summary)
+    skan_nx = csr.skeleton_to_nx(skeleton.skeleton_image)
+    new_skeleton = csr.nx_to_skeleton(skan_nx)
+    assert np.testing.assert_array_equal(
+            new_skeleton, csr._pad_non_square_arrays(np_skeleton)
+            )

@@ -1205,19 +1205,80 @@ def sholl_analysis(skeleton, center=None, shells=None):
     return center, shell_radii, intersection_counts
 
 
-def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
-    """Convert a Skeleton object to a networkx Graph."""
-    if summary is None:
-        summary = summarize(skeleton)
-    summary_future = summary.rename(columns=lambda s: s.replace('-', '_'))
-    g = nx.Graph()
-    for row in summary_future.itertuples(name='Edge'):
-        i, j = row.node_id_src, row.node_id_dst
-        g.add_edge(i, j, **row._asdict())
-        g.edges[i, j]['path'] = skeleton.path_coordinates(row.Index)
-        g.nodes[i]['pos'] = skeleton.coordinates[i]
-        g.nodes[j]['pos'] = skeleton.coordinates[j]
-    return g
+# def skeleton_to_nx(
+#         skeleton: Skeleton, summary: pd.DataFrame | None = None
+#         ) -> nx.Graph:
+#     """Convert a Skeleton object to a networkx Graph.
+
+#     Parameters
+#     ----------
+#     skeleton : Skeleton
+#         Skeleton object to be converted.
+#     summary : pd.DataFrame, optional
+#         If the skeleton has already been summarized() pass it in, if not provided it will be summarized.
+
+#     Raises
+#     ------
+#     TypeError
+#         If a Numpy array is passed by mistake an error is raised.
+
+#     Returns
+#     -------
+#     nx.Graph
+#         Returns a networkx Graph
+#     """
+#     if isinstance(skeleton, np.ndarray):
+#         raise TypeError(
+#                 'You have passed a Numpy array, please convert to Skeleton first.'
+#                 )
+#     if summary is None:
+#         summary = summarize(skeleton)
+#     summary_future = summary.rename(columns=lambda s: s.replace('-', '_'))
+#     g = nx.Graph()
+#     for row in summary_future.itertuples(name='Edge'):
+#         i, j = row.node_id_src, row.node_id_dst
+#         g.add_edge(i, j, **row._asdict())
+#         g.edges[i, j]['path'] = skeleton.path_coordinates(row.Index)
+#         g.nodes[i]['pos'] = skeleton.coordinates[i]
+#         g.nodes[j]['pos'] = skeleton.coordinates[j]
+#     return g
+
+
+def skeleton_to_nx(adjacency_array: npt.NDArray) -> nx.Graph:
+    nrows, ncols = adjacency_array.shape
+    if nrows / ncols != 1:
+        adjacency_array = _pad_non_square_arrays(adjacency_array)
+    return nx.from_numpy_array(adjacency_array)
+
+
+def _pad_non_square_arrays(adjacency_array: npt.NDArray) -> npt.NDArray:
+    """Pad a non-square adjacency array with zeros so that it is square.
+
+    The NetworkX method from_numpy_array() only works with square arrays. We therefore need to pad non-square arrays to
+    conveniently convert them to NetworkX graph objects.
+
+    Parameters
+    ----------
+    adjacency_array : npt.NDArray
+        2-D Numpy adjaceny array with uneven dimensions.
+
+    Returns
+    -------
+    npt.NDArray
+        Padded array where ncols equals nrows.
+    """
+    try:
+        nrows, ncols = adjacency_array.shape
+        print(adjacency_array.shape)
+    except ValueError:
+        nrows, ncols = (1, len(adjacency_array))
+    if nrows / ncols < 1:
+        pad_width = ((0, ncols - nrows), (0, 0))
+    elif nrows / ncols > 1:
+        pad_width = ((0, 0), (0, nrows - ncols))
+    else:
+        pad_width = ((0, 0), (0, 0))
+    return np.pad(adjacency_array, pad_width)
 
 
 def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
@@ -1263,12 +1324,30 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
     g.remove_node(middle_node)
 
 
-def _remove_simple_path_nodes(g):
+def _remove_simple_path_nodes(g: nx.Graph):
     """Remove any nodes of degree 2 by merging their incident edges."""
     to_remove = [n for n in g.nodes if g.degree(n) == 2]
     for u in to_remove:
         v, w = g[u].keys()
         _merge_edges(g, (u, v), (u, w))
+
+
+def nx_to_skeleton(g: nx.Graph) -> Skeleton:
+    """Convert networkx graph to Skeleton.
+
+    Parameters
+    ----------
+    g : nx.Graph
+        Networkx graph object.
+
+    Returns
+    -------
+    Skeleton
+        Skeleton object.
+
+    """
+    return Skeleton(nx.to_numpy_array(g))
+    # return nx.to_numpy_array(g)
 
 
 def iteratively_prune_paths(
