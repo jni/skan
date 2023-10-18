@@ -88,8 +88,8 @@ Documentation = "https://skeleton-analysis.org/stable/"
 include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["src"]
+where = ["src"]
+include = ["skan"]
 exclude = ["doc"]
 
 [tool.setuptools.package-data]
