@@ -504,10 +504,10 @@ class Skeleton:
                 spacing=spacing,
                 value_is_height=value_is_height,
                 )
-        if np.issubdtype(skeleton_image.dtype, np.float_):
-            self.pixel_values = skeleton_image[coords]
-        else:
+        if np.issubdtype(skeleton_image.dtype, np.bool_):
             self.pixel_values = None
+        else:
+            self.pixel_values = skeleton_image[coords]
         self.graph = graph
         self.nbgraph = csr_to_nbgraph(graph, self.pixel_values)
         self.coordinates = np.transpose(coords)
