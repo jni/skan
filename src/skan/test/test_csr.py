@@ -315,3 +315,4 @@ def test_skeleton_path_image_no_keep_image():
 def test_skeletonlabel():
     stats = csr.summarize(csr.Skeleton(skeletonlabel))
     assert stats['mean-pixel-value'].max() == skeletonlabel.max()
+    assert stats['mean-pixel-value'].max() > 1
