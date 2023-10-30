@@ -69,7 +69,7 @@ testing = [
     'tifffile',
 ]
 docs = [
-    'napari[all]<0.4.18',
+    'napari[all]>=0.4.19rc1',
     'sphinx',
     'jupyter',
     'notebook',
