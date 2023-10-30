@@ -1,0 +1,39 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 173, in wrapped
+    return loop.run_until_complete(inner)
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+blobs = binary_blobs(64, volume_fraction=0.3, n_dim=3)
+binary_skeleton = skeletonize(blobs)
+skeleton = skan.Skeleton(binary_skeleton)
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mAttributeError[0m                            Traceback (most recent call last)
+Cell [0;32mIn[2], line 3[0m
+[1;32m      1[0m blobs [38;5;241m=[39m binary_blobs([38;5;241m64[39m, volume_fraction[38;5;241m=[39m[38;5;241m0.3[39m, n_dim[38;5;241m=[39m[38;5;241m3[39m)
+[1;32m      2[0m binary_skeleton [38;5;241m=[39m skeletonize(blobs)
+[0;32m----> 3[0m skeleton [38;5;241m=[39m [43mskan[49m[38;5;241;43m.[39;49m[43mSkeleton[49m[43m([49m[43mbinary_skeleton[49m[43m)[49m
+
+File [0;32m/opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/skan/csr.py:514[0m, in [0;36mSkeleton.__init__[0;34m(self, skeleton_image, spacing, source_image, keep_images, value_is_height)[0m
+[1;32m    512[0m     [38;5;28mself[39m[38;5;241m.[39mpixel_values [38;5;241m=[39m [38;5;28;01mNone[39;00m
+[1;32m    513[0m [38;5;28mself[39m[38;5;241m.[39mgraph [38;5;241m=[39m graph
+[0;32m--> 514[0m [38;5;28mself[39m[38;5;241m.[39mnbgraph [38;5;241m=[39m csr_to_nbgraph(graph, [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mpixel_values[49m)
+[1;32m    515[0m [38;5;28mself[39m[38;5;241m.[39mcoordinates [38;5;241m=[39m np[38;5;241m.[39mtranspose(coords)
+[1;32m    516[0m [38;5;28mself[39m[38;5;241m.[39mpaths [38;5;241m=[39m _build_skeleton_path_graph([38;5;28mself[39m[38;5;241m.[39mnbgraph)
+
+[0;31mAttributeError[0m: 'Skeleton' object has no attribute 'pixel_values'
+
