@@ -61,7 +61,7 @@ all = [
 testing = [
     'coverage',
     'hypothesis',
-    'napari[pyqt5]!=0.4.18',
+    'napari[pyqt5]>=0.4.19rc1',
     'pytest',
     'pytest-cov',
     'pytest-qt',
