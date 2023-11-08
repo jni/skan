@@ -1205,80 +1205,127 @@ def sholl_analysis(skeleton, center=None, shells=None):
     return center, shell_radii, intersection_counts
 
 
-# def skeleton_to_nx(
-#         skeleton: Skeleton, summary: pd.DataFrame | None = None
-#         ) -> nx.Graph:
-#     """Convert a Skeleton object to a networkx Graph.
-
-#     Parameters
-#     ----------
-#     skeleton : Skeleton
-#         Skeleton object to be converted.
-#     summary : pd.DataFrame, optional
-#         If the skeleton has already been summarized() pass it in, if not provided it will be summarized.
-
-#     Raises
-#     ------
-#     TypeError
-#         If a Numpy array is passed by mistake an error is raised.
-
-#     Returns
-#     -------
-#     nx.Graph
-#         Returns a networkx Graph
-#     """
-#     if isinstance(skeleton, np.ndarray):
-#         raise TypeError(
-#                 'You have passed a Numpy array, please convert to Skeleton first.'
-#                 )
-#     if summary is None:
-#         summary = summarize(skeleton)
-#     summary_future = summary.rename(columns=lambda s: s.replace('-', '_'))
-#     g = nx.Graph()
-#     for row in summary_future.itertuples(name='Edge'):
-#         i, j = row.node_id_src, row.node_id_dst
-#         g.add_edge(i, j, **row._asdict())
-#         g.edges[i, j]['path'] = skeleton.path_coordinates(row.Index)
-#         g.nodes[i]['pos'] = skeleton.coordinates[i]
-#         g.nodes[j]['pos'] = skeleton.coordinates[j]
-#     return g
-
-
-def skeleton_to_nx(adjacency_array: npt.NDArray) -> nx.Graph:
-    nrows, ncols = adjacency_array.shape
-    if nrows / ncols != 1:
-        adjacency_array = _pad_non_square_arrays(adjacency_array)
-    return nx.from_numpy_array(adjacency_array)
-
-
-def _pad_non_square_arrays(adjacency_array: npt.NDArray) -> npt.NDArray:
-    """Pad a non-square adjacency array with zeros so that it is square.
-
-    The NetworkX method from_numpy_array() only works with square arrays. We therefore need to pad non-square arrays to
-    conveniently convert them to NetworkX graph objects.
+def skeleton_to_nx(
+        skeleton: Skeleton, summary: pd.DataFrame | None = None
+        ) -> nx.Graph:
+    """Convert a Skeleton object to a networkx Graph.
 
     Parameters
     ----------
-    adjacency_array : npt.NDArray
-        2-D Numpy adjaceny array with uneven dimensions.
+    skeleton : Skeleton
+        Skeleton object to be converted.
+    summary : pd.DataFrame, optional
+        If the skeleton has already been summarized() pass it in, if not provided it will be summarized.
+
+    Raises
+    ------
+    TypeError
+        If a Numpy array is passed by mistake an error is raised.
+
+    Returns
+    -------
+    nx.Graph
+        Returns a networkx Graph
+    """
+    if isinstance(skeleton, np.ndarray):
+        raise TypeError(
+                'You have passed a Numpy array, please convert to Skeleton first.'
+                )
+    if summary is None:
+        summary = summarize(skeleton)
+    summary_future = summary.rename(columns=lambda s: s.replace('-', '_'))
+    g = nx.Graph()
+    for row in summary_future.itertuples(name='Edge'):
+        i, j = row.node_id_src, row.node_id_dst
+        g.add_edge(i, j, **row._asdict())
+        g.edges[i, j]['path'] = skeleton.path_coordinates(row.Index)
+        g.nodes[i]['pos'] = skeleton.coordinates[i]
+        g.nodes[j]['pos'] = skeleton.coordinates[j]
+    return g
+
+
+def array_to_nx(array: npt.NDArray) -> nx.Graph:
+    """Convert an image array into a NetworkX graph where each pixel is a node.
+
+    Parameters
+    ----------
+    array: npt.NDArray
+        Binary skeleton as Numpy Array
+
+    Returns
+    -------
+    nx.Graph
+        NetworkX Graph where every cell in an array is a node connected to adjacent cells. The shape of the original
+    array and the co-ordinates of nodes are stored in the Networkx.graph dictionary under the keys 'skeleton_shape' and
+    'skeleton_coordinates' respectively.
+    """
+    g = nx.Graph()
+    skeleton_coordinates = np.argwhere(array != 0)
+    for node in skeleton_coordinates:
+        neighbours = _get_neighbours(
+                node, exclude_node=True, shape=array.shape
+                )
+        for neighbour in neighbours:
+            # If neighbouring cell is non-zero its a node and we add an edge
+            # TODO : Generalise to 3D
+            if array[neighbour[0], neighbour[1]] > 0:
+                g.add_edge(tuple(node), tuple(neighbour))
+    # Store the original shape in the returned graph object for reconstructing
+    g.graph["skeleton_shape"] = array.shape
+    return g
+
+
+def nx_to_array(graph: nx.Graph) -> npt.NDArray:
+    """Convert a NetworkX graph to Numpy Array."""
+    array = np.zeros(graph.graph["skeleton_shape"])
+    print(f"{array=}")
+    for node in graph:
+        array[node] = 1
+    print(f"{array=}")
+    return np.array(array, dtype=bool)
+
+
+def _get_neighbours(
+        node: npt.NDArray,
+        exclude_node: bool = True,
+        shape: npt.NDArray = None
+        ) -> npt.NDArray:
+    """Get the co-ordinates of adjacent cells for an arbitrary co-ordinate.
+
+    Determine the adjacent nodes for a given co-ordinate. Not original, taken from
+    https://stackoverflow.com/a/34908879/1444043
+
+    Parameters
+    ----------
+    node : npt.NDArray
+        Co-ordinates of a node.
+    exclude_node : bool
+        Exclude the node itself from the returned list of co-ordinates.
+    shape : npt.NDArray
+        Shape of array from which the co-ordinate is derived.
 
     Returns
     -------
     npt.NDArray
-        Padded array where ncols equals nrows.
+        An array of co-ordinates for adjacent cells.
+
     """
-    try:
-        nrows, ncols = adjacency_array.shape
-        print(adjacency_array.shape)
-    except ValueError:
-        nrows, ncols = (1, len(adjacency_array))
-    if nrows / ncols < 1:
-        pad_width = ((0, ncols - nrows), (0, 0))
-    elif nrows / ncols > 1:
-        pad_width = ((0, 0), (0, nrows - ncols))
-    else:
-        pad_width = ((0, 0), (0, 0))
-    return np.pad(adjacency_array, pad_width)
+    ndim = len(node)
+    # generate an (m, ndims) array containing all strings over the alphabet {0, 1, 2}:
+    offset_idx = np.indices((3,) * ndim).reshape(ndim, -1).T
+    # use these to index into np.array([-1, 0, 1]) to get offsets
+    offsets = np.r_[-1, 0, 1].take(offset_idx)
+    # optional: exclude offsets of 0, 0, ..., 0 (i.e. node itself)
+    if exclude_node:
+        offsets = offsets[np.any(offsets, 1)]
+    neighbours = node + offsets  # apply offsets to p
+    # optional: exclude out-of-bounds indices
+    if shape is not None:
+        valid = np.all((neighbours < np.array(shape)) & (neighbours >= 0),
+                       axis=1)
+        neighbours = neighbours[valid]
+
+    return neighbours
 
 
 def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
