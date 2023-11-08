@@ -1256,8 +1256,8 @@ def array_to_nx(array: npt.NDArray) -> nx.Graph:
     -------
     nx.Graph
         NetworkX Graph where every cell in an array is a node connected to adjacent cells. The shape of the original
-    array and the co-ordinates of nodes are stored in the Networkx.graph dictionary under the keys 'skeleton_shape' and
-    'skeleton_coordinates' respectively.
+    array is stored in the Networkx.graph dictionary under the key 'skeleton_shape' and can be used when reconstructing
+    the Numpy Array.
     """
     g = nx.Graph()
     skeleton_coordinates = np.argwhere(array != 0)
