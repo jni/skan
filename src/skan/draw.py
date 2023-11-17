@@ -142,8 +142,8 @@ def overlay_euclidean_skeleton_2d(
     image = _normalise_image(image, image_cmap=image_cmap)
     summary = stats
     # transforming from row, col to x, y
-    coords_cols = ['image_coord_src_%i' % i for i in [1, 0]
-                   ] + ['image_coord_dst_%i' % i for i in [1, 0]]
+    coords_cols = (['image_coord_src_%i' % i for i in [1, 0]]
+                   + ['image_coord_dst_%i' % i for i in [1, 0]])
     coords = summary[coords_cols].values.reshape((-1, 2, 2))
     if axes is None:
         fig, axes = plt.subplots()

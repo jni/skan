@@ -10,7 +10,7 @@ from skimage.feature import shape_index
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import multiprocessing as mp
 
-CPU_COUNT = int(os.environ.get("CPU_COUNT", mp.cpu_count()))
+CPU_COUNT = int(os.environ.get('CPU_COUNT', mp.cpu_count()))
 
 
 def _get_scale(image, md_path_or_scale):
@@ -67,7 +67,7 @@ def process_single_image(
             sigma=pixel_smoothing_radius,
             radius=pixel_threshold_radius,
             offset=brightness_offset,
-            smooth_method=smooth_method,
+            smooth_method=smooth_method
             )
     quality = shape_index(image, sigma=pixel_smoothing_radius, mode='reflect')
     skeleton = morphology.skeletonize(thresholded) * quality
@@ -94,7 +94,7 @@ def process_images(
         scale_metadata_path,
         crop_radius=0,
         smooth_method='Gaussian',
-        num_threads=CPU_COUNT,
+        num_threads=CPU_COUNT
         ):
     """Full pipeline from images to skeleton stats with local median threshold.
 
@@ -134,7 +134,7 @@ def process_images(
         Finally, after all the images have been processed, the pipeline yields
         a DataFrame containing all the collated branch-level results.
     """
-    image_format = None if image_format == "auto" else image_format
+    image_format = None if image_format == 'auto' else image_format
     results = []
     image_results = []
     with ThreadPoolExecutor(max_workers=num_threads) as ex:
