@@ -45,8 +45,14 @@ def _get_scale(image, md_path_or_scale):
 
 
 def process_single_image(
-        filename, image_format, scale_metadata_path, threshold_radius,
-        smooth_radius, brightness_offset, crop_radius, smooth_method,
+        filename,
+        image_format,
+        scale_metadata_path,
+        threshold_radius,
+        smooth_radius,
+        brightness_offset,
+        crop_radius,
+        smooth_method,
         ):
     image = imageio.v2.imread(filename, format=image_format)
     scale = _get_scale(image, scale_metadata_path)
@@ -134,9 +140,15 @@ def process_images(
     with ThreadPoolExecutor(max_workers=num_threads) as ex:
         future_data = {
                 ex.submit(
-                        process_single_image, filename, image_format,
-                        scale_metadata_path, threshold_radius, smooth_radius,
-                        brightness_offset, crop_radius, smooth_method,
+                        process_single_image,
+                        filename,
+                        image_format,
+                        scale_metadata_path,
+                        threshold_radius,
+                        smooth_radius,
+                        brightness_offset,
+                        crop_radius,
+                        smooth_method,
                         ): filename
                 for filename in filenames
                 }
