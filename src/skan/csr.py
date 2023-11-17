@@ -189,7 +189,7 @@ NBGraphBool = numba.experimental.jitclass(NBGraphBase, csr_spec_bool)
 
 def csr_to_nbgraph(csr, node_props=None):
     if node_props is None:
-        node_props = np.broadcast_to(1, csr.shape[0])
+        node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
             csr.indptr, csr.indices, csr.data,
@@ -385,9 +385,9 @@ def _build_skeleton_path_graph(graph):
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
             graph.indptr, graph.indices, visited_data, graph.shape,
-            np.broadcast_to(1, graph.shape[0])
+            np.broadcast_to(1., graph.shape[0])
             )
-    endpoints = degrees != 2
+    endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
     num_paths = np.sum(endpoint_degrees)
     path_indptr = np.zeros(num_paths + buffer_size_offset, dtype=int)
@@ -398,9 +398,10 @@ def _build_skeleton_path_graph(graph):
     # cycles (since each cycle has one index repeated). We don't know
     # the number of cycles ahead of time, but it is bounded by one quarter
     # of the number of points.
-    n_points = graph.indices.size + np.sum(
-            np.maximum(0, endpoint_degrees - 1)
-            ) + buffer_size_offset
+    n_points = (
+            graph.indices.size + np.sum(np.maximum(0, endpoint_degrees - 1))
+            + buffer_size_offset
+            )
     path_indices = np.zeros(n_points, dtype=int)
     path_data = np.zeros(path_indices.shape, dtype=float)
     m, n = _build_paths(
@@ -762,9 +763,9 @@ def summarize(
                 [coords_real_dst, values_dst[:, np.newaxis]],
                 axis=1,
                 )
-    summary['euclidean_distance'] = np.sqrt(
-            (coords_real_dst - coords_real_src)**2
-            @ np.ones(ndim + int(value_is_height))
+    summary['euclidean_distance'] = (
+            np.sqrt((coords_real_dst - coords_real_src)**2
+                    @ np.ones(ndim + int(value_is_height)))
             )
     df = pd.DataFrame(summary)
 
@@ -1010,13 +1011,11 @@ def make_degree_image(skeleton_image):
                 degree_kernel,
                 mode='constant',
                 ) * bool_skeleton
-
     # use dask image for any array other than a numpy array (which isn't
     # supported yet anyway)
     else:
         import dask.array as da
         from dask_image.ndfilters import convolve as dask_convolve
-
         if isinstance(bool_skeleton, da.Array):
             degree_image = bool_skeleton * dask_convolve(
                     bool_skeleton.astype(int), degree_kernel, mode='constant'
@@ -1131,7 +1130,7 @@ def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
                 'the spacing between shells is smaller than the (diagonal) '
                 f'voxel spacing. The given voxel spacing is {sp}, and the '
                 f'smallest shell spacing is {sh}.',
-                stacklevel=2,
+                stacklevel=2
                 )
     return shell_radii
 

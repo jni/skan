@@ -5,7 +5,9 @@ from numpy.testing import assert_allclose
 import pytest
 from skan.csr import Skeleton, summarize
 
-from skan._testdata import tinycycle, skeleton1, skeleton2, skeleton3d, skeleton4, junction_first
+from skan._testdata import (
+        tinycycle, skeleton1, skeleton2, skeleton3d, skeleton4, junction_first
+        )
 
 
 def test_tiny_cycle():

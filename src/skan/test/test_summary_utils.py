@@ -16,6 +16,7 @@ def test_find_main():
     coords = non_main_df[[
             'coord_src_0', 'coord_src_1', 'coord_dst_0', 'coord_dst_1'
             ]].to_numpy()
-    assert np.all(
-            coords == non_main_edge_start + non_main_edge_finish
-            ) or np.all(coords == non_main_edge_finish + non_main_edge_start)
+    assert (
+            np.all(coords == non_main_edge_start + non_main_edge_finish)
+            or np.all(coords == non_main_edge_finish + non_main_edge_start)
+            )

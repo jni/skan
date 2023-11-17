@@ -140,15 +140,9 @@ def process_images(
     with ThreadPoolExecutor(max_workers=num_threads) as ex:
         future_data = {
                 ex.submit(
-                        process_single_image,
-                        filename,
-                        image_format,
-                        scale_metadata_path,
-                        threshold_radius,
-                        smooth_radius,
-                        brightness_offset,
-                        crop_radius,
-                        smooth_method,
+                        process_single_image, filename, image_format,
+                        scale_metadata_path, threshold_radius, smooth_radius,
+                        brightness_offset, crop_radius, smooth_method
                         ): filename
                 for filename in filenames
                 }

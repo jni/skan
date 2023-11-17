@@ -201,7 +201,7 @@ def test_transpose_image():
                                   [0, 3, 2, 0, 1, 1, 0], [3, 0, 0, 4, 0, 0, 0],
                                   [3, 0, 0, 0, 4, 4, 4]])
                         ),
-                ],
+                ]
         )
 def test_prune_paths(
         skeleton: np.ndarray, prune_branch: int, target: np.ndarray
