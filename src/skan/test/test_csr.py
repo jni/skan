@@ -183,38 +183,23 @@ def test_transpose_image():
         'skeleton,prune_branch,target',
         [
                 (
-                        skeleton1,
-                        1,
-                        np.array([
-                                [0, 1, 1, 1, 1, 1, 0],
-                                [1, 0, 0, 0, 0, 0, 1],
-                                [0, 1, 1, 0, 1, 1, 0],
-                                [0, 0, 0, 1, 0, 0, 0],
-                                [0, 0, 0, 0, 0, 0, 0],
-                                ]),
+                        skeleton1, 1,
+                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
+                                  [0, 1, 1, 0, 1, 1, 0], [0, 0, 0, 1, 0, 0, 0],
+                                  [0, 0, 0, 0, 0, 0, 0]])
                         ),
                 (
-                        skeleton1,
-                        2,
-                        np.array([
-                                [0, 0, 0, 0, 0, 0, 0],
-                                [0, 0, 0, 0, 0, 0, 0],
-                                [0, 1, 0, 0, 0, 0, 0],
-                                [1, 0, 0, 2, 0, 0, 0],
-                                [1, 0, 0, 0, 2, 2, 2],
-                                ]),
+                        skeleton1, 2,
+                        np.array([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                                  [0, 1, 0, 0, 0, 0, 0], [1, 0, 0, 2, 0, 0, 0],
+                                  [1, 0, 0, 0, 2, 2, 2]])
                         ),
                 # There are no isolated cycles to be pruned
                 (
-                        skeleton1,
-                        3,
-                        np.array([
-                                [0, 1, 1, 1, 1, 1, 0],
-                                [1, 0, 0, 0, 0, 0, 1],
-                                [0, 3, 2, 0, 1, 1, 0],
-                                [3, 0, 0, 4, 0, 0, 0],
-                                [3, 0, 0, 0, 4, 4, 4],
-                                ]),
+                        skeleton1, 3,
+                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
+                                  [0, 3, 2, 0, 1, 1, 0], [3, 0, 0, 4, 0, 0, 0],
+                                  [3, 0, 0, 0, 4, 4, 4]])
                         ),
                 ],
         )
@@ -327,7 +312,8 @@ def test_skeleton_path_image_no_keep_image():
     pli = s.path_label_image()
     assert np.max(pli) == s.n_paths
 
+
 def test_skeletonlabel():
     stats = csr.summarize(csr.Skeleton(skeletonlabel))
-    assert stats['mean-pixel-value'].max() == skeletonlabel.max()
-    assert stats['mean-pixel-value'].max() > 1
+    assert stats['mean_pixel_value'].max() == skeletonlabel.max()
+    assert stats['mean_pixel_value'].max() > 1
