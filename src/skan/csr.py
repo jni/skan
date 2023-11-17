@@ -1044,9 +1044,9 @@ def _simplify_graph(skel):
         return skel.graph, np.arange(skel.graph.shape[0])
 
     summary = summarize(skel)
-    src = np.asarray(summary["node_id_src"])
-    dst = np.asarray(summary["node_id_dst"])
-    distance = np.asarray(summary["branch_distance"])
+    src = np.asarray(summary['node_id_src'])
+    dst = np.asarray(summary['node_id_dst'])
+    distance = np.asarray(summary['branch_distance'])
 
     # to reduce the size of simplified graph
     nodes = np.unique(np.append(src, dst))
