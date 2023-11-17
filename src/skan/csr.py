@@ -505,7 +505,9 @@ class Skeleton:
                 )
         if np.issubdtype(skeleton_image.dtype, np.float_):
             self.pixel_values = skeleton_image[coords]
-        else:
+        elif np.issubdtype(skeleton_image.dtype, np.int_):
+            self.pixel_values = skeleton_image.astype(float)[coords]
+        elif np.issubdtype(skeleton_image.dtype, np.bool_):
             self.pixel_values = None
         self.graph = graph
         self.nbgraph = csr_to_nbgraph(graph, self.pixel_values)

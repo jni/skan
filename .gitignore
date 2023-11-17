@@ -99,3 +99,7 @@ ENV/
 
 # VSCode configuration files
 .vscode/
+
+# Emacs tmp files
+*~
+\#*

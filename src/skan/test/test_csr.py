@@ -8,7 +8,7 @@ from skimage.draw import line
 from skan import csr, summarize
 from skan._testdata import (
         tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
-        topograph1d, skeleton4
+        topograph1d, skeleton4, skeletonlabel
         )
 
 
@@ -326,3 +326,8 @@ def test_skeleton_path_image_no_keep_image():
     s = csr.Skeleton(skeleton2, keep_images=False)
     pli = s.path_label_image()
     assert np.max(pli) == s.n_paths
+
+def test_skeletonlabel():
+    stats = csr.summarize(csr.Skeleton(skeletonlabel))
+    assert stats['mean-pixel-value'].max() == skeletonlabel.max()
+    assert stats['mean-pixel-value'].max() > 1
