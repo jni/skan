@@ -317,3 +317,9 @@ def test_skeletonlabel():
     stats = csr.summarize(csr.Skeleton(skeletonlabel))
     assert stats['mean_pixel_value'].max() == skeletonlabel.max()
     assert stats['mean_pixel_value'].max() > 1
+
+
+def test_default_summarize_separator():
+    with pytest.warns(FutureWarning, match='separator in column name'):
+        stats = csr.summarize(csr.Skeleton(skeletonlabel))
+    assert 'skeleton-id' in stats
