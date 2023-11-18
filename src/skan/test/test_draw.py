@@ -35,7 +35,7 @@ def test_skeleton(test_thresholded):
 
 @pytest.fixture
 def test_stats(test_skeleton):
-    stats = csr.summarize(csr.Skeleton(test_skeleton))
+    stats = csr.summarize(csr.Skeleton(test_skeleton), separator='_')
     return stats
 
 

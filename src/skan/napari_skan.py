@@ -39,7 +39,7 @@ def labels_to_skeleton_shapes(
     all_paths = [skeleton.path_coordinates(i) for i in range(skeleton.n_paths)]
 
     # option to have main_path = True (or something) changing header
-    paths_table = summarize(skeleton)
+    paths_table = summarize(skeleton, separator='_')
     layer_kwargs = {
             'shape_type': 'path',
             'edge_colormap': 'tab10',

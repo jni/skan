@@ -1067,7 +1067,7 @@ def _simplify_graph(skel):
         # don't reduce
         return skel.graph, np.arange(skel.graph.shape[0])
 
-    summary = summarize(skel)
+    summary = summarize(skel, separator='_')
     src = np.asarray(summary['node_id_src'])
     dst = np.asarray(summary['node_id_dst'])
     distance = np.asarray(summary['branch_distance'])

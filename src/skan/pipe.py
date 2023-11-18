@@ -65,7 +65,9 @@ def process_single_image(
             )
     quality = shape_index(image, sigma=pixel_smoothing_radius, mode='reflect')
     skeleton = morphology.skeletonize(thresholded) * quality
-    framedata = csr.summarize(csr.Skeleton(skeleton, spacing=scale))
+    framedata = csr.summarize(
+            csr.Skeleton(skeleton, spacing=scale), separator='_'
+            )
     framedata['squiggle'] = np.log2(
             framedata['branch_distance'] / framedata['euclidean_distance']
             )

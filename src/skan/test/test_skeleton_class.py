@@ -101,7 +101,7 @@ def test_skeleton_summarize():
     image = np.zeros(skeleton2.shape, dtype=float)
     image[skeleton2] = 1 + np.random.random(np.sum(skeleton2))
     skeleton = Skeleton(image)
-    summary = summarize(skeleton)
+    summary = summarize(skeleton, separator='_')
     assert set(summary['skeleton_id']) == {0, 1}
     assert (
             np.all(summary['mean_pixel_value'] < 2)
