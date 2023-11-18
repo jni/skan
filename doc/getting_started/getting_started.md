@@ -136,7 +136,7 @@ Let's go back to the red blood cell image to illustrate this graph.
 
 ```{code-cell} ipython3
 from skan import Skeleton, summarize
-branch_data = summarize(Skeleton(skeleton0, spacing=spacing_nm))
+branch_data = summarize(Skeleton(skeleton0, spacing=spacing_nm), separator='_')
 branch_data.head()
 ```
 
@@ -156,7 +156,7 @@ Next come the coordinates in natural space, the Euclidean distance between the p
 This data table follows the "tidy data" paradigm, with one row per branch, which allows fast  exploration of branch statistics. Here, for example, we plot the distribution of branch lengths according to branch type:
 
 ```{code-cell} ipython3
-branch_data.hist(column='branch-distance', by='branch-type', bins=100);
+branch_data.hist(column='branch_distance', by='branch_type', bins=100);
 ```
 
 We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.
@@ -165,7 +165,7 @@ We can also represent this visually with the `overlay_euclidean_skeleton`, which
 
 ```{code-cell} ipython3
 draw.overlay_euclidean_skeleton_2d(image0, branch_data,
-                                   skeleton_color_source='branch-type');
+                                   skeleton_color_source='branch_type');
 ```
 
 ## 2. Comparing different skeletons
@@ -194,7 +194,7 @@ def skeletonize(images, spacings_nm):
 
 
 skeletons = skeletonize(images, spacings_nm)
-tables = [summarize(Skeleton(skeleton, spacing=spacing))
+tables = [summarize(Skeleton(skeleton, spacing=spacing), separator='_')
           for skeleton, spacing in zip(skeletons, spacings_nm)]
 
 for filename, dataframe in zip(files, tables):
@@ -210,8 +210,8 @@ Now, however, we have a tidy data table with information about the sample origin
 ```{code-cell} ipython3
 import seaborn as sns
 
-j2j = (table[table['branch-type'] == 2].
-       rename(columns={'branch-distance':
+j2j = (table[table['branch_type'] == 2].
+       rename(columns={'branch_distance':
                        'branch distance (nm)'}))
 per_image = j2j.groupby('filename').median()
 per_image['infected'] = ['infected' if 'inf' in fn else 'normal'
