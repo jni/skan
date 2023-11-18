@@ -112,21 +112,21 @@ data['field number'] = data['filename'].apply(field_number)
 Next, we filter the branches by using the [*shape index*](http://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.shape_index). We have used a very simple method to extract skeletons (see [Getting started](../getting_started/getting_started)), which does an acceptable job but creates a lot of false branches. Since the goal of Skan is to analyse skeletons, rather than generate them, we attempt to filter the branches, and measure only those that look like ridges according to the shape index.
 
 ```{code-cell} ipython3
-ridges = ((data['mean-shape-index'] < 0.625) &
-          (data['mean-shape-index'] > 0.125))
+ridges = ((data['mean_shape_index'] < 0.625) &
+          (data['mean_shape_index'] > 0.125))
 ```
 
 For the same reason, we only look at junction-to-junction branches, which are more accurately identified by our method than junction-to-endpoint branches.
 
 ```{code-cell} ipython3
-j2j = data['branch-type'] == 2
+j2j = data['branch_type'] == 2
 datar = data.loc[ridges & j2j].copy()
 ```
 
 Finally, we make a new column of measurements in a more natural scale for our purpose.
 
 ```{code-cell} ipython3
-datar['branch distance (nm)'] = datar['branch-distance'] * 1e9
+datar['branch distance (nm)'] = datar['branch_distance'] * 1e9
 ```
 
 ## 3. Making the figure
