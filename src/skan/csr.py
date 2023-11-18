@@ -151,13 +151,21 @@ def pixel_graph(
     return graph, nodes
 
 
-csr_spec_float = [('indptr', numba.int32[:]), ('indices', numba.int32[:]),
-                  ('data', numba.float64[:]), ('shape', numba.int32[:]),
-                  ('node_properties', numba.float64[:])]
+csr_spec_float = [
+        ('indptr', numba.int32[:]),
+        ('indices', numba.int32[:]),
+        ('data', numba.float64[:]),
+        ('shape', numba.int32[:]),
+        ('node_properties', numba.float64[:]),
+        ]  # yapf: disable
 
-csr_spec_bool = [('indptr', numba.int32[:]), ('indices', numba.int32[:]),
-                 ('data', numba.bool_[:]), ('shape', numba.int32[:]),
-                 ('node_properties', numba.float64[:])]
+csr_spec_bool = [
+        ('indptr', numba.int32[:]),
+        ('indices', numba.int32[:]),
+        ('data', numba.bool_[:]),
+        ('shape', numba.int32[:]),
+        ('node_properties', numba.float64[:]),
+        ]  # yapf: disable
 
 
 class NBGraphBase:
