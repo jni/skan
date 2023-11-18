@@ -705,7 +705,8 @@ def summarize(
         skel: Skeleton,
         *,
         value_is_height: bool = False,
-        find_main_branch: bool = False
+        find_main_branch: bool = False,
+        separator: str | None = None,
         ) -> pd.DataFrame:
     """Compute statistics for every skeleton and branch in ``skel``.
 
@@ -722,6 +723,11 @@ def summarize(
         longest shortest path within a skeleton. This step is very expensive
         as it involves computing the shortest paths between all pairs of branch
         endpoints, so it is off by default.
+    separator : str, optional
+        Some column names are composite, e.g. ``'coord_src_0'``. The separator
+        argument allows users to configure which character is used to separate
+        the components. The default up to version 0.12 is '-', but will change
+        to '_' in version 0.13.
 
     Returns
     -------
@@ -729,6 +735,15 @@ def summarize(
         A summary of the branches including branch length, mean branch value,
         branch euclidean distance, etc.
     """
+    if separator is None:
+        warnings.warn(
+                "separator in column name will change to _ in version 0.13; "
+                "to silence this warning, use `separator='-'` to maintain "
+                "current behavior and use `separator='_'` to switch to the "
+                "new default behavior.",
+                FutureWarning,
+                )
+        separator = '-'
     summary = {}
     ndim = skel.coordinates.shape[1]
     _, skeleton_ids = csgraph.connected_components(skel.graph, directed=False)
@@ -780,6 +795,7 @@ def summarize(
     if find_main_branch:
         # define main branch as longest shortest path within a single skeleton
         df['main'] = find_main_branches(df)
+    df.rename(columns=lambda s: s.replace('_', separator), inplace=True)
     return df
 
 
