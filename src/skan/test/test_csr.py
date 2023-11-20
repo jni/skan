@@ -1,4 +1,5 @@
 from collections import defaultdict
+from itertools import product
 
 import pytest
 import numpy as np
@@ -316,8 +317,16 @@ def test_skeleton_path_image_no_keep_image():
     assert np.max(pli) == s.n_paths
 
 
-def test_skeletonlabel():
-    stats = csr.summarize(csr.Skeleton(skeletonlabel), separator='_')
+@pytest.mark.parametrize(
+        'dtype', [
+                ''.join([pre, 'int', suf])
+                for pre, suf in product(['u', ''], ['8', '16', '32', '64'])
+                ]
+        )
+def test_skeleton_integer_dtype(dtype):
+    stats = csr.summarize(
+            csr.Skeleton(skeletonlabel.astype(dtype)), separator='_'
+            )
     assert stats['mean_pixel_value'].max() == skeletonlabel.max()
     assert stats['mean_pixel_value'].max() > 1
 
