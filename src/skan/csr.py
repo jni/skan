@@ -743,7 +743,8 @@ def summarize(
                 "to silence this warning, use `separator='-'` to maintain "
                 "current behavior and use `separator='_'` to switch to the "
                 "new default behavior.",
-                FutureWarning,
+                np.VisibleDeprecationWarning,
+                stacklevel=2,  # make sure warning points to calling line
                 )
         separator = '-'
     summary = {}

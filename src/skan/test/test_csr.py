@@ -323,6 +323,7 @@ def test_skeletonlabel():
 
 
 def test_default_summarize_separator():
-    with pytest.warns(FutureWarning, match='separator in column name'):
+    with pytest.warns(np.VisibleDeprecationWarning,
+                      match='separator in column name'):
         stats = csr.summarize(csr.Skeleton(skeletonlabel))
     assert 'skeleton-id' in stats
