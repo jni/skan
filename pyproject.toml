@@ -79,7 +79,7 @@ docs = [
     'sphinxcontrib-bibtex',
     'myst-nb',
     'zarr',
-    'pydata-sphinx-theme==0.8.1'
+    'pydata-sphinx-theme<1.0'
 ]
 
 [project.urls]
