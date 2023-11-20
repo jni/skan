@@ -506,12 +506,10 @@ class Skeleton:
                 spacing=spacing,
                 value_is_height=value_is_height,
                 )
-        if np.issubdtype(skeleton_image.dtype, np.float_):
+        if np.issubdtype(skeleton_image.dtype, np.floating):
             self.pixel_values = skeleton_image[coords]
-        elif np.issubdtype(skeleton_image.dtype, np.int_):
+        elif np.issubdtype(skeleton_image.dtype, np.integer):
             self.pixel_values = skeleton_image.astype(float)[coords]
-        elif np.issubdtype(skeleton_image.dtype, np.bool_):
-            self.pixel_values = None
         else:
             self.pixel_values = None
         self.graph = graph
