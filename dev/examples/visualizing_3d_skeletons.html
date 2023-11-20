@@ -316,12 +316,12 @@ function checkPageExistsAndRedirect(event) {
 <span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">binary_skeleton</span> <span class="o">=</span> <span class="n">skeletonize</span><span class="p">(</span><span class="n">blobs</span><span class="p">)</span>
 <span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">skeleton</span> <span class="o">=</span> <span class="n">skan</span><span class="o">.</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">binary_skeleton</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/skan/csr.py:514,</span> in <span class="ni">Skeleton.__init__</span><span class="nt">(self, skeleton_image, spacing, source_image, keep_images, value_is_height)</span>
-<span class="g g-Whitespace">    </span><span class="mi">512</span>     <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="g g-Whitespace">    </span><span class="mi">513</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span>
-<span class="ne">--&gt; </span><span class="mi">514</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span> <span class="o">=</span> <span class="n">csr_to_nbgraph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">515</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">516</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">_build_skeleton_path_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span><span class="p">)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/skan/csr.py:516,</span> in <span class="ni">Skeleton.__init__</span><span class="nt">(self, skeleton_image, spacing, source_image, keep_images, value_is_height)</span>
+<span class="g g-Whitespace">    </span><span class="mi">514</span>     <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="g g-Whitespace">    </span><span class="mi">515</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span>
+<span class="ne">--&gt; </span><span class="mi">516</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span> <span class="o">=</span> <span class="n">csr_to_nbgraph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">517</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">518</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">_build_skeleton_path_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span><span class="p">)</span>
 
 <span class="ne">AttributeError</span>: &#39;Skeleton&#39; object has no attribute &#39;pixel_values&#39;
 </pre></div>
@@ -340,14 +340,14 @@ function checkPageExistsAndRedirect(event) {
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths_table</span> <span class="o">=</span> <span class="n">skan</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">skeleton</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths_table</span> <span class="o">=</span> <span class="n">skan</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths_table</span><span class="p">[</span><span class="s1">&#39;path-id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">n_paths</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths_table</span><span class="p">[</span><span class="s1">&#39;path_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">n_paths</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -355,7 +355,7 @@ function checkPageExistsAndRedirect(event) {
 <p>First, we color by random path ID, showing each path in a distinct color using the matplotlib “tab10” qualitative palette. (Coloring by path ID directly results in “bands” of nearby paths receiving the same color.)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths_table</span><span class="p">[</span><span class="s1">&#39;random-path-id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">n_paths</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">paths_table</span><span class="p">[</span><span class="s1">&#39;random_path_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">skeleton</span><span class="o">.</span><span class="n">n_paths</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -369,7 +369,7 @@ function checkPageExistsAndRedirect(event) {
         <span class="n">shape_type</span><span class="o">=</span><span class="s1">&#39;path&#39;</span><span class="p">,</span>
         <span class="n">properties</span><span class="o">=</span><span class="n">paths_table</span><span class="p">,</span>
         <span class="n">edge_width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">edge_color</span><span class="o">=</span><span class="s1">&#39;random-path-id&#39;</span><span class="p">,</span>
+        <span class="n">edge_color</span><span class="o">=</span><span class="s1">&#39;random_path_id&#39;</span><span class="p">,</span>
         <span class="n">edge_colormap</span><span class="o">=</span><span class="s1">&#39;tab10&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
@@ -381,9 +381,9 @@ function checkPageExistsAndRedirect(event) {
 <p>We can also demonstrate that most of these branches are in one skeleton, with a few stragglers around the edges, by coloring by skeleton ID:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">skeleton_layer</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="s1">&#39;skeleton-id&#39;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">skeleton_layer</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="s1">&#39;skeleton_id&#39;</span>
 <span class="c1"># for now, we need to set the face color as well</span>
-<span class="n">skeleton_layer</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="s1">&#39;skeleton-id&#39;</span>
+<span class="n">skeleton_layer</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="s1">&#39;skeleton_id&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -393,10 +393,10 @@ function checkPageExistsAndRedirect(event) {
 <p>Finally, we can color the paths by a numerical property, such as their length.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">skeleton_layer</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="s1">&#39;branch-distance&#39;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">skeleton_layer</span><span class="o">.</span><span class="n">edge_color</span> <span class="o">=</span> <span class="s1">&#39;branch_distance&#39;</span>
 <span class="n">skeleton_layer</span><span class="o">.</span><span class="n">edge_colormap</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
 <span class="c1"># for now, we need to set the face color as well</span>
-<span class="n">skeleton_layer</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="s1">&#39;branch-distance&#39;</span>
+<span class="n">skeleton_layer</span><span class="o">.</span><span class="n">face_color</span> <span class="o">=</span> <span class="s1">&#39;branch_distance&#39;</span>
 <span class="n">skeleton_layer</span><span class="o">.</span><span class="n">face_colormap</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
 </pre></div>
 </div>

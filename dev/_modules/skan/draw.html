@@ -332,7 +332,7 @@ function checkPageExistsAndRedirect(event) {
         <span class="n">stats</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">image_cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;branch-type&#39;</span><span class="p">,</span>
+        <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;branch_type&#39;</span><span class="p">,</span>
         <span class="n">skeleton_colormap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span>
         <span class="n">axes</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">):</span>
@@ -356,7 +356,7 @@ function checkPageExistsAndRedirect(event) {
 
 <span class="sd">        - skeleton-id: each individual skeleton (connected component) will</span>
 <span class="sd">          have a different colour.</span>
-<span class="sd">        - branch-type: each branch type (tip-tip, tip-junction,</span>
+<span class="sd">        - branch_type: each branch type (tip-tip, tip-junction,</span>
 <span class="sd">          junction-junction, path-path). This is the default.</span>
 <span class="sd">        - branch-distance: the curved length of the skeleton branch.</span>
 <span class="sd">        - euclidean-distance: the straight-line length of the skeleton branch.</span>
@@ -374,8 +374,8 @@ function checkPageExistsAndRedirect(event) {
     <span class="n">image</span> <span class="o">=</span> <span class="n">_normalise_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">image_cmap</span><span class="o">=</span><span class="n">image_cmap</span><span class="p">)</span>
     <span class="n">summary</span> <span class="o">=</span> <span class="n">stats</span>
     <span class="c1"># transforming from row, col to x, y</span>
-    <span class="n">coords_cols</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;image-coord-src-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
-                   <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;image-coord-dst-</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="n">coords_cols</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;image_coord_src_</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+                   <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;image_coord_dst_</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="n">summary</span><span class="p">[</span><span class="n">coords_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>

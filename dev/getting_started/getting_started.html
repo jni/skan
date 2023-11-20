@@ -310,7 +310,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/4e4ce561d001e274660e36116e8f1974d9cab54fa28708bc056aecd054d35439.png" src="../_images/4e4ce561d001e274660e36116e8f1974d9cab54fa28708bc056aecd054d35439.png" />
+<img alt="../_images/3f26bccb9d58ce7c2f8fae33fad14b58a8b0ae61121a685b9f99c2f52dc3c6ec.png" src="../_images/3f26bccb9d58ce7c2f8fae33fad14b58a8b0ae61121a685b9f99c2f52dc3c6ec.png" />
 </div>
 </div>
 <p>As an aside, we can extract the pixel spacing in meters from the <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
@@ -331,7 +331,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/e30e4a91a4579966b84c1717a3ed4a7b4a1867e0ad049516e97e65363f7e1d7c.png" src="../_images/e30e4a91a4579966b84c1717a3ed4a7b4a1867e0ad049516e97e65363f7e1d7c.png" />
+<img alt="../_images/e99ce8d35afed1d21b0d41cf62d13147b248d3ffbdf5909f4fb23818f6efa249.png" src="../_images/e99ce8d35afed1d21b0d41cf62d13147b248d3ffbdf5909f4fb23818f6efa249.png" />
 </div>
 </div>
 <p>This is an image of the inside of the membrane of a red blood cell. We want to measure the network of bright regions in this image, which is made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
@@ -356,7 +356,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/123347b87e9051b8375c4c9d0627c27c944875a75250cbcaf361bc4ea0ecf277.png" src="../_images/123347b87e9051b8375c4c9d0627c27c944875a75250cbcaf361bc4ea0ecf277.png" />
+<img alt="../_images/bc44547edabb014795bf776dfd8eec966b26cd842520bb91468f9435544de77a.png" src="../_images/bc44547edabb014795bf776dfd8eec966b26cd842520bb91468f9435544de77a.png" />
 </div>
 </div>
 <p>(There are some thresholding artifacts around the left edge, due to the dark border caused by microscope imaging drift and alignment. We will ignore this in this document, but the Skan GUI allows for a “crop” parameter to filter out these regions.)</p>
@@ -381,7 +381,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f7194d05a72f6a9aaa87831c99521ae05c6b39013e97ededb6430d4d328f0dee.png" src="../_images/f7194d05a72f6a9aaa87831c99521ae05c6b39013e97ededb6430d4d328f0dee.png" />
+<img alt="../_images/eab9685976ba0597cecb282e80550f450f287a4a30febe592fba17e13ed5cfc2.png" src="../_images/eab9685976ba0597cecb282e80550f450f287a4a30febe592fba17e13ed5cfc2.png" />
 </div>
 </div>
 </section>
@@ -425,7 +425,7 @@ function checkPageExistsAndRedirect(event) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
 </pre></div>
 </div>
-<img alt="../_images/197fa8a77ddc339cdce20504ebbb1ced5d85300875a7a92e370d68766ab48a6a.png" src="../_images/197fa8a77ddc339cdce20504ebbb1ced5d85300875a7a92e370d68766ab48a6a.png" />
+<img alt="../_images/9b5b91e1434841f5b3716e5829ceb432b56eac75db875ef6f6aa8e1a10be1597.png" src="../_images/9b5b91e1434841f5b3716e5829ceb432b56eac75db875ef6f6aa8e1a10be1597.png" />
 </div>
 </div>
 <p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates…) together.</p>
@@ -434,7 +434,7 @@ function checkPageExistsAndRedirect(event) {
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="n">summarize</span>
-<span class="n">branch_data</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">))</span>
+<span class="n">branch_data</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">),</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
 <span class="n">branch_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -458,119 +458,119 @@ function checkPageExistsAndRedirect(event) {
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>skeleton-id</th>
-      <th>node-id-src</th>
-      <th>node-id-dst</th>
-      <th>branch-distance</th>
-      <th>branch-type</th>
-      <th>mean-pixel-value</th>
-      <th>stdev-pixel-value</th>
-      <th>image-coord-src-0</th>
-      <th>image-coord-src-1</th>
-      <th>image-coord-dst-0</th>
-      <th>image-coord-dst-1</th>
-      <th>coord-src-0</th>
-      <th>coord-src-1</th>
-      <th>coord-dst-0</th>
-      <th>coord-dst-1</th>
-      <th>euclidean-distance</th>
+      <th>skeleton_id</th>
+      <th>node_id_src</th>
+      <th>node_id_dst</th>
+      <th>branch_distance</th>
+      <th>branch_type</th>
+      <th>mean_pixel_value</th>
+      <th>stdev_pixel_value</th>
+      <th>image_coord_src_0</th>
+      <th>image_coord_src_1</th>
+      <th>image_coord_dst_0</th>
+      <th>image_coord_dst_1</th>
+      <th>coord_src_0</th>
+      <th>coord_src_1</th>
+      <th>coord_dst_0</th>
+      <th>coord_dst_1</th>
+      <th>euclidean_distance</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>0</td>
-      <td>691</td>
-      <td>52.215399</td>
+      <td>3</td>
+      <td>999</td>
+      <td>36.213005</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>64</td>
-      <td>13</td>
-      <td>21</td>
-      <td>0.0</td>
-      <td>69.06688</td>
-      <td>14.02921</td>
-      <td>22.66257</td>
-      <td>48.478642</td>
+      <td>7</td>
+      <td>182</td>
+      <td>32</td>
+      <td>167</td>
+      <td>7.55419</td>
+      <td>196.40894</td>
+      <td>34.53344</td>
+      <td>180.22139</td>
+      <td>31.462942</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
+      <td>4</td>
+      <td>2439</td>
+      <td>102.872853</td>
       <td>1</td>
-      <td>740</td>
-      <td>41.608855</td>
-      <td>0</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>128</td>
-      <td>14</td>
-      <td>159</td>
-      <td>0.0</td>
-      <td>138.13376</td>
-      <td>15.10838</td>
-      <td>171.58803</td>
-      <td>36.707647</td>
+      <td>7</td>
+      <td>315</td>
+      <td>81</td>
+      <td>330</td>
+      <td>7.55419</td>
+      <td>339.93855</td>
+      <td>87.41277</td>
+      <td>356.12610</td>
+      <td>81.482695</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>8</td>
-      <td>833</td>
-      <td>22.815959</td>
+      <td>10</td>
+      <td>247</td>
+      <td>13.026734</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>281</td>
-      <td>16</td>
-      <td>292</td>
-      <td>0.0</td>
-      <td>303.24677</td>
-      <td>17.26672</td>
-      <td>315.11764</td>
-      <td>20.953691</td>
+      <td>7</td>
+      <td>624</td>
+      <td>13</td>
+      <td>615</td>
+      <td>7.55419</td>
+      <td>673.40208</td>
+      <td>14.02921</td>
+      <td>663.68955</td>
+      <td>11.673008</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>2</td>
-      <td>11</td>
-      <td>899</td>
-      <td>59.769589</td>
+      <td>3</td>
+      <td>27</td>
+      <td>208</td>
+      <td>15.185074</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>364</td>
-      <td>17</td>
-      <td>318</td>
-      <td>0.0</td>
-      <td>392.81788</td>
-      <td>18.34589</td>
-      <td>343.17606</td>
-      <td>52.923359</td>
+      <td>7</td>
+      <td>1068</td>
+      <td>12</td>
+      <td>1056</td>
+      <td>7.55419</td>
+      <td>1152.55356</td>
+      <td>12.95004</td>
+      <td>1139.60352</td>
+      <td>14.029210</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>2</td>
-      <td>17</td>
-      <td>907</td>
-      <td>30.893850</td>
+      <td>4</td>
+      <td>28</td>
+      <td>549</td>
+      <td>48.977889</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>630</td>
-      <td>17</td>
-      <td>651</td>
-      <td>0.0</td>
-      <td>679.87710</td>
-      <td>18.34589</td>
-      <td>702.53967</td>
-      <td>29.157568</td>
+      <td>7</td>
+      <td>1383</td>
+      <td>20</td>
+      <td>1423</td>
+      <td>7.55419</td>
+      <td>1492.49211</td>
+      <td>21.58340</td>
+      <td>1535.65891</td>
+      <td>45.389331</td>
     </tr>
   </tbody>
 </table>
@@ -588,12 +588,12 @@ function checkPageExistsAndRedirect(event) {
 <p>This data table follows the “tidy data” paradigm, with one row per branch, which allows fast  exploration of branch statistics. Here, for example, we plot the distribution of branch lengths according to branch type:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">branch_data</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;branch-type&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">);</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">branch_data</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;branch_distance&#39;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;branch_type&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/4a55b95703fe1f8704529d581a464845c6f5be7a168c2d001b1c89dcd6fc4279.png" src="../_images/4a55b95703fe1f8704529d581a464845c6f5be7a168c2d001b1c89dcd6fc4279.png" />
+<img alt="../_images/8e0bb845cda94587f23a8220fb10d7b12dcefa457d05e84308bdadfe3f413163.png" src="../_images/8e0bb845cda94587f23a8220fb10d7b12dcefa457d05e84308bdadfe3f413163.png" />
 </div>
 </div>
 <p>We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.</p>
@@ -601,12 +601,12 @@ function checkPageExistsAndRedirect(event) {
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">draw</span><span class="o">.</span><span class="n">overlay_euclidean_skeleton_2d</span><span class="p">(</span><span class="n">image0</span><span class="p">,</span> <span class="n">branch_data</span><span class="p">,</span>
-                                   <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;branch-type&#39;</span><span class="p">);</span>
+                                   <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;branch_type&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/d360516d80bc41da2d7601c664c30d81c1727c16313106c257185fff96c9298d.png" src="../_images/d360516d80bc41da2d7601c664c30d81c1727c16313106c257185fff96c9298d.png" />
+<img alt="../_images/e407d50bad36e1f2a5cf14434b787ddde4481e955ecc4e6d8cc461fbfff8ec2b.png" src="../_images/e407d50bad36e1f2a5cf14434b787ddde4481e955ecc4e6d8cc461fbfff8ec2b.png" />
 </div>
 </div>
 </section>
@@ -636,7 +636,7 @@ function checkPageExistsAndRedirect(event) {
 
 
 <span class="n">skeletons</span> <span class="o">=</span> <span class="n">skeletonize</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">spacings_nm</span><span class="p">)</span>
-<span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">summarize</span><span class="p">(</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">))</span>
+<span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">summarize</span><span class="p">(</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">),</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
           <span class="k">for</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">spacing</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">skeletons</span><span class="p">,</span> <span class="n">spacings_nm</span><span class="p">)]</span>
 
 <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">dataframe</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">tables</span><span class="p">):</span>
@@ -653,8 +653,8 @@ function checkPageExistsAndRedirect(event) {
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
-<span class="n">j2j</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;branch-type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span>
-       <span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;branch-distance&#39;</span><span class="p">:</span>
+<span class="n">j2j</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;branch_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span>
+       <span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;branch_distance&#39;</span><span class="p">:</span>
                        <span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">}))</span>
 <span class="n">per_image</span> <span class="o">=</span> <span class="n">j2j</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
 <span class="n">per_image</span><span class="p">[</span><span class="s1">&#39;infected&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;infected&#39;</span> <span class="k">if</span> <span class="s1">&#39;inf&#39;</span> <span class="ow">in</span> <span class="n">fn</span> <span class="k">else</span> <span class="s1">&#39;normal&#39;</span>
@@ -667,7 +667,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/093e535665c7ba01c3befb9031c04419a0826f7c5a23ad1817e4f133546c2ac7.png" src="../_images/093e535665c7ba01c3befb9031c04419a0826f7c5a23ad1817e4f133546c2ac7.png" />
+<img alt="../_images/bde325d8ee4edd41ba7092134f52be89aa1834d92f351fae785b5a89b8cca425.png" src="../_images/bde325d8ee4edd41ba7092134f52be89aa1834d92f351fae785b5a89b8cca425.png" />
 </div>
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>
