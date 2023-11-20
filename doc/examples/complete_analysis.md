@@ -196,7 +196,7 @@ ax[2].set_ylabel('density')
 # Finally, a panel grouping the data by cell, showing the difference
 # between infected and uninfected cells
 cellmeans = (datar.groupby(['infection', 'cell number'])
-                  .mean().reset_index())
+                  .mean(numeric_only=True).reset_index())
 sns.stripplot(x='infection', y='branch distance (nm)', data=cellmeans,
               jitter=True, order=('normal', 'infected'), ax=ax[3])
               
