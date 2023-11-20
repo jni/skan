@@ -20,9 +20,9 @@ def find_main_branches(summary: DataFrame) -> np.ndarray:
        skeleton
     """
     is_main = np.zeros(summary.shape[0], dtype=bool)
-    us = summary['node-id-src']
-    vs = summary['node-id-dst']
-    ws = summary['branch-distance']
+    us = summary['node_id_src']
+    vs = summary['node_id_dst']
+    ws = summary['branch_distance']
 
     edge2idx = {(u, v): i for i, (u, v) in enumerate(zip(us, vs))}
 

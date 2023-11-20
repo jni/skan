@@ -49,17 +49,17 @@ all_paths = [
 ```
 
 ```{code-cell} ipython3
-paths_table = skan.summarize(skeleton)
+paths_table = skan.summarize(skeleton, separator='_')
 ```
 
 ```{code-cell} ipython3
-paths_table['path-id'] = np.arange(skeleton.n_paths)
+paths_table['path_id'] = np.arange(skeleton.n_paths)
 ```
 
 First, we color by random path ID, showing each path in a distinct color using the matplotlib "tab10" qualitative palette. (Coloring by path ID directly results in "bands" of nearby paths receiving the same color.)
 
 ```{code-cell} ipython3
-paths_table['random-path-id'] = np.random.default_rng().permutation(skeleton.n_paths)
+paths_table['random_path_id'] = np.random.default_rng().permutation(skeleton.n_paths)
 ```
 
 ```{code-cell} ipython3
@@ -70,7 +70,7 @@ skeleton_layer = viewer.add_shapes(
         shape_type='path',
         properties=paths_table,
         edge_width=0.5,
-        edge_color='random-path-id',
+        edge_color='random_path_id',
         edge_colormap='tab10',
 )
 ```
@@ -85,9 +85,9 @@ napari.utils.nbscreenshot(viewer)
 We can also demonstrate that most of these branches are in one skeleton, with a few stragglers around the edges, by coloring by skeleton ID:
 
 ```{code-cell} ipython3
-skeleton_layer.edge_color = 'skeleton-id'
+skeleton_layer.edge_color = 'skeleton_id'
 # for now, we need to set the face color as well
-skeleton_layer.face_color = 'skeleton-id'
+skeleton_layer.face_color = 'skeleton_id'
 ```
 
 ```{code-cell} ipython3
@@ -99,10 +99,10 @@ napari.utils.nbscreenshot(viewer)
 Finally, we can color the paths by a numerical property, such as their length.
 
 ```{code-cell} ipython3
-skeleton_layer.edge_color = 'branch-distance'
+skeleton_layer.edge_color = 'branch_distance'
 skeleton_layer.edge_colormap = 'viridis'
 # for now, we need to set the face color as well
-skeleton_layer.face_color = 'branch-distance'
+skeleton_layer.face_color = 'branch_distance'
 skeleton_layer.face_colormap = 'viridis'
 ```
 

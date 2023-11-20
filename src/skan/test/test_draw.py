@@ -35,7 +35,7 @@ def test_skeleton(test_thresholded):
 
 @pytest.fixture
 def test_stats(test_skeleton):
-    stats = csr.summarize(csr.Skeleton(test_skeleton))
+    stats = csr.summarize(csr.Skeleton(test_skeleton), separator='_')
     return stats
 
 
@@ -48,7 +48,7 @@ def test_overlay_skeleton(test_image, test_skeleton):
 def test_overlay_euclidean_skeleton(test_image, test_stats):
     draw.overlay_euclidean_skeleton_2d(test_image, test_stats)
     draw.overlay_euclidean_skeleton_2d(
-            test_image, test_stats, skeleton_color_source='branch-distance'
+            test_image, test_stats, skeleton_color_source='branch_distance'
             )
 
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -705,7 +707,8 @@ def summarize(
         skel: Skeleton,
         *,
         value_is_height: bool = False,
-        find_main_branch: bool = False
+        find_main_branch: bool = False,
+        separator: str | None = None,
         ) -> pd.DataFrame:
     """Compute statistics for every skeleton and branch in ``skel``.
 
@@ -722,6 +725,11 @@ def summarize(
         longest shortest path within a skeleton. This step is very expensive
         as it involves computing the shortest paths between all pairs of branch
         endpoints, so it is off by default.
+    separator : str, optional
+        Some column names are composite, e.g. ``'coord_src_0'``. The separator
+        argument allows users to configure which character is used to separate
+        the components. The default up to version 0.12 is '-', but will change
+        to '_' in version 0.13.
 
     Returns
     -------
@@ -729,49 +737,59 @@ def summarize(
         A summary of the branches including branch length, mean branch value,
         branch euclidean distance, etc.
     """
+    if separator is None:
+        warnings.warn(
+                "separator in column name will change to _ in version 0.13; "
+                "to silence this warning, use `separator='-'` to maintain "
+                "current behavior and use `separator='_'` to switch to the "
+                "new default behavior.",
+                np.VisibleDeprecationWarning,
+                stacklevel=2,  # make sure warning points to calling line
+                )
+        separator = '-'
     summary = {}
     ndim = skel.coordinates.shape[1]
     _, skeleton_ids = csgraph.connected_components(skel.graph, directed=False)
     endpoints_src = skel.paths.indices[skel.paths.indptr[:-1]]
     endpoints_dst = skel.paths.indices[skel.paths.indptr[1:] - 1]
-    summary['skeleton-id'] = skeleton_ids[endpoints_src]
-    summary['node-id-src'] = endpoints_src
-    summary['node-id-dst'] = endpoints_dst
-    summary['branch-distance'] = skel.path_lengths()
+    summary['skeleton_id'] = skeleton_ids[endpoints_src]
+    summary['node_id_src'] = endpoints_src
+    summary['node_id_dst'] = endpoints_dst
+    summary['branch_distance'] = skel.path_lengths()
     deg_src = skel.degrees[endpoints_src]
     deg_dst = skel.degrees[endpoints_dst]
     kind = np.full(deg_src.shape, 2)  # default: junction-to-junction
     kind[(deg_src == 1) | (deg_dst == 1)] = 1  # tip-junction
     kind[(deg_src == 1) & (deg_dst == 1)] = 0  # tip-tip
     kind[endpoints_src == endpoints_dst] = 3  # cycle
-    summary['branch-type'] = kind
-    summary['mean-pixel-value'] = skel.path_means()
-    summary['stdev-pixel-value'] = skel.path_stdev()
+    summary['branch_type'] = kind
+    summary['mean_pixel_value'] = skel.path_means()
+    summary['stdev_pixel_value'] = skel.path_stdev()
     for i in range(ndim):  # keep loops separate for best insertion order
-        summary[f'image-coord-src-{i}'] = skel.coordinates[endpoints_src, i]
+        summary[f'image_coord_src_{i}'] = skel.coordinates[endpoints_src, i]
     for i in range(ndim):
-        summary[f'image-coord-dst-{i}'] = skel.coordinates[endpoints_dst, i]
+        summary[f'image_coord_dst_{i}'] = skel.coordinates[endpoints_dst, i]
     coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
     for i in range(ndim):
-        summary[f'coord-src-{i}'] = coords_real_src[:, i]
+        summary[f'coord_src_{i}'] = coords_real_src[:, i]
     if value_is_height:
         values_src = skel.pixel_values[endpoints_src]
-        summary[f'coord-src-{ndim}'] = values_src
+        summary[f'coord_src_{ndim}'] = values_src
         coords_real_src = np.concatenate(
                 [coords_real_src, values_src[:, np.newaxis]],
                 axis=1,
-                )  # yapf: ignore
+                )
     coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
     for i in range(ndim):
-        summary[f'coord-dst-{i}'] = coords_real_dst[:, i]
+        summary[f'coord_dst_{i}'] = coords_real_dst[:, i]
     if value_is_height:
         values_dst = skel.pixel_values[endpoints_dst]
-        summary[f'coord-dst-{ndim}'] = values_dst
+        summary[f'coord_dst_{ndim}'] = values_dst
         coords_real_dst = np.concatenate(
                 [coords_real_dst, values_dst[:, np.newaxis]],
                 axis=1,
-                )  # yapf: ignore
-    summary['euclidean-distance'] = (
+                )
+    summary['euclidean_distance'] = (
             np.sqrt((coords_real_dst - coords_real_src)**2
                     @ np.ones(ndim + int(value_is_height)))
             )
@@ -780,6 +798,7 @@ def summarize(
     if find_main_branch:
         # define main branch as longest shortest path within a single skeleton
         df['main'] = find_main_branches(df)
+    df.rename(columns=lambda s: s.replace('_', separator), inplace=True)
     return df
 
 
@@ -1051,10 +1070,10 @@ def _simplify_graph(skel):
         # don't reduce
         return skel.graph, np.arange(skel.graph.shape[0])
 
-    summary = summarize(skel)
-    src = np.asarray(summary['node-id-src'])
-    dst = np.asarray(summary['node-id-dst'])
-    distance = np.asarray(summary['branch-distance'])
+    summary = summarize(skel, separator='_')
+    src = np.asarray(summary['node_id_src'])
+    dst = np.asarray(summary['node_id_dst'])
+    distance = np.asarray(summary['branch_distance'])
 
     # to reduce the size of simplified graph
     nodes = np.unique(np.append(src, dst))
