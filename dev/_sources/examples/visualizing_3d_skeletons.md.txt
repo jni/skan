@@ -5,7 +5,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.10.3
+    jupytext_version: 1.14.6
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -107,35 +107,8 @@ skeleton_layer.face_colormap = 'viridis'
 ```
 
 ```{code-cell} ipython3
-:tags: ["remove-input"]
+:tags: [remove-input]
+
 viewer.camera.angles = (-30, 30, -135)
 napari.utils.nbscreenshot(viewer)
-```
-
-## Using the Labels layer
-
-We can also visualize the pixels of the skeleton as a Labels layer, with each path ID appearing as a different label. The downside with this approach is that junction pixels are arbitrarily assigned to one of the branches incident on that junction. Therefore, removing that branch would cause the junction pixel to be removed, which could incorrectly disconnect the skeleton at that point.
-
-However, the rich 3D interactivity of the labels layer does allow prunning of branches in 3D, which could be extremely useful for manual curation of the skeleton, as long as propert care is taken in downstream processing of the edits.
-
-```{code-cell} ipython3
-labels = np.asarray(skeleton)
-
-viewer2 = napari.view_labels(
-        labels,
-        properties=paths_table,
-        opacity=1,
-        ndisplay=3,
-        )
-```
-
-```{code-cell} ipython3
-:tags: ["remove-input"]
-viewer2.camera.angles = (-30, 30, -135)
-viewer2.camera.zoom = 6.5
-napari.utils.nbscreenshot(viewer2)
-```
-
-```{code-cell} ipython3
-
 ```
