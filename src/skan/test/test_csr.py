@@ -11,10 +11,20 @@ from skimage.draw import line
 
 from skan import csr, summarize
 from skan._testdata import (
-        tinycycle, tinyline, skeleton0, skeleton1, skeleton2, skeleton3d,
-        topograph1d, skeleton4, skeletonlabel, skeleton_loop1,
-        skeleton_loop2, skeleton_linear1, skeleton_linear2, 
-        skeleton_linear3
+        tinycycle,
+        tinyline,
+        skeleton0,
+        skeleton1,
+        skeleton2,
+        skeleton3d,
+        topograph1d,
+        skeleton4,
+        skeletonlabel,
+        skeleton_loop1,
+        skeleton_loop2,
+        skeleton_linear1,
+        skeleton_linear2,
+        skeleton_linear3,
         )
 
 
@@ -293,7 +303,7 @@ def test_sholl_spacing():
 def test_diagonal():
     s = csr.Skeleton(skeleton4)
     # We choose the shells so that we catch all three, then two, then one arm
-    # of the skeleton, while not triggering the "shell spacing too small"
+    # of the skeleton, while not triggering the 'shell spacing too small'
     # warning
     c, r, counts = csr.sholl_analysis(
             s, center=[1, 1], shells=np.arange(0.09, 5, 1.45)
@@ -325,7 +335,7 @@ def test_zero_degree_nodes():
 
 
 @pytest.mark.parametrize(
-        "skeleton, paths, branch_type, branch_distance, euclidean_distance",
+        'skeleton, paths, branch_type, branch_distance, euclidean_distance',
         [
                 [skeleton_loop1, 1, 3, 159.23759005323606, 0],
                 [skeleton_loop2, 1, 3, 161.33809511662434, 0],
@@ -337,21 +347,24 @@ def test_zero_degree_nodes():
                 ],
         )
 def test_iteratively_prune_paths(
-        skeleton: np.ndarray, paths: int, branch_type: int,
-        branch_distance: float, euclidean_distance: float
+        skeleton: np.ndarray,
+        paths: int,
+        branch_type: int,
+        branch_distance: float,
+        euclidean_distance: float,
         ) -> None:
     """Test iteratively pruning a skeleton."""
     pruned_skeleton = csr.iteratively_prune_paths(skeleton)
     skeleton_summary = csr.summarize(pruned_skeleton)
     assert isinstance(pruned_skeleton, csr.Skeleton)
     assert skeleton_summary.shape[0] == paths
-    assert skeleton_summary["branch-type"][0] == branch_type
-    assert skeleton_summary["branch-distance"][0] == branch_distance
-    assert skeleton_summary["euclidean-distance"][0] == euclidean_distance
+    assert skeleton_summary['branch-type'][0] == branch_type
+    assert skeleton_summary['branch-distance'][0] == branch_distance
+    assert skeleton_summary['euclidean-distance'][0] == euclidean_distance
 
 
 @pytest.mark.parametrize(
-        "skeleton, paths, branch_type, branch_distance, euclidean_distance",
+        'skeleton, paths, branch_type, branch_distance, euclidean_distance',
         [[
                 skeleton_linear3,
                 3,
@@ -361,21 +374,24 @@ def test_iteratively_prune_paths(
                 ]],
         )
 def test_iteratively_prune_multiple_paths(
-        skeleton: np.ndarray, paths: int, branch_type: int,
-        branch_distance: float, euclidean_distance: float
+        skeleton: np.ndarray,
+        paths: int,
+        branch_type: int,
+        branch_distance: float,
+        euclidean_distance: float,
         ) -> None:
     """Test iteratively pruning a image with multiple skeletons."""
     pruned_skeleton = csr.iteratively_prune_paths(skeleton)
     skeleton_summary = csr.summarize(pruned_skeleton)
     assert isinstance(pruned_skeleton, csr.Skeleton)
     assert skeleton_summary.shape[0] == paths
-    assert list(skeleton_summary["branch-type"]) == branch_type
-    assert list(skeleton_summary["branch-distance"]) == branch_distance
-    assert list(skeleton_summary["euclidean-distance"]) == euclidean_distance
+    assert list(skeleton_summary['branch-type']) == branch_type
+    assert list(skeleton_summary['branch-distance']) == branch_distance
+    assert list(skeleton_summary['euclidean-distance']) == euclidean_distance
 
 
 def test_skeleton_path_image_no_keep_image():
-    """See #208: "Skeleton.path_label_image requires keep_images=True."
+    """See #208: 'Skeleton.path_label_image requires keep_images=True.'
 
     Before PR #210, it was an implicit requirement of path_label_image
     to create a Skeleton with keep_images=True. However, we only needed
@@ -388,9 +404,12 @@ def test_skeleton_path_image_no_keep_image():
 
 
 @pytest.mark.parametrize(
-        ("np_skeleton", "summary", "nodes", "edges"),
+        ('np_skeleton', 'summary', 'nodes', 'edges'),
         [
-                (skeleton0, summarize(csr.Skeleton(skeleton0), separator='_'), 4, 3),
+                (
+                        skeleton0,
+                        summarize(csr.Skeleton(skeleton0), separator='_'), 4, 3
+                        ),
                 (skeleton1, None, 4, 3),
                 (skeleton1, summarize(csr.Skeleton(skeleton1)), 4, 3),
                 (skeleton2, summarize(csr.Skeleton(skeleton2)), 8, 6),
@@ -410,21 +429,40 @@ def test_skeleton_to_nx(
 
 
 @pytest.mark.parametrize(
-        ("node", "exclude_node", "shape", "target"),
-        [([0, 0], True, [2, 2], np.array([[0, 1], [1, 0], [1, 1]])),
-         ([0, 0], False, [2, 2], np.array([[0, 0], [0, 1], [1, 0], [1, 1]])),
-         ([1, 1], True, [3, 3],
-          np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 2], [2, 0], [2, 1],
-                    [2, 2]])),
-         ([1, 1], False, [3, 3],
-          np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0],
-                    [2, 1], [2, 2]])),
-         ([4, 6], True, [10, 10],
-          np.array([[3, 5], [3, 6], [3, 7], [4, 5], [4, 7], [5, 5], [5, 6],
-                    [5, 7]])),
-         ([4, 6], False, [10, 10],
-          np.array([[3, 5], [3, 6], [3, 7], [4, 5], [4, 6], [4, 7], [5, 5],
-                    [5, 6], [5, 7]]))]
+        ('node', 'exclude_node', 'shape', 'target'),
+        [
+                ([0, 0], True, [2, 2], np.array([[0, 1], [1, 0], [1, 1]])),
+                ([0, 0], False, [2, 2],
+                 np.array([[0, 0], [0, 1], [1, 0], [1, 1]])),
+                (
+                        [1, 1],
+                        True,
+                        [3, 3],
+                        np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 2],
+                                  [2, 0], [2, 1], [2, 2]]),
+                        ),
+                (
+                        [1, 1],
+                        False,
+                        [3, 3],
+                        np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 1],
+                                  [1, 2], [2, 0], [2, 1], [2, 2]]),
+                        ),
+                (
+                        [4, 6],
+                        True,
+                        [10, 10],
+                        np.array([[3, 5], [3, 6], [3, 7], [4, 5], [4, 7],
+                                  [5, 5], [5, 6], [5, 7]]),
+                        ),
+                (
+                        [4, 6],
+                        False,
+                        [10, 10],
+                        np.array([[3, 5], [3, 6], [3, 7], [4, 5], [4, 6],
+                                  [4, 7], [5, 5], [5, 6], [5, 7]]),
+                        ),
+                ],
         )
 def test__get_neighbours(
         node: npt.NDArray, exclude_node: bool, shape: npt.NDArray,
@@ -438,7 +476,7 @@ def test__get_neighbours(
 
 
 @pytest.mark.parametrize(
-        ("np_skeleton", "nodes", "edges"),
+        ('np_skeleton', 'nodes', 'edges'),
         [
                 (tinycycle, 4, 4),
                 (skeleton0, 10, 11),
@@ -456,31 +494,47 @@ def test_array_to_nx(np_skeleton: npt.NDArray, nodes: int, edges: int) -> None:
 
 
 @pytest.mark.parametrize(
-        ("np_skeleton"),
-        [(tinycycle), (skeleton0), (skeleton1), (skeleton2), (skeleton_loop1),
-         (skeleton_loop2)],
+        ('np_skeleton'),
+        [
+                (tinycycle),
+                (skeleton0),
+                (skeleton1),
+                (skeleton2),
+                (skeleton_loop1),
+                (skeleton_loop2),
+                ],
         )
 def test_array_to_nx_coordinates(np_skeleton: npt.NDArray) -> None:
     """Check that thet skeleton shape and co-ordinates are stored and returned correctly."""
     skan_nx = csr.array_to_nx(np_skeleton)
     np.testing.assert_array_equal(
-            skan_nx.graph["skeleton_shape"], np_skeleton.shape
+            skan_nx.graph['skeleton_shape'], np_skeleton.shape
             )
 
 
 @pytest.mark.parametrize(
-        ("np_skeleton"),
-        [(tinycycle), (skeleton0), (skeleton1), (skeleton2), (skeleton_loop1),
-         (skeleton_loop2)],
+        ('np_skeleton'),
+        [
+                (tinycycle),
+                (skeleton0),
+                (skeleton1),
+                (skeleton2),
+                (skeleton_loop1),
+                (skeleton_loop2),
+                ],
         )
 def test_nx_to_skeleton(np_skeleton: npt.NDArray) -> None:
     """Test converting Networkx graph to Skeleton object."""
     nx_graph = csr.array_to_nx(np_skeleton)
     np.testing.assert_array_equal(csr.nx_to_array(nx_graph), np_skeleton)
-        'dtype', [
+
+
+@pytest.mark.parametrize(
+        'dtype',
+        [
                 ''.join([pre, 'int', suf])
                 for pre, suf in product(['u', ''], ['8', '16', '32', '64'])
-                ]
+                ],
         )
 def test_skeleton_integer_dtype(dtype):
     stats = csr.summarize(
