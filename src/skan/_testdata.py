@@ -102,3 +102,9 @@ kwargs["min_size"] = 20
 random_images, _ = random_shapes(**kwargs)
 mask = np.where(random_images != 255, 1, 0)
 skeleton_linear3 = skeletonize(mask)
+skeletonlabel = np.array([[1, 1, 0, 0, 2, 2, 0],
+                          [0, 0, 1, 0, 0, 0, 2],
+                          [3, 0, 0, 1, 0, 0, 2],
+                          [3, 0, 0, 1, 0, 0, 0],
+                          [3, 0, 0, 0, 1, 1, 1],
+                          [0, 3, 0, 0, 0, 1, 0]], dtype=int)
