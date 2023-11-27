@@ -1385,10 +1385,12 @@ def _remove_simple_path_nodes(g):
     for u in to_remove:
         v, w = g[u].keys()
         _merge_edges(g, (u, v), (u, w))
+
+
 def iteratively_prune_paths(
         skeleton: nx.Graph,
         discard: Callable[[nx.Graph, dict], bool],
-        ) -> Skeleton:
+        ) -> nx.Graph:
     """Iteratively prune a skeleton leaving the specified number of paths.
 
     Will repeatedly remove branches of type 1 and 3 until there are none left on the Skeleton.
@@ -1409,7 +1411,7 @@ def iteratively_prune_paths(
 
     Returns
     -------
-    Graph
+    nx.Graph
         Returns a networkx Graph with the given edges pruned and remaining
         paths merged.
     """

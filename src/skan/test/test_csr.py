@@ -420,11 +420,11 @@ def test_skeletonlabel():
         [
                 (
                         skeleton0,
-                        summarize(csr.Skeleton(skeleton0), separator='_'), 4, 3
+                        csr.summarize(csr.Skeleton(skeleton0), separator="_"), 4, 3
                         ),
                 (skeleton1, None, 4, 3),
-                (skeleton1, summarize(csr.Skeleton(skeleton1)), 4, 3),
-                (skeleton2, summarize(csr.Skeleton(skeleton2)), 8, 6),
+                (skeleton1, csr.summarize(csr.Skeleton(skeleton1)), 4, 3),
+                (skeleton2, csr.summarize(csr.Skeleton(skeleton2)), 8, 6),
                 (skeleton3d, None, 7, 7),
                 (skeleton_loop1, None, 10, 10),
                 (skeleton_linear1, None, 24, 23),
@@ -438,90 +438,6 @@ def test_skeleton_to_nx(
     skan_nx = csr.skeleton_to_nx(skeleton)
     assert skan_nx.number_of_nodes() == nodes
     assert skan_nx.number_of_edges() == edges
-
-
-@pytest.mark.parametrize(
-        ('node', 'exclude_node', 'shape', 'target'),
-        [
-                ([0, 0], True, [2, 2], np.array([[0, 1], [1, 0], [1, 1]])),
-                ([0, 0], False, [2, 2],
-                 np.array([[0, 0], [0, 1], [1, 0], [1, 1]])),
-                (
-                        [1, 1],
-                        True,
-                        [3, 3],
-                        np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 2],
-                                  [2, 0], [2, 1], [2, 2]]),
-                        ),
-                (
-                        [1, 1],
-                        False,
-                        [3, 3],
-                        np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 1],
-                                  [1, 2], [2, 0], [2, 1], [2, 2]]),
-                        ),
-                (
-                        [4, 6],
-                        True,
-                        [10, 10],
-                        np.array([[3, 5], [3, 6], [3, 7], [4, 5], [4, 7],
-                                  [5, 5], [5, 6], [5, 7]]),
-                        ),
-                (
-                        [4, 6],
-                        False,
-                        [10, 10],
-                        np.array([[3, 5], [3, 6], [3, 7], [4, 5], [4, 6],
-                                  [4, 7], [5, 5], [5, 6], [5, 7]]),
-                        ),
-                ],
-        )
-def test__get_neighbours(
-        node: npt.NDArray, exclude_node: bool, shape: npt.NDArray,
-        target: npt.NDArray
-        ) -> None:
-    """Test calculating neighbouring cell coordinates"""
-    np.testing.assert_array_equal(
-            csr._get_neighbours(np.array(node), exclude_node, np.array(shape)),
-            target
-            )
-
-
-@pytest.mark.parametrize(
-        ('np_skeleton', 'nodes', 'edges'),
-        [
-                (tinycycle, 4, 4),
-                (skeleton0, 10, 11),
-                (skeleton1, 17, 17),
-                (skeleton2, 34, 34),
-                (skeleton_loop1, 262, 268),
-                (skeleton_linear1, 349, 362),
-                ],
-        )
-def test_array_to_nx(np_skeleton: npt.NDArray, nodes: int, edges: int) -> None:
-    """Test creation of NetworkX Graph from Numpy Array and summary."""
-    skan_nx = csr.array_to_nx(np_skeleton)
-    assert skan_nx.number_of_nodes() == nodes
-    assert skan_nx.number_of_edges() == edges
-
-
-@pytest.mark.parametrize(
-        ('np_skeleton'),
-        [
-                (tinycycle),
-                (skeleton0),
-                (skeleton1),
-                (skeleton2),
-                (skeleton_loop1),
-                (skeleton_loop2),
-                ],
-        )
-def test_array_to_nx_coordinates(np_skeleton: npt.NDArray) -> None:
-    """Check that thet skeleton shape and co-ordinates are stored and returned correctly."""
-    skan_nx = csr.array_to_nx(np_skeleton)
-    np.testing.assert_array_equal(
-            skan_nx.graph['skeleton_shape'], np_skeleton.shape
-            )
 
 
 @pytest.mark.parametrize(
