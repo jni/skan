@@ -101,17 +101,17 @@ def test_skeleton_summarize():
     image = np.zeros(skeleton2.shape, dtype=float)
     image[skeleton2] = 1 + np.random.random(np.sum(skeleton2))
     skeleton = Skeleton(image)
-    summary = summarize(skeleton)
-    assert set(summary['skeleton-id']) == {0, 1}
+    summary = summarize(skeleton, separator='_')
+    assert set(summary['skeleton_id']) == {0, 1}
     assert (
-            np.all(summary['mean-pixel-value'] < 2)
-            and np.all(summary['mean-pixel-value'] > 1)
+            np.all(summary['mean_pixel_value'] < 2)
+            and np.all(summary['mean_pixel_value'] > 1)
             )
 
 
 def test_skeleton_label_image_strict():
     """Test that the skeleton pixel labels match the branch IDs.
-    
+
     This does pixel-wise pairing of the label image with the expected label
     image.  There should be the same number of unique pairs as there are unique
     labels in the expected label image. This assumes that the branches are

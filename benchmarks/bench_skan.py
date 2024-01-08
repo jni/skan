@@ -42,7 +42,7 @@ def bench_suite():
         skel_obj = csr.Skeleton(skeleton)
     times['skeleton object again'] = t_skeleton2[0]
     with timer() as t_summary:
-        summary = csr.summarize(skel_obj)
+        summary = csr.summarize(skel_obj, separator='_')
     times['compute per-skeleton statistics'] = t_summary[0]
     return times
 

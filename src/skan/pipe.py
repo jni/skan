@@ -65,13 +65,15 @@ def process_single_image(
             )
     quality = shape_index(image, sigma=pixel_smoothing_radius, mode='reflect')
     skeleton = morphology.skeletonize(thresholded) * quality
-    framedata = csr.summarize(csr.Skeleton(skeleton, spacing=scale))
+    framedata = csr.summarize(
+            csr.Skeleton(skeleton, spacing=scale), separator='_'
+            )
     framedata['squiggle'] = np.log2(
-            framedata['branch-distance'] / framedata['euclidean-distance']
+            framedata['branch_distance'] / framedata['euclidean_distance']
             )
     framedata['scale'] = scale
     framedata.rename(
-            columns={'mean-pixel-value': 'mean-shape-index'},
+            columns={'mean_pixel_value': 'mean_shape_index'},
             inplace=True,
             errors='raise',
             )
@@ -152,9 +154,9 @@ def process_images(
             image_stats['branch density'] = (
                     framedata.shape[0] / image_stats['area']
                     )
-            j2j = framedata[framedata['branch-type'] == 2]
+            j2j = framedata[framedata['branch_type'] == 2]
             image_stats['mean J2J branch distance'] = (
-                    j2j['branch-distance'].mean()
+                    j2j['branch_distance'].mean()
                     )
             image_results.append(image_stats)
             yield filename, image, thresholded, skeleton, framedata

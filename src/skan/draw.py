@@ -100,7 +100,7 @@ def overlay_euclidean_skeleton_2d(
         stats,
         *,
         image_cmap=None,
-        skeleton_color_source='branch-type',
+        skeleton_color_source='branch_type',
         skeleton_colormap='viridis',
         axes=None
         ):
@@ -124,7 +124,7 @@ def overlay_euclidean_skeleton_2d(
 
         - skeleton-id: each individual skeleton (connected component) will
           have a different colour.
-        - branch-type: each branch type (tip-tip, tip-junction,
+        - branch_type: each branch type (tip-tip, tip-junction,
           junction-junction, path-path). This is the default.
         - branch-distance: the curved length of the skeleton branch.
         - euclidean-distance: the straight-line length of the skeleton branch.
@@ -142,8 +142,8 @@ def overlay_euclidean_skeleton_2d(
     image = _normalise_image(image, image_cmap=image_cmap)
     summary = stats
     # transforming from row, col to x, y
-    coords_cols = (['image-coord-src-%i' % i for i in [1, 0]]
-                   + ['image-coord-dst-%i' % i for i in [1, 0]])
+    coords_cols = (['image_coord_src_%i' % i for i in [1, 0]]
+                   + ['image_coord_dst_%i' % i for i in [1, 0]])
     coords = summary[coords_cols].values.reshape((-1, 2, 2))
     if axes is None:
         fig, axes = plt.subplots()

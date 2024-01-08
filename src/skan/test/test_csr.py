@@ -1,4 +1,5 @@
 from collections import defaultdict
+from itertools import product
 
 import pytest
 import numpy as np
@@ -32,8 +33,10 @@ def _old_branch_statistics(
     skel = csr.Skeleton(
             skeleton_image, spacing=spacing, value_is_height=value_is_height
             )
-    summary = csr.summarize(skel, value_is_height=value_is_height)
-    columns = ['node-id-src', 'node-id-dst', 'branch-distance', 'branch-type']
+    summary = csr.summarize(
+            skel, value_is_height=value_is_height, separator='_'
+            )
+    columns = ['node_id_src', 'node_id_dst', 'branch_distance', 'branch_type']
     return summary[columns].to_numpy()
 
 
@@ -68,23 +71,23 @@ def test_skeleton1_stats():
 
 
 def test_2skeletons():
-    df = csr.summarize(csr.Skeleton(skeleton2))
-    assert_almost_equal(np.unique(df['euclidean-distance']), np.sqrt([5, 10]))
-    assert_equal(np.unique(df['skeleton-id']), [0, 1])
-    assert_equal(np.bincount(df['branch-type']), [0, 4, 4])
+    df = csr.summarize(csr.Skeleton(skeleton2), separator='_')
+    assert_almost_equal(np.unique(df['euclidean_distance']), np.sqrt([5, 10]))
+    assert_equal(np.unique(df['skeleton_id']), [0, 1])
+    assert_equal(np.bincount(df['branch_type']), [0, 4, 4])
 
 
 def test_summarize_spacing():
-    df = csr.summarize(csr.Skeleton(skeleton2))
-    df2 = csr.summarize(csr.Skeleton(skeleton2, spacing=2))
-    assert_equal(np.array(df['node-id-src']), np.array(df2['node-id-src']))
+    df = csr.summarize(csr.Skeleton(skeleton2), separator='_')
+    df2 = csr.summarize(csr.Skeleton(skeleton2, spacing=2), separator='_')
+    assert_equal(np.array(df['node_id_src']), np.array(df2['node_id_src']))
     assert_almost_equal(
-            np.array(df2['euclidean-distance']),
-            np.array(2 * df['euclidean-distance'])
+            np.array(df2['euclidean_distance']),
+            np.array(2 * df['euclidean_distance'])
             )
     assert_almost_equal(
-            np.array(df2['branch-distance']),
-            np.array(2 * df['branch-distance'])
+            np.array(df2['branch_distance']),
+            np.array(2 * df['branch_distance'])
             )
 
 
@@ -121,9 +124,10 @@ def test_topograph_summary():
     stats = csr.summarize(
             csr.Skeleton(topograph1d, spacing=2.5, value_is_height=True),
             value_is_height=True,
+            separator='_',
             )
-    assert stats.loc[0, 'euclidean-distance'] == 5.0
-    columns = ['coord-src-0', 'coord-src-1', 'coord-dst-0', 'coord-dst-1']
+    assert stats.loc[0, 'euclidean_distance'] == 5.0
+    columns = ['coord_src_0', 'coord_src_1', 'coord_dst_0', 'coord_dst_1']
     assert_almost_equal(sorted(stats.loc[0, columns]), [0, 3, 3, 5])
 
 
@@ -135,27 +139,27 @@ def test_junction_multiplicity():
 
 
 def test_multiplicity_stats():
-    stats1 = csr.summarize(csr.Skeleton(skeleton0))
-    stats2 = csr.summarize(csr.Skeleton(skeleton0, spacing=2))
+    stats1 = csr.summarize(csr.Skeleton(skeleton0), separator='_')
+    stats2 = csr.summarize(csr.Skeleton(skeleton0, spacing=2), separator='_')
     assert_almost_equal(
-            2 * stats1['branch-distance'].values,
-            stats2['branch-distance'].values
+            2 * stats1['branch_distance'].values,
+            stats2['branch_distance'].values
             )
     assert_almost_equal(
-            2 * stats1['euclidean-distance'].values,
-            stats2['euclidean-distance'].values
+            2 * stats1['euclidean_distance'].values,
+            stats2['euclidean_distance'].values
             )
 
 
 def test_pixel_values():
     image = np.random.random((45,))
     expected = np.mean(image)
-    stats = csr.summarize(csr.Skeleton(image))
-    assert_almost_equal(stats.loc[0, 'mean-pixel-value'], expected)
+    stats = csr.summarize(csr.Skeleton(image), separator='_')
+    assert_almost_equal(stats.loc[0, 'mean_pixel_value'], expected)
 
 
 def test_tip_junction_edges():
-    stats1 = csr.summarize(csr.Skeleton(skeleton4))
+    stats1 = csr.summarize(csr.Skeleton(skeleton4), separator='_')
     assert stats1.shape[0] == 3  # ensure all three branches are counted
 
 
@@ -186,7 +190,7 @@ def test_transpose_image():
     skeleton1 = csr.Skeleton(image)
     skeleton2 = csr.Skeleton(image.T)
 
-    assert (skeleton1.n_paths == skeleton2.n_paths)
+    assert skeleton1.n_paths == skeleton2.n_paths
     np.testing.assert_allclose(
             np.sort(skeleton1.path_lengths()),
             np.sort(skeleton2.path_lengths()),
@@ -194,7 +198,7 @@ def test_transpose_image():
 
 
 @pytest.mark.parametrize(
-        "skeleton,prune_branch,target",
+        'skeleton,prune_branch,target',
         [
                 (
                         skeleton1, 1,
@@ -222,8 +226,8 @@ def test_prune_paths(
         ) -> None:
     """Test pruning of paths."""
     s = csr.Skeleton(skeleton, keep_images=True)
-    summary = summarize(s)
-    indices_to_remove = summary.loc[summary['branch-type'] == prune_branch
+    summary = summarize(s, separator='_')
+    indices_to_remove = summary.loc[summary['branch_type'] == prune_branch
                                     ].index
     pruned = s.prune_paths(indices_to_remove)
     np.testing.assert_array_equal(pruned, target)
@@ -233,8 +237,8 @@ def test_prune_paths_exception_single_point() -> None:
     """Test exceptions raised when pruning leaves a single point and Skeleton object
     can not be created and returned."""
     s = csr.Skeleton(skeleton0)
-    summary = summarize(s)
-    indices_to_remove = summary.loc[summary['branch-type'] == 1].index
+    summary = summarize(s, separator='_')
+    indices_to_remove = summary.loc[summary['branch_type'] == 1].index
     with pytest.raises(ValueError):
         s.prune_paths(indices_to_remove)
 
@@ -243,7 +247,7 @@ def test_prune_paths_exception_invalid_path_index() -> None:
     """Test exceptions raised when trying to prune paths that do not exist in the summary. This can arise if skeletons
     are not updated correctly during iterative pruning."""
     s = csr.Skeleton(skeleton0)
-    summary = summarize(s)
+    summary = summarize(s, separator='_')
     indices_to_remove = [6]
     with pytest.raises(ValueError):
         s.prune_paths(indices_to_remove)
@@ -325,6 +329,33 @@ def test_skeleton_path_image_no_keep_image():
     s = csr.Skeleton(skeleton2, keep_images=False)
     pli = s.path_label_image()
     assert np.max(pli) == s.n_paths
+
+
+def test_skeletonlabel():
+    stats = csr.summarize(csr.Skeleton(skeletonlabel))
+    assert stats['mean-pixel-value'].max() == skeletonlabel.max()
+    assert stats['mean-pixel-value'].max() > 1
+
+
+@pytest.mark.parametrize(
+        'dtype', [
+                ''.join([pre, 'int', suf])
+                for pre, suf in product(['u', ''], ['8', '16', '32', '64'])
+                ]
+        )
+def test_skeleton_integer_dtype(dtype):
+    stats = csr.summarize(
+            csr.Skeleton(skeletonlabel.astype(dtype)), separator='_'
+            )
+    assert stats['mean_pixel_value'].max() == skeletonlabel.max()
+    assert stats['mean_pixel_value'].max() > 1
+
+
+def test_default_summarize_separator():
+    with pytest.warns(np.VisibleDeprecationWarning,
+                      match='separator in column name'):
+        stats = csr.summarize(csr.Skeleton(skeletonlabel))
+    assert 'skeleton-id' in stats
 
 
 def test_skeletonlabel():
