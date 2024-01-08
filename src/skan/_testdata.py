@@ -1,3 +1,4 @@
+import networkx as nx
 import numpy as np
 from skimage.draw import random_shapes
 from skimage.morphology import skeletonize
@@ -7,7 +8,7 @@ tinycycle = np.array([[0, 1, 0],
                       [0, 1, 0]], dtype=bool)
 
 
-tinyline = np.array([0, 1, 1, 1, 0], dtype=bool)
+tinyline = np.array([[0, 1, 1, 1, 0]], dtype=bool)
 
 
 skeleton0 = np.array([[0, 0, 0, 1, 0, 0, 0],
@@ -109,3 +110,12 @@ kwargs["min_size"] = 20
 random_images, _ = random_shapes(**kwargs)
 mask = np.where(random_images != 255, 1, 0)
 skeleton_linear3 = skeletonize(mask)
+
+## Sample NetworkX Graphs...
+# ...with no edge attributes
+nx_graph = nx.Graph()
+nx_graph.add_nodes_from([1, 2, 3])
+# ...with edge attributes
+nx_graph_edges = nx.Graph()
+nx_graph_edges.add_nodes_from([1, 2, 3])
+nx_graph_edges.add_edge(1, 2, **{"path": np.asarray([[4, 4]])})
