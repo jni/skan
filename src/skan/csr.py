@@ -203,8 +203,11 @@ def csr_to_nbgraph(csr, node_props=None):
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
-            csr.indptr, csr.indices, csr.data,
-            np.array(csr.shape, dtype=np.int32), node_props
+            csr.indptr,
+            csr.indices,
+            csr.data,
+            np.array(csr.shape, dtype=np.int32),
+            node_props,
             )
 
 
@@ -346,8 +349,14 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
             for neighbor in jgraph.neighbors(node):
                 if not visited.edge(node, neighbor):
                     n_steps = _walk_path(
-                            jgraph, node, neighbor, visited, degrees, indices,
-                            path_data, indices_j
+                            jgraph,
+                            node,
+                            neighbor,
+                            visited,
+                            degrees,
+                            indices,
+                            path_data,
+                            indices_j,
                             )
                     indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                     indptr_i += 1
@@ -358,8 +367,14 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
             neighbor = jgraph.neighbors(node)[0]
             if not visited.edge(node, neighbor):
                 n_steps = _walk_path(
-                        jgraph, node, neighbor, visited, degrees, indices,
-                        path_data, indices_j
+                        jgraph,
+                        node,
+                        neighbor,
+                        visited,
+                        degrees,
+                        indices,
+                        path_data,
+                        indices_j,
                         )
                 indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                 indptr_i += 1
@@ -395,8 +410,11 @@ def _build_skeleton_path_graph(graph):
     degrees = np.diff(graph.indptr)
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
-            graph.indptr, graph.indices, visited_data, graph.shape,
-            np.broadcast_to(1., graph.shape[0])
+            graph.indptr,
+            graph.indices,
+            visited_data,
+            graph.shape,
+            np.broadcast_to(1.0, graph.shape[0]),
             )
     endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
@@ -1044,6 +1062,7 @@ def make_degree_image(skeleton_image):
     else:
         import dask.array as da
         from dask_image.ndfilters import convolve as dask_convolve
+
         if isinstance(bool_skeleton, da.Array):
             degree_image = bool_skeleton * dask_convolve(
                     bool_skeleton.astype(int), degree_kernel, mode='constant'
@@ -1230,19 +1249,16 @@ def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
         summary = summarize(skeleton, separator='_')
     # Ensure underscores in column names
     summary.rename(columns=lambda s: s.replace('-', '_'), inplace=True)
-    g = nx.Graph()
+    g = nx.MultiGraph()
     for row in summary.itertuples(name='Edge'):
-        # i and j include the row.Index because some edges have identifcal src
-        # and dst when branches split/join from loops with side-branches
-        i = (row.Index, row.node_id_src)
-        j = (row.Index, row.node_id_dst)
-        g.add_edge(i, j, **{"path": skeleton.path_coordinates(row.Index)})
-        g.nodes[i]['pos'] = skeleton.coordinates[i[1]]
-        g.nodes[j]['pos'] = skeleton.coordinates[j[1]]
+        i = (row.node_id_src)
+        j = (row.node_id_dst)
+        # Nodes are added if they don't exist so only need to add edges
+        g.add_edge(i, j, **{'path': skeleton.path_coordinates(row.Index)})
     return g
 
 
-def nx_to_skeleton(g: nx.Graph, orig_dim: tuple) -> Skeleton:
+def nx_to_skeleton(g: nx.Graph | nx.MultiGraph, orig_dim: tuple) -> Skeleton:
     """Convert a Networkx Graph to a Skeleton object.
 
     The NetworkX Graph should have been created using skeleton_to_nx() function
@@ -1267,27 +1283,27 @@ def nx_to_skeleton(g: nx.Graph, orig_dim: tuple) -> Skeleton:
     np_img = np.zeros(orig_dim)
     x, y = [], []
     try:
-        for edge in g.edges():
-            i, j = edge
-            coords = g.edges[i, j].pop("path")
-            x.append(coords[:, 0].tolist())
-            y.append(coords[:, 1].tolist())
-    # AttributeError are raised iif the wrong type of object is passed
+        for edge in g.edges.data(data='path', default=1):
+            _, _, path = edge
+            x.append(path[:, 0].tolist())
+            y.append(path[:, 1].tolist())
+
+    # AttributeError are raised if the wrong type of object is passed
     except AttributeError:
         raise TypeError(
-                "Please check you are passing a NetworkX graph object with "
-                "edge properties and not a Numpy Array, Skeleton."
+                'Please check you are passing a NetworkX graph object with '
+                'edge properties and not a Numpy Array or Skeleton.'
                 )
     except ValueError:
         raise ValueError(
-                "Please check your NetworkX graph object has edge "
-                "attributes that define the points between nodes."
+                'Please check your NetworkX graph object has edge '
+                'attributes that define the points between nodes.'
                 )
     except IndexError:
         raise IndexError(
-                "The underlying image of this NetworkX graph has "
-                "only one dimension. Typically skeletons have at "
-                "least 2 dimensions."
+                'The underlying image of this NetworkX graph has '
+                'only one dimension. Typically skeletons have at '
+                'least 2 dimensions.'
                 )
     x = np.concatenate(x)
     y = np.concatenate(y)
@@ -1295,9 +1311,9 @@ def nx_to_skeleton(g: nx.Graph, orig_dim: tuple) -> Skeleton:
         np_img[x, y] = 1
     except IndexError:
         raise IndexError(
-                "Can not add points outside of the original image. "
-                "Check your original images dimensions and consider "
-                "changing the orig_dim value."
+                'Can not add points outside of the original image. '
+                'Check your original images dimensions and consider '
+                'changing the orig_dim value.'
                 )
     return Skeleton(np_img)
 
@@ -1411,25 +1427,25 @@ def iteratively_prune_paths(
 #     # Check to see if we have a looped path with a branches, if so and the branch is shorter than the loop we
 #     # remove it and break. Can either look for whether there are just two branches
 #     # if branch_data.shape[0] == 2:
-#     #     length_branch_type1 = branch_data.loc[branch_data["branch-type"] ==
+#     #     length_branch_type1 = branch_data.loc[branch_data['branch-type'] ==
 #     #                                           1,
-#     #                                           "branch-distance"].values[0]
-#     #     length_branch_type3 = branch_data.loc[branch_data["branch-type"] ==
+#     #                                           'branch-distance'].values[0]
+#     #     length_branch_type3 = branch_data.loc[branch_data['branch-type'] ==
 #     #                                           3,
-#     #                                           "branch-distance"].values[0]
+#     #                                           'branch-distance'].values[0]
 #     #     if length_branch_type3 > length_branch_type1:
 #     #         pruned, branch_data = _remove_branch_type(
 #     #                 pruned, branch_data, branch_type=1, find_main_branch=find_main_branch, **kwargs
 #     #                 )
 #     # ...or perhaps more generally whether we have just one loop left and if its length is less than other branches
-#     if branch_data.loc[branch_data["branch-type"] == 3].shape[0] == 1:
+#     if branch_data.loc[branch_data['branch-type'] == 3].shape[0] == 1:
 #         # Extract the length of a loop
-#         length_branch_type3 = branch_data.loc[branch_data["branch-type"] ==
+#         length_branch_type3 = branch_data.loc[branch_data['branch-type'] ==
 #                                               3,
-#                                               "branch-distance"].values[0]
+#                                               'branch-distance'].values[0]
 #         # Extract indices for branches lengths less than this and prune them
 #         pruned = pruned.prune_paths(
-#                 branch_data.loc[branch_data["branch-distance"] <
+#                 branch_data.loc[branch_data['branch-distance'] <
 #                                 length_branch_type3].index
 #                 )
 #         branch_data = summarize(pruned, find_main_branch=find_main_branch)
@@ -1490,27 +1506,29 @@ def _remove_branch_type(
     # We want to retain the main_branch but get rid of branches of other types, but only for linear objects which have
     # only a single labeled region (other than the skeleton itself), grains with loops as main body have two such
     # regions one outside of the loop and one within
-    unique_regions = len(
-            np.unique(
-                    morphology.label(
-                            skeleton.skeleton_image,
-                            background=1,
-                            connectivity=1
+    unique_regions = (
+            len(
+                    np.unique(
+                            morphology.label(
+                                    skeleton.skeleton_image,
+                                    background=1,
+                                    connectivity=1
+                                    )
                             )
-                    )
-            ) - 1
+                    ) - 1
+            )
     if find_main_branch == True and unique_regions != 2:
         to_remove = branch_data.loc[
-                (branch_data["branch-type"] == branch_type)
-                & (branch_data["main"] == False)]
+                (branch_data['branch-type'] == branch_type)
+                & (branch_data['main'] == False)]
     # This is the final prune of looped skeletons to remove branches of type 1 that persist when there are internal
     # loops to the main loop. We re-enable find_main_branch so that we can pass through subsequent iterations if needed.
     elif find_main_branch == False and unique_regions != 2:
-        to_remove = branch_data.loc[(branch_data["branch-type"] == 1)]
+        to_remove = branch_data.loc[(branch_data['branch-type'] == 1)]
         find_main_branch = True
     else:
         to_remove = branch_data.loc[
-                (branch_data["branch-type"] == branch_type)]
+                (branch_data['branch-type'] == branch_type)]
     # Now prune the skeleton
     skeleton = skeleton.prune_paths(to_remove.index)
     # Might not need this line, it is included to add the **kwargs to the returned item but that may well be
