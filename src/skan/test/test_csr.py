@@ -523,36 +523,29 @@ def test_nx_to_skeleton(
     """Test creation of Skeleton from NetworkX Graph."""
     skeleton = csr.Skeleton(np_skeleton)
     skan_nx = csr.skeleton_to_nx(skeleton, summary)
-    skeleton_nx = csr.nx_to_skeleton(skan_nx, np_skeleton.shape)
+    skeleton_nx = csr.nx_to_skeleton(skan_nx)
     np.testing.assert_array_equal(np_skeleton, skeleton_nx.skeleton_image)
 
 
 @pytest.mark.parametrize(
-        ('wrong_skeleton', 'shape'),
+        'wrong_skeleton',
         [
-                pytest.param(skeleton0, [2, 2], id='Numpy Array.'),
-                pytest.param(csr.Skeleton(skeleton0), [2, 2], id='Skeleton.'),
-                pytest.param(
-                        nx_graph, [2, 2], id='NetworkX Graph without edges.'
-                        ),
+                pytest.param(skeleton0, id='Numpy Array.'),
+                pytest.param(csr.Skeleton(skeleton0), id='Skeleton.'),
+                pytest.param(nx_graph, id='NetworkX Graph without edges.'),
                 pytest.param(
                         nx_graph_edges,
-                        [2, 2],
                         id='NetworkX Graph with points outside image.',
                         ),
                 pytest.param(
                         csr.skeleton_to_nx(
                                 csr.Skeleton(np.asarray([0, 1, 1, 1, 0]))
                                 ),
-                        [1, 5],
                         id='One-dimensional array.',
                         ),
                 ],
         )
-def test_nx_to_skeleton_attribute_error(
-        wrong_skeleton: Any,
-        shape: list,
-        ) -> None:
+def test_nx_to_skeleton_attribute_error(wrong_skeleton: Any) -> None:
     """Test various errors are raised by nx_to_skeleton()."""
     with pytest.raises(Exception):
-        csr.nx_to_skeleton(wrong_skeleton, shape)
+        csr.nx_to_skeleton(wrong_skeleton)
