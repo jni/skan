@@ -1251,8 +1251,8 @@ def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
     summary.rename(columns=lambda s: s.replace('-', '_'), inplace=True)
     g = nx.MultiGraph()
     for row in summary.itertuples(name='Edge'):
-        i = (row.node_id_src)
-        j = (row.node_id_dst)
+        i = row.node_id_src
+        j = row.node_id_dst
         # Nodes are added if they don't exist so only need to add edges
         g.add_edge(i, j, **{'path': skeleton.path_coordinates(row.Index)})
     return g
