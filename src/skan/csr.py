@@ -540,6 +540,7 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.skeleton_shape = skeleton_image.shape
+        self.skeleton_dtype = skeleton_image.dtype
         self.source_image = None
         self.degrees = np.diff(self.graph.indptr)
         self.spacing = (
@@ -1249,16 +1250,26 @@ def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
         summary = summarize(skeleton, separator='_')
     # Ensure underscores in column names
     summary.rename(columns=lambda s: s.replace('-', '_'), inplace=True)
-    g = nx.MultiGraph()
+    g = nx.MultiGraph(
+            shape=skeleton.skeleton_shape, dtype=skeleton.skeleton_dtype
+            )
     for row in summary.itertuples(name='Edge'):
+        index = row.Index
         i = row.node_id_src
         j = row.node_id_dst
+        indices, values = skeleton.path_with_data(index)
         # Nodes are added if they don't exist so only need to add edges
-        g.add_edge(i, j, **{'path': skeleton.path_coordinates(row.Index)})
+        g.add_edge(
+                i, j, **{
+                        'path': skeleton.path_coordinates(index),
+                        'indices': indices,
+                        'values': values,
+                        }
+                )
     return g
 
 
-def nx_to_skeleton(g: nx.Graph | nx.MultiGraph, orig_dim: tuple) -> Skeleton:
+def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
     """Convert a Networkx Graph to a Skeleton object.
 
     The NetworkX Graph should have been created using skeleton_to_nx() function
@@ -1280,13 +1291,15 @@ def nx_to_skeleton(g: nx.Graph | nx.MultiGraph, orig_dim: tuple) -> Skeleton:
     Skeleton
         Skeleton object.
     """
-    image = np.zeros(orig_dim, dtype=bool)
-    all_coords = np.concatenate([
-            path for _, _, path in g.edges.data(data='path')
+    image = np.zeros(g.graph['shape'], dtype=g.graph['dtype'])
+    all_coords = np.concatenate([path for _, _, path in g.edges.data('path')],
+                                axis=0)
+    all_values = np.concatenate([
+            values for _, _, values in g.edges.data('values')
             ],
                                 axis=0)
 
-    image[tuple(all_coords.T)] = 1
+    image[tuple(all_coords.T)] = all_values
 
     return Skeleton(image)
 
