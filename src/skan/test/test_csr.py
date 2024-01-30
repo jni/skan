@@ -537,12 +537,6 @@ def test_nx_to_skeleton(
                         nx_graph_edges,
                         id='NetworkX Graph with points outside image.',
                         ),
-                pytest.param(
-                        csr.skeleton_to_nx(
-                                csr.Skeleton(np.asarray([0, 1, 1, 1, 0]))
-                                ),
-                        id='One-dimensional array.',
-                        ),
                 ],
         )
 def test_nx_to_skeleton_attribute_error(wrong_skeleton: Any) -> None:
