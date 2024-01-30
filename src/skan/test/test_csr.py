@@ -416,7 +416,9 @@ def test_skeletonlabel():
                         8,
                         id='skeleton2 (with summary)'
                         ),
-                # pytest.param(skeleton3d, None, 7, 7, id='skeleton3d (no summary)'),
+                pytest.param(
+                        skeleton3d, None, 7, 7, id='skeleton3d (no summary)'
+                        ),
                 pytest.param(
                         skeleton_loop1,
                         None,
@@ -488,7 +490,11 @@ def test_skeleton_to_nx(
                         csr.summarize(csr.Skeleton(skeleton1)),
                         id='skeleton1'
                         ),
-                # pytest.param(skeleton3d, csr.summarize(csr.Skeleton(skeleton3d)), id='skeleton3d (no summary)'),
+                pytest.param(
+                        skeleton3d,
+                        csr.summarize(csr.Skeleton(skeleton3d)),
+                        id='skeleton3d (no summary)'
+                        ),
                 pytest.param(
                         skeleton_loop1,
                         csr.summarize(csr.Skeleton(skeleton_loop1)),
