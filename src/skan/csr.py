@@ -1280,42 +1280,15 @@ def nx_to_skeleton(g: nx.Graph | nx.MultiGraph, orig_dim: tuple) -> Skeleton:
     Skeleton
         Skeleton object.
     """
-    np_img = np.zeros(orig_dim)
-    x, y = [], []
-    try:
-        for edge in g.edges.data(data='path', default=1):
-            _, _, path = edge
-            x.append(path[:, 0].tolist())
-            y.append(path[:, 1].tolist())
+    image = np.zeros(orig_dim, dtype=bool)
+    all_coords = np.concatenate([
+            path for _, _, path in g.edges.data(data='path')
+            ],
+                                axis=0)
 
-    # AttributeError are raised if the wrong type of object is passed
-    except AttributeError:
-        raise TypeError(
-                'Please check you are passing a NetworkX graph object with '
-                'edge properties and not a Numpy Array or Skeleton.'
-                )
-    except ValueError:
-        raise ValueError(
-                'Please check your NetworkX graph object has edge '
-                'attributes that define the points between nodes.'
-                )
-    except IndexError:
-        raise IndexError(
-                'The underlying image of this NetworkX graph has '
-                'only one dimension. Typically skeletons have at '
-                'least 2 dimensions.'
-                )
-    x = np.concatenate(x)
-    y = np.concatenate(y)
-    try:
-        np_img[x, y] = 1
-    except IndexError:
-        raise IndexError(
-                'Can not add points outside of the original image. '
-                'Check your original images dimensions and consider '
-                'changing the orig_dim value.'
-                )
-    return Skeleton(np_img)
+    image[tuple(all_coords.T)] = 1
+
+    return Skeleton(image)
 
 
 def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):

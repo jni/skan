@@ -98,7 +98,7 @@ def test_summarize_spacing():
 
 def test_line():
     g, idxs = csr.skeleton_to_csgraph(tinyline)
-    assert_equal(np.ravel(idxs), [0, 0, 0, 1, 2, 3])
+    assert_equal(np.ravel(idxs), [1, 2, 3])
     assert_equal(g.shape, (3, 3))
     # source, dest, length, type
     assert_equal(_old_branch_statistics(tinyline), [[0, 2, 2, 0]])
