@@ -206,38 +206,23 @@ def test_transpose_image():
         'skeleton,prune_branch,target',
         [
                 (
-                        skeleton1,
-                        1,
-                        np.array([
-                                [0, 1, 1, 1, 1, 1, 0],
-                                [1, 0, 0, 0, 0, 0, 1],
-                                [0, 1, 1, 0, 1, 1, 0],
-                                [0, 0, 0, 1, 0, 0, 0],
-                                [0, 0, 0, 0, 0, 0, 0],
-                                ]),
+                        skeleton1, 1,
+                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
+                                  [0, 1, 1, 0, 1, 1, 0], [0, 0, 0, 1, 0, 0, 0],
+                                  [0, 0, 0, 0, 0, 0, 0]])
                         ),
                 (
-                        skeleton1,
-                        2,
-                        np.array([
-                                [0, 0, 0, 0, 0, 0, 0],
-                                [0, 0, 0, 0, 0, 0, 0],
-                                [0, 1, 0, 0, 0, 0, 0],
-                                [1, 0, 0, 2, 0, 0, 0],
-                                [1, 0, 0, 0, 2, 2, 2],
-                                ]),
+                        skeleton1, 2,
+                        np.array([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                                  [0, 1, 0, 0, 0, 0, 0], [1, 0, 0, 2, 0, 0, 0],
+                                  [1, 0, 0, 0, 2, 2, 2]])
                         ),
                 # There are no isolated cycles to be pruned
                 (
-                        skeleton1,
-                        3,
-                        np.array([
-                                [0, 1, 1, 1, 1, 1, 0],
-                                [1, 0, 0, 0, 0, 0, 1],
-                                [0, 3, 2, 0, 1, 1, 0],
-                                [3, 0, 0, 4, 0, 0, 0],
-                                [3, 0, 0, 0, 4, 4, 4],
-                                ]),
+                        skeleton1, 3,
+                        np.array([[0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 0, 0, 0, 1],
+                                  [0, 3, 2, 0, 1, 1, 0], [3, 0, 0, 4, 0, 0, 0],
+                                  [3, 0, 0, 0, 4, 4, 4]])
                         ),
                 ],
         )
@@ -358,11 +343,10 @@ def test_skeletonlabel():
 
 
 @pytest.mark.parametrize(
-        'dtype',
-        [
+        'dtype', [
                 ''.join([pre, 'int', suf])
                 for pre, suf in product(['u', ''], ['8', '16', '32', '64'])
-                ],
+                ]
         )
 def test_skeleton_integer_dtype(dtype):
     stats = csr.summarize(
@@ -397,7 +381,7 @@ def test_skeletonlabel():
                         csr.summarize(csr.Skeleton(skeleton0), separator='_'),
                         4,
                         3,
-                        id='skeleton0 (with summary)',
+                        id='skeleton0 (with summary)'
                         ),
                 pytest.param(
                         skeleton1, None, 4, 4, id='skeleton1 (no summary)'
@@ -498,27 +482,27 @@ def test_skeleton_to_nx(
                 pytest.param(
                         skeleton_loop1,
                         csr.summarize(csr.Skeleton(skeleton_loop1)),
-                        id='skeleton_loop1',
+                        id='skeleton_loop1'
                         ),
                 pytest.param(
                         skeleton_loop2,
                         csr.summarize(csr.Skeleton(skeleton_loop2)),
-                        id='skeleton_loop2',
+                        id='skeleton_loop2'
                         ),
                 pytest.param(
                         skeleton_linear1,
                         csr.summarize(csr.Skeleton(skeleton_linear1)),
-                        id='skeleton_lienar1',
+                        id='skeleton_lienar1'
                         ),
                 pytest.param(
                         skeleton_linear2,
                         csr.summarize(csr.Skeleton(skeleton_linear2)),
-                        id='skeleton_linear2',
+                        id='skeleton_linear2'
                         ),
                 pytest.param(
                         skeleton_linear3,
                         csr.summarize(csr.Skeleton(skeleton_linear3)),
-                        id='skeleton_linear3',
+                        id='skeleton_linear3'
                         ),
                 ],
         )
@@ -541,7 +525,7 @@ def test_nx_to_skeleton(
                 pytest.param(nx_graph, id='NetworkX Graph without edges.'),
                 pytest.param(
                         nx_graph_edges,
-                        id='NetworkX Graph with points outside image.',
+                        id='NetworkX Graph with points outside image.'
                         ),
                 ],
         )

@@ -410,11 +410,8 @@ def _build_skeleton_path_graph(graph):
     degrees = np.diff(graph.indptr)
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
-            graph.indptr,
-            graph.indices,
-            visited_data,
-            graph.shape,
-            np.broadcast_to(1.0, graph.shape[0]),
+            graph.indptr, graph.indices, visited_data, graph.shape,
+            np.broadcast_to(1.0, graph.shape[0])
             )
     endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
