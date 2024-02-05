@@ -106,5 +106,9 @@ skan = [
 [tool.setuptools_scm]
 write_to = 'src/skan/_version.py'
 
+[tool.pytest.ini_options]
+minversion = "7.4.2"
+addopts = "-W ignore"
+
 [project.entry-points.'napari.manifest']
 skan-napari = 'skan:napari.yaml'

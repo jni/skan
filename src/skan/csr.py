@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import networkx as nx
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -11,7 +12,7 @@ from skimage.util._map_array import map_array, ArrayMap
 import numpy.typing as npt
 import numba
 import warnings
-
+from typing import Tuple, Callable
 from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
 
@@ -202,8 +203,11 @@ def csr_to_nbgraph(csr, node_props=None):
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
-            csr.indptr, csr.indices, csr.data,
-            np.array(csr.shape, dtype=np.int32), node_props
+            csr.indptr,
+            csr.indices,
+            csr.data,
+            np.array(csr.shape, dtype=np.int32),
+            node_props,
             )
 
 
@@ -345,8 +349,14 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
             for neighbor in jgraph.neighbors(node):
                 if not visited.edge(node, neighbor):
                     n_steps = _walk_path(
-                            jgraph, node, neighbor, visited, degrees, indices,
-                            path_data, indices_j
+                            jgraph,
+                            node,
+                            neighbor,
+                            visited,
+                            degrees,
+                            indices,
+                            path_data,
+                            indices_j,
                             )
                     indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                     indptr_i += 1
@@ -357,8 +367,14 @@ def _build_paths(jgraph, indptr, indices, path_data, visited, degrees):
             neighbor = jgraph.neighbors(node)[0]
             if not visited.edge(node, neighbor):
                 n_steps = _walk_path(
-                        jgraph, node, neighbor, visited, degrees, indices,
-                        path_data, indices_j
+                        jgraph,
+                        node,
+                        neighbor,
+                        visited,
+                        degrees,
+                        indices,
+                        path_data,
+                        indices_j,
                         )
                 indptr[indptr_i + 1] = indptr[indptr_i] + n_steps
                 indptr_i += 1
@@ -395,7 +411,7 @@ def _build_skeleton_path_graph(graph):
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
             graph.indptr, graph.indices, visited_data, graph.shape,
-            np.broadcast_to(1., graph.shape[0])
+            np.broadcast_to(1.0, graph.shape[0])
             )
     endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
@@ -521,6 +537,7 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.skeleton_shape = skeleton_image.shape
+        self.skeleton_dtype = skeleton_image.dtype
         self.source_image = None
         self.degrees = np.diff(self.graph.indptr)
         self.spacing = (
@@ -1043,6 +1060,7 @@ def make_degree_image(skeleton_image):
     else:
         import dask.array as da
         from dask_image.ndfilters import convolve as dask_convolve
+
         if isinstance(bool_skeleton, da.Array):
             degree_image = bool_skeleton * dask_convolve(
                     bool_skeleton.astype(int), degree_kernel, mode='constant'
@@ -1221,3 +1239,114 @@ def sholl_analysis(skeleton, center=None, shells=None):
     intersection_counts = np.bincount(shells, minlength=len(shell_radii)) // 2
 
     return center, shell_radii, intersection_counts
+
+
+def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
+    """Convert a Skeleton object to a networkx Graph."""
+    if summary is None:
+        summary = summarize(skeleton, separator='_')
+    # Ensure underscores in column names
+    summary.rename(columns=lambda s: s.replace('-', '_'), inplace=True)
+    g = nx.MultiGraph(
+            shape=skeleton.skeleton_shape, dtype=skeleton.skeleton_dtype
+            )
+    for row in summary.itertuples(name='Edge'):
+        index = row.Index
+        i = row.node_id_src
+        j = row.node_id_dst
+        indices, values = skeleton.path_with_data(index)
+        # Nodes are added if they don't exist so only need to add edges
+        g.add_edge(
+                i, j, **{
+                        'path': skeleton.path_coordinates(index),
+                        'indices': indices,
+                        'values': values,
+                        }
+                )
+    return g
+
+
+def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
+    """Convert a Networkx Graph to a Skeleton object.
+
+    The NetworkX Graph should have been created using skeleton_to_nx() function
+    which stores the co-ordinates of points between nodes as an edge property.
+    These are extracted and used to re-create the original Numpy array
+
+    Currently this is limited to 2D skeletons.
+
+
+    Parameters
+    ----------
+    g: nx.Graph
+        Networkx graph to convert to Skeleton.
+    orig_dim: tuple
+        Tuple of the original images dimensions
+
+    Returns
+    -------
+    Skeleton
+        Skeleton object.
+    """
+    image = np.zeros(g.graph['shape'], dtype=g.graph['dtype'])
+    all_coords = np.concatenate([path for _, _, path in g.edges.data('path')],
+                                axis=0)
+    all_values = np.concatenate([
+            values for _, _, values in g.edges.data('values')
+            ],
+                                axis=0)
+
+    image[tuple(all_coords.T)] = all_values
+
+    return Skeleton(image)
+
+
+def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
+    """Join two paths together that have a common endpoint."""
+    return np.concatenate([p1[:-1], p2], axis=0)
+
+
+def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
+    middle_node = set(e1) & set(e2)
+    new_edge = sorted(
+            (set(e1) | set(e2)) - {middle_node},
+            key=lambda i: i in e2,
+            )
+    d1 = g.edges[e1]
+    d2 = g.edges[e2]
+    p1 = d1['path'] if e1[1] == middle_node else d1['path'][::-1]
+    p2 = d2['path'] if e2[0] == middle_node else d2['path'][::-1]
+    n1 = len(d1['path'])
+    n2 = len(d2['path'])
+    new_edge_values = {
+            'skeleton_id':
+                    g.edges[e1]['skeleton_id'],
+            'node_id_src':
+                    new_edge[0],
+            'node_id_dst':
+                    new_edge[1],
+            'branch_distance':
+                    d1['branch_distance'] + d2['branch_distance'],
+            'branch_type':
+                    min(d1['branch_type'], d2['branch_type']),
+            'mean_pixel_value': (
+                    n1 * d1['mean_pixel_value'] + n2 * d2['mean_pixel_value']
+                    ) / (n1+n2),
+            'stdev_pixel_value':
+                    np.sqrt((
+                            d1['stdev_pixel_value']**2 *
+                            (n1-1) + d2['stdev_pixel_value']**2 * (n2-1)
+                            ) / (n1+n2-1)),
+            'path':
+                    _merge_paths(p1, p2),
+            }
+    g.add_edge(new_edge[0], new_edge[1], **new_edge_values)
+    g.remove_node(middle_node)
+
+
+def _remove_simple_path_nodes(g):
+    """Remove any nodes of degree 2 by merging their incident edges."""
+    to_remove = [n for n in g.nodes if g.degree(n) == 2]
+    for u in to_remove:
+        v, w = g[u].keys()
+        _merge_edges(g, (u, v), (u, w))
