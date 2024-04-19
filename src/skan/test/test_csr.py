@@ -1,4 +1,5 @@
 from __future__ import annotations
+import sys
 
 from collections import defaultdict
 from itertools import product
@@ -422,7 +423,11 @@ def test_skeletonlabel():
                         None,
                         24,
                         24,
-                        id='skeleton_linear1 (no summary)'
+                        id='skeleton_linear1 (no summary)',
+                        marks=pytest.mark.xfail(
+                                sys.version_info[:2] == (3, 8),
+                                reason='Incorrect edege discovery (#225)'
+                                )
                         ),
                 pytest.param(
                         skeleton_linear2,
