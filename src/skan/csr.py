@@ -1289,24 +1289,34 @@ def skeleton_to_nx(
 def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
     """Convert a Networkx Graph to a Skeleton object.
 
-    The NetworkX Graph should have been created using skeleton_to_nx() function
-    which stores the co-ordinates of points between nodes as an edge property.
-    These are extracted and used to re-create the original Numpy array
+    The NetworkX Graph should have the following graph properties:
+    - 'shape': the shape of the image from which the graph was created.
+    - 'dtype': the dtype of the image from which the graph was created.
 
-    Currently this is limited to 2D skeletons.
+    and the following edge properties:
+    - 'path': an (N, Ndim) array of coordinates in the image of the pixels
+      traced by this edge.
+    - 'values': an (N,) array of values for the pixels traced by this edge.
 
+    The `skeleton_to_nx` function can produce such a graph from a `Skeleton`
+    object.
 
     Parameters
     ----------
     g: nx.Graph
         Networkx graph to convert to Skeleton.
-    orig_dim: tuple
-        Tuple of the original images dimensions
 
     Returns
     -------
     Skeleton
-        Skeleton object.
+        Skeleton object corresponding to the input graph.
+
+    Notes
+    -----
+    Currently, this method uses the naive, brute-force approach of regenerating
+    the entire image from the graph, and then generating the Skeleton from the
+    image. It is probably low-hanging fruit to instead generate the Skeleton
+    compressed-sparse-row (CSR) data directly.
     """
     image = np.zeros(g.graph['shape'], dtype=g.graph['dtype'])
     all_coords = np.concatenate([path for _, _, path in g.edges.data('path')],
