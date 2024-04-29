@@ -1246,11 +1246,11 @@ def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
     if summary is None:
         summary = summarize(skeleton, separator='_')
     # Ensure underscores in column names
-    summary.rename(columns=lambda s: s.replace('-', '_'), inplace=True)
+    csum = summary.rename(columns=lambda s: s.replace('-', '_'))
     g = nx.MultiGraph(
             shape=skeleton.skeleton_shape, dtype=skeleton.skeleton_dtype
             )
-    for row in summary.itertuples(name='Edge'):
+    for row in csum.itertuples(name='Edge'):
         index = row.Index
         i = row.node_id_src
         j = row.node_id_dst
