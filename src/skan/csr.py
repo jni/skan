@@ -1242,7 +1242,24 @@ def sholl_analysis(skeleton, center=None, shells=None):
 
 
 def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
-    """Convert a Skeleton object to a networkx Graph."""
+    """Convert a Skeleton object to a networkx Graph.
+
+    Parameters
+    ----------
+    skeleton : Skeleton
+        The skeleton to convert.
+    summary : pd.DataFrame | None
+        The summary statistics of the skeleton. Each row in the summary table
+        is an edge in the networkx graph. It is not necessary to pass this in
+        because it can be computed from the input skeleton, but if it is
+        already computed, it will speed up this function.
+
+    Returns
+    -------
+    g : nx.Graph
+        A graph where each node is a junction or endpoint in the skeleton, and
+        each edge is a path.
+    """
     if summary is None:
         summary = summarize(skeleton, separator='_')
     # Ensure underscores in column names
