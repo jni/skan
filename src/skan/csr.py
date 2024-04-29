@@ -1241,7 +1241,10 @@ def sholl_analysis(skeleton, center=None, shells=None):
     return center, shell_radii, intersection_counts
 
 
-def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
+def skeleton_to_nx(
+        skeleton: Skeleton,
+        summary: pd.DataFrame | None = None,
+        ) -> nx.MultiGraph:
     """Convert a Skeleton object to a networkx Graph.
 
     Parameters
@@ -1256,7 +1259,7 @@ def skeleton_to_nx(skeleton: Skeleton, summary: pd.DataFrame | None = None):
 
     Returns
     -------
-    g : nx.Graph
+    g : nx.MultiGraph
         A graph where each node is a junction or endpoint in the skeleton, and
         each edge is a path.
     """
