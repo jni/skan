@@ -74,42 +74,30 @@ skeletonlabel = np.array([[1, 1, 0, 0, 2, 2, 0],
                           [3, 0, 0, 0, 1, 1, 1],
                           [0, 3, 0, 0, 0, 1, 0]], dtype=int)
 
-# Generate a random skeletons, first is a skeleton with a closed loop with side branches
-kwargs = {"image_shape": (128, 128),
-          "max_shapes": 20,
-          "channel_axis": None,
-          "shape": None,
-          "rng": 1,
-          "allow_overlap": True,
-          "min_size": 20}
+
+def _generate_random_skeleton(**extra_kwargs):
+    """Generate random skeletons using skimage.draw's random_shapes."""
+    kwargs = {"image_shape": (128, 128),
+              "max_shapes": 20,
+              "channel_axis": None,
+              "shape": None,
+              "allow_overlap": True}
+    random_image, _ = random_shapes(**kwargs, **extra_kwargs)
+    mask = random_image != 255
+    return skeletonize(mask)
+
+# Generate random skeletons:
+
 # Skeleton with loop to be retained and side-branches
-random_images, _ = random_shapes(**kwargs)
-mask = np.where(random_images != 255, 1, 0)
-skeleton_loop1 = skeletonize(mask)
+skeleton_loop1 = _generate_random_skeleton(rng=1, min_size=20)
 # Skeleton with loop to be retained and side-branches
-kwargs["rng"] = 165103
-kwargs["min_size"] = 60
-random_images, _ = random_shapes(**kwargs)
-mask = np.where(random_images != 255, 1, 0)
-skeleton_loop2 = skeletonize(mask)
+skeleton_loop2 = _generate_random_skeleton(rng=165103, min_size=60)
 # Linear skeleton with lots of large side-branches, some forked
-kwargs["rng"] = 13588686514
-kwargs["min_size"] = 20
-random_images, _ = random_shapes(**kwargs)
-mask = np.where(random_images != 255, 1, 0)
-skeleton_linear1 = skeletonize(mask)
+skeleton_linear1 = _generate_random_skeleton(rng=13588686514, min_size=20)
 # Linear Skeleton with simple fork at one end
-kwargs["rng"] = 21
-kwargs["min_size"] = 20
-random_images, _ = random_shapes(**kwargs)
-mask = np.where(random_images != 255, 1, 0)
-skeleton_linear2 = skeletonize(mask)
+skeleton_linear2 = _generate_random_skeleton(rng=21, min_size=20)
 # Linear Skeletons (i.e. multiple) with branches
-kwargs["rng"] = 894632511
-kwargs["min_size"] = 20
-random_images, _ = random_shapes(**kwargs)
-mask = np.where(random_images != 255, 1, 0)
-skeleton_linear3 = skeletonize(mask)
+skeleton_linear3 = _generate_random_skeleton(rng=894632511, min_size=20)
 
 ## Sample NetworkX Graphs...
 # ...with no edge attributes
