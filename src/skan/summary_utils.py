@@ -4,6 +4,29 @@ from pandas import DataFrame
 import toolz as tz
 
 
+def find_main_branch_nx(g: nx.Graph, weight='branch-distance', in_place=True):
+    """Find longest shortest paths in g and annotate edges on the path."""
+    if not in_place:
+        g = g.copy()
+    for conn in nx.connected_components(g):
+        curr_val = 0
+        curr_pair = None
+        h = g.subgraph(conn)
+        p = dict(nx.all_pairs_dijkstra_path_length(h, weight=weight))
+        for src in p:
+            for dst in p[src]:
+                val = p[src][dst]
+                if val is not None and np.isfinite(val) and val >= curr_val:
+                    curr_val = val
+                    curr_pair = (src, dst)
+        for i, j in tz.sliding_window(2, nx.shortest_path(h,
+                                                          source=curr_pair[0],
+                                                          target=curr_pair[1],
+                                                          weight=weight)):
+            g.edges[i, j]['main'] = True
+    return g
+
+
 def find_main_branches(summary: DataFrame) -> np.ndarray:
     """Predict the extent of branching.
 
@@ -32,21 +55,8 @@ def find_main_branches(summary: DataFrame) -> np.ndarray:
 
     g.add_weighted_edges_from(zip(us, vs, ws))
 
-    for conn in nx.connected_components(g):
-        curr_val = 0
-        curr_pair = None
-        h = g.subgraph(conn)
-        p = dict(nx.all_pairs_dijkstra_path_length(h))
-        for src in p:
-            for dst in p[src]:
-                val = p[src][dst]
-                if (val is not None and np.isfinite(val) and val >= curr_val):
-                    curr_val = val
-                    curr_pair = (src, dst)
-        for i, j in tz.sliding_window(2, nx.shortest_path(h,
-                                                          source=curr_pair[0],
-                                                          target=curr_pair[1],
-                                                          weight='weight')):
-            is_main[edge2idx[(i, j)]] = 1
+    h = find_main_branch_nx(g)
+    for i, j in h.edges():
+        is_main[edge2idx[(i, j)]] = 1
 
     return is_main
