@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.11.1 documentation</title>
   
@@ -19,33 +18,33 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/documentation_options.js?v=57cbeb03"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=30646c52"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/getting_started';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.14.3';
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.2';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.x';
         DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
@@ -63,10 +62,9 @@
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -107,7 +105,7 @@
 </form></div>
   </div>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
 <div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
     <span class="fa-solid fa-bars"></span>
@@ -117,6 +115,7 @@
   <div class="col-lg-3 navbar-header-items__start">
     
       <div class="navbar-item">
+
   
 
 <a class="navbar-brand logo" href="../index.html">
@@ -136,13 +135,8 @@
     
     <div class="me-auto navbar-header-items__center">
       
-        <div class="navbar-item"><nav class="navbar-nav">
-  <p class="sidebar-header-items__title"
-     role="heading"
-     aria-level="1"
-     aria-label="Site Navigation">
-    Site Navigation
-  </p>
+        <div class="navbar-item">
+<nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
     
                     <li class="nav-item current active">
@@ -182,6 +176,7 @@
       
         <div class="navbar-item navbar-persistent--container">
           
+
  <script>
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -240,6 +235,7 @@ document.write(`
   
   
     <div class="navbar-persistent--mobile">
+
  <script>
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -259,10 +255,13 @@ document.write(`
   
 </div>
 
-    </nav>
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -273,13 +272,8 @@ document.write(`
     
       <div class="sidebar-header-items__center">
         
-          <div class="navbar-item"><nav class="navbar-nav">
-  <p class="sidebar-header-items__title"
-     role="heading"
-     aria-level="1"
-     aria-label="Site Navigation">
-    Site Navigation
-  </p>
+          <div class="navbar-item">
+<nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
     
                     <li class="nav-item current active">
@@ -363,7 +357,8 @@ document.write(`
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
@@ -424,13 +419,13 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <section id="getting-started-skeleton-analysis-with-skan">
-<h1>Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started-skeleton-analysis-with-skan" title="Permalink to this heading">#</a></h1>
+<h1>Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started-skeleton-analysis-with-skan" title="Link to this heading">#</a></h1>
 <p>Skeleton analysis allows us to measure fine structure in samples. In this case, we are going to measure the network formed by a protein called <em>spectrin</em> inside the membrane of a red blood cell, either infected by the malaria parasite <em>Plasmodium falciparum</em>, or uninfected.</p>
 <section id="extracting-a-skeleton-from-an-image">
-<h2>0. Extracting a skeleton from an image<a class="headerlink" href="#extracting-a-skeleton-from-an-image" title="Permalink to this heading">#</a></h2>
+<h2>0. Extracting a skeleton from an image<a class="headerlink" href="#extracting-a-skeleton-from-an-image" title="Link to this heading">#</a></h2>
 <p>Skan’s primary purpose is to analyse skeletons. (It primarily mimics the <a class="reference external" href="https://imagej.net/AnalyzeSkeleton">“Analyze Skeleton” Fiji plugin</a>.) In this section, we will run some simple preprocessing on our source images to extract a skeleton, provided by Skan and <a class="reference external" href="https://scikit-image.org">scikit-image</a>, but this is far from the optimal way of extracting a skeleton from an image. Skip to section 1 for Skan’s primary functionality.</p>
 <p>First, we load the images. These images were produced by an FEI scanning electron microscope. <a class="reference external" href="https://imageio.github.io">ImageIO</a> provides a method to read these images, including metadata.</p>
 <div class="cell docutils container">
@@ -458,7 +453,8 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/13b79ffeacdeee963a876f034ccd83a9606d33dd2a92aa5f4c00cd72f4f751d6.png" src="../_images/13b79ffeacdeee963a876f034ccd83a9606d33dd2a92aa5f4c00cd72f4f751d6.png" />
+<a class="reference internal image-reference" href="../_images/78a6f24dd6e774f5ffe917765087e10c1deee4aa31b2e3aa0a6cbafb4e947e0b.png"><img alt="../_images/78a6f24dd6e774f5ffe917765087e10c1deee4aa31b2e3aa0a6cbafb4e947e0b.png" src="../_images/78a6f24dd6e774f5ffe917765087e10c1deee4aa31b2e3aa0a6cbafb4e947e0b.png" style="width: 561px; height: 379px;" />
+</a>
 </div>
 </div>
 <p>As an aside, we can extract the pixel spacing in meters from the <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
@@ -479,7 +475,8 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/05cc099c1a9a8a3ed7385641f63ab4aaa9bdf09201b227d979be3f1b243f32c5.png" src="../_images/05cc099c1a9a8a3ed7385641f63ab4aaa9bdf09201b227d979be3f1b243f32c5.png" />
+<a class="reference internal image-reference" href="../_images/d22455a25e9e8c9c430ba9c6ac9d6a577916ba2436f57a89671d74fd2afac87b.png"><img alt="../_images/d22455a25e9e8c9c430ba9c6ac9d6a577916ba2436f57a89671d74fd2afac87b.png" src="../_images/d22455a25e9e8c9c430ba9c6ac9d6a577916ba2436f57a89671d74fd2afac87b.png" style="width: 581px; height: 399px;" />
+</a>
 </div>
 </div>
 <p>This is an image of the inside of the membrane of a red blood cell. We want to measure the network of bright regions in this image, which is made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
@@ -504,7 +501,8 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/100f5d400a7106dd25aed4b7392143f387d9a9c5700556eea7478fe9fb2935b1.png" src="../_images/100f5d400a7106dd25aed4b7392143f387d9a9c5700556eea7478fe9fb2935b1.png" />
+<a class="reference internal image-reference" href="../_images/f22eee39894ef63780c751bab680896645d0f3da2269568875de075d345f5a25.png"><img alt="../_images/f22eee39894ef63780c751bab680896645d0f3da2269568875de075d345f5a25.png" src="../_images/f22eee39894ef63780c751bab680896645d0f3da2269568875de075d345f5a25.png" style="width: 561px; height: 379px;" />
+</a>
 </div>
 </div>
 <p>(There are some thresholding artifacts around the left edge, due to the dark border caused by microscope imaging drift and alignment. We will ignore this in this document, but the Skan GUI allows for a “crop” parameter to filter out these regions.)</p>
@@ -529,12 +527,13 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/77b0474bd96ef236c115690037253bff9aa5ea659d9692fc77baf6556d9943ac.png" src="../_images/77b0474bd96ef236c115690037253bff9aa5ea659d9692fc77baf6556d9943ac.png" />
+<a class="reference internal image-reference" href="../_images/3ed4573ca99565df361f495387b58ce64c872f40eebf5a6c864ca61e2022af35.png"><img alt="../_images/3ed4573ca99565df361f495387b58ce64c872f40eebf5a6c864ca61e2022af35.png" src="../_images/3ed4573ca99565df361f495387b58ce64c872f40eebf5a6c864ca61e2022af35.png" style="width: 515px; height: 350px;" />
+</a>
 </div>
 </div>
 </section>
 <section id="measuring-the-length-of-skeleton-branches">
-<h2>1. Measuring the length of skeleton branches<a class="headerlink" href="#measuring-the-length-of-skeleton-branches" title="Permalink to this heading">#</a></h2>
+<h2>1. Measuring the length of skeleton branches<a class="headerlink" href="#measuring-the-length-of-skeleton-branches" title="Link to this heading">#</a></h2>
 <p>Now that we have a skeleton, we can use Skan’s primary functions: producing a network of skeleton pixels, and measuring the properties of branches along that network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -573,7 +572,8 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
 </pre></div>
 </div>
-<img alt="../_images/9b5b91e1434841f5b3716e5829ceb432b56eac75db875ef6f6aa8e1a10be1597.png" src="../_images/9b5b91e1434841f5b3716e5829ceb432b56eac75db875ef6f6aa8e1a10be1597.png" />
+<a class="reference internal image-reference" href="../_images/176220ddf65d31f36121371e274202ef9c20431d3f520244c2e752330cc42ed2.png"><img alt="../_images/176220ddf65d31f36121371e274202ef9c20431d3f520244c2e752330cc42ed2.png" src="../_images/176220ddf65d31f36121371e274202ef9c20431d3f520244c2e752330cc42ed2.png" style="width: 515px; height: 181px;" />
+</a>
 </div>
 </div>
 <p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates…) together.</p>
@@ -741,7 +741,8 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/e7c1753e05ac1a94c9164ba60182ca90436bdf4b4b4cd752ccfdedd24b10d428.png" src="../_images/e7c1753e05ac1a94c9164ba60182ca90436bdf4b4b4cd752ccfdedd24b10d428.png" />
+<a class="reference internal image-reference" href="../_images/d3b7bb59813f11813b2e81ba858130a861eaa0d62f66bfc9803a5e49ade02a9d.png"><img alt="../_images/d3b7bb59813f11813b2e81ba858130a861eaa0d62f66bfc9803a5e49ade02a9d.png" src="../_images/d3b7bb59813f11813b2e81ba858130a861eaa0d62f66bfc9803a5e49ade02a9d.png" style="width: 559px; height: 437px;" />
+</a>
 </div>
 </div>
 <p>We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.</p>
@@ -754,12 +755,13 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/008859304ad6a04a64b2200aeb64bbe1edf1f3d33cd3a4073528d767da058c55.png" src="../_images/008859304ad6a04a64b2200aeb64bbe1edf1f3d33cd3a4073528d767da058c55.png" />
+<a class="reference internal image-reference" href="../_images/340f5033810fbbcd7a512313fbc61a827f1cdf990fc483827d23397903a5dab7.png"><img alt="../_images/340f5033810fbbcd7a512313fbc61a827f1cdf990fc483827d23397903a5dab7.png" src="../_images/340f5033810fbbcd7a512313fbc61a827f1cdf990fc483827d23397903a5dab7.png" style="width: 515px; height: 350px;" />
+</a>
 </div>
 </div>
 </section>
 <section id="comparing-different-skeletons">
-<h2>2. Comparing different skeletons<a class="headerlink" href="#comparing-different-skeletons" title="Permalink to this heading">#</a></h2>
+<h2>2. Comparing different skeletons<a class="headerlink" href="#comparing-different-skeletons" title="Link to this heading">#</a></h2>
 <p>Now we can use Python’s data analysis tools to answer a scientific question: do malaria-infected red blood cells differ in their spectrin skeleton?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -815,7 +817,8 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/07862e06ed1d4e59b7d3a10de04a7217d5793ce2fc9b4b51f2c2bd0d0e010a06.png" src="../_images/07862e06ed1d4e59b7d3a10de04a7217d5793ce2fc9b4b51f2c2bd0d0e010a06.png" />
+<a class="reference internal image-reference" href="../_images/c63f4b46dc37915a2dd8341d628766c884ba3c4918b9e6c840a734866107541d.png"><img alt="../_images/c63f4b46dc37915a2dd8341d628766c884ba3c4918b9e6c840a734866107541d.png" src="../_images/c63f4b46dc37915a2dd8341d628766c884ba3c4918b9e6c840a734866107541d.png" style="width: 576px; height: 432px;" />
+</a>
 </div>
 </div>
 <p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>
@@ -839,7 +842,7 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
     <a class="left-prev"
        href="install.html"
@@ -868,11 +871,14 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
   <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc">
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extracting-a-skeleton-from-an-image">0. Extracting a skeleton from an image</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#measuring-the-length-of-skeleton-branches">1. Measuring the length of skeleton branches</a></li>
@@ -881,6 +887,7 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   </nav></div>
 
   <div class="sidebar-secondary-item">
+
   <div class="tocsection sourcelink">
     <a href="../_sources/getting_started/getting_started.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
@@ -901,8 +908,8 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -910,6 +917,7 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
     <div class="footer-items__start">
       
         <div class="footer-item">
+
   <p class="copyright">
     
       © Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.
@@ -924,8 +932,9 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   
     <div class="footer-items__end">
       
-        <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.3.
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
 </p></div>
       
     </div>
