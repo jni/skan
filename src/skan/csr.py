@@ -1,6 +1,7 @@
 from __future__ import annotations
 import networkx as nx
 
+import networkx as nx
 import numpy as np
 import pandas as pd
 from scipy import sparse, ndimage as ndi
@@ -412,11 +413,8 @@ def _build_skeleton_path_graph(graph):
     degrees = np.diff(graph.indptr)
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
-            graph.indptr,
-            graph.indices,
-            visited_data,
-            graph.shape,
-            np.broadcast_to(1.0, graph.shape[0]),
+            graph.indptr, graph.indices, visited_data, graph.shape,
+            np.broadcast_to(1.0, graph.shape[0])
             )
     endpoints = degrees != 2
     endpoint_degrees = degrees[endpoints]
@@ -542,6 +540,7 @@ class Skeleton:
         self._distances_initialized = False
         self.skeleton_image = None
         self.skeleton_shape = skeleton_image.shape
+        self.skeleton_dtype = skeleton_image.dtype
         self.source_image = None
         self.degrees = np.diff(self.graph.indptr)
         self.spacing = (
@@ -1248,126 +1247,93 @@ def sholl_analysis(skeleton, center=None, shells=None):
 
 
 def skeleton_to_nx(
-        skeleton: Skeleton, summary: pd.DataFrame | None = None
-        ) -> nx.Graph:
+        skeleton: Skeleton,
+        summary: pd.DataFrame | None = None,
+        ) -> nx.MultiGraph:
     """Convert a Skeleton object to a networkx Graph.
 
     Parameters
     ----------
     skeleton : Skeleton
-        Skeleton object to be converted.
-    summary : pd.DataFrame, optional
-        If the skeleton has already been summarized() pass it in, if not provided it will be summarized.
-
-    Raises
-    ------
-    TypeError
-        If a Numpy array is passed by mistake an error is raised.
+        The skeleton to convert.
+    summary : pd.DataFrame | None
+        The summary statistics of the skeleton. Each row in the summary table
+        is an edge in the networkx graph. It is not necessary to pass this in
+        because it can be computed from the input skeleton, but if it is
+        already computed, it will speed up this function.
 
     Returns
     -------
-    nx.Graph
-        Returns a networkx Graph
+    g : nx.MultiGraph
+        A graph where each node is a junction or endpoint in the skeleton, and
+        each edge is a path.
     """
-    if isinstance(skeleton, np.ndarray):
-        raise TypeError(
-                "You have passed a Numpy array, please convert to Skeleton first."
-                )
     if summary is None:
-        summary = summarize(skeleton)
-    summary_future = summary.rename(columns=lambda s: s.replace("-", "_"))
-    g = nx.Graph()
-    for row in summary_future.itertuples(name="Edge"):
-        i, j = row.node_id_src, row.node_id_dst
-        g.add_edge(i, j, **row._asdict())
-        g.edges[i, j]["path"] = skeleton.path_coordinates(row.Index)
-        g.nodes[i]["pos"] = skeleton.coordinates[i]
-        g.nodes[j]["pos"] = skeleton.coordinates[j]
-    return g
-
-
-def array_to_nx(array: npt.NDArray) -> nx.Graph:
-    """Convert an image array into a NetworkX graph where each pixel is a node.
-
-    Parameters
-    ----------
-    array: npt.NDArray
-        Binary skeleton as Numpy Array
-
-    Returns
-    -------
-    nx.Graph
-        NetworkX Graph where every cell in an array is a node connected to adjacent cells. The shape of the original
-    array is stored in the Networkx.graph dictionary under the key 'skeleton_shape' and can be used when reconstructing
-    the Numpy Array.
-    """
-    g = nx.Graph()
-    skeleton_coordinates = np.argwhere(array != 0)
-    for node in skeleton_coordinates:
-        neighbours = _get_neighbours(
-                node, exclude_node=True, shape=array.shape
+        summary = summarize(skeleton, separator='_')
+    # Ensure underscores in column names
+    csum = summary.rename(columns=lambda s: s.replace('-', '_'))
+    g = nx.MultiGraph(
+            shape=skeleton.skeleton_shape, dtype=skeleton.skeleton_dtype
+            )
+    for row in csum.itertuples(name='Edge'):
+        index = row.Index
+        i = row.node_id_src
+        j = row.node_id_dst
+        indices, values = skeleton.path_with_data(index)
+        # Nodes are added if they don't exist so only need to add edges
+        g.add_edge(
+                i, j, **{
+                        'path': skeleton.path_coordinates(index),
+                        'indices': indices,
+                        'values': values,
+                        }
                 )
-        for neighbour in neighbours:
-            # If neighbouring cell is non-zero its a node and we add an edge
-            # TODO : Generalise to 3D
-            if array[neighbour[0], neighbour[1]] > 0:
-                g.add_edge(tuple(node), tuple(neighbour))
-    # Store the original shape in the returned graph object for reconstructing
-    g.graph["skeleton_shape"] = array.shape
     return g
 
 
-def nx_to_array(graph: nx.Graph) -> npt.NDArray:
-    """Convert a NetworkX graph to Numpy Array."""
-    array = np.zeros(graph.graph["skeleton_shape"])
-    print(f"{array=}")
-    for node in graph:
-        array[node] = 1
-    print(f"{array=}")
-    return np.array(array, dtype=bool)
+def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
+    """Convert a Networkx Graph to a Skeleton object.
 
+    The NetworkX Graph should have the following graph properties:
+    - 'shape': the shape of the image from which the graph was created.
+    - 'dtype': the dtype of the image from which the graph was created.
 
-def _get_neighbours(
-        node: npt.NDArray,
-        exclude_node: bool = True,
-        shape: npt.NDArray = None
-        ) -> npt.NDArray:
-    """Get the co-ordinates of adjacent cells for an arbitrary co-ordinate.
+    and the following edge properties:
+    - 'path': an (N, Ndim) array of coordinates in the image of the pixels
+      traced by this edge.
+    - 'values': an (N,) array of values for the pixels traced by this edge.
 
-    Determine the adjacent nodes for a given co-ordinate. Not original, taken from
-    https://stackoverflow.com/a/34908879/1444043
+    The `skeleton_to_nx` function can produce such a graph from a `Skeleton`
+    object.
 
     Parameters
     ----------
-    node : npt.NDArray
-        Co-ordinates of a node.
-    exclude_node : bool
-        Exclude the node itself from the returned list of co-ordinates.
-    shape : npt.NDArray
-        Shape of array from which the co-ordinate is derived.
+    g: nx.Graph
+        Networkx graph to convert to Skeleton.
 
     Returns
     -------
-    npt.NDArray
-        An array of co-ordinates for adjacent cells.
+    Skeleton
+        Skeleton object corresponding to the input graph.
 
+    Notes
+    -----
+    Currently, this method uses the naive, brute-force approach of regenerating
+    the entire image from the graph, and then generating the Skeleton from the
+    image. It is probably low-hanging fruit to instead generate the Skeleton
+    compressed-sparse-row (CSR) data directly.
     """
-    ndim = len(node)
-    # generate an (m, ndims) array containing all strings over the alphabet {0, 1, 2}:
-    offset_idx = np.indices((3,) * ndim).reshape(ndim, -1).T
-    # use these to index into np.array([-1, 0, 1]) to get offsets
-    offsets = np.r_[-1, 0, 1].take(offset_idx)
-    # optional: exclude offsets of 0, 0, ..., 0 (i.e. node itself)
-    if exclude_node:
-        offsets = offsets[np.any(offsets, 1)]
-    neighbours = node + offsets  # apply offsets to p
-    # optional: exclude out-of-bounds indices
-    if shape is not None:
-        valid = np.all((neighbours < np.array(shape)) & (neighbours >= 0),
-                       axis=1)
-        neighbours = neighbours[valid]
+    image = np.zeros(g.graph['shape'], dtype=g.graph['dtype'])
+    all_coords = np.concatenate([path for _, _, path in g.edges.data('path')],
+                                axis=0)
+    all_values = np.concatenate([
+            values for _, _, values in g.edges.data('values')
+            ],
+                                axis=0)
 
-    return neighbours
+    image[tuple(all_coords.T)] = all_values
+
+    return Skeleton(image)
 
 
 def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
@@ -1383,62 +1349,42 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
             )
     d1 = g.edges[e1]
     d2 = g.edges[e2]
-    p1 = d1["path"] if e1[1] == middle_node else d1["path"][::-1]
-    p2 = d2["path"] if e2[0] == middle_node else d2["path"][::-1]
-    n1 = len(d1["path"])
-    n2 = len(d2["path"])
+    p1 = d1['path'] if e1[1] == middle_node else d1['path'][::-1]
+    p2 = d2['path'] if e2[0] == middle_node else d2['path'][::-1]
+    n1 = len(d1['path'])
+    n2 = len(d2['path'])
     new_edge_values = {
-            "skeleton_id":
-                    g.edges[e1]["skeleton_id"],
-            "node_id_src":
+            'skeleton_id':
+                    g.edges[e1]['skeleton_id'],
+            'node_id_src':
                     new_edge[0],
-            "node_id_dst":
+            'node_id_dst':
                     new_edge[1],
-            "branch_distance":
-                    d1["branch_distance"] + d2["branch_distance"],
-            "branch_type":
-                    min(d1["branch_type"], d2["branch_type"]),
-            "mean_pixel_value": (
-                    n1 * d1["mean_pixel_value"] + n2 * d2["mean_pixel_value"]
+            'branch_distance':
+                    d1['branch_distance'] + d2['branch_distance'],
+            'branch_type':
+                    min(d1['branch_type'], d2['branch_type']),
+            'mean_pixel_value': (
+                    n1 * d1['mean_pixel_value'] + n2 * d2['mean_pixel_value']
                     ) / (n1+n2),
-            "stdev_pixel_value":
+            'stdev_pixel_value':
                     np.sqrt((
-                            d1["stdev_pixel_value"]**2 *
-                            (n1-1) + d2["stdev_pixel_value"]**2 * (n2-1)
+                            d1['stdev_pixel_value']**2 *
+                            (n1-1) + d2['stdev_pixel_value']**2 * (n2-1)
                             ) / (n1+n2-1)),
-            "path":
+            'path':
                     _merge_paths(p1, p2),
             }
     g.add_edge(new_edge[0], new_edge[1], **new_edge_values)
     g.remove_node(middle_node)
 
 
-def _remove_simple_path_nodes(g: nx.Graph):
+def _remove_simple_path_nodes(g):
     """Remove any nodes of degree 2 by merging their incident edges."""
     to_remove = [n for n in g.nodes if g.degree(n) == 2]
     for u in to_remove:
         v, w = g[u].keys()
         _merge_edges(g, (u, v), (u, w))
-
-
-def nx_to_skeleton(g: nx.Graph) -> Skeleton:
-    """Convert networkx graph to Skeleton.
-
-    Parameters
-    ----------
-    g : nx.Graph
-        Networkx graph object.
-
-    Returns
-    -------
-    Skeleton
-        Skeleton object.
-
-    """
-    return Skeleton(nx.to_numpy_array(g))
-    # return nx.to_numpy_array(g)
-
-
 def iteratively_prune_paths(
         skeleton: nx.Graph,
         discard: Callable[[nx.Graph, dict], bool],
