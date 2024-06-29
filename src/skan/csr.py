@@ -1390,6 +1390,16 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
                             (n1-1) + d2['stdev_pixel_value']**2 * (n2-1)
                             ) / (n1+n2-1)),
             }
+    # TODO: add these attributes in as well
+    # 'image_coord_src_0': 13,
+    # 'image_coord_src_1': 40,
+    # 'image_coord_dst_0': 13,
+    # 'image_coord_dst_1': 41,
+    # 'coord_src_0': 13,
+    # 'coord_src_1': 40,
+    # 'coord_dst_0': 13,
+    # 'coord_dst_1': 41,
+    # 'euclidean_distance': 1.0}
     g.add_edge(new_edge[0], new_edge[1], **new_edge_values)
     g.remove_node(middle_node)
 
