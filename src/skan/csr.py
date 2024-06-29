@@ -1286,6 +1286,7 @@ def skeleton_to_nx(
                         'path': skeleton.path_coordinates(index),
                         'indices': indices,
                         'values': values,
+                        **row._asdict(),
                         }
                 )
     return g
