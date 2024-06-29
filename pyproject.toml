@@ -38,14 +38,14 @@ keywords = [
     'image processing',
     'skeletons'
 ]
-requires-python = '>=3.8'
+requires-python = '>=3.9'
 dependencies = [
     'imageio>=2.10.1',
     'magicgui>=0.7.3',
     'matplotlib>=3.4',
     'networkx>=2.7',
     'numba>=0.53',
-    'numpy>=1.21',
+    'numpy>=1.25',
     'pandas>=2.0.2',
     'openpyxl>=2.6',
     'scikit-image>=0.17.1',
