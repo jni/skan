@@ -1343,10 +1343,10 @@ def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
 
 
 def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
-    middle_node = set(e1) & set(e2)
+    middle_node = (set(e1[:2]) & set(e2[:2])).pop()
     new_edge = sorted(
-            (set(e1) | set(e2)) - {middle_node},
-            key=lambda i: i in e2,
+            (set(e1[:2]) | set(e2[:2])) - {middle_node},
+            key=lambda i: i in e2[:2],
             )
     d1 = g.edges[e1]
     d2 = g.edges[e2]
@@ -1380,17 +1380,25 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
     g.remove_node(middle_node)
 
 
+def _get_edge_key(g, u, v):
+    keys_list = list(g[u][v])
+    return keys_list[0]
+
+
 def _remove_simple_path_nodes(g):
     """Remove any nodes of degree 2 by merging their incident edges."""
     to_remove = [n for n in g.nodes if g.degree(n) == 2]
     for u in to_remove:
         v, w = g[u].keys()
-        _merge_edges(g, (u, v), (u, w))
+        kuv = _get_edge_key(g, u, v)
+        kuw = _get_edge_key(g, u, w)
+        _merge_edges(g, (u, v, kuv), (u, w, kuw))
 
 
 def iteratively_prune_paths(
         skeleton: nx.Graph,
-        discard: Callable[[nx.Graph, dict], bool],
+        *,
+        discard: Callable[[nx.Graph, tuple(int, int, int)], bool],
         ) -> nx.Graph:
     """Iteratively prune a skeleton leaving the specified number of paths.
 
@@ -1405,10 +1413,10 @@ def iteratively_prune_paths(
     ----------
     skeleton: np.ndarray | Skeleton
         Skeleton object to be pruned, may be a binary Numpy array or a Skeleton.
-    discard : Callable[[nx.Graph, dict], bool]
+    discard : Callable[[nx.Graph, tuple(int, int, int)], bool]
         A predicate that is True if the edge should be discarded. The input is
-        a dictionary of all the attributes of that edge — the same as the
-        columns in the output of `summarize`.
+        a graph and an edge, including the multigraph edge key (from which all
+        the edge's attributes can be obtained, if needed).
 
     Returns
     -------
@@ -1422,10 +1430,9 @@ def iteratively_prune_paths(
 
     while num_pruned > 0:
         for_pruning = []
-        for u, v in pruned.edges:
-            attrs = pruned.edges[u, v]
-            if discard(pruned, attrs):
-                for_pruning.append((u, v))
+        for e in pruned.edges(keys=True):
+            if discard(pruned, e):
+                for_pruning.append(e)
         num_pruned = len(for_pruning)
         pruned.remove_edges_from(for_pruning)
         _remove_simple_path_nodes(pruned)
