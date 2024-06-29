@@ -1439,6 +1439,12 @@ def iteratively_prune_paths(
     return pruned
 
 
+def is_endpoint(g, e):
+    """Whether e is a junction-to-endpoint or endpoint-to-endpoint edge."""
+    u, v, _ = e  # e is a multi-edge
+    return nx.degree(g, u) == 1 or nx.degree(g, v) == 1
+
+
 # Below code needs to be turned into a discard predicate callback
 # while branch_data.shape[0] > min_skeleton:
 #     # Remove branches that have endpoint (branch_type == 1)
