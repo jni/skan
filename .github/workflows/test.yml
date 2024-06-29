@@ -22,10 +22,6 @@ jobs:
       matrix:
         platform: [ubuntu-latest, windows-latest, macos-latest]
         python: ["3.9", "3.12"]
-        include:
-          # test big sur on 3.9.0
-          - python: 3.9
-            platform: macos-11.0
 
     steps:
       - uses: actions/checkout@v3
