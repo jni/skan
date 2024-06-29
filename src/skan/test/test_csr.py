@@ -473,7 +473,7 @@ def test_skeleton_integer_dtype(dtype):
 
 
 def test_default_summarize_separator():
-    with pytest.warns(np.VisibleDeprecationWarning,
+    with pytest.warns(np.exceptions.VisibleDeprecationWarning,
                       match='separator in column name'):
         stats = csr.summarize(csr.Skeleton(skeletonlabel))
     assert 'skeleton-id' in stats
