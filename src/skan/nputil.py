@@ -240,9 +240,9 @@ def _raveled_offsets_and_distances(
     ...         )
     >>> off  # doctest: +SKIP
     array([-5, -1,  1,  5, -6, -4,  4,  6, 10,  9, 11])
-    >>> d[0]
+    >>> float(d[0])  # avoid np.float64 repr
     1.0
-    >>> d[-1]  # distance from (1, 1) to (3, 2)
+    >>> float(d[-1])  # distance from (1, 1) to (3, 2)
     2.236...
     """
     ndim = len(image_shape)
