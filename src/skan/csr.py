@@ -1327,6 +1327,8 @@ def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
     compressed-sparse-row (CSR) data directly.
     """
     image = np.zeros(g.graph['shape'], dtype=g.graph['dtype'])
+    if len(g.edges()) == 0:
+        return Skeleton(image, keep_images=True)
     all_coords = np.concatenate([path for _, _, path in g.edges.data('path')],
                                 axis=0)
     all_values = np.concatenate([
@@ -1336,7 +1338,7 @@ def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
 
     image[tuple(all_coords.T)] = all_values
 
-    return Skeleton(image)
+    return Skeleton(image, keep_images=True)
 
 
 def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
