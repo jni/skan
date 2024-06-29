@@ -1348,6 +1348,8 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
             (set(e1[:2]) | set(e2[:2])) - {middle_node},
             key=lambda i: i in e2[:2],
             )
+    if len(new_edge) == 1:  # self-edge
+        new_edge = (new_edge[0], new_edge[0])
     d1 = g.edges[e1]
     d2 = g.edges[e2]
     p1 = d1['path'] if e1[1] == middle_node else d1['path'][::-1]
@@ -1385,14 +1387,23 @@ def _get_edge_key(g, u, v):
     return keys_list[0]
 
 
+def _get_neighbor(g, u):
+    """Get the first available neighbor of node u in g."""
+    return list(g[u])[0]
+
+
 def _remove_simple_path_nodes(g):
     """Remove any nodes of degree 2 by merging their incident edges."""
     to_remove = [n for n in g.nodes if g.degree(n) == 2]
     for u in to_remove:
-        v, w = g[u].keys()
-        kuv = _get_edge_key(g, u, v)
-        kuw = _get_edge_key(g, u, w)
-        _merge_edges(g, (u, v, kuv), (u, w, kuw))
+        if n_unique_neighbors(g, u) == 2:  # actually a simple node
+            v, w = g[u].keys()
+            kuv = _get_edge_key(g, u, v)
+            kuw = _get_edge_key(g, u, w)
+            _merge_edges(g, (u, v, kuv), (u, w, kuw))
+        elif n_unique_neighbors(g, u) == 1 and (v := _get_neighbor(g, u)) != u:
+            kuv0, kuv1 = list(g[u][v])
+            _merge_edges(g, (u, v, kuv0), (u, v, kuv1))
 
 
 def iteratively_prune_paths(
@@ -1437,6 +1448,16 @@ def iteratively_prune_paths(
         pruned.remove_edges_from(for_pruning)
         _remove_simple_path_nodes(pruned)
     return pruned
+
+
+def n_unique_neighbors(mg: nx.MultiGraph, n: int):
+    """Number of unique neighbors (not counting multi-edges).
+
+    `nx.degree` counts two edges to the same neighbor as degree 2. In
+    some situations (such as determining how many edges to access, rather
+    than multi-edge keys), we need the unique neighbor count instead.
+    """
+    return len(mg[n])
 
 
 def is_endpoint(g, e):
