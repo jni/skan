@@ -1358,9 +1358,19 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
     d2 = g.edges[e2]
     p1 = d1['path'] if e1[1] == middle_node else d1['path'][::-1]
     p2 = d2['path'] if e2[0] == middle_node else d2['path'][::-1]
+    i1 = d1['indices'] if e1[1] == middle_node else d1['indices'][::-1]
+    i2 = d2['indices'] if e2[0] == middle_node else d2['indices'][::-1]
+    v1 = d1['values'] if e1[1] == middle_node else d1['values'][::-1]
+    v2 = d2['values'] if e2[0] == middle_node else d2['values'][::-1]
     n1 = len(d1['path'])
     n2 = len(d2['path'])
     new_edge_values = {
+            'path':
+                    _merge_paths(p1, p2),
+            'indices':
+                    _merge_paths(i1, i2),
+            'values':
+                    _merge_paths(v1, v2),
             'skeleton_id':
                     g.edges[e1]['skeleton_id'],
             'node_id_src':
@@ -1379,8 +1389,6 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
                             d1['stdev_pixel_value']**2 *
                             (n1-1) + d2['stdev_pixel_value']**2 * (n2-1)
                             ) / (n1+n2-1)),
-            'path':
-                    _merge_paths(p1, p2),
             }
     g.add_edge(new_edge[0], new_edge[1], **new_edge_values)
     g.remove_node(middle_node)
