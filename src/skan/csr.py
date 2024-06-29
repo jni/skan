@@ -409,7 +409,9 @@ def _walk_path(
 
 def _build_skeleton_path_graph(graph):
     max_num_cycles = graph.indices.size // 4
-    buffer_size_offset = max_num_cycles
+    # minimum buffer size should be 1, because an empty image still requires
+    # an indptr of size 1 in sparse.csr_matrix/array
+    buffer_size_offset = max_num_cycles + 1
     degrees = np.diff(graph.indptr)
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
