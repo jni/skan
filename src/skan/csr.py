@@ -1469,7 +1469,8 @@ def iteratively_prune_paths(
         num_pruned = len(for_pruning)
         pruned.remove_edges_from(for_pruning)
         _remove_simple_path_nodes(pruned)
-    return pruned
+        yield nx_to_skeleton(pruned)
+    # return pruned
 
 
 def n_unique_neighbors(mg: nx.MultiGraph, n: int):

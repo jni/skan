@@ -161,7 +161,75 @@ def get_multiedge(mg, e):
 ```
 
 ```{code-cell} ipython3
-skeleton_pruned_iteratively = iteratively_prune_paths(nxskel, discard=unwanted)
+skeletons_pruned_iteratively = list(iteratively_prune_paths(nxskel, discard=unwanted))
+```
+
+```{code-cell} ipython3
+images = np.asarray([sk.skeleton_image for sk in skeletons_pruned_iteratively])
+```
+
+```{code-cell} ipython3
+def pts_list_to_nd(list_of_coord_arrays):
+    arrs = []
+    for i, arr in enumerate(list_of_coord_arrays):
+        prefix = np.full((arr.shape[0], 1), i)
+        arrs.append(np.concatenate((prefix, arr), axis=1))
+    return np.concatenate(arrs, axis=0)
+```
+
+```{code-cell} ipython3
+from skan import summarize
+
+summaries = [summarize(sk, separator='_') for sk in skeletons_pruned_iteratively]
+src_pts = [np.asarray(s[['image_coord_src_0', 'image_coord_src_1']]) for s in summaries]
+src_pts_nd = pts_list_to_nd(src_pts)
+dst_pts = [np.asarray(s[['image_coord_dst_0', 'image_coord_dst_1']]) for s in summaries]
+dst_pts_nd = pts_list_to_nd(dst_pts)
+
+all_pts = np.concatenate([src_pts_nd, dst_pts_nd], axis=0)
+all_pts_unique = np.unique(all_pts, axis=0)
+```
+
+```{code-cell} ipython3
+viewer, layer = napari.imshow(images)
+```
+
+```{code-cell} ipython3
+pts_layer = viewer.add_points(all_pts_unique, size=1, face_color='red')
+```
+
+```{code-cell} ipython3
+skel0 = skeletons_pruned_iteratively[0]
+```
+
+```{code-cell} ipython3
+all_paths = [skel0.path_coordinates(i) for i in range(skel0.n_paths)]
+paths_table = summaries[0]
+paths_table['path_id'] = np.arange(skel0.n_paths)
+paths_table['random_path_id'] = np.random.default_rng().permutation(skel0.n_paths)
+```
+
+```{code-cell} ipython3
+len(np.unique(paths_table['random_path_id']))
+```
+
+```{code-cell} ipython3
+skel0.n_paths
+```
+
+```{code-cell} ipython3
+skeleton_layer = viewer.add_shapes(
+        all_paths,
+        shape_type='path',
+        features=paths_table,
+        edge_width=0.5,
+        edge_color='random_path_id',
+        edge_colormap='tab10',
+        )
+```
+
+```{code-cell} ipython3
+skeleton_layer.edge_color_cycle = 'tab10'
 ```
 
 ```{code-cell} ipython3
