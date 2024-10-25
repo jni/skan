@@ -58,6 +58,8 @@ release! 🙏 You can find the full list of changes below:
 
 ## Misc
 
+- [#232](https://github.com/jni/skan/pull/232): Use python -m build for wheel
+  and sdist
 - [#218](https://github.com/jni/skan/pull/218): Fix pyproject.toml metadata
   formatting
 - [#217](https://github.com/jni/skan/pull/217): Migrate from setup.cfg to
