@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Skeleton analysis with Skan 🦴📏 &#8212; Skan 🦴📏 0.11.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="_static/documentation_options.js?v=57cbeb03"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=30646c52"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.x';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting_started/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11.1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Skan 🦴📏 0.11.1 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/api.html">
+    Skan API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="misc/index.html">
+    Miscellaneous
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/api.html">
+    Skan API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="misc/index.html">
+    Miscellaneous
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="skeleton-analysis-with-skan">
+<h1>Skeleton analysis with Skan 🦴📏<a class="headerlink" href="#skeleton-analysis-with-skan" title="Link to this heading">#</a></h1>
+<p>Skan is a pure Python library to analyse skeleton images.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/install.html">Installing Skan</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/install.html#getting-the-python-package-and-dependencies">Getting the Python package and dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/getting_started.html">Getting started: Skeleton analysis with Skan</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/getting_started.html#extracting-a-skeleton-from-an-image">0. Extracting a skeleton from an image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/getting_started.html#measuring-the-length-of-skeleton-branches">1. Measuring the length of skeleton branches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/getting_started.html#comparing-different-skeletons">2. Comparing different skeletons</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/complete_analysis.html">Complete analysis with Skan</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/complete_analysis.html#getting-the-data">0. Getting the data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/complete_analysis.html#using-skan-pipe-to-get-a-branch-dataset-for-analysis">1. Using <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> to get a branch dataset for analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/complete_analysis.html#cleaning-up-the-data">2. Cleaning up the data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/complete_analysis.html#making-the-figure">3. Making the figure</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/sholl_analysis.html">Sholl analysis in Skan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/visualizing_3d_skeletons.html">Display 3D skeletons in napari</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/visualizing_3d_skeletons.html#using-the-shapes-layer">Using the Shapes layer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/api.html">Skan API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/skan.csr.html">skan.csr: CSR Graph representation of skeletons</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.Skeleton"><code class="docutils literal notranslate"><span class="pre">Skeleton</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.make_degree_image"><code class="docutils literal notranslate"><span class="pre">make_degree_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.nx_to_skeleton"><code class="docutils literal notranslate"><span class="pre">nx_to_skeleton()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.pixel_graph"><code class="docutils literal notranslate"><span class="pre">pixel_graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.sholl_analysis"><code class="docutils literal notranslate"><span class="pre">sholl_analysis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.skeleton_to_csgraph"><code class="docutils literal notranslate"><span class="pre">skeleton_to_csgraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.skeleton_to_nx"><code class="docutils literal notranslate"><span class="pre">skeleton_to_nx()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.submatrix"><code class="docutils literal notranslate"><span class="pre">submatrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.csr.html#skan.csr.summarize"><code class="docutils literal notranslate"><span class="pre">summarize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/skan.draw.html">skan.draw: Skeleton visualisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.draw.html#skan.draw.overlay_euclidean_skeleton_2d"><code class="docutils literal notranslate"><span class="pre">overlay_euclidean_skeleton_2d()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.draw.html#skan.draw.overlay_skeleton_2d"><code class="docutils literal notranslate"><span class="pre">overlay_skeleton_2d()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.draw.html#skan.draw.overlay_skeleton_2d_class"><code class="docutils literal notranslate"><span class="pre">overlay_skeleton_2d_class()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.draw.html#skan.draw.overlay_skeleton_networkx"><code class="docutils literal notranslate"><span class="pre">overlay_skeleton_networkx()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.draw.html#skan.draw.pipeline_plot"><code class="docutils literal notranslate"><span class="pre">pipeline_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.draw.html#skan.draw.pixel_perfect_figsize"><code class="docutils literal notranslate"><span class="pre">pixel_perfect_figsize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.draw.html#skan.draw.sholl_shells"><code class="docutils literal notranslate"><span class="pre">sholl_shells()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/skan.pipe.html">skan.pipe:: Pipeline functions for skeleton analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.pipe.html#skan.pipe.process_images"><code class="docutils literal notranslate"><span class="pre">process_images()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/skan.pre.html">skan.pre: Image preprocessing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.pre.html#skan.pre.hyperball"><code class="docutils literal notranslate"><span class="pre">hyperball()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/skan.pre.html#skan.pre.threshold"><code class="docutils literal notranslate"><span class="pre">threshold()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="misc/index.html">Miscellaneous</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="misc/faq.html">FAQ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="misc/faq.html#i-just-upgraded-from-skan-v0-8-or-0-9-and-my-measurements-are-slightly-different-what-gives">I just upgraded from skan v0.8 or 0.9 and my measurements are slightly different. What gives?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc/faq.html#what-s-unique-junctions-or-junction-mode">What’s <code class="docutils literal notranslate"><span class="pre">unique_junctions</span></code> or <code class="docutils literal notranslate"><span class="pre">junction_mode</span></code>?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc/faq.html#why-are-coordinates-floats-and-not-integers">Why are coordinates floats and not integers?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc/faq.html#why-is-coordinate-0-0-0-always-in-my-coordinate-list-why-is-the-coordinate-array-larger-than-the-number-of-nodes-in-the-pixel-graph">Why is coordinate (0, 0, 0) always in my coordinate list? / Why is the coordinate array larger than the number of nodes in the pixel graph?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="misc/release-notes/index.html">Skan release notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="misc/release-notes/release-v0.11.html">skan v0.11.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc/release-notes/release-v0.11.html#skan-v0-11-0">skan v0.11.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc/release-notes/release-v0.10.0.html">skan v0.10.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc/release-notes/release-v0.9.html">skan v0.9</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="misc/citing.html">Citing Skan</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="getting_started/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Getting started</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Skeleton analysis with Skan 🦴📏</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
