@@ -52,6 +52,10 @@ release! 🙏 You can find the full list of changes below:
 - [#210](https://github.com/jni/skan/pull/210): Cache skeleton_image shape for
   use by the path_label_image method
 
+## Documentation
+
+- [#231](https://github.com/jni/skan/pull/231): Add 0.12 release notes
+
 ## Misc
 
 - [#218](https://github.com/jni/skan/pull/218): Fix pyproject.toml metadata
