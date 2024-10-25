@@ -16,26 +16,29 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../_static/documentation_options.js?v=57cbeb03"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -44,7 +47,7 @@
     <script src="../_static/copybutton.js?v=30646c52"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/getting_started';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.x';
         DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
@@ -55,6 +58,7 @@
     <link rel="prev" title="Installing Skan" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.11.1" />
   </head>
   
   
@@ -70,19 +74,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../search.html"
       method="get">
@@ -90,7 +83,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -98,8 +90,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -180,41 +172,33 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
-<script>
-document.write(`
-  <div class="version-switcher__container dropdown">
-    <button id="pst-version-switcher-button-2"
-      type="button"
-      class="version-switcher__button btn btn-sm dropdown-toggle"
-      data-bs-toggle="dropdown"
-      aria-haspopup="listbox"
-      aria-controls="pst-version-switcher-list-2"
-      aria-label="Version switcher list"
-    >
-      Choose version  <!-- this text may get changed later by javascript -->
-      <span class="caret"></span>
-    </button>
-    <div id="pst-version-switcher-list-2"
-      class="version-switcher__menu dropdown-menu list-group-flush py-0"
-      role="listbox" aria-labelledby="pst-version-switcher-button-2">
-      <!-- dropdown will be populated by javascript on page load -->
-    </div>
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
   </div>
-`);
-</script></div>
+</div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -239,15 +223,11 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
@@ -266,7 +246,8 @@ document.write(`
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -319,28 +300,24 @@ document.write(`
       <div class="sidebar-header-items__end">
         
           <div class="navbar-item">
-<script>
-document.write(`
-  <div class="version-switcher__container dropdown">
-    <button id="pst-version-switcher-button-3"
-      type="button"
-      class="version-switcher__button btn btn-sm dropdown-toggle"
-      data-bs-toggle="dropdown"
-      aria-haspopup="listbox"
-      aria-controls="pst-version-switcher-list-3"
-      aria-label="Version switcher list"
-    >
-      Choose version  <!-- this text may get changed later by javascript -->
-      <span class="caret"></span>
-    </button>
-    <div id="pst-version-switcher-list-3"
-      class="version-switcher__menu dropdown-menu list-group-flush py-0"
-      role="listbox" aria-labelledby="pst-version-switcher-button-3">
-      <!-- dropdown will be populated by javascript on page load -->
-    </div>
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
   </div>
-`);
-</script></div>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -397,8 +374,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -410,7 +385,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Getting started</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">Getting...</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting started: Skeleton analysis with Skan</span></li>
   </ul>
 </nav>
 </div>
@@ -459,7 +434,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/397beb70abcd7e77f7a29399456ae214dc7e6a14f650225046373d0a2d3ba5a1.png"><img alt="../_images/397beb70abcd7e77f7a29399456ae214dc7e6a14f650225046373d0a2d3ba5a1.png" src="../_images/397beb70abcd7e77f7a29399456ae214dc7e6a14f650225046373d0a2d3ba5a1.png" style="width: 561px; height: 379px;" />
+<a class="reference internal image-reference" href="../_images/a0d7a72bde73d48747b45b011e118abfdd9407f6b52f73ec416fdae95f31d356.png"><img alt="../_images/a0d7a72bde73d48747b45b011e118abfdd9407f6b52f73ec416fdae95f31d356.png" src="../_images/a0d7a72bde73d48747b45b011e118abfdd9407f6b52f73ec416fdae95f31d356.png" style="width: 561px; height: 379px;" />
 </a>
 </div>
 </div>
@@ -481,7 +456,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/95fdd515c37bee57d4f197c8bc60faf3a63e7e96c9c12fe9d5a9b4f1b7d05152.png"><img alt="../_images/95fdd515c37bee57d4f197c8bc60faf3a63e7e96c9c12fe9d5a9b4f1b7d05152.png" src="../_images/95fdd515c37bee57d4f197c8bc60faf3a63e7e96c9c12fe9d5a9b4f1b7d05152.png" style="width: 571px; height: 399px;" />
+<a class="reference internal image-reference" href="../_images/0e6b0d0d6ec43a7f040c845abbf621aae61dfea4c7e1b4e6243d9ba072bd91b9.png"><img alt="../_images/0e6b0d0d6ec43a7f040c845abbf621aae61dfea4c7e1b4e6243d9ba072bd91b9.png" src="../_images/0e6b0d0d6ec43a7f040c845abbf621aae61dfea4c7e1b4e6243d9ba072bd91b9.png" style="width: 581px; height: 399px;" />
 </a>
 </div>
 </div>
@@ -507,7 +482,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/0ffae71f6b8232b0e92858a5b6160c64297aa090e7ab6c16ecb663136193cdbf.png"><img alt="../_images/0ffae71f6b8232b0e92858a5b6160c64297aa090e7ab6c16ecb663136193cdbf.png" src="../_images/0ffae71f6b8232b0e92858a5b6160c64297aa090e7ab6c16ecb663136193cdbf.png" style="width: 561px; height: 379px;" />
+<a class="reference internal image-reference" href="../_images/93e7eae62558450f5b7c3e8535b78b938d2d2b2762dd7ef2866b017dd0b85803.png"><img alt="../_images/93e7eae62558450f5b7c3e8535b78b938d2d2b2762dd7ef2866b017dd0b85803.png" src="../_images/93e7eae62558450f5b7c3e8535b78b938d2d2b2762dd7ef2866b017dd0b85803.png" style="width: 561px; height: 379px;" />
 </a>
 </div>
 </div>
@@ -533,7 +508,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/eb135be3c90600d8f5f0f9a024ada7590d55401e87c0f68d4ced9332e6cff220.png"><img alt="../_images/eb135be3c90600d8f5f0f9a024ada7590d55401e87c0f68d4ced9332e6cff220.png" src="../_images/eb135be3c90600d8f5f0f9a024ada7590d55401e87c0f68d4ced9332e6cff220.png" style="width: 515px; height: 350px;" />
+<a class="reference internal image-reference" href="../_images/2de3a54ab3c8be0710c41f4d23e410845b3367aa4d3019f47d7cb94a7a2a0c80.png"><img alt="../_images/2de3a54ab3c8be0710c41f4d23e410845b3367aa4d3019f47d7cb94a7a2a0c80.png" src="../_images/2de3a54ab3c8be0710c41f4d23e410845b3367aa4d3019f47d7cb94a7a2a0c80.png" style="width: 515px; height: 350px;" />
 </a>
 </div>
 </div>
@@ -578,7 +553,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../_images/1b6aeb3268c883d835c96122603266974000f4aee411033e138bc51a81ef2315.png"><img alt="../_images/1b6aeb3268c883d835c96122603266974000f4aee411033e138bc51a81ef2315.png" src="../_images/1b6aeb3268c883d835c96122603266974000f4aee411033e138bc51a81ef2315.png" style="width: 515px; height: 181px;" />
+<a class="reference internal image-reference" href="../_images/20860607e16021884f9f310c75c5eb6b8d15d5739197380b7177d39d53888d2d.png"><img alt="../_images/20860607e16021884f9f310c75c5eb6b8d15d5739197380b7177d39d53888d2d.png" src="../_images/20860607e16021884f9f310c75c5eb6b8d15d5739197380b7177d39d53888d2d.png" style="width: 515px; height: 181px;" />
 </a>
 </div>
 </div>
@@ -634,97 +609,97 @@ document.write(`
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>0</td>
-      <td>1103</td>
-      <td>51.875395</td>
+      <td>3</td>
+      <td>999</td>
+      <td>36.213005</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>198</td>
-      <td>21</td>
-      <td>170</td>
-      <td>0.0</td>
-      <td>267.09408</td>
-      <td>28.32816</td>
-      <td>229.32320</td>
-      <td>47.213600</td>
+      <td>7</td>
+      <td>182</td>
+      <td>32</td>
+      <td>167</td>
+      <td>7.55419</td>
+      <td>196.40894</td>
+      <td>34.53344</td>
+      <td>180.22139</td>
+      <td>31.462942</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0</td>
-      <td>2</td>
-      <td>649</td>
-      <td>34.474493</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2439</td>
+      <td>102.872853</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>262</td>
-      <td>11</td>
-      <td>241</td>
-      <td>0.0</td>
-      <td>353.42752</td>
-      <td>14.83856</td>
-      <td>325.09936</td>
-      <td>31.979173</td>
+      <td>7</td>
+      <td>315</td>
+      <td>81</td>
+      <td>330</td>
+      <td>7.55419</td>
+      <td>339.93855</td>
+      <td>87.41277</td>
+      <td>356.12610</td>
+      <td>81.482695</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>1</td>
-      <td>3</td>
-      <td>329</td>
-      <td>16.842145</td>
+      <td>2</td>
+      <td>10</td>
+      <td>247</td>
+      <td>13.026734</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>385</td>
-      <td>6</td>
-      <td>395</td>
-      <td>0.0</td>
-      <td>519.34960</td>
-      <td>8.09376</td>
-      <td>532.83920</td>
-      <td>15.731442</td>
+      <td>7</td>
+      <td>624</td>
+      <td>13</td>
+      <td>615</td>
+      <td>7.55419</td>
+      <td>673.40208</td>
+      <td>14.02921</td>
+      <td>663.68955</td>
+      <td>11.673008</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>1</td>
-      <td>7</td>
-      <td>1054</td>
-      <td>64.016035</td>
+      <td>3</td>
+      <td>27</td>
+      <td>208</td>
+      <td>15.185074</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>460</td>
-      <td>20</td>
-      <td>496</td>
-      <td>0.0</td>
-      <td>620.52160</td>
-      <td>26.97920</td>
-      <td>669.08416</td>
-      <td>55.553573</td>
+      <td>7</td>
+      <td>1068</td>
+      <td>12</td>
+      <td>1056</td>
+      <td>7.55419</td>
+      <td>1152.55356</td>
+      <td>12.95004</td>
+      <td>1139.60352</td>
+      <td>14.029210</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>1</td>
-      <td>20</td>
-      <td>618</td>
-      <td>20.426135</td>
+      <td>4</td>
+      <td>28</td>
+      <td>549</td>
+      <td>48.977889</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0</td>
-      <td>541</td>
-      <td>10</td>
-      <td>530</td>
-      <td>0.0</td>
-      <td>729.78736</td>
-      <td>13.48960</td>
-      <td>714.94880</td>
-      <td>20.053732</td>
+      <td>7</td>
+      <td>1383</td>
+      <td>20</td>
+      <td>1423</td>
+      <td>7.55419</td>
+      <td>1492.49211</td>
+      <td>21.58340</td>
+      <td>1535.65891</td>
+      <td>45.389331</td>
     </tr>
   </tbody>
 </table>
@@ -747,7 +722,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/fb99910f34e673c41f63a9300cb3123bec6ff802970f23d16898530fbad07171.png"><img alt="../_images/fb99910f34e673c41f63a9300cb3123bec6ff802970f23d16898530fbad07171.png" src="../_images/fb99910f34e673c41f63a9300cb3123bec6ff802970f23d16898530fbad07171.png" style="width: 559px; height: 442px;" />
+<a class="reference internal image-reference" href="../_images/f81af2c72b4b9ada4164e4bfad0a01d9ee4c0ca924f4edb3a8911ac76cc4f1d1.png"><img alt="../_images/f81af2c72b4b9ada4164e4bfad0a01d9ee4c0ca924f4edb3a8911ac76cc4f1d1.png" src="../_images/f81af2c72b4b9ada4164e4bfad0a01d9ee4c0ca924f4edb3a8911ac76cc4f1d1.png" style="width: 563px; height: 437px;" />
 </a>
 </div>
 </div>
@@ -761,7 +736,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/f7ace44bd4f9c7618077c2743ebeff31fe37c563c5f7b5d1d1fa929763623802.png"><img alt="../_images/f7ace44bd4f9c7618077c2743ebeff31fe37c563c5f7b5d1d1fa929763623802.png" src="../_images/f7ace44bd4f9c7618077c2743ebeff31fe37c563c5f7b5d1d1fa929763623802.png" style="width: 515px; height: 350px;" />
+<a class="reference internal image-reference" href="../_images/0b8790bc436927773f5b571f57231b0709cda906ba970d05101d1764b354b548.png"><img alt="../_images/0b8790bc436927773f5b571f57231b0709cda906ba970d05101d1764b354b548.png" src="../_images/0b8790bc436927773f5b571f57231b0709cda906ba970d05101d1764b354b548.png" style="width: 515px; height: 350px;" />
 </a>
 </div>
 </div>
@@ -823,7 +798,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/ba585186f6d8b930a6a56b19a82b9cbb3d4533fb0662643cf4ff5003e58081f4.png"><img alt="../_images/ba585186f6d8b930a6a56b19a82b9cbb3d4533fb0662643cf4ff5003e58081f4.png" src="../_images/ba585186f6d8b930a6a56b19a82b9cbb3d4533fb0662643cf4ff5003e58081f4.png" style="width: 576px; height: 432px;" />
+<a class="reference internal image-reference" href="../_images/8a6f74458f06ae0c689a4b10e8aaa6cfe6985739ba6d7769bcf5fd03bb7f4477.png"><img alt="../_images/8a6f74458f06ae0c689a4b10e8aaa6cfe6985739ba6d7769bcf5fd03bb7f4477.png" src="../_images/8a6f74458f06ae0c689a4b10e8aaa6cfe6985739ba6d7769bcf5fd03bb7f4477.png" style="width: 576px; height: 432px;" />
 </a>
 </div>
 </div>
@@ -875,7 +850,8 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -914,8 +890,8 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -935,7 +911,7 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
     <br/>
   </p>
 </div>
@@ -948,7 +924,7 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
 </p></div>
       
     </div>
