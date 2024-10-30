@@ -207,7 +207,7 @@ def csr_to_nbgraph(csr, node_props=None):
             csr.indices,
             csr.data,
             np.array(csr.shape, dtype=np.int32),
-            node_props,
+            node_props.astype(np.float64),
             )
 
 
