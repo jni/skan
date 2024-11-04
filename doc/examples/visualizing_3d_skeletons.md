@@ -99,10 +99,10 @@ napari.utils.nbscreenshot(viewer)
 Finally, we can color the paths by a numerical property, such as their length.
 
 ```{code-cell} ipython3
-skeleton_layer.edge_color = 'branch_distance'
+skeleton_layer.edge_color = 'branch-distance'
 skeleton_layer.edge_colormap = 'viridis'
 # for now, we need to set the face color as well
-skeleton_layer.face_color = 'branch_distance'
+skeleton_layer.face_color = 'branch-distance'
 skeleton_layer.face_colormap = 'viridis'
 ```
 
