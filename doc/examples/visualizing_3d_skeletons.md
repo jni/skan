@@ -85,9 +85,9 @@ napari.utils.nbscreenshot(viewer)
 We can also demonstrate that most of these branches are in one skeleton, with a few stragglers around the edges, by coloring by skeleton ID:
 
 ```{code-cell} ipython3
-skeleton_layer.edge_color = 'skeleton_id'
+skeleton_layer.edge_color = 'skeleton-id'
 # for now, we need to set the face color as well
-skeleton_layer.face_color = 'skeleton_id'
+skeleton_layer.face_color = 'skeleton-id'
 ```
 
 ```{code-cell} ipython3
