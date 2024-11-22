@@ -7,6 +7,7 @@
     {
         "name": "0.12.x (stable)",
         "version": "0.12.x",
+        "preferred": true,
         "url": "https://skeleton-analysis.org/stable"
     },
     {
