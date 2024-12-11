@@ -10,6 +10,7 @@ import numpy.typing as npt
 from numpy.testing import assert_equal, assert_almost_equal
 import pandas as pd
 import pytest
+import scipy
 from skimage.draw import line
 
 from skan import csr
@@ -523,7 +524,7 @@ def test_nx_to_skeleton(
 
 
 @pytest.mark.parametrize(
-        'wrong_skeleton',
+        ('wrong_skeleton'),
         [
                 pytest.param(skeleton0, id='Numpy Array.'),
                 pytest.param(csr.Skeleton(skeleton0), id='Skeleton.'),
@@ -538,3 +539,36 @@ def test_nx_to_skeleton_attribute_error(wrong_skeleton: Any) -> None:
     """Test various errors are raised by nx_to_skeleton()."""
     with pytest.raises(Exception):
         csr.nx_to_skeleton(wrong_skeleton)
+
+
+@pytest.mark.parametrize(
+        ('skeleton'),
+        [
+                pytest.param(skeleton0, id='Numpy Array'),
+                pytest.param(csr.Skeleton(skeleton0), id='Skeleton'),
+                pytest.param(nx_graph, id='NetworkX Graph without edges.'),
+                ],
+        )
+def test_csr_to_nbgraph_attribute_error(skeleton: Any) -> None:
+    """Raise AttributeError if csr_to_nbgraph() passed incomplete objects."""
+    with pytest.raises(AttributeError):
+        csr.csr_to_nbgraph(skeleton)
+
+
+@pytest.mark.parametrize(
+        ('graph'),
+        [
+                pytest.param(
+                        scipy.sparse.csr_matrix(skeleton0),
+                        id='Sparse matrix directly from Numpy Array',
+                        ),
+                pytest.param(
+                        scipy.sparse.csr_matrix(csr.Skeleton(skeleton0)),
+                        id='Sparse matrix from csr.Skeleton',
+                        ),
+                ],
+        )
+def test_csr_to_nbgraph_type_error(graph: scipy.sparse.csr_matrix) -> None:
+    """Test TypeError is raised by csr_to_nbgraph() if wrong type is passed."""
+    with pytest.raises(TypeError):
+        csr.csr_to_nbgraph(graph)
