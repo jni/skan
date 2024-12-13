@@ -207,7 +207,7 @@ def csr_to_nbgraph(csr, node_props=None):
             csr.indices,
             csr.data,
             np.array(csr.shape, dtype=np.int32),
-            node_props,
+            node_props.astype(np.float64),
             )
 
 
@@ -525,7 +525,7 @@ class Skeleton:
         if np.issubdtype(skeleton_image.dtype, np.floating):
             self.pixel_values = skeleton_image[coords]
         elif np.issubdtype(skeleton_image.dtype, np.integer):
-            self.pixel_values = skeleton_image.astype(float)[coords]
+            self.pixel_values = skeleton_image.astype(np.float64)[coords]
         else:
             self.pixel_values = None
         self.graph = graph
