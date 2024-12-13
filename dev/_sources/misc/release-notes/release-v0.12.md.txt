@@ -1,3 +1,13 @@
+# skan v0.12.2
+
+This minor release added an important bug fix from Neil Shephard
+([#235](https://github.com/jni/skan/pull/235)), preventing a crash when
+working with float32 images.
+
+# skan v0.12.1
+
+This minor release fixed issues with the version switcher in the documentation.
+
 # skan v0.12.0
 
 This release adds NumPy 2.0 compatibility (while remaining compatible with 1.x)
