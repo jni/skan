@@ -11,7 +11,10 @@ from numpy.testing import assert_equal, assert_almost_equal
 import pandas as pd
 import pytest
 import scipy
+from scipy import ndimage as ndi
+from skimage import data
 from skimage.draw import line
+from skimage.morphology import skeletonize
 
 from skan import csr
 from skan._testdata import (
@@ -356,6 +359,16 @@ def test_skeleton_integer_dtype(dtype):
             )
     assert stats['mean_pixel_value'].max() == skeletonlabel.max()
     assert stats['mean_pixel_value'].max() > 1
+
+
+@pytest.mark.parametrize('dtype', [np.float32, np.float64])
+def test_skeleton_all_float_dtypes(dtype):
+    """Test that skeleton data types can be both float32 and float64."""
+    horse = ~data.horse()
+    skeleton_image = skeletonize(horse)
+    dt = ndi.distance_transform_edt(horse)
+    float_skel = (dt * skeleton_image).astype(dtype)
+    _ = csr.Skeleton(float_skel)
 
 
 def test_default_summarize_separator():
