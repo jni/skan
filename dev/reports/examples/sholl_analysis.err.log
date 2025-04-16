@@ -1,0 +1,143 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+import numpy as np
+import zarr
+
+neuron = np.asarray(zarr.open('../example-data/neuron.zarr.zip'))
+
+fig, ax = plt.subplots()
+ax.imshow(neuron, cmap='gray')
+ax.scatter(57, 54)
+ax.set_axis_off()
+plt.show()
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mFileExistsError[39m                           Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[2][39m[32m, line 4[39m
+[32m      1[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mnumpy[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[34;01mnp[39;00m
+[32m      2[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mzarr[39;00m
+[32m----> [39m[32m4[39m neuron = np.asarray([43mzarr[49m[43m.[49m[43mopen[49m[43m([49m[33;43m'[39;49m[33;43m../example-data/neuron.zarr.zip[39;49m[33;43m'[39;49m[43m)[49m)
+[32m      6[39m fig, ax = plt.subplots()
+[32m      7[39m ax.imshow(neuron, cmap=[33m'[39m[33mgray[39m[33m'[39m)
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/_compat.py:43[39m, in [36m_deprecate_positional_args.<locals>._inner_deprecate_positional_args.<locals>.inner_f[39m[34m(*args, **kwargs)[39m
+[32m     41[39m extra_args = [38;5;28mlen[39m(args) - [38;5;28mlen[39m(all_args)
+[32m     42[39m [38;5;28;01mif[39;00m extra_args <= [32m0[39m:
+[32m---> [39m[32m43[39m     [38;5;28;01mreturn[39;00m [43mf[49m[43m([49m[43m*[49m[43margs[49m[43m,[49m[43m [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m)[49m
+[32m     45[39m [38;5;66;03m# extra_args > 0[39;00m
+[32m     46[39m args_msg = [
+[32m     47[39m     [33mf[39m[33m"[39m[38;5;132;01m{[39;00mname[38;5;132;01m}[39;00m[33m=[39m[38;5;132;01m{[39;00marg[38;5;132;01m}[39;00m[33m"[39m
+[32m     48[39m     [38;5;28;01mfor[39;00m name, arg [38;5;129;01min[39;00m [38;5;28mzip[39m(kwonly_args[:extra_args], args[-extra_args:], strict=[38;5;28;01mFalse[39;00m)
+[32m     49[39m ]
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/api/synchronous.py:193[39m, in [36mopen[39m[34m(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)[39m
+[32m    155[39m [38;5;129m@_deprecate_positional_args[39m
+[32m    156[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mopen[39m(
+[32m    157[39m     store: StoreLike | [38;5;28;01mNone[39;00m = [38;5;28;01mNone[39;00m,
+[32m   (...)[39m[32m    164[39m     **kwargs: Any,  [38;5;66;03m# TODO: type kwargs as valid args to async_api.open[39;00m
+[32m    165[39m ) -> Array | Group:
+[32m    166[39m [38;5;250m    [39m[33;03m"""Open a group or array using file-mode-like semantics.[39;00m
+[32m    167[39m 
+[32m    168[39m [33;03m    Parameters[39;00m
+[32m   (...)[39m[32m    191[39m [33;03m        Return type depends on what exists in the given store.[39;00m
+[32m    192[39m [33;03m    """[39;00m
+[32m--> [39m[32m193[39m     obj = [43msync[49m[43m([49m
+[32m    194[39m [43m        [49m[43masync_api[49m[43m.[49m[43mopen[49m[43m([49m
+[32m    195[39m [43m            [49m[43mstore[49m[43m=[49m[43mstore[49m[43m,[49m
+[32m    196[39m [43m            [49m[43mmode[49m[43m=[49m[43mmode[49m[43m,[49m
+[32m    197[39m [43m            [49m[43mzarr_version[49m[43m=[49m[43mzarr_version[49m[43m,[49m
+[32m    198[39m [43m            [49m[43mzarr_format[49m[43m=[49m[43mzarr_format[49m[43m,[49m
+[32m    199[39m [43m            [49m[43mpath[49m[43m=[49m[43mpath[49m[43m,[49m
+[32m    200[39m [43m            [49m[43mstorage_options[49m[43m=[49m[43mstorage_options[49m[43m,[49m
+[32m    201[39m [43m            [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m,[49m
+[32m    202[39m [43m        [49m[43m)[49m
+[32m    203[39m [43m    [49m[43m)[49m
+[32m    204[39m     [38;5;28;01mif[39;00m [38;5;28misinstance[39m(obj, AsyncArray):
+[32m    205[39m         [38;5;28;01mreturn[39;00m Array(obj)
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/core/sync.py:163[39m, in [36msync[39m[34m(coro, loop, timeout)[39m
+[32m    160[39m return_result = [38;5;28mnext[39m([38;5;28miter[39m(finished)).result()
+[32m    162[39m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(return_result, [38;5;167;01mBaseException[39;00m):
+[32m--> [39m[32m163[39m     [38;5;28;01mraise[39;00m return_result
+[32m    164[39m [38;5;28;01melse[39;00m:
+[32m    165[39m     [38;5;28;01mreturn[39;00m return_result
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/core/sync.py:119[39m, in [36m_runner[39m[34m(coro)[39m
+[32m    114[39m [38;5;250m[39m[33;03m"""[39;00m
+[32m    115[39m [33;03mAwait a coroutine and return the result of running it. If awaiting the coroutine raises an[39;00m
+[32m    116[39m [33;03mexception, the exception will be returned.[39;00m
+[32m    117[39m [33;03m"""[39;00m
+[32m    118[39m [38;5;28;01mtry[39;00m:
+[32m--> [39m[32m119[39m     [38;5;28;01mreturn[39;00m [38;5;28;01mawait[39;00m coro
+[32m    120[39m [38;5;28;01mexcept[39;00m [38;5;167;01mException[39;00m [38;5;28;01mas[39;00m ex:
+[32m    121[39m     [38;5;28;01mreturn[39;00m ex
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/api/asynchronous.py:315[39m, in [36mopen[39m[34m(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)[39m
+[32m    286[39m [38;5;250m[39m[33;03m"""Convenience function to open a group or array using file-mode-like semantics.[39;00m
+[32m    287[39m 
+[32m    288[39m [33;03mParameters[39;00m
+[32m   (...)[39m[32m    311[39m [33;03m    Return type depends on what exists in the given store.[39;00m
+[32m    312[39m [33;03m"""[39;00m
+[32m    313[39m zarr_format = _handle_zarr_version_or_format(zarr_version=zarr_version, zarr_format=zarr_format)
+[32m--> [39m[32m315[39m store_path = [38;5;28;01mawait[39;00m make_store_path(store, mode=mode, path=path, storage_options=storage_options)
+[32m    317[39m [38;5;66;03m# TODO: the mode check below seems wrong![39;00m
+[32m    318[39m [38;5;28;01mif[39;00m [33m"[39m[33mshape[39m[33m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m kwargs [38;5;129;01mand[39;00m mode [38;5;129;01min[39;00m {[33m"[39m[33ma[39m[33m"[39m, [33m"[39m[33mr[39m[33m"[39m, [33m"[39m[33mr+[39m[33m"[39m, [33m"[39m[33mw[39m[33m"[39m}:
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/storage/_common.py:309[39m, in [36mmake_store_path[39m[34m(store_like, path, mode, storage_options)[39m
+[32m    305[39m         store = FsspecStore.from_url(
+[32m    306[39m             store_like, storage_options=storage_options, read_only=_read_only
+[32m    307[39m         )
+[32m    308[39m     [38;5;28;01melse[39;00m:
+[32m--> [39m[32m309[39m         store = [38;5;28;01mawait[39;00m LocalStore.open(root=Path(store_like), read_only=_read_only)
+[32m    310[39m [38;5;28;01melif[39;00m [38;5;28misinstance[39m(store_like, [38;5;28mdict[39m):
+[32m    311[39m     [38;5;66;03m# We deliberate only consider dict[str, Buffer] here, and not arbitrary mutable mappings.[39;00m
+[32m    312[39m     [38;5;66;03m# By only allowing dictionaries, which are in-memory, we know that MemoryStore appropriate.[39;00m
+[32m    313[39m     store = [38;5;28;01mawait[39;00m MemoryStore.open(store_dict=store_like, read_only=_read_only)
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/abc/store.py:83[39m, in [36mStore.open[39m[34m(cls, *args, **kwargs)[39m
+[32m     67[39m [38;5;250m[39m[33;03m"""[39;00m
+[32m     68[39m [33;03mCreate and open the store.[39;00m
+[32m     69[39m 
+[32m   (...)[39m[32m     80[39m [33;03m    The opened store instance.[39;00m
+[32m     81[39m [33;03m"""[39;00m
+[32m     82[39m store = [38;5;28mcls[39m(*args, **kwargs)
+[32m---> [39m[32m83[39m [38;5;28;01mawait[39;00m store._open()
+[32m     84[39m [38;5;28;01mreturn[39;00m store
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages/zarr/storage/_local.py:105[39m, in [36mLocalStore._open[39m[34m(self)[39m
+[32m    103[39m [38;5;28;01masync[39;00m [38;5;28;01mdef[39;00m[38;5;250m [39m[34m_open[39m([38;5;28mself[39m) -> [38;5;28;01mNone[39;00m:
+[32m    104[39m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m [38;5;28mself[39m.read_only:
+[32m--> [39m[32m105[39m         [38;5;28;43mself[39;49m[43m.[49m[43mroot[49m[43m.[49m[43mmkdir[49m[43m([49m[43mparents[49m[43m=[49m[38;5;28;43;01mTrue[39;49;00m[43m,[49m[43m [49m[43mexist_ok[49m[43m=[49m[38;5;28;43;01mTrue[39;49;00m[43m)[49m
+[32m    106[39m     [38;5;28;01mreturn[39;00m [38;5;28;01mawait[39;00m [38;5;28msuper[39m()._open()
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/pathlib.py:1311[39m, in [36mPath.mkdir[39m[34m(self, mode, parents, exist_ok)[39m
+[32m   1307[39m [38;5;250m[39m[33;03m"""[39;00m
+[32m   1308[39m [33;03mCreate a new directory at this given path.[39;00m
+[32m   1309[39m [33;03m"""[39;00m
+[32m   1310[39m [38;5;28;01mtry[39;00m:
+[32m-> [39m[32m1311[39m     [43mos[49m[43m.[49m[43mmkdir[49m[43m([49m[38;5;28;43mself[39;49m[43m,[49m[43m [49m[43mmode[49m[43m)[49m
+[32m   1312[39m [38;5;28;01mexcept[39;00m [38;5;167;01mFileNotFoundError[39;00m:
+[32m   1313[39m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m parents [38;5;129;01mor[39;00m [38;5;28mself[39m.parent == [38;5;28mself[39m:
+
+[31mFileExistsError[39m: [Errno 17] File exists: '../example-data/neuron.zarr.zip'
+
