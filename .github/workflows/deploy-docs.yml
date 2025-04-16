@@ -60,7 +60,7 @@ jobs:
           run: make -C doc html
 
       - name: Deploy dev docs 🚀
-        uses: JamesIves/github-pages-deploy-action@4.7.3
+        uses: JamesIves/github-pages-deploy-action@4
         with:
           branch: gh-pages
           folder: doc/_build/html
@@ -68,7 +68,7 @@ jobs:
           clean: true
 
       - name: Deploy stable docs 🚀
-        uses: JamesIves/github-pages-deploy-action@4.7.3
+        uses: JamesIves/github-pages-deploy-action@4
         if: startsWith(env.TAG, 'v')
         with:
           branch: gh-pages
