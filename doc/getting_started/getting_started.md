@@ -130,7 +130,7 @@ draw.overlay_skeleton_networkx(g1, np.transpose(c1), image=_testdata.skeleton1,
 
 For more sophisticated analyses, the `skan.Skeleton` class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates...) together.
 
-The function `skan.summarize` uses this class to trace the path from junctions (node 3 in the left graph, 8 and 13 in the right graph) to endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and other junctions. It then produces a junction graph and table in the form of a pandas DataFrame.
+The function `skan.summarize` uses this class to trace the path from junctions (node 6 in the left graph, 7 and 12 in the right graph) to endpoints (0, 3, and 9 on the left, and 13 and 16 on the right) and other junctions. It then produces a junction graph and table in the form of a pandas DataFrame.
 
 Let's go back to the red blood cell image to illustrate this graph.
 

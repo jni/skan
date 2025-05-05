@@ -1,1 +1,1 @@
-doc/misc/release-notes/release-v0.11.0.md
+doc/misc/release-notes/release-v0.12.md
