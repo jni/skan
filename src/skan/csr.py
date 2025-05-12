@@ -1356,12 +1356,15 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
         new_edge = (new_edge[0], new_edge[0])
     d1 = g.edges[e1]
     d2 = g.edges[e2]
-    p1 = d1['path'] if e1[1] == middle_node else d1['path'][::-1]
-    p2 = d2['path'] if e2[0] == middle_node else d2['path'][::-1]
-    i1 = d1['indices'] if e1[1] == middle_node else d1['indices'][::-1]
-    i2 = d2['indices'] if e2[0] == middle_node else d2['indices'][::-1]
-    v1 = d1['values'] if e1[1] == middle_node else d1['values'][::-1]
-    v2 = d2['values'] if e2[0] == middle_node else d2['values'][::-1]
+    u0, v0 = d1['indices'][[0, -1]]
+    u1, v1 = d2['indices'][[0, -1]]
+    middle_idx = ({u0, v0} & {u1, v1}).pop()
+    p1 = d1['path'] if v0 == middle_idx else d1['path'][::-1]
+    p2 = d2['path'] if u1 == middle_idx else d2['path'][::-1]
+    i1 = d1['indices'] if v0 == middle_idx else d1['indices'][::-1]
+    i2 = d2['indices'] if u1 == middle_idx else d2['indices'][::-1]
+    v1 = d1['values'] if v0 == middle_idx else d1['values'][::-1]
+    v2 = d2['values'] if u1 == middle_idx else d2['values'][::-1]
     n1 = len(d1['path'])
     n2 = len(d2['path'])
     new_edge_values = {
