@@ -207,8 +207,8 @@ def csr_to_nbgraph(csr, node_props=None):
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
-            csr.indptr,
-            csr.indices,
+            csr.indptr.astype(np.int32, copy='False'),
+            csr.indices.astype(np.int32, copy='False'),
             csr.data,
             np.array(csr.shape, dtype=np.int32),
             node_props.astype(np.float64),
