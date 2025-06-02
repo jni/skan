@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from functools import cached_property
+
 import networkx as nx
 import numpy as np
 import pandas as pd
+import scipy
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
 from scipy.spatial import distance_matrix
@@ -440,6 +444,89 @@ def _build_skeleton_path_graph(graph):
     return paths
 
 
+@dataclass
+class PathGraph:
+    """Generalization of a skeleton.
+
+    A morphological skeleton is a collection of single pixel wide paths in
+    a binary (or, more generally, quantitative) image. Skan was created to
+    make measurements of those paths in image data. It turns out, though,
+    that the neighborhood topology of those paths (a graph containing long
+    strings of nodes of degree 2) is more generally useful, and indeed makes
+    sense without a source image or without representing pixels. (One example:
+    tracklets in cell tracking data.)
+
+    In the text below, we use the following notation:
+
+    - N: the number of points in the pixel skeleton,
+    - ndim: the dimensionality of the skeleton
+    - P: the number of paths in the skeleton (also the number of links in the
+      junction graph).
+    - J: the number of junction nodes
+    - Sd: the sum of the degrees of all the junction nodes
+    - [Nt], [Np], Nr, Nc: the dimensions of the source image
+    """
+    node_coordinates: np.ndarray | None
+    node_values: np.ndarray | None
+    graph: scipy.sparse.csr_array  # pixel/node-id neighbor graph
+    paths: scipy.sparse.csr_array  # paths[i, j] = 1 iff coord j is in path i
+    spacing: float | tuple[float, ...] = 1  # spatial scale between coordinates
+
+    @classmethod
+    def from_graph(
+            cls, *, node_coordinates, graph, node_values=None, spacing=1
+            ):
+        nbgraph = csr_to_nbgraph(graph, node_values)
+        paths = _build_skeleton_path_graph(nbgraph)
+        return cls(node_coordinates, node_values, graph, paths, spacing)
+
+    @classmethod
+    def from_image(cls, skeleton_image, *, spacing=1, value_is_height=False):
+        graph, coords = skeleton_to_csgraph(
+                skeleton_image,
+                spacing=spacing,
+                value_is_height=value_is_height,
+                )
+        values = _extract_values(skeleton_image, coords)
+        return cls.from_graph(
+                node_coordinates=np.transpose(coords),
+                node_values=values,
+                graph=graph,
+                spacing=spacing,
+                )
+
+    @cached_property
+    def nbgraph(self):
+        return csr_to_nbgraph(self.graph, self.node_values)
+
+    @cached_property
+    def distances(self):
+        distances = np.empty(self.n_paths, dtype=float)
+        _compute_distances(
+                self.nbgraph, self.paths.indptr, self.paths.indices, distances
+                )
+        return distances
+
+    @property
+    def n_paths(self):
+        return self.paths.shape[0]
+
+    @cached_property
+    def degrees(self):
+        return np.diff(self.graph.indptr)
+
+
+def _extract_values(image, coords):
+    if image.dtype == np.bool:
+        return None
+    values = image[coords]
+    output_dtype = (
+            np.float64 if np.issubdtype(image.dtype, np.integer) else
+            image.dtype
+            )
+    return values.astype(output_dtype, copy=False)
+
+
 class Skeleton:
     """Object to group together all the properties of a skeleton.
 
@@ -522,12 +609,7 @@ class Skeleton:
                 spacing=spacing,
                 value_is_height=value_is_height,
                 )
-        if np.issubdtype(skeleton_image.dtype, np.floating):
-            self.pixel_values = skeleton_image[coords]
-        elif np.issubdtype(skeleton_image.dtype, np.integer):
-            self.pixel_values = skeleton_image.astype(np.float64)[coords]
-        else:
-            self.pixel_values = None
+        self.pixel_values = _extract_values(skeleton_image, coords)
         self.graph = graph
         self.nbgraph = csr_to_nbgraph(graph, self.pixel_values)
         self.coordinates = np.transpose(coords)
@@ -548,6 +630,26 @@ class Skeleton:
             self.keep_images = keep_images
             self.skeleton_image = skeleton_image
             self.source_image = source_image
+
+    @classmethod
+    def from_path_graph(cls, pg: PathGraph):
+        dtype = bool if pg.node_values is None else pg.node_values.dtype
+        ndim = pg.node_coordinates.shape[1]
+        dummy_image = np.zeros((4,) * ndim, dtype=dtype)
+        dummy_image[([1, 2],) * ndim] = 1  # make a single diagonal branch
+        obj = cls(dummy_image, spacing=pg.spacing, keep_images=False)
+        obj.pixel_values = pg.node_values
+        obj.graph = pg.graph
+        obj.nbgraph = pg.nbgraph
+        obj.coordinates = pg.node_coordinates
+        obj.paths = pg.paths
+        obj.n_paths = pg.n_paths
+        obj.distances = pg.distances
+        obj.skeleton_shape = np.max(obj.coordinates, axis=0) + 1
+        obj.skeleton_dtype = dtype
+        obj.degrees = pg.degrees
+        obj.spacing = pg.spacing
+        return obj
 
     def path(self, index):
         """Return the pixel indices of path number `index`.
