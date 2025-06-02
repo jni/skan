@@ -517,7 +517,7 @@ class PathGraph:
 
 
 def _extract_values(image, coords):
-    if image.dtype == np.bool:
+    if image.dtype == np.bool_:
         return None
     values = image[coords]
     output_dtype = (
