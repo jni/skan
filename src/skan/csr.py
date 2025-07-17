@@ -467,19 +467,17 @@ class PathGraph:
     - Sd: the sum of the degrees of all the junction nodes
     - [Nt], [Np], Nr, Nc: the dimensions of the source image
     """
+    adj: scipy.sparse.csr_array  # pixel/node-id neighbor adjacency matrix
     node_coordinates: np.ndarray | None
     node_values: np.ndarray | None
-    graph: scipy.sparse.csr_array  # pixel/node-id neighbor graph
     paths: scipy.sparse.csr_array  # paths[i, j] = 1 iff coord j is in path i
     spacing: float | tuple[float, ...] = 1  # spatial scale between coordinates
 
     @classmethod
-    def from_graph(
-            cls, *, node_coordinates, graph, node_values=None, spacing=1
-            ):
-        nbgraph = csr_to_nbgraph(graph, node_values)
+    def from_graph(cls, *, adj, node_coordinates, node_values=None, spacing=1):
+        nbgraph = csr_to_nbgraph(adj, node_values)
         paths = _build_skeleton_path_graph(nbgraph)
-        return cls(node_coordinates, node_values, graph, paths, spacing)
+        return cls(adj, node_coordinates, node_values, paths, spacing)
 
     @classmethod
     def from_image(cls, skeleton_image, *, spacing=1, value_is_height=False):
@@ -490,15 +488,15 @@ class PathGraph:
                 )
         values = _extract_values(skeleton_image, coords)
         return cls.from_graph(
+                adj=graph,
                 node_coordinates=np.transpose(coords),
                 node_values=values,
-                graph=graph,
                 spacing=spacing,
                 )
 
     @cached_property
     def nbgraph(self):
-        return csr_to_nbgraph(self.graph, self.node_values)
+        return csr_to_nbgraph(self.adj, self.node_values)
 
     @cached_property
     def distances(self):
@@ -514,7 +512,7 @@ class PathGraph:
 
     @cached_property
     def degrees(self):
-        return np.diff(self.graph.indptr)
+        return np.diff(self.adj.indptr)
 
 
 def _extract_values(image, coords):
@@ -640,7 +638,7 @@ class Skeleton:
         dummy_image[([1, 2],) * ndim] = 1  # make a single diagonal branch
         obj = cls(dummy_image, spacing=pg.spacing, keep_images=False)
         obj.pixel_values = pg.node_values
-        obj.graph = pg.graph
+        obj.graph = pg.adj
         obj.nbgraph = pg.nbgraph
         obj.coordinates = pg.node_coordinates
         obj.paths = pg.paths
