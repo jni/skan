@@ -207,8 +207,8 @@ def csr_to_nbgraph(csr, node_props=None):
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
-            csr.indptr.astype(np.int32, copy='False'),
-            csr.indices.astype(np.int32, copy='False'),
+            csr.indptr.astype(np.int32, copy=False),
+            csr.indices.astype(np.int32, copy=False),
             csr.data,
             np.array(csr.shape, dtype=np.int32),
             node_props.astype(np.float64),
@@ -414,8 +414,9 @@ def _build_skeleton_path_graph(graph):
     degrees = np.diff(graph.indptr)
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
-            graph.indptr, graph.indices, visited_data, graph.shape,
-            np.broadcast_to(1.0, graph.shape[0])
+            graph.indptr.astype(np.int32, copy=False),
+            graph.indices.astype(np.int32, copy=False), visited_data,
+            graph.shape, np.broadcast_to(1.0, graph.shape[0])
             )
     endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
