@@ -823,7 +823,7 @@ class Skeleton:
 
 
 def summarize(
-        skel: Skeleton,
+        skel: Skeleton | PathGraph,
         *,
         value_is_height: bool = False,
         find_main_branch: bool = False,
@@ -856,6 +856,8 @@ def summarize(
         A summary of the branches including branch length, mean branch value,
         branch euclidean distance, etc.
     """
+    if isinstance(skel, PathGraph):
+        skel = Skeleton.from_path_graph(skel)
     if separator is None:
         warnings.warn(
                 "separator in column name will change to _ in version 0.13; "
