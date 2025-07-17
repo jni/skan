@@ -475,12 +475,34 @@ class PathGraph:
 
     @classmethod
     def from_graph(cls, *, adj, node_coordinates, node_values=None, spacing=1):
+        """Build a PathGraph from an adjacency matrix and node coordinates.
+
+        Parameters
+        ----------
+        adj : scipy.sparse.csr_array
+            An adjacency matrix where adj[i, j] is nonzero iff there is an
+            edge between node i and node j.
+        node_coordinates : np.ndarray, shape (N, ndim)
+            The coordinates of the nodes. node_coordinates[i] is the
+            coordinate of node i. The indices of these coordinates must match
+            the indices of adj.
+        node_values : np.ndarray, shape (N,)
+            Values of the nodes. Could be image intensity, height, or some
+            other quantity of which you want to compute statistics along the
+            path.
+        spacing : float or tuple of float, shape (ndim,)
+            The pixel/voxel spacing along each axis coordinate.
+        """
         nbgraph = csr_to_nbgraph(adj, node_values)
         paths = _build_skeleton_path_graph(nbgraph)
         return cls(adj, node_coordinates, node_values, paths, spacing)
 
     @classmethod
     def from_image(cls, skeleton_image, *, spacing=1, value_is_height=False):
+        """Build a PathGraph from a skeleton image.
+
+        This is just a convenience meant to mirror Skeleton.__init__.
+        """
         graph, coords = skeleton_to_csgraph(
                 skeleton_image,
                 spacing=spacing,
@@ -500,6 +522,13 @@ class PathGraph:
 
     @cached_property
     def distances(self):
+        """The path distances.
+
+        Returns
+        -------
+        distances : np.ndarray of float, shape (P,)
+            distances[i] contains the distance of path i.
+        """
         distances = np.empty(self.n_paths, dtype=float)
         _compute_distances(
                 self.nbgraph, self.paths.indptr, self.paths.indices, distances
@@ -512,6 +541,12 @@ class PathGraph:
 
     @cached_property
     def degrees(self):
+        """The degree (number of neighbors) of each node/pixel.
+
+        Returns
+        -------
+        degrees : np.ndarray of int, shape (N,)
+        """
         return np.diff(self.adj.indptr)
 
 
