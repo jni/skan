@@ -1,0 +1,27 @@
+[
+    {
+        "name": "main",
+        "version": "dev",
+        "url": "https://skeleton-analysis.org/dev"
+    },
+    {
+        "name": "0.12.x (stable)",
+        "version": "0.12.x",
+        "preferred": true,
+        "url": "https://skeleton-analysis.org/stable"
+    },
+    {
+        "name": "0.11.x",
+        "version": "0.11.x",
+        "url": "https://skeleton-analysis.org/0.11.x"
+    },
+    {
+        "name": "0.10.x",
+        "version": "0.10.x",
+        "url": "https://skeleton-analysis.org/0.10.x"
+    },
+    {
+        "version": "0.9.x",
+        "url": "https://skeleton-analysis.org/0.9.x"
+    }
+]

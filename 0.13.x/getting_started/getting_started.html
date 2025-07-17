@@ -1,0 +1,943 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.13.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=1019fba8"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/getting_started';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.13.x';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples" href="../examples/index.html" />
+    <link rel="prev" title="Installing Skan" href="install.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.13.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Skan 🦴📏 0.13.0 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/api.html">
+    Skan API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../misc/index.html">
+    Miscellaneous
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/api.html">
+    Skan API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../misc/index.html">
+    Miscellaneous
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Skan</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Getting started: Skeleton analysis with Skan</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Getting started</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Getting started: Skeleton analysis with Skan</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="getting-started-skeleton-analysis-with-skan">
+<h1>Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started-skeleton-analysis-with-skan" title="Link to this heading">#</a></h1>
+<p>Skeleton analysis allows us to measure fine structure in samples. In this case, we are going to measure the network formed by a protein called <em>spectrin</em> inside the membrane of a red blood cell, either infected by the malaria parasite <em>Plasmodium falciparum</em>, or uninfected.</p>
+<section id="extracting-a-skeleton-from-an-image">
+<h2>0. Extracting a skeleton from an image<a class="headerlink" href="#extracting-a-skeleton-from-an-image" title="Link to this heading">#</a></h2>
+<p>Skan’s primary purpose is to analyse skeletons. (It primarily mimics the <a class="reference external" href="https://imagej.net/AnalyzeSkeleton">“Analyze Skeleton” Fiji plugin</a>.) In this section, we will run some simple preprocessing on our source images to extract a skeleton, provided by Skan and <a class="reference external" href="https://scikit-image.org">scikit-image</a>, but this is far from the optimal way of extracting a skeleton from an image. Skip to section 1 for Skan’s primary functionality.</p>
+<p>First, we load the images. These images were produced by an FEI scanning electron microscope. <a class="reference external" href="https://imageio.github.io">ImageIO</a> provides a method to read these images, including metadata.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">imageio</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">iio</span>
+
+<span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;../example-data/*.tif&#39;</span><span class="p">)</span>
+<span class="n">image0</span> <span class="o">=</span> <span class="n">iio</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We display the images with <a class="reference external" href="http://matplotlib.org">Matplotlib</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">config</span> InlineBackend.figure_format=&#39;retina&#39;
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/993819ca86a622139241483d9e00cdcb12937636dfe8cede5aa8c1df22055848.png"><img alt="../_images/993819ca86a622139241483d9e00cdcb12937636dfe8cede5aa8c1df22055848.png" src="../_images/993819ca86a622139241483d9e00cdcb12937636dfe8cede5aa8c1df22055848.png" style="width: 561px; height: 379px;" />
+</a>
+</div>
+</div>
+<p>As an aside, we can extract the pixel spacing in meters from the <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">spacing</span> <span class="o">=</span> <span class="n">image0</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;Scan&#39;</span><span class="p">][</span><span class="s1">&#39;PixelHeight&#39;</span><span class="p">]</span>
+<span class="n">spacing_nm</span> <span class="o">=</span> <span class="n">spacing</span> <span class="o">*</span> <span class="mf">1e9</span>  <span class="c1"># nm per pixel</span>
+<span class="n">dim_nm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image0</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="n">spacing_nm</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+          <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_nm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim_nm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">]);</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x (nm)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y (nm)&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/2b0d55b1e15849a54a4bdb4e4101a383fa06489270d1492d77e143f27e41e808.png"><img alt="../_images/2b0d55b1e15849a54a4bdb4e4101a383fa06489270d1492d77e143f27e41e808.png" src="../_images/2b0d55b1e15849a54a4bdb4e4101a383fa06489270d1492d77e143f27e41e808.png" style="width: 571px; height: 399px;" />
+</a>
+</div>
+</div>
+<p>This is an image of the inside of the membrane of a red blood cell. We want to measure the network of bright regions in this image, which is made up of a protein called <em>spectrin</em>. Our strategy will be to:</p>
+<ul class="simple">
+<li><p>smooth the image with Gaussian smoothing</p></li>
+<li><p>threshold the image with Sauvola thresholding (Otsu thresholding also works)</p></li>
+<li><p>skeletonise the resulting binary image</p></li>
+</ul>
+<p>These steps can be performed by a single function in Skan, <code class="docutils literal notranslate"><span class="pre">skan.pre.threshold</span></code>. We use parameters derived from the metadata, so that our analysis is portable to images taken at slightly different physical resolutions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan.pre</span><span class="w"> </span><span class="kn">import</span> <span class="n">threshold</span>
+
+<span class="n">smooth_radius</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="n">spacing_nm</span>  <span class="c1"># float OK</span>
+<span class="n">threshold_radius</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">50</span> <span class="o">/</span> <span class="n">spacing_nm</span><span class="p">))</span>
+<span class="n">binary0</span> <span class="o">=</span> <span class="n">threshold</span><span class="p">(</span><span class="n">image0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">smooth_radius</span><span class="p">,</span>
+                    <span class="n">radius</span><span class="o">=</span><span class="n">threshold_radius</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">binary0</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/d35e0ad1ac520dc8e758fa1e32e552b72fdc0ff9579c5176a9fbf084148cd5a7.png"><img alt="../_images/d35e0ad1ac520dc8e758fa1e32e552b72fdc0ff9579c5176a9fbf084148cd5a7.png" src="../_images/d35e0ad1ac520dc8e758fa1e32e552b72fdc0ff9579c5176a9fbf084148cd5a7.png" style="width: 561px; height: 379px;" />
+</a>
+</div>
+</div>
+<p>(There are some thresholding artifacts around the left edge, due to the dark border caused by microscope imaging drift and alignment. We will ignore this in this document, but the Skan GUI allows for a “crop” parameter to filter out these regions.)</p>
+<p>Finally, we skeletonise this binary image:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">morphology</span>
+
+<span class="n">skeleton0</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">binary0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Skan has functions for drawing skeletons in 2D:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan</span><span class="w"> </span><span class="kn">import</span> <span class="n">draw</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_2d</span><span class="p">(</span><span class="n">image0</span><span class="p">,</span> <span class="n">skeleton0</span><span class="p">,</span> <span class="n">dilate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/59a68787947a182bfea4b0c44ff01a49382f88e54ef210bb0cab2218e4451210.png"><img alt="../_images/59a68787947a182bfea4b0c44ff01a49382f88e54ef210bb0cab2218e4451210.png" src="../_images/59a68787947a182bfea4b0c44ff01a49382f88e54ef210bb0cab2218e4451210.png" style="width: 515px; height: 350px;" />
+</a>
+</div>
+</div>
+</section>
+<section id="measuring-the-length-of-skeleton-branches">
+<h2>1. Measuring the length of skeleton branches<a class="headerlink" href="#measuring-the-length-of-skeleton-branches" title="Link to this heading">#</a></h2>
+<p>Now that we have a skeleton, we can use Skan’s primary functions: producing a network of skeleton pixels, and measuring the properties of branches along that network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan.csr</span><span class="w"> </span><span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
+
+<span class="n">pixel_graph</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The pixel graph is a SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html">CSR matrix</a> in which entry $(i, j)$ is 0 if pixels $i$ and $j$ are not connected, and otherwise is equal to the distance between pixels $i$ and $j$ in the skeleton. This will normally be 1 between adjacent pixels and $\sqrt{2}$ between diagonally adjacent pixels, but in this can be scaled by a <code class="docutils literal notranslate"><span class="pre">spacing=</span></code> keyword argument that sets the scale (and this scale can be different for each image axis). In our case, we know the spacing between pixels, so we can measure our network in physical units instead of pixels:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pixel_graph0</span><span class="p">,</span> <span class="n">coordinates0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The second variable contains the coordinates (in pixel units) of the points in the pixel graph. Finally, <code class="docutils literal notranslate"><span class="pre">degrees</span></code> is an image of the skeleton, with each skeleton pixel containing the number of neighbouring pixels. This enables us to distinguish between <em>junctions</em> (where three or more skeleton branches meet), <em>endpoints</em> (where a skeleton ends), and <em>paths</em> (pixels on the inside of a skeleton branch.</p>
+<p>These intermediate objects contain all the information we need from the skeleton, but in a more useful format. It is still difficult to interpret, however, and the best option might be to visualise a couple of minimal examples. Skan provides a function to do this. (Because of the way NetworkX and Matplotlib draw networks, this method is only recommended for very small networks.)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan</span><span class="w"> </span><span class="kn">import</span> <span class="n">_testdata</span>
+<span class="n">g0</span><span class="p">,</span> <span class="n">c0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span><span class="p">)</span>
+<span class="n">g1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton1</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_networkx</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">c0</span><span class="p">),</span> <span class="n">image</span><span class="o">=</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span><span class="p">,</span>
+                               <span class="n">axis</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_networkx</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">c1</span><span class="p">),</span> <span class="n">image</span><span class="o">=</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton1</span><span class="p">,</span>
+                               <span class="n">axis</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/ed8525b8023ed48a5a315e35862a661d66e1b2f79a0728998e3334c3b0234164.png"><img alt="../_images/ed8525b8023ed48a5a315e35862a661d66e1b2f79a0728998e3334c3b0234164.png" src="../_images/ed8525b8023ed48a5a315e35862a661d66e1b2f79a0728998e3334c3b0234164.png" style="width: 515px; height: 181px;" />
+</a>
+</div>
+</div>
+<p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates…) together.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">skan.summarize</span></code> uses this class to trace the path from junctions (node 6 in the left graph, 7 and 12 in the right graph) to endpoints (0, 3, and 9 on the left, and 13 and 16 on the right) and other junctions. It then produces a junction graph and table in the form of a pandas DataFrame.</p>
+<p>Let’s go back to the red blood cell image to illustrate this graph.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan</span><span class="w"> </span><span class="kn">import</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="n">summarize</span>
+<span class="n">branch_data</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">),</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="n">branch_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>skeleton_id</th>
+      <th>node_id_src</th>
+      <th>node_id_dst</th>
+      <th>branch_distance</th>
+      <th>branch_type</th>
+      <th>mean_pixel_value</th>
+      <th>stdev_pixel_value</th>
+      <th>image_coord_src_0</th>
+      <th>image_coord_src_1</th>
+      <th>image_coord_dst_0</th>
+      <th>image_coord_dst_1</th>
+      <th>coord_src_0</th>
+      <th>coord_src_1</th>
+      <th>coord_dst_0</th>
+      <th>coord_dst_1</th>
+      <th>euclidean_distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>2</td>
+      <td>378</td>
+      <td>30.100300</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>979</td>
+      <td>8</td>
+      <td>960</td>
+      <td>0.00000</td>
+      <td>1320.63184</td>
+      <td>10.79168</td>
+      <td>1295.00160</td>
+      <td>27.809523</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>3</td>
+      <td>233</td>
+      <td>33.588423</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1042</td>
+      <td>5</td>
+      <td>1020</td>
+      <td>0.00000</td>
+      <td>1405.61632</td>
+      <td>6.74480</td>
+      <td>1375.93920</td>
+      <td>30.433925</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>4</td>
+      <td>51</td>
+      <td>39.543020</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1446</td>
+      <td>2</td>
+      <td>1420</td>
+      <td>0.00000</td>
+      <td>1950.59616</td>
+      <td>2.69792</td>
+      <td>1915.52320</td>
+      <td>35.176573</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>5</td>
+      <td>482</td>
+      <td>26.053420</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1533</td>
+      <td>10</td>
+      <td>1519</td>
+      <td>0.00000</td>
+      <td>2067.95568</td>
+      <td>13.48960</td>
+      <td>2049.07024</td>
+      <td>23.208385</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>7</td>
+      <td>847</td>
+      <td>39.966200</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>175</td>
+      <td>19</td>
+      <td>154</td>
+      <td>1.34896</td>
+      <td>236.06800</td>
+      <td>25.63024</td>
+      <td>207.73984</td>
+      <td>37.310390</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>The branch distance is the sum of the distances along path nodes between two nodes, in natural scale (given by <code class="docutils literal notranslate"><span class="pre">spacing</span></code>).</p>
+<p>The branch type is coded by number as:</p>
+<ol start="0">
+<li>endpoint-to-endpoint (isolated branch)</li>
+<li>junction-to-endpoint</li>
+<li>junction-to-junction</li>
+<li>isolated cycle</li>
+</ol>
+<p>Next come the coordinates in natural space, the Euclidean distance between the points, and the coordinates in image space (pixels). Finally, the unique IDs of the endpoints of the branch (these correspond to the pixel indices in the CSR representation above), and the unique ID of the skeleton that the branch belongs to.</p>
+<p>This data table follows the “tidy data” paradigm, with one row per branch, which allows fast  exploration of branch statistics. Here, for example, we plot the distribution of branch lengths according to branch type:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">branch_data</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;branch_distance&#39;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;branch_type&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/65635283f95c10aec5b86a7d93af182517d7b03339721e5704582f204da34f3f.png"><img alt="../_images/65635283f95c10aec5b86a7d93af182517d7b03339721e5704582f204da34f3f.png" src="../_images/65635283f95c10aec5b86a7d93af182517d7b03339721e5704582f204da34f3f.png" style="width: 559px; height: 437px;" />
+</a>
+</div>
+</div>
+<p>We can see that junction-to-junction branches tend to be longer than junction-to-endpoint and junction isolated branches, and that there are no cycles in our dataset.</p>
+<p>We can also represent this visually with the <code class="docutils literal notranslate"><span class="pre">overlay_euclidean_skeleton</span></code>, which colormaps branches according to a user-selected attribute in the table:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">draw</span><span class="o">.</span><span class="n">overlay_euclidean_skeleton_2d</span><span class="p">(</span><span class="n">image0</span><span class="p">,</span> <span class="n">branch_data</span><span class="p">,</span>
+                                   <span class="n">skeleton_color_source</span><span class="o">=</span><span class="s1">&#39;branch_type&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/e4b1b0354a04307449024c3fbb2f0ca7bedd3666b6578b51e94aaf35a0c3b498.png"><img alt="../_images/e4b1b0354a04307449024c3fbb2f0ca7bedd3666b6578b51e94aaf35a0c3b498.png" src="../_images/e4b1b0354a04307449024c3fbb2f0ca7bedd3666b6578b51e94aaf35a0c3b498.png" style="width: 515px; height: 350px;" />
+</a>
+</div>
+</div>
+</section>
+<section id="comparing-different-skeletons">
+<h2>2. Comparing different skeletons<a class="headerlink" href="#comparing-different-skeletons" title="Link to this heading">#</a></h2>
+<p>Now we can use Python’s data analysis tools to answer a scientific question: do malaria-infected red blood cells differ in their spectrin skeleton?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">iio</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+<span class="n">spacings</span> <span class="o">=</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;Scan&#39;</span><span class="p">][</span><span class="s1">&#39;PixelHeight&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+<span class="n">spacings_nm</span> <span class="o">=</span> <span class="mf">1e9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spacings</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">skeletonize</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">spacings_nm</span><span class="p">):</span>
+    <span class="n">smooth_radii</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="n">spacings_nm</span>  <span class="c1"># float OK</span>
+    <span class="n">threshold_radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">50</span> <span class="o">/</span> <span class="n">spacings_nm</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">binaries</span> <span class="o">=</span> <span class="p">(</span><span class="n">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">smooth_radius</span><span class="p">,</span>
+                          <span class="n">radius</span><span class="o">=</span><span class="n">threshold_radius</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">smooth_radius</span><span class="p">,</span> <span class="n">threshold_radius</span>
+                <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">smooth_radii</span><span class="p">,</span> <span class="n">threshold_radii</span><span class="p">))</span>
+    <span class="n">skeletons</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">,</span> <span class="n">binaries</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">skeletons</span>
+
+
+<span class="n">skeletons</span> <span class="o">=</span> <span class="n">skeletonize</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">spacings_nm</span><span class="p">)</span>
+<span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">summarize</span><span class="p">(</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">),</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">spacing</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">skeletons</span><span class="p">,</span> <span class="n">spacings_nm</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">dataframe</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">tables</span><span class="p">):</span>
+    <span class="n">dataframe</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+
+<span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">tables</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This analysis is quite verbose, which is why the <code class="docutils literal notranslate"><span class="pre">skan.pipe</span></code> module exists. It will be covered in a separate document.</p>
+<p>Now, however, we have a tidy data table with information about the sample origin of the data, allowing us to analyse the effects of treatment on our skeleton measurement. We will use only junction-to-junction branches.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="n">j2j</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;branch_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span>
+       <span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;branch_distance&#39;</span><span class="p">:</span>
+                       <span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">}))</span>
+<span class="n">per_image</span> <span class="o">=</span> <span class="n">j2j</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+<span class="n">per_image</span><span class="p">[</span><span class="s1">&#39;infected&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;infected&#39;</span> <span class="k">if</span> <span class="s1">&#39;inf&#39;</span> <span class="ow">in</span> <span class="n">fn</span> <span class="k">else</span> <span class="s1">&#39;normal&#39;</span>
+                         <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">per_image</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">stripplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">per_image</span><span class="p">,</span>
+              <span class="n">x</span><span class="o">=</span><span class="s1">&#39;infected&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;branch distance (nm)&#39;</span><span class="p">,</span>
+              <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;infected&#39;</span><span class="p">],</span>
+              <span class="n">jitter</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../_images/c2c1680d65429663270146cc5924890d68b770c3bd8bda02b112c3ee89d0c571.png"><img alt="../_images/c2c1680d65429663270146cc5924890d68b770c3bd8bda02b112c3ee89d0c571.png" src="../_images/c2c1680d65429663270146cc5924890d68b770c3bd8bda02b112c3ee89d0c571.png" style="width: 576px; height: 432px;" />
+</a>
+</div>
+</div>
+<p>We now have a hint that infection by the malaria-causing parasite, <em>Plasmodium falciparum</em>, might expand the spectrin skeleton on the inner surface of the RBC membrane.</p>
+<p>This is of course a toy example. For the full dataset and analysis, see:</p>
+<ul class="simple">
+<li><p>our <a class="reference external" href="https://peerj.com/articles/4312/">PeerJ paper</a> (and <a class="reference external" href="https://ilovesymposia.com/2019/05/02/why-you-should-cite-open-source-tools/">please cite it</a> if you publish using skan!),</p></li>
+<li><p>the <a class="reference internal" href="../examples/complete_analysis.html"><span class="doc std std-doc">“Complete analysis with skan”</span></a> page, and</p></li>
+<li><p>the <a class="reference external" href="https://github.com/jni/skan-scripts">skan-scripts</a> repository.</p></li>
+</ul>
+<p>But we hope this minimal example will serve for inspiration for your future analysis of skeleton images.</p>
+<p>If you are interested in how we used <a class="reference external" href="https://numba.pydata.org">numba</a>
+to accelerate some parts of Skan, check out <a class="reference external" href="https://www.youtube.com/watch?v=0pUPNMglnaE">Juan’s talk at the SciPy 2019 conference</a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="install.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Installing Skan</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../examples/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Examples</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extracting-a-skeleton-from-an-image">0. Extracting a skeleton from an image</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#measuring-the-length-of-skeleton-branches">1. Measuring the length of skeleton branches</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-different-skeletons">2. Comparing different skeletons</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/getting_started/getting_started.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2021, Juan Nunez-Iglesias &amp; skan contributors.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
