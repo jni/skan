@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from functools import cached_property
+
 import networkx as nx
 import numpy as np
 import pandas as pd
+import scipy
 from scipy import sparse, ndimage as ndi
 from scipy.sparse import csgraph
 from scipy.spatial import distance_matrix
@@ -203,8 +207,8 @@ def csr_to_nbgraph(csr, node_props=None):
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
-            csr.indptr,
-            csr.indices,
+            csr.indptr.astype(np.int32, copy=False),
+            csr.indices.astype(np.int32, copy=False),
             csr.data,
             np.array(csr.shape, dtype=np.int32),
             node_props.astype(np.float64),
@@ -410,8 +414,9 @@ def _build_skeleton_path_graph(graph):
     degrees = np.diff(graph.indptr)
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
-            graph.indptr, graph.indices, visited_data, graph.shape,
-            np.broadcast_to(1.0, graph.shape[0])
+            graph.indptr.astype(np.int32, copy=False),
+            graph.indices.astype(np.int32, copy=False), visited_data,
+            graph.shape, np.broadcast_to(1.0, graph.shape[0])
             )
     endpoints = (degrees != 2)
     endpoint_degrees = degrees[endpoints]
@@ -438,6 +443,122 @@ def _build_skeleton_path_graph(graph):
             shape=(m - 1, n)
             )
     return paths
+
+
+@dataclass
+class PathGraph:
+    """Generalization of a skeleton.
+
+    A morphological skeleton is a collection of single pixel wide paths in
+    a binary (or, more generally, quantitative) image. Skan was created to
+    make measurements of those paths in image data. It turns out, though,
+    that the neighborhood topology of those paths (a graph containing long
+    strings of nodes of degree 2) is more generally useful, and indeed makes
+    sense without a source image or without representing pixels. (One example:
+    tracklets in cell tracking data.)
+
+    In the text below, we use the following notation:
+
+    - N: the number of points in the pixel skeleton,
+    - ndim: the dimensionality of the skeleton
+    - P: the number of paths in the skeleton (also the number of links in the
+      junction graph).
+    - J: the number of junction nodes
+    - Sd: the sum of the degrees of all the junction nodes
+    - [Nt], [Np], Nr, Nc: the dimensions of the source image
+    """
+    adj: scipy.sparse.csr_array  # pixel/node-id neighbor adjacency matrix
+    node_coordinates: np.ndarray | None
+    node_values: np.ndarray | None
+    paths: scipy.sparse.csr_array  # paths[i, j] = 1 iff coord j is in path i
+    spacing: float | tuple[float, ...] = 1  # spatial scale between coordinates
+
+    @classmethod
+    def from_graph(cls, *, adj, node_coordinates, node_values=None, spacing=1):
+        """Build a PathGraph from an adjacency matrix and node coordinates.
+
+        Parameters
+        ----------
+        adj : scipy.sparse.csr_array
+            An adjacency matrix where adj[i, j] is nonzero iff there is an
+            edge between node i and node j.
+        node_coordinates : np.ndarray, shape (N, ndim)
+            The coordinates of the nodes. node_coordinates[i] is the
+            coordinate of node i. The indices of these coordinates must match
+            the indices of adj.
+        node_values : np.ndarray, shape (N,)
+            Values of the nodes. Could be image intensity, height, or some
+            other quantity of which you want to compute statistics along the
+            path.
+        spacing : float or tuple of float, shape (ndim,)
+            The pixel/voxel spacing along each axis coordinate.
+        """
+        nbgraph = csr_to_nbgraph(adj, node_values)
+        paths = _build_skeleton_path_graph(nbgraph)
+        return cls(adj, node_coordinates, node_values, paths, spacing)
+
+    @classmethod
+    def from_image(cls, skeleton_image, *, spacing=1, value_is_height=False):
+        """Build a PathGraph from a skeleton image.
+
+        This is just a convenience meant to mirror Skeleton.__init__.
+        """
+        graph, coords = skeleton_to_csgraph(
+                skeleton_image,
+                spacing=spacing,
+                value_is_height=value_is_height,
+                )
+        values = _extract_values(skeleton_image, coords)
+        return cls.from_graph(
+                adj=graph,
+                node_coordinates=np.transpose(coords),
+                node_values=values,
+                spacing=spacing,
+                )
+
+    @cached_property
+    def nbgraph(self):
+        return csr_to_nbgraph(self.adj, self.node_values)
+
+    @cached_property
+    def distances(self):
+        """The path distances.
+
+        Returns
+        -------
+        distances : np.ndarray of float, shape (P,)
+            distances[i] contains the distance of path i.
+        """
+        distances = np.empty(self.n_paths, dtype=float)
+        _compute_distances(
+                self.nbgraph, self.paths.indptr, self.paths.indices, distances
+                )
+        return distances
+
+    @property
+    def n_paths(self):
+        return self.paths.shape[0]
+
+    @cached_property
+    def degrees(self):
+        """The degree (number of neighbors) of each node/pixel.
+
+        Returns
+        -------
+        degrees : np.ndarray of int, shape (N,)
+        """
+        return np.diff(self.adj.indptr)
+
+
+def _extract_values(image, coords):
+    if image.dtype == np.bool_:
+        return None
+    values = image[coords]
+    output_dtype = (
+            np.float64 if np.issubdtype(image.dtype, np.integer) else
+            image.dtype
+            )
+    return values.astype(output_dtype, copy=False)
 
 
 class Skeleton:
@@ -522,12 +643,7 @@ class Skeleton:
                 spacing=spacing,
                 value_is_height=value_is_height,
                 )
-        if np.issubdtype(skeleton_image.dtype, np.floating):
-            self.pixel_values = skeleton_image[coords]
-        elif np.issubdtype(skeleton_image.dtype, np.integer):
-            self.pixel_values = skeleton_image.astype(np.float64)[coords]
-        else:
-            self.pixel_values = None
+        self.pixel_values = _extract_values(skeleton_image, coords)
         self.graph = graph
         self.nbgraph = csr_to_nbgraph(graph, self.pixel_values)
         self.coordinates = np.transpose(coords)
@@ -548,6 +664,26 @@ class Skeleton:
             self.keep_images = keep_images
             self.skeleton_image = skeleton_image
             self.source_image = source_image
+
+    @classmethod
+    def from_path_graph(cls, pg: PathGraph):
+        dtype = bool if pg.node_values is None else pg.node_values.dtype
+        ndim = pg.node_coordinates.shape[1]
+        dummy_image = np.zeros((4,) * ndim, dtype=dtype)
+        dummy_image[([1, 2],) * ndim] = 1  # make a single diagonal branch
+        obj = cls(dummy_image, spacing=pg.spacing, keep_images=False)
+        obj.pixel_values = pg.node_values
+        obj.graph = pg.adj
+        obj.nbgraph = pg.nbgraph
+        obj.coordinates = pg.node_coordinates
+        obj.paths = pg.paths
+        obj.n_paths = pg.n_paths
+        obj.distances = pg.distances
+        obj.skeleton_shape = np.max(obj.coordinates, axis=0) + 1
+        obj.skeleton_dtype = dtype
+        obj.degrees = pg.degrees
+        obj.spacing = pg.spacing
+        return obj
 
     def path(self, index):
         """Return the pixel indices of path number `index`.
@@ -721,7 +857,7 @@ class Skeleton:
 
 
 def summarize(
-        skel: Skeleton,
+        skel: Skeleton | PathGraph,
         *,
         value_is_height: bool = False,
         find_main_branch: bool = False,
@@ -754,6 +890,8 @@ def summarize(
         A summary of the branches including branch length, mean branch value,
         branch euclidean distance, etc.
     """
+    if isinstance(skel, PathGraph):
+        skel = Skeleton.from_path_graph(skel)
     if separator is None:
         warnings.warn(
                 "separator in column name will change to _ in version 0.13; "
