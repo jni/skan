@@ -384,6 +384,39 @@ def test_skeletonlabel():
     assert stats['mean-pixel-value'].max() > 1
 
 
+@pytest.mark.parametrize(('np_skeleton', 'spacing', 'dtype'),
+                         product(
+                                 [
+                                         tinycycle, tinyline, skeleton0,
+                                         skeleton1, skeleton2, skeleton3d
+                                         ],
+                                 [1.0, 2.0, (5.0, 2.5, 2.5)],
+                                 [bool, np.float32, np.float64],
+                                 ))
+def test_pathgraph_skeleton_equiv(np_skeleton, spacing, dtype):
+    if dtype is not bool:
+        np_skeleton = (
+                np_skeleton
+                * np.random.random(np_skeleton.shape).astype(dtype)
+                )
+    if isinstance(spacing, tuple):
+        spacing = spacing[:np_skeleton.ndim]  # truncate spacing to image ndim
+    s = csr.Skeleton(np_skeleton, spacing=spacing)
+    p = csr.PathGraph.from_image(np_skeleton, spacing=spacing)
+    p2 = csr.PathGraph.from_graph(
+            adj=p.adj,
+            node_coordinates=p.node_coordinates,
+            node_values=p.node_values,
+            spacing=spacing,
+            )
+    ss = csr.summarize(s)
+    sp = csr.summarize(p)
+    sp2 = csr.summarize(p2)
+
+    np.testing.assert_allclose(ss.to_numpy(), sp.to_numpy())
+    np.testing.assert_allclose(sp.to_numpy(), sp2.to_numpy())
+
+
 @pytest.mark.parametrize(
         ('np_skeleton', 'summary', 'nodes', 'edges'),
         [
