@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>skan.csr &#8212; Skan 🦴📏 0.12.3 documentation</title>
+    <title>skan.csr &#8212; Skan 🦴📏 0.1.dev1+g153fe4c documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=56343b9b"></script>
+    <script src="../../_static/documentation_options.js?v=500724a6"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -48,7 +48,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.12.x';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+g153fe4c';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -56,7 +56,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.12.3" />
+  <meta name="docsearch:version" content="0.1.dev1+g153fe4c" />
   </head>
   
   
@@ -118,7 +118,7 @@
   
   
   
-    <p class="title logo__title">Skan 🦴📏 0.12.3 documentation</p>
+    <p class="title logo__title">Skan 🦴📏 0.1.dev1+g153fe4c documentation</p>
   
 </a></div>
     
@@ -393,9 +393,13 @@
   <h1>Source code for skan.csr</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">sparse</span><span class="p">,</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csgraph</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">distance_matrix</span>
@@ -599,8 +603,8 @@
         <span class="n">node_props</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">csr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">node_props</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">writeable</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="n">NBGraph</span><span class="p">(</span>
-            <span class="n">csr</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span>
-            <span class="n">csr</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span>
+            <span class="n">csr</span><span class="o">.</span><span class="n">indptr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">csr</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">csr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">csr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
             <span class="n">node_props</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
@@ -806,8 +810,9 @@
     <span class="n">degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span>
     <span class="n">visited_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="n">visited</span> <span class="o">=</span> <span class="n">NBGraphBool</span><span class="p">(</span>
-            <span class="n">graph</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">visited_data</span><span class="p">,</span> <span class="n">graph</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">graph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">indptr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">visited_data</span><span class="p">,</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">graph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="p">)</span>
     <span class="n">endpoints</span> <span class="o">=</span> <span class="p">(</span><span class="n">degrees</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">endpoint_degrees</span> <span class="o">=</span> <span class="n">degrees</span><span class="p">[</span><span class="n">endpoints</span><span class="p">]</span>
@@ -834,6 +839,131 @@
             <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
             <span class="p">)</span>
     <span class="k">return</span> <span class="n">paths</span>
+
+
+<div class="viewcode-block" id="PathGraph">
+<a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.PathGraph">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PathGraph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generalization of a skeleton.</span>
+
+<span class="sd">    A morphological skeleton is a collection of single pixel wide paths in</span>
+<span class="sd">    a binary (or, more generally, quantitative) image. Skan was created to</span>
+<span class="sd">    make measurements of those paths in image data. It turns out, though,</span>
+<span class="sd">    that the neighborhood topology of those paths (a graph containing long</span>
+<span class="sd">    strings of nodes of degree 2) is more generally useful, and indeed makes</span>
+<span class="sd">    sense without a source image or without representing pixels. (One example:</span>
+<span class="sd">    tracklets in cell tracking data.)</span>
+
+<span class="sd">    In the text below, we use the following notation:</span>
+
+<span class="sd">    - N: the number of points in the pixel skeleton,</span>
+<span class="sd">    - ndim: the dimensionality of the skeleton</span>
+<span class="sd">    - P: the number of paths in the skeleton (also the number of links in the</span>
+<span class="sd">      junction graph).</span>
+<span class="sd">    - J: the number of junction nodes</span>
+<span class="sd">    - Sd: the sum of the degrees of all the junction nodes</span>
+<span class="sd">    - [Nt], [Np], Nr, Nc: the dimensions of the source image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">adj</span><span class="p">:</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csr_array</span>  <span class="c1"># pixel/node-id neighbor adjacency matrix</span>
+    <span class="n">node_coordinates</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">node_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">paths</span><span class="p">:</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csr_array</span>  <span class="c1"># paths[i, j] = 1 iff coord j is in path i</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># spatial scale between coordinates</span>
+
+<div class="viewcode-block" id="PathGraph.from_graph">
+<a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.PathGraph.from_graph">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_graph</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">node_coordinates</span><span class="p">,</span> <span class="n">node_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a PathGraph from an adjacency matrix and node coordinates.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        adj : scipy.sparse.csr_array</span>
+<span class="sd">            An adjacency matrix where adj[i, j] is nonzero iff there is an</span>
+<span class="sd">            edge between node i and node j.</span>
+<span class="sd">        node_coordinates : np.ndarray, shape (N, ndim)</span>
+<span class="sd">            The coordinates of the nodes. node_coordinates[i] is the</span>
+<span class="sd">            coordinate of node i. The indices of these coordinates must match</span>
+<span class="sd">            the indices of adj.</span>
+<span class="sd">        node_values : np.ndarray, shape (N,)</span>
+<span class="sd">            Values of the nodes. Could be image intensity, height, or some</span>
+<span class="sd">            other quantity of which you want to compute statistics along the</span>
+<span class="sd">            path.</span>
+<span class="sd">        spacing : float or tuple of float, shape (ndim,)</span>
+<span class="sd">            The pixel/voxel spacing along each axis coordinate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nbgraph</span> <span class="o">=</span> <span class="n">csr_to_nbgraph</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">node_values</span><span class="p">)</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">_build_skeleton_path_graph</span><span class="p">(</span><span class="n">nbgraph</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">node_coordinates</span><span class="p">,</span> <span class="n">node_values</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">spacing</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PathGraph.from_image">
+<a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.PathGraph.from_image">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_image</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">skeleton_image</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">value_is_height</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a PathGraph from a skeleton image.</span>
+
+<span class="sd">        This is just a convenience meant to mirror Skeleton.__init__.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">graph</span><span class="p">,</span> <span class="n">coords</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span>
+                <span class="n">skeleton_image</span><span class="p">,</span>
+                <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
+                <span class="n">value_is_height</span><span class="o">=</span><span class="n">value_is_height</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">_extract_values</span><span class="p">(</span><span class="n">skeleton_image</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span>
+                <span class="n">adj</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
+                <span class="n">node_coordinates</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span>
+                <span class="n">node_values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+                <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nbgraph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">csr_to_nbgraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_values</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">distances</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The path distances.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        distances : np.ndarray of float, shape (P,)</span>
+<span class="sd">            distances[i] contains the distance of path i.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_paths</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_compute_distances</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">distances</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">distances</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">degrees</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The degree (number of neighbors) of each node/pixel.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        degrees : np.ndarray of int, shape (N,)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj</span><span class="o">.</span><span class="n">indptr</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_values</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">coords</span><span class="p">]</span>
+    <span class="n">output_dtype</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span> <span class="k">else</span>
+            <span class="n">image</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">output_dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Skeleton">
@@ -920,12 +1050,7 @@
                 <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
                 <span class="n">value_is_height</span><span class="o">=</span><span class="n">value_is_height</span><span class="p">,</span>
                 <span class="p">)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="n">skeleton_image</span><span class="p">[</span><span class="n">coords</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">skeleton_image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="n">skeleton_image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)[</span><span class="n">coords</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="n">_extract_values</span><span class="p">(</span><span class="n">skeleton_image</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nbgraph</span> <span class="o">=</span> <span class="n">csr_to_nbgraph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_values</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
@@ -946,6 +1071,26 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">keep_images</span> <span class="o">=</span> <span class="n">keep_images</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">skeleton_image</span> <span class="o">=</span> <span class="n">skeleton_image</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="o">=</span> <span class="n">source_image</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_path_graph</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pg</span><span class="p">:</span> <span class="n">PathGraph</span><span class="p">):</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="nb">bool</span> <span class="k">if</span> <span class="n">pg</span><span class="o">.</span><span class="n">node_values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pg</span><span class="o">.</span><span class="n">node_values</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="n">ndim</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">node_coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dummy_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,)</span> <span class="o">*</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">dummy_image</span><span class="p">[([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],)</span> <span class="o">*</span> <span class="n">ndim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># make a single diagonal branch</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dummy_image</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">pg</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span> <span class="n">keep_images</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">pixel_values</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">node_values</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">adj</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">nbgraph</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">nbgraph</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">node_coordinates</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">paths</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">paths</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">n_paths</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">n_paths</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">distances</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">skeleton_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">skeleton_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">degrees</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">degrees</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">spacing</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">spacing</span>
+        <span class="k">return</span> <span class="n">obj</span>
 
 <div class="viewcode-block" id="Skeleton.path">
 <a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.Skeleton.path">[docs]</a>
@@ -1149,7 +1294,7 @@
 <div class="viewcode-block" id="summarize">
 <a class="viewcode-back" href="../../api/skan.csr.html#skan.csr.summarize">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">summarize</span><span class="p">(</span>
-        <span class="n">skel</span><span class="p">:</span> <span class="n">Skeleton</span><span class="p">,</span>
+        <span class="n">skel</span><span class="p">:</span> <span class="n">Skeleton</span> <span class="o">|</span> <span class="n">PathGraph</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">value_is_height</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">find_main_branch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1182,6 +1327,8 @@
 <span class="sd">        A summary of the branches including branch length, mean branch value,</span>
 <span class="sd">        branch euclidean distance, etc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">skel</span><span class="p">,</span> <span class="n">PathGraph</span><span class="p">):</span>
+        <span class="n">skel</span> <span class="o">=</span> <span class="n">Skeleton</span><span class="o">.</span><span class="n">from_path_graph</span><span class="p">(</span><span class="n">skel</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">separator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;separator in column name will change to _ in version 0.13; &quot;</span>
