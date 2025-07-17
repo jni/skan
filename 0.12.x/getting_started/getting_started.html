@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.12.2 documentation</title>
+    <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.12.3 documentation</title>
   
   
   
@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,30 +27,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=f24cbf82"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=56343b9b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/getting_started';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.12.x';
-        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -58,7 +59,7 @@
     <link rel="prev" title="Installing Skan" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.12.2" />
+  <meta name="docsearch:version" content="0.12.3" />
   </head>
   
   
@@ -120,7 +121,7 @@
   
   
   
-    <p class="title logo__title">Skan 🦴📏 0.12.2 documentation</p>
+    <p class="title logo__title">Skan 🦴📏 0.12.3 documentation</p>
   
 </a></div>
     
@@ -354,9 +355,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -411,8 +417,8 @@
 <p>First, we load the images. These images were produced by an FEI scanning electron microscope. <a class="reference external" href="https://imageio.github.io">ImageIO</a> provides a method to read these images, including metadata.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">import</span> <span class="nn">imageio</span> <span class="k">as</span> <span class="nn">iio</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">imageio</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">iio</span>
 
 <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;../example-data/*.tif&#39;</span><span class="p">)</span>
 <span class="n">image0</span> <span class="o">=</span> <span class="n">iio</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">)</span>
@@ -423,7 +429,7 @@
 <p>We display the images with <a class="reference external" href="http://matplotlib.org">Matplotlib</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="o">%</span><span class="k">config</span> InlineBackend.figure_format=&#39;retina&#39;
@@ -434,14 +440,14 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/eca4377d6f8a889c0349d2a7fb1b0c1fdacf958c0994005b8385d5802ad95d5c.png"><img alt="../_images/eca4377d6f8a889c0349d2a7fb1b0c1fdacf958c0994005b8385d5802ad95d5c.png" src="../_images/eca4377d6f8a889c0349d2a7fb1b0c1fdacf958c0994005b8385d5802ad95d5c.png" style="width: 561px; height: 379px;" />
+<a class="reference internal image-reference" href="../_images/993819ca86a622139241483d9e00cdcb12937636dfe8cede5aa8c1df22055848.png"><img alt="../_images/993819ca86a622139241483d9e00cdcb12937636dfe8cede5aa8c1df22055848.png" src="../_images/993819ca86a622139241483d9e00cdcb12937636dfe8cede5aa8c1df22055848.png" style="width: 561px; height: 379px;" />
 </a>
 </div>
 </div>
 <p>As an aside, we can extract the pixel spacing in meters from the <code class="docutils literal notranslate"><span class="pre">.meta</span></code> attribute of the ImageIO image:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">spacing</span> <span class="o">=</span> <span class="n">image0</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;Scan&#39;</span><span class="p">][</span><span class="s1">&#39;PixelHeight&#39;</span><span class="p">]</span>
 <span class="n">spacing_nm</span> <span class="o">=</span> <span class="n">spacing</span> <span class="o">*</span> <span class="mf">1e9</span>  <span class="c1"># nm per pixel</span>
@@ -456,7 +462,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/c47070b6a4f415b76eff58f5576a412093aca91e7ccc2350f57b282e91e8cd5a.png"><img alt="../_images/c47070b6a4f415b76eff58f5576a412093aca91e7ccc2350f57b282e91e8cd5a.png" src="../_images/c47070b6a4f415b76eff58f5576a412093aca91e7ccc2350f57b282e91e8cd5a.png" style="width: 581px; height: 399px;" />
+<a class="reference internal image-reference" href="../_images/2b0d55b1e15849a54a4bdb4e4101a383fa06489270d1492d77e143f27e41e808.png"><img alt="../_images/2b0d55b1e15849a54a4bdb4e4101a383fa06489270d1492d77e143f27e41e808.png" src="../_images/2b0d55b1e15849a54a4bdb4e4101a383fa06489270d1492d77e143f27e41e808.png" style="width: 571px; height: 399px;" />
 </a>
 </div>
 </div>
@@ -469,7 +475,7 @@
 <p>These steps can be performed by a single function in Skan, <code class="docutils literal notranslate"><span class="pre">skan.pre.threshold</span></code>. We use parameters derived from the metadata, so that our analysis is portable to images taken at slightly different physical resolutions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan.pre</span> <span class="kn">import</span> <span class="n">threshold</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan.pre</span><span class="w"> </span><span class="kn">import</span> <span class="n">threshold</span>
 
 <span class="n">smooth_radius</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="n">spacing_nm</span>  <span class="c1"># float OK</span>
 <span class="n">threshold_radius</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">50</span> <span class="o">/</span> <span class="n">spacing_nm</span><span class="p">))</span>
@@ -482,7 +488,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/375babba930226bb1f4e100dc19e9e2b3261276b8306d0befd924765666b0c9f.png"><img alt="../_images/375babba930226bb1f4e100dc19e9e2b3261276b8306d0befd924765666b0c9f.png" src="../_images/375babba930226bb1f4e100dc19e9e2b3261276b8306d0befd924765666b0c9f.png" style="width: 561px; height: 379px;" />
+<a class="reference internal image-reference" href="../_images/d35e0ad1ac520dc8e758fa1e32e552b72fdc0ff9579c5176a9fbf084148cd5a7.png"><img alt="../_images/d35e0ad1ac520dc8e758fa1e32e552b72fdc0ff9579c5176a9fbf084148cd5a7.png" src="../_images/d35e0ad1ac520dc8e758fa1e32e552b72fdc0ff9579c5176a9fbf084148cd5a7.png" style="width: 561px; height: 379px;" />
 </a>
 </div>
 </div>
@@ -490,7 +496,7 @@
 <p>Finally, we skeletonise this binary image:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">morphology</span>
 
 <span class="n">skeleton0</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">binary0</span><span class="p">)</span>
 </pre></div>
@@ -500,7 +506,7 @@
 <p>Skan has functions for drawing skeletons in 2D:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">draw</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan</span><span class="w"> </span><span class="kn">import</span> <span class="n">draw</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">draw</span><span class="o">.</span><span class="n">overlay_skeleton_2d</span><span class="p">(</span><span class="n">image0</span><span class="p">,</span> <span class="n">skeleton0</span><span class="p">,</span> <span class="n">dilate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
@@ -508,7 +514,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/e1587c987323d14b7462af708ed91fe2ca48ecc3bed37ddb3e47aede5199477b.png"><img alt="../_images/e1587c987323d14b7462af708ed91fe2ca48ecc3bed37ddb3e47aede5199477b.png" src="../_images/e1587c987323d14b7462af708ed91fe2ca48ecc3bed37ddb3e47aede5199477b.png" style="width: 515px; height: 350px;" />
+<a class="reference internal image-reference" href="../_images/59a68787947a182bfea4b0c44ff01a49382f88e54ef210bb0cab2218e4451210.png"><img alt="../_images/59a68787947a182bfea4b0c44ff01a49382f88e54ef210bb0cab2218e4451210.png" src="../_images/59a68787947a182bfea4b0c44ff01a49382f88e54ef210bb0cab2218e4451210.png" style="width: 515px; height: 350px;" />
 </a>
 </div>
 </div>
@@ -518,7 +524,7 @@
 <p>Now that we have a skeleton, we can use Skan’s primary functions: producing a network of skeleton pixels, and measuring the properties of branches along that network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan.csr</span> <span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan.csr</span><span class="w"> </span><span class="kn">import</span> <span class="n">skeleton_to_csgraph</span>
 
 <span class="n">pixel_graph</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">)</span>
 </pre></div>
@@ -537,7 +543,7 @@
 <p>These intermediate objects contain all the information we need from the skeleton, but in a more useful format. It is still difficult to interpret, however, and the best option might be to visualise a couple of minimal examples. Skan provides a function to do this. (Because of the way NetworkX and Matplotlib draw networks, this method is only recommended for very small networks.)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">_testdata</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan</span><span class="w"> </span><span class="kn">import</span> <span class="n">_testdata</span>
 <span class="n">g0</span><span class="p">,</span> <span class="n">c0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton0</span><span class="p">)</span>
 <span class="n">g1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">_testdata</span><span class="o">.</span><span class="n">skeleton1</span><span class="p">)</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -553,16 +559,16 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../_images/8fbf29a0a4ef28e8bf9310b9fe7311d814f5c64d5a0a73a8fcd64092b34abe08.png"><img alt="../_images/8fbf29a0a4ef28e8bf9310b9fe7311d814f5c64d5a0a73a8fcd64092b34abe08.png" src="../_images/8fbf29a0a4ef28e8bf9310b9fe7311d814f5c64d5a0a73a8fcd64092b34abe08.png" style="width: 515px; height: 181px;" />
+<a class="reference internal image-reference" href="../_images/ed8525b8023ed48a5a315e35862a661d66e1b2f79a0728998e3334c3b0234164.png"><img alt="../_images/ed8525b8023ed48a5a315e35862a661d66e1b2f79a0728998e3334c3b0234164.png" src="../_images/ed8525b8023ed48a5a315e35862a661d66e1b2f79a0728998e3334c3b0234164.png" style="width: 515px; height: 181px;" />
 </a>
 </div>
 </div>
 <p>For more sophisticated analyses, the <code class="docutils literal notranslate"><span class="pre">skan.Skeleton</span></code> class provides a way to keep all relevant information (the CSR matrix, the image, the node coordinates…) together.</p>
-<p>The function <code class="docutils literal notranslate"><span class="pre">skan.summarize</span></code> uses this class to trace the path from junctions (node 3 in the left graph, 8 and 13 in the right graph) to endpoints (1, 4, and 10 on the left, and 14 and 17 on the right) and other junctions. It then produces a junction graph and table in the form of a pandas DataFrame.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">skan.summarize</span></code> uses this class to trace the path from junctions (node 6 in the left graph, 7 and 12 in the right graph) to endpoints (0, 3, and 9 on the left, and 13 and 16 on the right) and other junctions. It then produces a junction graph and table in the form of a pandas DataFrame.</p>
 <p>Let’s go back to the red blood cell image to illustrate this graph.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skan</span> <span class="kn">import</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="n">summarize</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">skan</span><span class="w"> </span><span class="kn">import</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="n">summarize</span>
 <span class="n">branch_data</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">Skeleton</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">),</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
 <span class="n">branch_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -609,97 +615,97 @@
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>3</td>
-      <td>999</td>
-      <td>36.213005</td>
+      <td>2</td>
+      <td>378</td>
+      <td>30.100300</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>7</td>
-      <td>182</td>
-      <td>32</td>
-      <td>167</td>
-      <td>7.55419</td>
-      <td>196.40894</td>
-      <td>34.53344</td>
-      <td>180.22139</td>
-      <td>31.462942</td>
+      <td>0</td>
+      <td>979</td>
+      <td>8</td>
+      <td>960</td>
+      <td>0.00000</td>
+      <td>1320.63184</td>
+      <td>10.79168</td>
+      <td>1295.00160</td>
+      <td>27.809523</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
-      <td>4</td>
-      <td>2439</td>
-      <td>102.872853</td>
-      <td>1</td>
+      <td>3</td>
+      <td>233</td>
+      <td>33.588423</td>
+      <td>0</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>7</td>
-      <td>315</td>
-      <td>81</td>
-      <td>330</td>
-      <td>7.55419</td>
-      <td>339.93855</td>
-      <td>87.41277</td>
-      <td>356.12610</td>
-      <td>81.482695</td>
+      <td>0</td>
+      <td>1042</td>
+      <td>5</td>
+      <td>1020</td>
+      <td>0.00000</td>
+      <td>1405.61632</td>
+      <td>6.74480</td>
+      <td>1375.93920</td>
+      <td>30.433925</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>10</td>
-      <td>247</td>
-      <td>13.026734</td>
-      <td>1</td>
+      <td>4</td>
+      <td>51</td>
+      <td>39.543020</td>
+      <td>0</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>7</td>
-      <td>624</td>
-      <td>13</td>
-      <td>615</td>
-      <td>7.55419</td>
-      <td>673.40208</td>
-      <td>14.02921</td>
-      <td>663.68955</td>
-      <td>11.673008</td>
+      <td>0</td>
+      <td>1446</td>
+      <td>2</td>
+      <td>1420</td>
+      <td>0.00000</td>
+      <td>1950.59616</td>
+      <td>2.69792</td>
+      <td>1915.52320</td>
+      <td>35.176573</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
-      <td>27</td>
-      <td>208</td>
-      <td>15.185074</td>
+      <td>5</td>
+      <td>482</td>
+      <td>26.053420</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>7</td>
-      <td>1068</td>
-      <td>12</td>
-      <td>1056</td>
-      <td>7.55419</td>
-      <td>1152.55356</td>
-      <td>12.95004</td>
-      <td>1139.60352</td>
-      <td>14.029210</td>
+      <td>0</td>
+      <td>1533</td>
+      <td>10</td>
+      <td>1519</td>
+      <td>0.00000</td>
+      <td>2067.95568</td>
+      <td>13.48960</td>
+      <td>2049.07024</td>
+      <td>23.208385</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>4</td>
-      <td>28</td>
-      <td>549</td>
-      <td>48.977889</td>
+      <td>0</td>
+      <td>7</td>
+      <td>847</td>
+      <td>39.966200</td>
       <td>1</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>7</td>
-      <td>1383</td>
-      <td>20</td>
-      <td>1423</td>
-      <td>7.55419</td>
-      <td>1492.49211</td>
-      <td>21.58340</td>
-      <td>1535.65891</td>
-      <td>45.389331</td>
+      <td>1</td>
+      <td>175</td>
+      <td>19</td>
+      <td>154</td>
+      <td>1.34896</td>
+      <td>236.06800</td>
+      <td>25.63024</td>
+      <td>207.73984</td>
+      <td>37.310390</td>
     </tr>
   </tbody>
 </table>
@@ -722,7 +728,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/46970d191ae4f62cfff3bf05d155167cd52e8c71aa428974656a71a25b346d6b.png"><img alt="../_images/46970d191ae4f62cfff3bf05d155167cd52e8c71aa428974656a71a25b346d6b.png" src="../_images/46970d191ae4f62cfff3bf05d155167cd52e8c71aa428974656a71a25b346d6b.png" style="width: 563px; height: 437px;" />
+<a class="reference internal image-reference" href="../_images/65635283f95c10aec5b86a7d93af182517d7b03339721e5704582f204da34f3f.png"><img alt="../_images/65635283f95c10aec5b86a7d93af182517d7b03339721e5704582f204da34f3f.png" src="../_images/65635283f95c10aec5b86a7d93af182517d7b03339721e5704582f204da34f3f.png" style="width: 559px; height: 437px;" />
 </a>
 </div>
 </div>
@@ -736,7 +742,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/a79e23478d43de4eb476672204888bb2458b9632719f467b0bba33c6570428e9.png"><img alt="../_images/a79e23478d43de4eb476672204888bb2458b9632719f467b0bba33c6570428e9.png" src="../_images/a79e23478d43de4eb476672204888bb2458b9632719f467b0bba33c6570428e9.png" style="width: 515px; height: 350px;" />
+<a class="reference internal image-reference" href="../_images/e4b1b0354a04307449024c3fbb2f0ca7bedd3666b6578b51e94aaf35a0c3b498.png"><img alt="../_images/e4b1b0354a04307449024c3fbb2f0ca7bedd3666b6578b51e94aaf35a0c3b498.png" src="../_images/e4b1b0354a04307449024c3fbb2f0ca7bedd3666b6578b51e94aaf35a0c3b498.png" style="width: 515px; height: 350px;" />
 </a>
 </div>
 </div>
@@ -746,7 +752,7 @@
 <p>Now we can use Python’s data analysis tools to answer a scientific question: do malaria-infected red blood cells differ in their spectrin skeleton?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">iio</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;fei&#39;</span><span class="p">)</span>
           <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
@@ -755,7 +761,7 @@
 <span class="n">spacings_nm</span> <span class="o">=</span> <span class="mf">1e9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spacings</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">skeletonize</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">spacings_nm</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">skeletonize</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">spacings_nm</span><span class="p">):</span>
     <span class="n">smooth_radii</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="n">spacings_nm</span>  <span class="c1"># float OK</span>
     <span class="n">threshold_radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mi">50</span> <span class="o">/</span> <span class="n">spacings_nm</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">binaries</span> <span class="o">=</span> <span class="p">(</span><span class="n">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">smooth_radius</span><span class="p">,</span>
@@ -782,7 +788,7 @@
 <p>Now, however, we have a tidy data table with information about the sample origin of the data, allowing us to analyse the effects of treatment on our skeleton measurement. We will use only junction-to-junction branches.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
 <span class="n">j2j</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;branch_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span>
        <span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;branch_distance&#39;</span><span class="p">:</span>
@@ -798,7 +804,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/c210f55984d4cf73ec87a01c771b78fb14ffd99f53e44c5b550c7480e23b5be7.png"><img alt="../_images/c210f55984d4cf73ec87a01c771b78fb14ffd99f53e44c5b550c7480e23b5be7.png" src="../_images/c210f55984d4cf73ec87a01c771b78fb14ffd99f53e44c5b550c7480e23b5be7.png" style="width: 576px; height: 432px;" />
+<a class="reference internal image-reference" href="../_images/8e21b2c9df1b35107bd7de2c56d36ad9424524e8a9ec63760f60498351c3c7cf.png"><img alt="../_images/8e21b2c9df1b35107bd7de2c56d36ad9424524e8a9ec63760f60498351c3c7cf.png" src="../_images/8e21b2c9df1b35107bd7de2c56d36ad9424524e8a9ec63760f60498351c3c7cf.png" style="width: 576px; height: 432px;" />
 </a>
 </div>
 </div>
@@ -869,13 +875,13 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   </nav></div>
 
   <div class="sidebar-secondary-item">
-
-  <div class="tocsection sourcelink">
-    <a href="../_sources/getting_started/getting_started.md.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
-  </div>
-</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/getting_started/getting_started.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
 
 </div></div>
               
@@ -890,8 +896,8 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -911,7 +917,7 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     <br/>
   </p>
 </div>
@@ -924,7 +930,8 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>
