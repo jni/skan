@@ -1,3 +1,11 @@
+# skan v0.12.3
+
+This minor release updates the minimum numba version to 0.58 to fix a
+pip resolution error ([issue #248](https://github.com/jni/skan/issues/248),
+fixed by [PR #249](https://github.com/jni/skan/issues/249), with thanks
+to new contributor [Alister Burt](https://github.com/alisterburt)!).
+
+
 # skan v0.12.2
 
 This minor release added an important bug fix from Neil Shephard
