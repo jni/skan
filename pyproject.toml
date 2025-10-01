@@ -59,7 +59,6 @@ all = [
 ]
 gui = [
     'magicgui>=0.7.3',
-    'napari[pyqt5]>=0.4.19rc1',
 ]
 testing = [
     'coverage',
