@@ -43,7 +43,6 @@ keywords = [
 requires-python = '>=3.9'
 dependencies = [
     'imageio>=2.10.1',
-    'magicgui>=0.7.3',
     'matplotlib>=3.4',
     'networkx>=2.7',
     'numba>=0.58',
@@ -59,6 +58,9 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     'scikit-image[data]',
+]
+gui = [
+    'magicgui>=0.7.3',
 ]
 testing = [
     'coverage',
