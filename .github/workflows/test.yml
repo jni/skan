@@ -20,8 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest, windows-latest, macos-latest]
-        python: ["3.9", "3.12"]
+        platform: [ubuntu-latest, windows-2022, macos-latest]
+        python: ["3.10", "3.13"]
 
     steps:
       - uses: actions/checkout@v3
