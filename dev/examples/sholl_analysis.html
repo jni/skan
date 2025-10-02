@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sholl analysis in Skan &#8212; Skan 🦴📏 0.1.dev1+gd60fdbd documentation</title>
+    <title>Sholl analysis in Skan &#8212; Skan 🦴📏 0.1.dev1+gd36672585 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=2c4ce94d"></script>
+    <script src="../_static/documentation_options.js?v=f8442b2c"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+gd60fdbd';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+gd36672585';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -59,7 +59,7 @@
     <link rel="prev" title="Complete analysis with Skan" href="complete_analysis.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.dev1+gd60fdbd" />
+  <meta name="docsearch:version" content="0.1.dev1+gd36672585" />
   </head>
   
   
@@ -121,7 +121,7 @@
   
   
   
-    <p class="title logo__title">Skan 🦴📏 0.1.dev1+gd60fdbd documentation</p>
+    <p class="title logo__title">Skan 🦴📏 0.1.dev1+gd36672585 documentation</p>
   
 </a></div>
     
@@ -447,30 +447,30 @@
 <span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">neuron</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/synchronous.py:200,</span> in <span class="ni">open</span><span class="nt">(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">162</span> <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">163</span>     <span class="n">store</span><span class="p">:</span> <span class="n">StoreLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">164</span>     <span class="o">*</span><span class="p">,</span>
-   <span class="p">(</span><span class="o">...</span><span class="p">)</span>    <span class="mi">170</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># TODO: type kwargs as valid args to async_api.open</span>
-<span class="g g-Whitespace">    </span><span class="mi">171</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span> <span class="o">|</span> <span class="n">Group</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">172</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Open a group or array using file-mode-like semantics.</span>
-<span class="g g-Whitespace">    </span><span class="mi">173</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">174</span><span class="sd">     Parameters</span>
-<span class="sd">   (...)    198         Return type depends on what exists in the given store.</span>
-<span class="g g-Whitespace">    </span><span class="mi">199</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">200</span>     <span class="n">obj</span> <span class="o">=</span> <span class="n">sync</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">201</span>         <span class="n">async_api</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">202</span>             <span class="n">store</span><span class="o">=</span><span class="n">store</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">203</span>             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">204</span>             <span class="n">zarr_version</span><span class="o">=</span><span class="n">zarr_version</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">205</span>             <span class="n">zarr_format</span><span class="o">=</span><span class="n">zarr_format</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">206</span>             <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">207</span>             <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">208</span>             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">209</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">210</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">211</span>     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">AsyncArray</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">212</span>         <span class="k">return</span> <span class="n">Array</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/synchronous.py:209,</span> in <span class="ni">open</span><span class="nt">(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">171</span> <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span>     <span class="n">store</span><span class="p">:</span> <span class="n">StoreLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">173</span>     <span class="o">*</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>    <span class="mi">179</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># TODO: type kwargs as valid args to async_api.open</span>
+<span class="g g-Whitespace">    </span><span class="mi">180</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span> <span class="o">|</span> <span class="n">Group</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">181</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Open a group or array using file-mode-like semantics.</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span><span class="sd"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">183</span><span class="sd">     Parameters</span>
+<span class="sd">   (...)    207         Return type depends on what exists in the given store.</span>
+<span class="g g-Whitespace">    </span><span class="mi">208</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">209</span>     <span class="n">obj</span> <span class="o">=</span> <span class="n">sync</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">210</span>         <span class="n">async_api</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">211</span>             <span class="n">store</span><span class="o">=</span><span class="n">store</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">212</span>             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">213</span>             <span class="n">zarr_version</span><span class="o">=</span><span class="n">zarr_version</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">214</span>             <span class="n">zarr_format</span><span class="o">=</span><span class="n">zarr_format</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">215</span>             <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">216</span>             <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">217</span>             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">218</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">219</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">220</span>     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">AsyncArray</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">221</span>         <span class="k">return</span> <span class="n">Array</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
 <span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/core/sync.py:163,</span> in <span class="ni">sync</span><span class="nt">(coro, loop, timeout)</span>
 <span class="g g-Whitespace">    </span><span class="mi">160</span> <span class="n">return_result</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">finished</span><span class="p">))</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
@@ -489,39 +489,53 @@
 <span class="g g-Whitespace">    </span><span class="mi">120</span> <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
 <span class="g g-Whitespace">    </span><span class="mi">121</span>     <span class="k">return</span> <span class="n">ex</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/asynchronous.py:345,</span> in <span class="ni">open</span><span class="nt">(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">343</span>     <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">344</span>         <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">345</span> <span class="n">store_path</span> <span class="o">=</span> <span class="k">await</span> <span class="n">make_store_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">347</span> <span class="c1"># TODO: the mode check below seems wrong!</span>
-<span class="g g-Whitespace">    </span><span class="mi">348</span> <span class="k">if</span> <span class="s2">&quot;shape&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;r+&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">}:</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/asynchronous.py:369,</span> in <span class="ni">open</span><span class="nt">(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">367</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">368</span>         <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">369</span> <span class="n">store_path</span> <span class="o">=</span> <span class="k">await</span> <span class="n">make_store_path</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">371</span> <span class="c1"># TODO: the mode check below seems wrong!</span>
+<span class="g g-Whitespace">    </span><span class="mi">372</span> <span class="k">if</span> <span class="s2">&quot;shape&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;r+&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">}:</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:349,</span> in <span class="ni">make_store_path</span><span class="nt">(store_like, path, mode, storage_options)</span>
-<span class="g g-Whitespace">    </span><span class="mi">345</span>         <span class="n">store</span> <span class="o">=</span> <span class="n">FsspecStore</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">346</span>             <span class="n">store_like</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">_read_only</span>
-<span class="g g-Whitespace">    </span><span class="mi">347</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">348</span>     <span class="k">else</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">349</span>         <span class="n">store</span> <span class="o">=</span> <span class="k">await</span> <span class="n">LocalStore</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">store_like</span><span class="p">),</span> <span class="n">read_only</span><span class="o">=</span><span class="n">_read_only</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">350</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">store_like</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">351</span>     <span class="c1"># We deliberate only consider dict[str, Buffer] here, and not arbitrary mutable mappings.</span>
-<span class="g g-Whitespace">    </span><span class="mi">352</span>     <span class="c1"># By only allowing dictionaries, which are in-memory, we know that MemoryStore appropriate.</span>
-<span class="g g-Whitespace">    </span><span class="mi">353</span>     <span class="n">store</span> <span class="o">=</span> <span class="k">await</span> <span class="n">MemoryStore</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">store_dict</span><span class="o">=</span><span class="n">store_like</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">_read_only</span><span class="p">)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:418,</span> in <span class="ni">make_store_path</span><span class="nt">(store_like, path, mode, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">413</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">414</span>         <span class="s2">&quot;&#39;path&#39; was provided but is not used for FSMap store_like objects. Specify the path when creating the FSMap instance instead.&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">415</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">417</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">418</span>     <span class="n">store</span> <span class="o">=</span> <span class="k">await</span> <span class="n">make_store</span><span class="p">(</span><span class="n">store_like</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">419</span>     <span class="k">return</span> <span class="k">await</span> <span class="n">StorePath</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_normalized</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/abc/store.py:83,</span> in <span class="ni">Store.open</span><span class="nt">(cls, *args, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">67</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">68</span><span class="sd"> Create and open the store.</span>
-<span class="g g-Whitespace">     </span><span class="mi">69</span><span class="sd"> </span>
-<span class="sd">   (...)     80     The opened store instance.</span>
-<span class="g g-Whitespace">     </span><span class="mi">81</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">82</span> <span class="n">store</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">83</span> <span class="k">await</span> <span class="n">store</span><span class="o">.</span><span class="n">_open</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">84</span> <span class="k">return</span> <span class="n">store</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:349,</span> in <span class="ni">make_store</span><span class="nt">(store_like, mode, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">344</span>         <span class="k">return</span> <span class="n">FsspecStore</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">345</span>             <span class="n">store_like</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">_read_only</span>
+<span class="g g-Whitespace">    </span><span class="mi">346</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">347</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">348</span>         <span class="c1"># Assume a filesystem path</span>
+<span class="ne">--&gt; </span><span class="mi">349</span>         <span class="k">return</span> <span class="k">await</span> <span class="n">make_store</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">store_like</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">351</span> <span class="k">elif</span> <span class="n">_has_fsspec</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">store_like</span><span class="p">,</span> <span class="n">FSMap</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">352</span>     <span class="k">return</span> <span class="n">FsspecStore</span><span class="o">.</span><span class="n">from_mapper</span><span class="p">(</span><span class="n">store_like</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">_read_only</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_local.py:114,</span> in <span class="ni">LocalStore._open</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">112</span> <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">113</span>     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">114</span>         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">115</span>     <span class="k">return</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_open</span><span class="p">()</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:339,</span> in <span class="ni">make_store</span><span class="nt">(store_like, mode, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">335</span>     <span class="k">return</span> <span class="k">await</span> <span class="n">make_store</span><span class="p">({},</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">337</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">store_like</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">338</span>     <span class="c1"># Create a new LocalStore</span>
+<span class="ne">--&gt; </span><span class="mi">339</span>     <span class="k">return</span> <span class="k">await</span> <span class="n">LocalStore</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">store_like</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">_read_only</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">341</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">store_like</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">342</span>     <span class="c1"># Either a FSSpec URI or a local filesystem path</span>
+<span class="g g-Whitespace">    </span><span class="mi">343</span>     <span class="k">if</span> <span class="n">_is_fsspec_uri</span><span class="p">(</span><span class="n">store_like</span><span class="p">):</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_local.py:160,</span> in <span class="ni">LocalStore.open</span><span class="nt">(cls, root, read_only, mode)</span>
+<span class="g g-Whitespace">    </span><span class="mi">158</span>     <span class="n">read_only_creation</span> <span class="o">=</span> <span class="n">read_only</span>
+<span class="g g-Whitespace">    </span><span class="mi">159</span> <span class="n">store</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="n">read_only_creation</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">160</span> <span class="k">await</span> <span class="n">store</span><span class="o">.</span><span class="n">_open</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">162</span> <span class="c1"># Set read_only state</span>
+<span class="g g-Whitespace">    </span><span class="mi">163</span> <span class="n">store</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">with_read_only</span><span class="p">(</span><span class="n">read_only</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_local.py:169,</span> in <span class="ni">LocalStore._open</span><span class="nt">(self, mode)</span>
+<span class="g g-Whitespace">    </span><span class="mi">167</span> <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">AccessModeLiteral</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">168</span>     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">169</span>         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">171</span>     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span>         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
 
 <span class="nn">File /opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/pathlib.py:1311,</span> in <span class="ni">Path.mkdir</span><span class="nt">(self, mode, parents, exist_ok)</span>
 <span class="g g-Whitespace">   </span><span class="mi">1307</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>

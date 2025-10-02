@@ -47,30 +47,30 @@ plt.show()
 [32m      6[39m fig, ax = plt.subplots()
 [32m      7[39m ax.imshow(neuron, cmap=[33m'[39m[33mgray[39m[33m'[39m)
 
-[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/synchronous.py:200[39m, in [36mopen[39m[34m(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)[39m
-[32m    162[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mopen[39m(
-[32m    163[39m     store: StoreLike | [38;5;28;01mNone[39;00m = [38;5;28;01mNone[39;00m,
-[32m    164[39m     *,
-[32m   (...)[39m[32m    170[39m     **kwargs: Any,  [38;5;66;03m# TODO: type kwargs as valid args to async_api.open[39;00m
-[32m    171[39m ) -> Array | Group:
-[32m    172[39m [38;5;250m    [39m[33;03m"""Open a group or array using file-mode-like semantics.[39;00m
-[32m    173[39m 
-[32m    174[39m [33;03m    Parameters[39;00m
-[32m   (...)[39m[32m    198[39m [33;03m        Return type depends on what exists in the given store.[39;00m
-[32m    199[39m [33;03m    """[39;00m
-[32m--> [39m[32m200[39m     obj = [43msync[49m[43m([49m
-[32m    201[39m [43m        [49m[43masync_api[49m[43m.[49m[43mopen[49m[43m([49m
-[32m    202[39m [43m            [49m[43mstore[49m[43m=[49m[43mstore[49m[43m,[49m
-[32m    203[39m [43m            [49m[43mmode[49m[43m=[49m[43mmode[49m[43m,[49m
-[32m    204[39m [43m            [49m[43mzarr_version[49m[43m=[49m[43mzarr_version[49m[43m,[49m
-[32m    205[39m [43m            [49m[43mzarr_format[49m[43m=[49m[43mzarr_format[49m[43m,[49m
-[32m    206[39m [43m            [49m[43mpath[49m[43m=[49m[43mpath[49m[43m,[49m
-[32m    207[39m [43m            [49m[43mstorage_options[49m[43m=[49m[43mstorage_options[49m[43m,[49m
-[32m    208[39m [43m            [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m,[49m
-[32m    209[39m [43m        [49m[43m)[49m
-[32m    210[39m [43m    [49m[43m)[49m
-[32m    211[39m     [38;5;28;01mif[39;00m [38;5;28misinstance[39m(obj, AsyncArray):
-[32m    212[39m         [38;5;28;01mreturn[39;00m Array(obj)
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/synchronous.py:209[39m, in [36mopen[39m[34m(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)[39m
+[32m    171[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mopen[39m(
+[32m    172[39m     store: StoreLike | [38;5;28;01mNone[39;00m = [38;5;28;01mNone[39;00m,
+[32m    173[39m     *,
+[32m   (...)[39m[32m    179[39m     **kwargs: Any,  [38;5;66;03m# TODO: type kwargs as valid args to async_api.open[39;00m
+[32m    180[39m ) -> Array | Group:
+[32m    181[39m [38;5;250m    [39m[33;03m"""Open a group or array using file-mode-like semantics.[39;00m
+[32m    182[39m 
+[32m    183[39m [33;03m    Parameters[39;00m
+[32m   (...)[39m[32m    207[39m [33;03m        Return type depends on what exists in the given store.[39;00m
+[32m    208[39m [33;03m    """[39;00m
+[32m--> [39m[32m209[39m     obj = [43msync[49m[43m([49m
+[32m    210[39m [43m        [49m[43masync_api[49m[43m.[49m[43mopen[49m[43m([49m
+[32m    211[39m [43m            [49m[43mstore[49m[43m=[49m[43mstore[49m[43m,[49m
+[32m    212[39m [43m            [49m[43mmode[49m[43m=[49m[43mmode[49m[43m,[49m
+[32m    213[39m [43m            [49m[43mzarr_version[49m[43m=[49m[43mzarr_version[49m[43m,[49m
+[32m    214[39m [43m            [49m[43mzarr_format[49m[43m=[49m[43mzarr_format[49m[43m,[49m
+[32m    215[39m [43m            [49m[43mpath[49m[43m=[49m[43mpath[49m[43m,[49m
+[32m    216[39m [43m            [49m[43mstorage_options[49m[43m=[49m[43mstorage_options[49m[43m,[49m
+[32m    217[39m [43m            [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m,[49m
+[32m    218[39m [43m        [49m[43m)[49m
+[32m    219[39m [43m    [49m[43m)[49m
+[32m    220[39m     [38;5;28;01mif[39;00m [38;5;28misinstance[39m(obj, AsyncArray):
+[32m    221[39m         [38;5;28;01mreturn[39;00m Array(obj)
 
 [36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/core/sync.py:163[39m, in [36msync[39m[34m(coro, loop, timeout)[39m
 [32m    160[39m return_result = [38;5;28mnext[39m([38;5;28miter[39m(finished)).result()
@@ -89,39 +89,53 @@ plt.show()
 [32m    120[39m [38;5;28;01mexcept[39;00m [38;5;167;01mException[39;00m [38;5;28;01mas[39;00m ex:
 [32m    121[39m     [38;5;28;01mreturn[39;00m ex
 
-[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/asynchronous.py:345[39m, in [36mopen[39m[34m(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)[39m
-[32m    343[39m     [38;5;28;01melse[39;00m:
-[32m    344[39m         mode = [33m"[39m[33ma[39m[33m"[39m
-[32m--> [39m[32m345[39m store_path = [38;5;28;01mawait[39;00m make_store_path(store, mode=mode, path=path, storage_options=storage_options)
-[32m    347[39m [38;5;66;03m# TODO: the mode check below seems wrong![39;00m
-[32m    348[39m [38;5;28;01mif[39;00m [33m"[39m[33mshape[39m[33m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m kwargs [38;5;129;01mand[39;00m mode [38;5;129;01min[39;00m {[33m"[39m[33ma[39m[33m"[39m, [33m"[39m[33mr[39m[33m"[39m, [33m"[39m[33mr+[39m[33m"[39m, [33m"[39m[33mw[39m[33m"[39m}:
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/api/asynchronous.py:369[39m, in [36mopen[39m[34m(store, mode, zarr_version, zarr_format, path, storage_options, **kwargs)[39m
+[32m    367[39m     [38;5;28;01melse[39;00m:
+[32m    368[39m         mode = [33m"[39m[33ma[39m[33m"[39m
+[32m--> [39m[32m369[39m store_path = [38;5;28;01mawait[39;00m make_store_path(store, mode=mode, path=path, storage_options=storage_options)
+[32m    371[39m [38;5;66;03m# TODO: the mode check below seems wrong![39;00m
+[32m    372[39m [38;5;28;01mif[39;00m [33m"[39m[33mshape[39m[33m"[39m [38;5;129;01mnot[39;00m [38;5;129;01min[39;00m kwargs [38;5;129;01mand[39;00m mode [38;5;129;01min[39;00m {[33m"[39m[33ma[39m[33m"[39m, [33m"[39m[33mr[39m[33m"[39m, [33m"[39m[33mr+[39m[33m"[39m, [33m"[39m[33mw[39m[33m"[39m}:
 
-[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:349[39m, in [36mmake_store_path[39m[34m(store_like, path, mode, storage_options)[39m
-[32m    345[39m         store = FsspecStore.from_url(
-[32m    346[39m             store_like, storage_options=storage_options, read_only=_read_only
-[32m    347[39m         )
-[32m    348[39m     [38;5;28;01melse[39;00m:
-[32m--> [39m[32m349[39m         store = [38;5;28;01mawait[39;00m LocalStore.open(root=Path(store_like), read_only=_read_only)
-[32m    350[39m [38;5;28;01melif[39;00m [38;5;28misinstance[39m(store_like, [38;5;28mdict[39m):
-[32m    351[39m     [38;5;66;03m# We deliberate only consider dict[str, Buffer] here, and not arbitrary mutable mappings.[39;00m
-[32m    352[39m     [38;5;66;03m# By only allowing dictionaries, which are in-memory, we know that MemoryStore appropriate.[39;00m
-[32m    353[39m     store = [38;5;28;01mawait[39;00m MemoryStore.open(store_dict=store_like, read_only=_read_only)
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:418[39m, in [36mmake_store_path[39m[34m(store_like, path, mode, storage_options)[39m
+[32m    413[39m     [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
+[32m    414[39m         [33m"[39m[33m'[39m[33mpath[39m[33m'[39m[33m was provided but is not used for FSMap store_like objects. Specify the path when creating the FSMap instance instead.[39m[33m"[39m
+[32m    415[39m     )
+[32m    417[39m [38;5;28;01melse[39;00m:
+[32m--> [39m[32m418[39m     store = [38;5;28;01mawait[39;00m make_store(store_like, mode=mode, storage_options=storage_options)
+[32m    419[39m     [38;5;28;01mreturn[39;00m [38;5;28;01mawait[39;00m StorePath.open(store, path=path_normalized, mode=mode)
 
-[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/abc/store.py:83[39m, in [36mStore.open[39m[34m(cls, *args, **kwargs)[39m
-[32m     67[39m [38;5;250m[39m[33;03m"""[39;00m
-[32m     68[39m [33;03mCreate and open the store.[39;00m
-[32m     69[39m 
-[32m   (...)[39m[32m     80[39m [33;03m    The opened store instance.[39;00m
-[32m     81[39m [33;03m"""[39;00m
-[32m     82[39m store = [38;5;28mcls[39m(*args, **kwargs)
-[32m---> [39m[32m83[39m [38;5;28;01mawait[39;00m store._open()
-[32m     84[39m [38;5;28;01mreturn[39;00m store
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:349[39m, in [36mmake_store[39m[34m(store_like, mode, storage_options)[39m
+[32m    344[39m         [38;5;28;01mreturn[39;00m FsspecStore.from_url(
+[32m    345[39m             store_like, storage_options=storage_options, read_only=_read_only
+[32m    346[39m         )
+[32m    347[39m     [38;5;28;01melse[39;00m:
+[32m    348[39m         [38;5;66;03m# Assume a filesystem path[39;00m
+[32m--> [39m[32m349[39m         [38;5;28;01mreturn[39;00m [38;5;28;01mawait[39;00m make_store(Path(store_like), mode=mode, storage_options=storage_options)
+[32m    351[39m [38;5;28;01melif[39;00m _has_fsspec [38;5;129;01mand[39;00m [38;5;28misinstance[39m(store_like, FSMap):
+[32m    352[39m     [38;5;28;01mreturn[39;00m FsspecStore.from_mapper(store_like, read_only=_read_only)
 
-[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_local.py:114[39m, in [36mLocalStore._open[39m[34m(self)[39m
-[32m    112[39m [38;5;28;01masync[39;00m [38;5;28;01mdef[39;00m[38;5;250m [39m[34m_open[39m([38;5;28mself[39m) -> [38;5;28;01mNone[39;00m:
-[32m    113[39m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m [38;5;28mself[39m.read_only:
-[32m--> [39m[32m114[39m         [38;5;28;43mself[39;49m[43m.[49m[43mroot[49m[43m.[49m[43mmkdir[49m[43m([49m[43mparents[49m[43m=[49m[38;5;28;43;01mTrue[39;49;00m[43m,[49m[43m [49m[43mexist_ok[49m[43m=[49m[38;5;28;43;01mTrue[39;49;00m[43m)[49m
-[32m    115[39m     [38;5;28;01mreturn[39;00m [38;5;28;01mawait[39;00m [38;5;28msuper[39m()._open()
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_common.py:339[39m, in [36mmake_store[39m[34m(store_like, mode, storage_options)[39m
+[32m    335[39m     [38;5;28;01mreturn[39;00m [38;5;28;01mawait[39;00m make_store({}, mode=mode, storage_options=storage_options)
+[32m    337[39m [38;5;28;01melif[39;00m [38;5;28misinstance[39m(store_like, Path):
+[32m    338[39m     [38;5;66;03m# Create a new LocalStore[39;00m
+[32m--> [39m[32m339[39m     [38;5;28;01mreturn[39;00m [38;5;28;01mawait[39;00m LocalStore.open(root=store_like, mode=mode, read_only=_read_only)
+[32m    341[39m [38;5;28;01melif[39;00m [38;5;28misinstance[39m(store_like, [38;5;28mstr[39m):
+[32m    342[39m     [38;5;66;03m# Either a FSSpec URI or a local filesystem path[39;00m
+[32m    343[39m     [38;5;28;01mif[39;00m _is_fsspec_uri(store_like):
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_local.py:160[39m, in [36mLocalStore.open[39m[34m(cls, root, read_only, mode)[39m
+[32m    158[39m     read_only_creation = read_only
+[32m    159[39m store = [38;5;28mcls[39m(root, read_only=read_only_creation)
+[32m--> [39m[32m160[39m [38;5;28;01mawait[39;00m store._open()
+[32m    162[39m [38;5;66;03m# Set read_only state[39;00m
+[32m    163[39m store = store.with_read_only(read_only)
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/zarr/storage/_local.py:169[39m, in [36mLocalStore._open[39m[34m(self, mode)[39m
+[32m    167[39m [38;5;28;01masync[39;00m [38;5;28;01mdef[39;00m[38;5;250m [39m[34m_open[39m([38;5;28mself[39m, *, mode: AccessModeLiteral | [38;5;28;01mNone[39;00m = [38;5;28;01mNone[39;00m) -> [38;5;28;01mNone[39;00m:
+[32m    168[39m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m [38;5;28mself[39m.read_only:
+[32m--> [39m[32m169[39m         [38;5;28;43mself[39;49m[43m.[49m[43mroot[49m[43m.[49m[43mmkdir[49m[43m([49m[43mparents[49m[43m=[49m[38;5;28;43;01mTrue[39;49;00m[43m,[49m[43m [49m[43mexist_ok[49m[43m=[49m[38;5;28;43;01mTrue[39;49;00m[43m)[49m
+[32m    171[39m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m [38;5;28mself[39m.root.exists():
+[32m    172[39m         [38;5;28;01mraise[39;00m [38;5;167;01mFileNotFoundError[39;00m([33mf[39m[33m"[39m[38;5;132;01m{[39;00m[38;5;28mself[39m.root[38;5;132;01m}[39;00m[33m does not exist[39m[33m"[39m)
 
 [36mFile [39m[32m/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/pathlib.py:1311[39m, in [36mPath.mkdir[39m[34m(self, mode, parents, exist_ok)[39m
 [32m   1307[39m [38;5;250m[39m[33;03m"""[39;00m
