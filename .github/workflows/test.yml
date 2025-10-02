@@ -23,6 +23,9 @@ jobs:
         platform: [ubuntu-latest, windows-2022, macos-latest]
         python: ["3.10", "3.13"]
 
+    env:
+      PYVISTA_OFF_SCREEN: True
+
     steps:
       - uses: actions/checkout@v3
 
@@ -31,19 +34,20 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      # these libraries enable testing on Qt on linux
-      - uses: tlambert03/setup-qt-libs@v1
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install 'setuptools<50.0'
           python -m pip install .[all,testing]
 
-      - name: Test
-        uses: aganders3/headless-gui@v1
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
         with:
-          run: pytest --pyargs skan --doctest-modules -s -v
+          qt: true
+          wm: herbstluftwm
+
+      - name: Test
+        run: pytest --pyargs skan --doctest-modules -s -v
 
       - name: Coverage
         if: runner.os == 'Linux' && matrix.python == '3.10'
