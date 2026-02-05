@@ -82,7 +82,7 @@ docs = [
     'sphinx-copybutton',
     'sphinxcontrib-bibtex',
     'myst-nb',
-    'zarr',
+    'zarr>=3.1.0',
     'pydata-sphinx-theme<1.0'
 ]
 

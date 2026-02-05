@@ -26,7 +26,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import zarr
 
-neuron = np.asarray(zarr.open('../example-data/neuron.zarr.zip'))
+path = '../example-data/neuron.zarr.zip'
+
+neuron = np.asarray(
+        zarr.open_array(
+                zarr.storage.ZipStore(path),
+                mode='r'
+                )
+        )
 
 fig, ax = plt.subplots()
 ax.imshow(neuron, cmap='gray')
