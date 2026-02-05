@@ -76,6 +76,7 @@ docs = [
     'napari[all]>=0.4.19rc1',
     'sphinx',
     'jupyter',
+    'jupytext',
     'notebook',
     'seaborn>=0.13,<1.0',
     'sphinx-toggleprompt',
