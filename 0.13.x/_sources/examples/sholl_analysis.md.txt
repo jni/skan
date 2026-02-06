@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.13.6
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -26,7 +26,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import zarr
 
-neuron = np.asarray(zarr.open('../example-data/neuron.zarr.zip'))
+path = '../example-data/neuron.zarr.zip'
+
+neuron = np.asarray(
+        zarr.open_array(
+                zarr.storage.ZipStore(path),
+                mode='r'
+                )
+        )
 
 fig, ax = plt.subplots()
 ax.imshow(neuron, cmap='gray')
