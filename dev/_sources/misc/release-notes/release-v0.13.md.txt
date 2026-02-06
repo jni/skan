@@ -1,3 +1,27 @@
+# skan v0.13.1
+
+This is a minor convenience and bug fix release, and recommended for all users.
+
+## Bug fixes
+
+- [#256](https://github.com/jni/skan/pull/256): Fix 'buffer source array is
+  read-only' error. This error was caused by a still-outstanding bug in
+  scikit-image:
+  [scikit-image/scikit-image#6378](https://github.com/scikit-image/scikit-image/issues/6378).
+
+## Documentation
+
+- [#255](https://github.com/jni/skan/pull/253): Update docs to use zarr v3.
+
+## Maintenance
+
+- [#253](https://github.com/jni/skan/pull/253), by
+  [@k-dominik](https://github.com/k-dominic): Move magicgui to optional
+  dependencies. This makes skan more lightweight for those who don't want/need
+  the napari plugin.
+- [#254](https://github.com/jni/skan/pull/254): Use windows-2022 VMs to test on
+  Windows, use pyvista graphics.
+
 # skan v0.13.0
 
 This is a minor step forward from v0.12.x which adds a new API:
