@@ -176,6 +176,7 @@ csr_spec_bool = [
 
 
 class NBGraphBase:
+
     def __init__(self, indptr, indices, data, shape, node_props):
         self.indptr = indptr
         self.indices = indices
@@ -629,6 +630,7 @@ class Skeleton:
         The image from which the skeleton was derived. Only present if
         `keep_images` is True. This is useful for visualization.
     """
+
     def __init__(
             self,
             skeleton_image,
@@ -1230,6 +1232,15 @@ def _simplify_graph(skel):
     src = np.asarray(summary['node_id_src'])
     dst = np.asarray(summary['node_id_dst'])
     distance = np.asarray(summary['branch_distance'])
+
+    # Workaround for https://github.com/scikit-image/scikit-image/issues/6378
+    # Remove when https://github.com/scikit-image/scikit-image/pull/7535 is
+    # included in a release.
+    # Writing into these arrays would be Bad, but we have no intention of doing
+    # so, it's just that Cython won't take a read-only array if you haven't
+    # explicitly declared that your function won't attempt to write to it.
+    src.flags.writeable = True
+    dst.flags.writeable = True
 
     # to reduce the size of simplified graph
     nodes = np.unique(np.append(src, dst))
