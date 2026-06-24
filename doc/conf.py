@@ -46,6 +46,8 @@ extensions = [
         'sphinx_copybutton',
         'myst_nb',
         ]
+        
+myst_enable_extensions = ["dollarmath"]
 
 # sphinx-copybutton prompt-stripping configuration
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
