@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.13.1 documentation</title>
+    <title>Getting started: Skeleton analysis with Skan &#8212; Skan 🦴📏 0.1.dev1+g7928b4530 documentation</title>
   
   
   
@@ -27,53 +27,62 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../_static/documentation_options.js?v=b4617fb1"></script>
+    <script src="../_static/documentation_options.js?v=f64acfad"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/getting_started';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.13.x';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+g7928b4530';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Examples" href="../examples/index.html" />
     <link rel="prev" title="Installing Skan" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.13.1" />
+  <meta name="docsearch:version" content="0.1.dev1+g7928b4530" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -99,7 +108,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -121,7 +130,7 @@
   
   
   
-    <p class="title logo__title">Skan 🦴📏 0.13.1 documentation</p>
+    <p class="title logo__title">Skan 🦴📏 0.1.dev1+g7928b4530 documentation</p>
   
 </a></div>
     
@@ -212,8 +221,7 @@
           
           
           
-          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -331,8 +339,7 @@
           
           
           
-          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/jni/skan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -341,7 +348,14 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
@@ -408,7 +422,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="getting-started-skeleton-analysis-with-skan">
+  <section class="tex2jax_ignore mathjax_ignore" id="getting-started-skeleton-analysis-with-skan">
 <h1>Getting started: Skeleton analysis with Skan<a class="headerlink" href="#getting-started-skeleton-analysis-with-skan" title="Link to this heading">#</a></h1>
 <p>Skeleton analysis allows us to measure fine structure in samples. In this case, we are going to measure the network formed by a protein called <em>spectrin</em> inside the membrane of a red blood cell, either infected by the malaria parasite <em>Plasmodium falciparum</em>, or uninfected.</p>
 <section id="extracting-a-skeleton-from-an-image">
@@ -440,7 +454,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/35cdc9f4db1dda9a7b018cd62e5ed6b265f9910a6dfb1b8f88ba2a184ab6a444.png"><img alt="../_images/35cdc9f4db1dda9a7b018cd62e5ed6b265f9910a6dfb1b8f88ba2a184ab6a444.png" height="379" src="../_images/35cdc9f4db1dda9a7b018cd62e5ed6b265f9910a6dfb1b8f88ba2a184ab6a444.png" width="561" />
+<a class="reference internal image-reference" href="../_images/8182a5985a964bd0e02c810b9ec04e1ea691ca79ec45836b5fb2fbe0e03075fc.png"><img alt="../_images/8182a5985a964bd0e02c810b9ec04e1ea691ca79ec45836b5fb2fbe0e03075fc.png" height="379" src="../_images/8182a5985a964bd0e02c810b9ec04e1ea691ca79ec45836b5fb2fbe0e03075fc.png" width="561" />
 </a>
 </div>
 </div>
@@ -462,7 +476,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/0a87a2774a255c20bb943faf6b19bcbe41bf257aae37920cac361829128e0534.png"><img alt="../_images/0a87a2774a255c20bb943faf6b19bcbe41bf257aae37920cac361829128e0534.png" height="399" src="../_images/0a87a2774a255c20bb943faf6b19bcbe41bf257aae37920cac361829128e0534.png" width="571" />
+<a class="reference internal image-reference" href="../_images/c8e69910212753d82d276005303817d654655fdf7f22322edf05d93dcc0e87cf.png"><img alt="../_images/c8e69910212753d82d276005303817d654655fdf7f22322edf05d93dcc0e87cf.png" height="398" src="../_images/c8e69910212753d82d276005303817d654655fdf7f22322edf05d93dcc0e87cf.png" width="572" />
 </a>
 </div>
 </div>
@@ -488,7 +502,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/70a905389b8aae677e98a8dcf7884f114a27081f4510139afe903117753e3ffe.png"><img alt="../_images/70a905389b8aae677e98a8dcf7884f114a27081f4510139afe903117753e3ffe.png" height="379" src="../_images/70a905389b8aae677e98a8dcf7884f114a27081f4510139afe903117753e3ffe.png" width="561" />
+<a class="reference internal image-reference" href="../_images/0632394e9156cd5a64c0b9924adba28bf53dfecf2f6f7371abd727b47a447bf6.png"><img alt="../_images/0632394e9156cd5a64c0b9924adba28bf53dfecf2f6f7371abd727b47a447bf6.png" height="379" src="../_images/0632394e9156cd5a64c0b9924adba28bf53dfecf2f6f7371abd727b47a447bf6.png" width="561" />
 </a>
 </div>
 </div>
@@ -514,11 +528,11 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/skan/draw.py:89: FutureWarning: `binary_dilation` is deprecated since version 0.26 and will be removed in version 0.28. Use `skimage.morphology.dilation` instead. Note the lack of mirroring for non-symmetric footprints (see docstring notes).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/skan/draw.py:89: FutureWarning: `binary_dilation` is deprecated since version 0.26 and will be removed in version 0.28. Use `skimage.morphology.dilation` instead. Note the lack of mirroring for non-symmetric footprints (see docstring notes).
   skeleton = morphology.binary_dilation(skeleton, selem)
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../_images/0e8612ccbe83e43863bbe3bee4240a1c320e19f744996c7df5d913e5eddc5bfe.png"><img alt="../_images/0e8612ccbe83e43863bbe3bee4240a1c320e19f744996c7df5d913e5eddc5bfe.png" height="350" src="../_images/0e8612ccbe83e43863bbe3bee4240a1c320e19f744996c7df5d913e5eddc5bfe.png" width="515" />
+<a class="reference internal image-reference" href="../_images/bc7f1c072497fba1e19b6127ac9ee8eb280deff9dd33ecdb0a732b1a123d67b3.png"><img alt="../_images/bc7f1c072497fba1e19b6127ac9ee8eb280deff9dd33ecdb0a732b1a123d67b3.png" height="350" src="../_images/bc7f1c072497fba1e19b6127ac9ee8eb280deff9dd33ecdb0a732b1a123d67b3.png" width="515" />
 </a>
 </div>
 </div>
@@ -535,7 +549,7 @@
 </div>
 </div>
 </div>
-<p>The pixel graph is a SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html">CSR matrix</a> in which entry $(i, j)$ is 0 if pixels $i$ and $j$ are not connected, and otherwise is equal to the distance between pixels $i$ and $j$ in the skeleton. This will normally be 1 between adjacent pixels and $\sqrt{2}$ between diagonally adjacent pixels, but in this can be scaled by a <code class="docutils literal notranslate"><span class="pre">spacing=</span></code> keyword argument that sets the scale (and this scale can be different for each image axis). In our case, we know the spacing between pixels, so we can measure our network in physical units instead of pixels:</p>
+<p>The pixel graph is a SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html">CSR matrix</a> in which entry <span class="math notranslate nohighlight">\((i, j)\)</span> is 0 if pixels <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> are not connected, and otherwise is equal to the distance between pixels <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> in the skeleton. This will normally be 1 between adjacent pixels and <span class="math notranslate nohighlight">\(\sqrt{2}\)</span> between diagonally adjacent pixels, but in this can be scaled by a <code class="docutils literal notranslate"><span class="pre">spacing=</span></code> keyword argument that sets the scale (and this scale can be different for each image axis). In our case, we know the spacing between pixels, so we can measure our network in physical units instead of pixels:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pixel_graph0</span><span class="p">,</span> <span class="n">coordinates0</span> <span class="o">=</span> <span class="n">skeleton_to_csgraph</span><span class="p">(</span><span class="n">skeleton0</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="n">spacing_nm</span><span class="p">)</span>
@@ -563,7 +577,7 @@
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../_images/8fbfc42049daa7bcd6f5412a01a6a3efcc3be992ba02db9890f0da0e2597b276.png"><img alt="../_images/8fbfc42049daa7bcd6f5412a01a6a3efcc3be992ba02db9890f0da0e2597b276.png" height="181" src="../_images/8fbfc42049daa7bcd6f5412a01a6a3efcc3be992ba02db9890f0da0e2597b276.png" width="515" />
+<a class="reference internal image-reference" href="../_images/6f0f3a823db756ff7830770510e5fba6d5b746d1d17eed3cb2eda81fe5b42724.png"><img alt="../_images/6f0f3a823db756ff7830770510e5fba6d5b746d1d17eed3cb2eda81fe5b42724.png" height="181" src="../_images/6f0f3a823db756ff7830770510e5fba6d5b746d1d17eed3cb2eda81fe5b42724.png" width="515" />
 </a>
 </div>
 </div>
@@ -732,7 +746,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/fd847bba02ad24e7499ab840ad1b693e3de8d604beac4775c8574957cb3e9643.png"><img alt="../_images/fd847bba02ad24e7499ab840ad1b693e3de8d604beac4775c8574957cb3e9643.png" height="437" src="../_images/fd847bba02ad24e7499ab840ad1b693e3de8d604beac4775c8574957cb3e9643.png" width="559" />
+<a class="reference internal image-reference" href="../_images/24c358be372b2d070726378a0766348a8446b243ddadfe6fafc9458fb1fb58fb.png"><img alt="../_images/24c358be372b2d070726378a0766348a8446b243ddadfe6fafc9458fb1fb58fb.png" height="437" src="../_images/24c358be372b2d070726378a0766348a8446b243ddadfe6fafc9458fb1fb58fb.png" width="559" />
 </a>
 </div>
 </div>
@@ -746,7 +760,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/8a9c7ab8e7d5deecc2816f1c807b1f5ecca0e11df8e31fa0b707d2aaed5bad2d.png"><img alt="../_images/8a9c7ab8e7d5deecc2816f1c807b1f5ecca0e11df8e31fa0b707d2aaed5bad2d.png" height="350" src="../_images/8a9c7ab8e7d5deecc2816f1c807b1f5ecca0e11df8e31fa0b707d2aaed5bad2d.png" width="515" />
+<a class="reference internal image-reference" href="../_images/12c861a254f0f2a677346a7047f2ac8083808b08e9275651a625b1995fd4a0ff.png"><img alt="../_images/12c861a254f0f2a677346a7047f2ac8083808b08e9275651a625b1995fd4a0ff.png" height="350" src="../_images/12c861a254f0f2a677346a7047f2ac8083808b08e9275651a625b1995fd4a0ff.png" width="515" />
 </a>
 </div>
 </div>
@@ -808,7 +822,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../_images/b08b66f6d2c12ae1eb2aed37cd0b809b8ea560342911de9e8ba08844d764fffc.png"><img alt="../_images/b08b66f6d2c12ae1eb2aed37cd0b809b8ea560342911de9e8ba08844d764fffc.png" height="432" src="../_images/b08b66f6d2c12ae1eb2aed37cd0b809b8ea560342911de9e8ba08844d764fffc.png" width="576" />
+<a class="reference internal image-reference" href="../_images/f776dc2793a26dcdfad53cfbca6bd5b689aaa22d50b895e3bbf486e99aef9589.png"><img alt="../_images/f776dc2793a26dcdfad53cfbca6bd5b689aaa22d50b895e3bbf486e99aef9589.png" height="432" src="../_images/f776dc2793a26dcdfad53cfbca6bd5b689aaa22d50b895e3bbf486e99aef9589.png" width="576" />
 </a>
 </div>
 </div>
@@ -870,8 +884,8 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extracting-a-skeleton-from-an-image">0. Extracting a skeleton from an image</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#measuring-the-length-of-skeleton-branches">1. Measuring the length of skeleton branches</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-different-skeletons">2. Comparing different skeletons</a></li>
@@ -879,13 +893,13 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/getting_started/getting_started.md.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/getting_started/getting_started.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -900,8 +914,8 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -935,7 +949,7 @@ to accelerate some parts of Skan, check out <a class="reference external" href="
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.19.0.
 </p></div>
       
     </div>
