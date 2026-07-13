@@ -1,4 +1,6 @@
-from .csr import summarize, Skeleton, sholl_analysis
+from .csr import summarize, Skeleton, sholl_analysis, iteratively_prune_paths
 from ._version import __version__
 
-__all__ = ['summarize', 'Skeleton', 'sholl_analysis']
+__all__ = [
+        "summarize", "Skeleton", "sholl_analysis", "iteratively_prune_paths"
+        ]

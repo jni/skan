@@ -65,12 +65,13 @@ gui = [
 testing = [
     'coverage',
     'hypothesis',
-    'napari[pyqt5]>=0.4.19rc1',
+    'napari[pyqt6]>=0.4.19rc1',
     'pytest',
     'pytest-cov',
     'pytest-qt',
     'seaborn<1.0',
     'tifffile',
+    'zarr',
 ]
 docs = [
     'napari[all]>=0.4.19rc1',

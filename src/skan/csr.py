@@ -1,4 +1,5 @@
 from __future__ import annotations
+import networkx as nx
 
 from dataclasses import dataclass
 from functools import cached_property
@@ -16,9 +17,11 @@ from skimage.util._map_array import map_array, ArrayMap
 import numpy.typing as npt
 import numba
 import warnings
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Iterator
 from .nputil import _raveled_offsets_and_distances
 from .summary_utils import find_main_branches
+
+import matplotlib.pyplot as plt
 
 
 def _weighted_abs_diff(
@@ -119,7 +122,7 @@ def pixel_graph(
     # Note, we use map_array to map the raveled coordinates in the padded
     # image to the ones in the original image, and those are the returned
     # nodes.
-    padded = np.pad(mask, 1, mode='constant', constant_values=False)
+    padded = np.pad(mask, 1, mode="constant", constant_values=False)
     nodes_padded = np.flatnonzero(padded)
     neighbor_offsets_padded, distances_padded = _raveled_offsets_and_distances(
             padded.shape, connectivity=connectivity, spacing=spacing
@@ -159,20 +162,20 @@ def pixel_graph(
 
 
 csr_spec_float = [
-        ('indptr', numba.int32[:]),
-        ('indices', numba.int32[:]),
-        ('data', numba.float64[:]),
-        ('shape', numba.int32[:]),
-        ('node_properties', numba.float64[:]),
-        ]  # yapf: disable
+    ("indptr", numba.int32[:]),
+    ("indices", numba.int32[:]),
+    ("data", numba.float64[:]),
+    ("shape", numba.int32[:]),
+    ("node_properties", numba.float64[:]),
+]  # yapf: disable
 
 csr_spec_bool = [
-        ('indptr', numba.int32[:]),
-        ('indices', numba.int32[:]),
-        ('data', numba.bool_[:]),
-        ('shape', numba.int32[:]),
-        ('node_properties', numba.float64[:]),
-        ]  # yapf: disable
+    ("indptr", numba.int32[:]),
+    ("indices", numba.int32[:]),
+    ("data", numba.bool_[:]),
+    ("shape", numba.int32[:]),
+    ("node_properties", numba.float64[:]),
+]  # yapf: disable
 
 
 class NBGraphBase:
@@ -205,7 +208,7 @@ NBGraphBool = numba.experimental.jitclass(NBGraphBase, csr_spec_bool)
 
 def csr_to_nbgraph(csr, node_props=None):
     if node_props is None:
-        node_props = np.broadcast_to(1., csr.shape[0])
+        node_props = np.broadcast_to(1.0, csr.shape[0])
         node_props.flags.writeable = True
     return NBGraph(
             csr.indptr.astype(np.int32, copy=False),
@@ -411,7 +414,9 @@ def _walk_path(
 
 def _build_skeleton_path_graph(graph):
     max_num_cycles = graph.indices.size // 4
-    buffer_size_offset = max_num_cycles
+    # minimum buffer size should be 1, because an empty image still requires
+    # an indptr of size 1 in sparse.csr_matrix/array
+    buffer_size_offset = max_num_cycles + 1
     degrees = np.diff(graph.indptr)
     visited_data = np.zeros(graph.data.shape, dtype=bool)
     visited = NBGraphBool(
@@ -419,7 +424,7 @@ def _build_skeleton_path_graph(graph):
             graph.indices.astype(np.int32, copy=False), visited_data,
             graph.shape, np.broadcast_to(1.0, graph.shape[0])
             )
-    endpoints = (degrees != 2)
+    endpoints = degrees != 2
     endpoint_degrees = degrees[endpoints]
     num_paths = np.sum(endpoint_degrees)
     path_indptr = np.zeros(num_paths + buffer_size_offset, dtype=int)
@@ -815,7 +820,7 @@ class Skeleton:
         means = self.path_means()
         return np.sqrt(np.clip(sumsq/lengths - means*means, 0, None))
 
-    def prune_paths(self, indices: npt.ArrayLike) -> 'Skeleton':
+    def prune_paths(self, indices: npt.ArrayLike) -> "Skeleton":
         """Prune nodes from the skeleton.
 
         Parameters
@@ -832,10 +837,10 @@ class Skeleton:
         image_cp = np.copy(self.skeleton_image)
         if not np.all(np.array(indices) < self.n_paths):
             raise ValueError(
-                    f'The path index {np.max(indices)} does not exist in this '
-                    f'skeleton. (The highest path index is {self.n_paths}.)\n'
-                    'If you obtained the index from a summary table, you '
-                    'probably need to resummarize the skeleton.'
+                    f"The path index {np.max(indices)} does not exist in this "
+                    f"skeleton. (The highest path index is {self.n_paths}.)\n"
+                    "If you obtained the index from a summary table, you "
+                    "probably need to resummarize the skeleton."
                     )
         for i in indices:
             pixel_ids_to_wipe = self.path(i)
@@ -850,7 +855,7 @@ class Skeleton:
                 new_skeleton,
                 spacing=self.spacing,
                 source_image=self.source_image,
-                keep_images=self.keep_images
+                keep_images=self.keep_images,
                 )
 
     def __array__(self, dtype=None):
@@ -903,59 +908,59 @@ def summarize(
                 np.exceptions.VisibleDeprecationWarning,
                 stacklevel=2,  # make sure warning points to calling line
                 )
-        separator = '-'
+        separator = "-"
     summary = {}
     ndim = skel.coordinates.shape[1]
     _, skeleton_ids = csgraph.connected_components(skel.graph, directed=False)
     endpoints_src = skel.paths.indices[skel.paths.indptr[:-1]]
     endpoints_dst = skel.paths.indices[skel.paths.indptr[1:] - 1]
-    summary['skeleton_id'] = skeleton_ids[endpoints_src]
-    summary['node_id_src'] = endpoints_src
-    summary['node_id_dst'] = endpoints_dst
-    summary['branch_distance'] = skel.path_lengths()
+    summary["skeleton_id"] = skeleton_ids[endpoints_src]
+    summary["node_id_src"] = endpoints_src
+    summary["node_id_dst"] = endpoints_dst
+    summary["branch_distance"] = skel.path_lengths()
     deg_src = skel.degrees[endpoints_src]
     deg_dst = skel.degrees[endpoints_dst]
     kind = np.full(deg_src.shape, 2)  # default: junction-to-junction
     kind[(deg_src == 1) | (deg_dst == 1)] = 1  # tip-junction
     kind[(deg_src == 1) & (deg_dst == 1)] = 0  # tip-tip
     kind[endpoints_src == endpoints_dst] = 3  # cycle
-    summary['branch_type'] = kind
-    summary['mean_pixel_value'] = skel.path_means()
-    summary['stdev_pixel_value'] = skel.path_stdev()
+    summary["branch_type"] = kind
+    summary["mean_pixel_value"] = skel.path_means()
+    summary["stdev_pixel_value"] = skel.path_stdev()
     for i in range(ndim):  # keep loops separate for best insertion order
-        summary[f'image_coord_src_{i}'] = skel.coordinates[endpoints_src, i]
+        summary[f"image_coord_src_{i}"] = skel.coordinates[endpoints_src, i]
     for i in range(ndim):
-        summary[f'image_coord_dst_{i}'] = skel.coordinates[endpoints_dst, i]
+        summary[f"image_coord_dst_{i}"] = skel.coordinates[endpoints_dst, i]
     coords_real_src = skel.coordinates[endpoints_src] * skel.spacing
     for i in range(ndim):
-        summary[f'coord_src_{i}'] = coords_real_src[:, i]
+        summary[f"coord_src_{i}"] = coords_real_src[:, i]
     if value_is_height:
         values_src = skel.pixel_values[endpoints_src]
-        summary[f'coord_src_{ndim}'] = values_src
+        summary[f"coord_src_{ndim}"] = values_src
         coords_real_src = np.concatenate(
                 [coords_real_src, values_src[:, np.newaxis]],
                 axis=1,
                 )
     coords_real_dst = skel.coordinates[endpoints_dst] * skel.spacing
     for i in range(ndim):
-        summary[f'coord_dst_{i}'] = coords_real_dst[:, i]
+        summary[f"coord_dst_{i}"] = coords_real_dst[:, i]
     if value_is_height:
         values_dst = skel.pixel_values[endpoints_dst]
-        summary[f'coord_dst_{ndim}'] = values_dst
+        summary[f"coord_dst_{ndim}"] = values_dst
         coords_real_dst = np.concatenate(
                 [coords_real_dst, values_dst[:, np.newaxis]],
                 axis=1,
                 )
-    summary['euclidean_distance'] = (
-            np.sqrt((coords_real_dst - coords_real_src)**2
-                    @ np.ones(ndim + int(value_is_height)))
+    summary["euclidean_distance"] = np.sqrt(
+            (coords_real_dst - coords_real_src)**2
+            @ np.ones(ndim + int(value_is_height))
             )
     df = pd.DataFrame(summary)
 
     if find_main_branch:
         # define main branch as longest shortest path within a single skeleton
-        df['main'] = find_main_branches(df)
-    df.rename(columns=lambda s: s.replace('_', separator), inplace=True)
+        df["main"] = find_main_branches(df)
+    df.rename(columns=lambda s: s.replace("_", separator), inplace=True)
     return df
 
 
@@ -969,7 +974,7 @@ def _compute_distances(graph, path_indptr, path_indices, distances):
 
 @numba.jit(nopython=True, nogil=True, cache=False)  # cache with Numba 1.0
 def _path_distance(graph, path):
-    d = 0.
+    d = 0.0
     n = len(path)
     for i in range(n - 1):
         u, v = path[i], path[i + 1]
@@ -1081,7 +1086,7 @@ def skeleton_to_csgraph(
             mask=skel_bool,
             edge_function=edge_func,
             connectivity=ndim,
-            spacing=spacing
+            spacing=spacing,
             )
 
     graph = _mst_junctions(graph)
@@ -1109,7 +1114,7 @@ def _csrget(indices, indptr, data, row, col):
     for i in range(start, end):
         if indices[i] == col:
             return data[i]
-    return 0.
+    return 0.0
 
 
 @numba.jit(nopython=True, cache=True)
@@ -1190,11 +1195,13 @@ def make_degree_image(skeleton_image):
     degree_kernel = np.ones((3,) * bool_skeleton.ndim)
     degree_kernel[(1,) * bool_skeleton.ndim] = 0  # remove centre pixel
     if isinstance(bool_skeleton, np.ndarray):
-        degree_image = ndi.convolve(
-                bool_skeleton.astype(int),
-                degree_kernel,
-                mode='constant',
-                ) * bool_skeleton
+        degree_image = (
+                ndi.convolve(
+                        bool_skeleton.astype(int),
+                        degree_kernel,
+                        mode="constant",
+                        ) * bool_skeleton
+                )
     # use dask image for any array other than a numpy array (which isn't
     # supported yet anyway)
     else:
@@ -1203,7 +1210,7 @@ def make_degree_image(skeleton_image):
 
         if isinstance(bool_skeleton, da.Array):
             degree_image = bool_skeleton * dask_convolve(
-                    bool_skeleton.astype(int), degree_kernel, mode='constant'
+                    bool_skeleton.astype(int), degree_kernel, mode="constant"
                     )
     return degree_image
 
@@ -1228,10 +1235,10 @@ def _simplify_graph(skel):
         # don't reduce
         return skel.graph, np.arange(skel.graph.shape[0])
 
-    summary = summarize(skel, separator='_')
-    src = np.asarray(summary['node_id_src'])
-    dst = np.asarray(summary['node_id_dst'])
-    distance = np.asarray(summary['branch_distance'])
+    summary = summarize(skel, separator="_")
+    src = np.asarray(summary["node_id_src"])
+    dst = np.asarray(summary["node_id_dst"])
+    distance = np.asarray(summary["branch_distance"])
 
     # Workaround for https://github.com/scikit-image/scikit-image/issues/6378
     # Remove when https://github.com/scikit-image/scikit-image/pull/7535 is
@@ -1320,11 +1327,11 @@ def _normalize_shells(shells, *, center, skeleton_coordinates, spacing):
         shell_radii = np.arange(start_radius, end_radius + epsilon, stepsize)
     if (sp := np.linalg.norm(spacing)) > (sh := np.min(np.diff(shell_radii))):
         warnings.warn(
-                'This implementation of Sholl analysis may not be accurate if '
-                'the spacing between shells is smaller than the (diagonal) '
-                f'voxel spacing. The given voxel spacing is {sp}, and the '
-                f'smallest shell spacing is {sh}.',
-                stacklevel=2
+                "This implementation of Sholl analysis may not be accurate if "
+                "the spacing between shells is smaller than the (diagonal) "
+                f"voxel spacing. The given voxel spacing is {sp}, and the "
+                f"smallest shell spacing is {sh}.",
+                stacklevel=2,
                 )
     return shell_radii
 
@@ -1430,6 +1437,7 @@ def skeleton_to_nx(
                         'path': skeleton.path_coordinates(index),
                         'indices': indices,
                         'values': values,
+                        **row._asdict(),
                         }
                 )
     return g
@@ -1468,6 +1476,8 @@ def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
     compressed-sparse-row (CSR) data directly.
     """
     image = np.zeros(g.graph['shape'], dtype=g.graph['dtype'])
+    if len(g.edges()) == 0:
+        return Skeleton(image, keep_images=True)
     all_coords = np.concatenate([path for _, _, path in g.edges.data('path')],
                                 axis=0)
     all_values = np.concatenate([
@@ -1477,7 +1487,7 @@ def nx_to_skeleton(g: nx.Graph | nx.MultiGraph) -> Skeleton:
 
     image[tuple(all_coords.T)] = all_values
 
-    return Skeleton(image)
+    return Skeleton(image, keep_images=True)
 
 
 def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
@@ -1486,18 +1496,33 @@ def _merge_paths(p1: npt.NDArray, p2: npt.NDArray):
 
 
 def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
-    middle_node = set(e1) & set(e2)
+    middle_node = (set(e1[:2]) & set(e2[:2])).pop()
     new_edge = sorted(
-            (set(e1) | set(e2)) - {middle_node},
-            key=lambda i: i in e2,
+            (set(e1[:2]) | set(e2[:2])) - {middle_node},
+            key=lambda i: i in e2[:2],
             )
+    if len(new_edge) == 1:  # self-edge
+        new_edge = (new_edge[0], new_edge[0])
     d1 = g.edges[e1]
     d2 = g.edges[e2]
-    p1 = d1['path'] if e1[1] == middle_node else d1['path'][::-1]
-    p2 = d2['path'] if e2[0] == middle_node else d2['path'][::-1]
+    u0, v0 = d1['indices'][[0, -1]]
+    u1, v1 = d2['indices'][[0, -1]]
+    middle_idx = ({u0, v0} & {u1, v1}).pop()
+    p1 = d1['path'] if v0 == middle_idx else d1['path'][::-1]
+    p2 = d2['path'] if u1 == middle_idx else d2['path'][::-1]
+    i1 = d1['indices'] if v0 == middle_idx else d1['indices'][::-1]
+    i2 = d2['indices'] if u1 == middle_idx else d2['indices'][::-1]
+    v1 = d1['values'] if v0 == middle_idx else d1['values'][::-1]
+    v2 = d2['values'] if u1 == middle_idx else d2['values'][::-1]
     n1 = len(d1['path'])
     n2 = len(d2['path'])
     new_edge_values = {
+            'path':
+                    _merge_paths(p1, p2),
+            'indices':
+                    _merge_paths(i1, i2),
+            'values':
+                    _merge_paths(v1, v2),
             'skeleton_id':
                     g.edges[e1]['skeleton_id'],
             'node_id_src':
@@ -1516,16 +1541,164 @@ def _merge_edges(g: nx.Graph, e1: tuple[int], e2: tuple[int]):
                             d1['stdev_pixel_value']**2 *
                             (n1-1) + d2['stdev_pixel_value']**2 * (n2-1)
                             ) / (n1+n2-1)),
-            'path':
-                    _merge_paths(p1, p2),
             }
+    # TODO: add these attributes in as well
+    # 'image_coord_src_0': 13,
+    # 'image_coord_src_1': 40,
+    # 'image_coord_dst_0': 13,
+    # 'image_coord_dst_1': 41,
+    # 'coord_src_0': 13,
+    # 'coord_src_1': 40,
+    # 'coord_dst_0': 13,
+    # 'coord_dst_1': 41,
+    # 'euclidean_distance': 1.0}
     g.add_edge(new_edge[0], new_edge[1], **new_edge_values)
     g.remove_node(middle_node)
+
+
+def _get_edge_key(g, u, v):
+    keys_list = list(g[u][v])
+    return keys_list[0]
+
+
+def _get_neighbor(g, u):
+    """Get the first available neighbor of node u in g."""
+    return list(g[u])[0]
 
 
 def _remove_simple_path_nodes(g):
     """Remove any nodes of degree 2 by merging their incident edges."""
     to_remove = [n for n in g.nodes if g.degree(n) == 2]
     for u in to_remove:
-        v, w = g[u].keys()
-        _merge_edges(g, (u, v), (u, w))
+        # merging edges removes nodes, so a node queued for removal may already
+        # be gone (or no longer simple) by the time we reach it; skip those.
+        if u not in g or g.degree(u) != 2:
+            continue
+        if n_unique_neighbors(g, u) == 2:  # actually a simple node
+            v, w = g[u].keys()
+            kuv = _get_edge_key(g, u, v)
+            kuw = _get_edge_key(g, u, w)
+            _merge_edges(g, (u, v, kuv), (u, w, kuw))
+        elif n_unique_neighbors(g, u) == 1 and (v := _get_neighbor(g, u)) != u:
+            kuv0, kuv1 = list(g[u][v])
+            _merge_edges(g, (u, v, kuv0), (u, v, kuv1))
+
+
+def spur_length(g: nx.Graph, e: tuple[int, int, int]) -> float:
+    """Priority function flagging short spurs (junction-to-endpoint branches).
+
+    This is the default priority used by `iteratively_prune_paths`: it removes
+    spurs -- branches with exactly one endpoint of degree 1 (a tip) and one of
+    higher degree (a junction) -- and leaves every other branch (including
+    isolated endpoint-to-endpoint lines and cycles) untouched. It uses the
+    inverse of the spur length as a priority to remove short spurs first.
+
+    Parameters
+    ----------
+    g : nx.Graph
+        The (multi)graph being pruned.
+    e : tuple[int, int, int]
+        A multigraph edge ``(u, v, key)``.
+
+    Returns
+    -------
+    float
+        0.0 if the branch is not as spur,
+        ``1/g[e[0], e[1]]['branch_distance']`` otherwise.
+    """
+    u, v, _ = e
+    if (g.degree(u) == 1) ^ (g.degree(v) == 1):
+        return 1 / g[u][v]['branch_distance']
+    return 0.0
+
+
+def iteratively_prune_paths(
+        skeleton: nx.Graph | Skeleton | npt.NDArray,
+        *,
+        priority: Callable[[nx.Graph, tuple[int, int, int]], float] = spur_length,
+        ) -> Iterator[Skeleton]:
+    """Iteratively prune edges from a skeleton by descending priority.
+
+    Edges (paths/branches) are removed one at a time: on each step ``priority``
+    is evaluated for every edge and the single highest-priority edge is
+    removed, after which any resulting degree-2 nodes are merged back into
+    their neighbours before ``priority`` is re-evaluated against the *updated*
+    graph. Pruning stops once no edge has a positive priority.
+
+    Removing the single highest-priority edge each step (rather than every
+    flagged edge in a batch) is important for correctness: it prevents
+    ``priority`` clauses that depend on the global topology from interacting
+    badly, and it makes the result independent of edge iteration order. For
+    example, for a loop with a single spur sticking out of it, a batch removal
+    would simultaneously delete both the spur (an endpoint branch) and the loop
+    (a self-loop that is not yet the *only* edge), destroying the whole
+    skeleton. By giving the spur a higher priority than the loop, the spur is
+    removed first; the loop is then the sole remaining edge, its priority drops
+    to zero, and it is correctly kept.
+
+    Common branch types a ``priority`` function might key off of:
+
+          0 endpoint-to-endpoint (isolated branch)
+          1 junction-to-endpoint
+          2 junction-to-junction
+          3 isolated cycle
+
+    Parameters
+    ----------
+    skeleton : nx.MultiGraph or Skeleton or array
+        Skeleton to be pruned. This may be an `nx.MultiGraph` as produced by
+        `skeleton_to_nx`, a `Skeleton` object, or a skeleton image array; the
+        latter two are converted to a graph internally. Note: when a graph is
+        passed, it is modified in place as pruning proceeds.
+    priority : Callable[[nx.Graph, tuple[int, int, int]], float]
+        A function returning the removal priority of an edge. The input is a
+        graph and an edge, including the multigraph edge key (from which all
+        the edge's attributes can be obtained, if needed). Return a positive
+        value for edges that may be removed -- the largest value is removed
+        first -- and zero (or a negative value) for edges that should be kept.
+        The default, `spur_length`, removes junction-to-endpoint branches and
+        leaves everything else in place.
+
+    Yields
+    ------
+    Skeleton
+        The pruned skeleton after each individual edge removal, ending with the
+        final skeleton once no remaining edge has a positive priority. Consume
+        the whole iterator (e.g. with ``list(...)``) and take the last element
+        to get the fully pruned result; the intermediate skeletons are useful
+        for visualising the pruning process.
+    """
+    if isinstance(skeleton, nx.Graph):
+        pruned = skeleton  # we start with no pruning
+    else:
+        if not isinstance(skeleton, Skeleton):
+            skeleton = Skeleton(skeleton)
+        pruned = skeleton_to_nx(skeleton)
+
+    pruning = True
+    while pruning:
+        pruning = False
+        best_edge = None
+        best_priority = 0
+        for e in pruned.edges(keys=True):
+            p = priority(pruned, e)
+            if p > best_priority:
+                best_priority = p
+                best_edge = e
+        if best_edge is not None:
+            # Remove the single highest-priority edge, then re-simplify and
+            # re-scan so that ``priority`` always sees an up-to-date graph.
+            pruned.remove_edge(*best_edge)
+            _remove_simple_path_nodes(pruned)
+            pruning = True
+        yield nx_to_skeleton(pruned)
+
+
+def n_unique_neighbors(mg: nx.MultiGraph, n: int):
+    """Number of unique neighbors (not counting multi-edges).
+
+    `nx.degree` counts two edges to the same neighbor as degree 2. In
+    some situations (such as determining how many edges to access, rather
+    than multi-edge keys), we need the unique neighbor count instead.
+    """
+    return len(mg[n])

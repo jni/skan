@@ -1,7 +1,8 @@
+import os
+
 import networkx as nx
 import numpy as np
-from skimage.draw import random_shapes
-from skimage.morphology import skeletonize
+import zarr
 
 tinycycle = np.array([[0, 1, 0],
                       [1, 0, 1],
@@ -75,29 +76,36 @@ skeletonlabel = np.array([[1, 1, 0, 0, 2, 2, 0],
                           [0, 3, 0, 0, 0, 1, 0]], dtype=int)
 
 
-def _generate_random_skeleton(**extra_kwargs):
-    """Generate random skeletons using skimage.draw's random_shapes."""
-    kwargs = {"image_shape": (128, 128),
-              "max_shapes": 20,
-              "channel_axis": None,
-              "shape": None,
-              "allow_overlap": True}
-    random_image, _ = random_shapes(**kwargs, **extra_kwargs)
-    mask = random_image != 255
-    return skeletonize(mask)
+# Skeletons used to test (iterative) pruning.
+#   skeleton_loop1, skeleton_loop2     -- closed loops with side branches
+#   skeleton_linear1                   -- linear, many side branches + a small
+#                                         spurious loop
+#   skeleton_linear2                   -- linear with a simple fork at one end
+#   skeleton_linear3                   -- multiple linear skeletons with branches
+_PRUNING_ZARR = os.path.join(
+        os.path.dirname(__file__), 'test', 'data', 'pruning_skeletons.zarr.zip'
+        )
 
-# Generate random skeletons:
 
-# Skeleton with loop to be retained and side-branches
-skeleton_loop1 = _generate_random_skeleton(rng=1, min_size=20)
-# Skeleton with loop to be retained and side-branches
-skeleton_loop2 = _generate_random_skeleton(rng=165103, min_size=60)
-# Linear skeleton with lots of large side-branches, some forked
-skeleton_linear1 = _generate_random_skeleton(rng=13588686514, min_size=20)
-# Linear Skeleton with simple fork at one end
-skeleton_linear2 = _generate_random_skeleton(rng=21, min_size=20)
-# Linear Skeletons (i.e. multiple) with branches
-skeleton_linear3 = _generate_random_skeleton(rng=894632511, min_size=20)
+def _load_pruning_skeletons():
+    store = zarr.storage.ZipStore(_PRUNING_ZARR, mode='r')
+    try:
+        group = zarr.open_group(store=store, mode='r')
+        names = (
+                'skeleton_loop1', 'skeleton_loop2', 'skeleton_linear1',
+                'skeleton_linear2', 'skeleton_linear3'
+                )
+        return {name: np.asarray(group[name]) for name in names}
+    finally:
+        store.close()
+
+
+_pruning_skeletons = _load_pruning_skeletons()
+skeleton_loop1 = _pruning_skeletons['skeleton_loop1']
+skeleton_loop2 = _pruning_skeletons['skeleton_loop2']
+skeleton_linear1 = _pruning_skeletons['skeleton_linear1']
+skeleton_linear2 = _pruning_skeletons['skeleton_linear2']
+skeleton_linear3 = _pruning_skeletons['skeleton_linear3']
 
 ## Sample NetworkX Graphs...
 # ...with no edge attributes
