@@ -166,6 +166,11 @@ csr_spec_float = [
         ('node_properties', numba.float64[:]),
         ]  # yapf: disable
 
+csr_spec_float32 = [
+        (name, numba.float32[:] if name == 'node_properties' else dtype)
+        for name, dtype in csr_spec_float
+        ]
+
 csr_spec_bool = [
         ('indptr', numba.int32[:]),
         ('indices', numba.int32[:]),
@@ -200,6 +205,7 @@ class NBGraphBase:
 
 
 NBGraph = numba.experimental.jitclass(NBGraphBase, csr_spec_float)
+NBGraph32 = numba.experimental.jitclass(NBGraphBase, csr_spec_float32)
 NBGraphBool = numba.experimental.jitclass(NBGraphBase, csr_spec_bool)
 
 
@@ -207,12 +213,17 @@ def csr_to_nbgraph(csr, node_props=None):
     if node_props is None:
         node_props = np.broadcast_to(1., csr.shape[0])
         node_props.flags.writeable = True
-    return NBGraph(
+    if node_props.dtype == np.float32:
+        graph_type = NBGraph32
+    else:
+        graph_type = NBGraph
+        node_props = node_props.astype(np.float64)
+    return graph_type(
             csr.indptr.astype(np.int32, copy=False),
             csr.indices.astype(np.int32, copy=False),
             csr.data,
             np.array(csr.shape, dtype=np.int32),
-            node_props.astype(np.float64),
+            node_props,
             )
 
 
@@ -609,6 +620,7 @@ class Skeleton:
         A thin Numba wrapper around the ``csr_matrix`` format, this provides
         faster graph methods. For example, it is much faster to get a list of
         neighbors, or test for the presence of a specific edge.
+        Float32 pixel values keep their dtype in this wrapper.
     coordinates : array, shape (N, ndim)
         skeleton_pixel_id i -> coordinates[i]
         The image coordinates of each pixel in the skeleton.

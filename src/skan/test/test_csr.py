@@ -371,7 +371,9 @@ def test_skeleton_all_float_dtypes(dtype):
     skel = csr.Skeleton(float_skel)
     assert skel.nbgraph.node_properties.dtype == dtype
     if dtype == np.float32:
-        assert np.shares_memory(skel.nbgraph.node_properties, skel.pixel_values)
+        assert np.shares_memory(
+                skel.nbgraph.node_properties, skel.pixel_values
+                )
 
 
 def test_default_summarize_separator():
