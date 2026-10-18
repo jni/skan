@@ -368,7 +368,10 @@ def test_skeleton_all_float_dtypes(dtype):
     skeleton_image = skeletonize(horse)
     dt = ndi.distance_transform_edt(horse)
     float_skel = (dt * skeleton_image).astype(dtype)
-    _ = csr.Skeleton(float_skel)
+    skel = csr.Skeleton(float_skel)
+    assert skel.nbgraph.node_properties.dtype == dtype
+    if dtype == np.float32:
+        assert np.shares_memory(skel.nbgraph.node_properties, skel.pixel_values)
 
 
 def test_default_summarize_separator():
