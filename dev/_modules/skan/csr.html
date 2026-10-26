@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>skan.csr &#8212; Skan 🦴📏 0.1.dev1+ge5a834229 documentation</title>
+    <title>skan.csr &#8212; Skan 🦴📏 0.1.dev1+gcd86739b0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=c127cf9b"></script>
+    <script src="../../_static/documentation_options.js?v=c5796e81"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -47,7 +47,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://skeleton-analysis.org/dev/_static/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+ge5a834229';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+gcd86739b0';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.dev1+ge5a834229" />
+  <meta name="docsearch:version" content="0.1.dev1+gcd86739b0" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -125,7 +125,7 @@
   
   
   
-    <p class="title logo__title">Skan 🦴📏 0.1.dev1+ge5a834229 documentation</p>
+    <p class="title logo__title">Skan 🦴📏 0.1.dev1+gcd86739b0 documentation</p>
   
 </a></div>
     
@@ -567,6 +567,11 @@
         <span class="p">(</span><span class="s1">'node_properties'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
         <span class="p">]</span>  <span class="c1"># yapf: disable</span>
 
+<span class="n">csr_spec_float32</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float32</span><span class="p">[:]</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">'node_properties'</span> <span class="k">else</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">csr_spec_float</span>
+        <span class="p">]</span>
+
 <span class="n">csr_spec_bool</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="s1">'indptr'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">[:]),</span>
         <span class="p">(</span><span class="s1">'indices'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">[:]),</span>
@@ -601,6 +606,7 @@
 
 
 <span class="n">NBGraph</span> <span class="o">=</span> <span class="n">numba</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">jitclass</span><span class="p">(</span><span class="n">NBGraphBase</span><span class="p">,</span> <span class="n">csr_spec_float</span><span class="p">)</span>
+<span class="n">NBGraph32</span> <span class="o">=</span> <span class="n">numba</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">jitclass</span><span class="p">(</span><span class="n">NBGraphBase</span><span class="p">,</span> <span class="n">csr_spec_float32</span><span class="p">)</span>
 <span class="n">NBGraphBool</span> <span class="o">=</span> <span class="n">numba</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">jitclass</span><span class="p">(</span><span class="n">NBGraphBase</span><span class="p">,</span> <span class="n">csr_spec_bool</span><span class="p">)</span>
 
 
@@ -608,12 +614,17 @@
     <span class="k">if</span> <span class="n">node_props</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">node_props</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">csr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">node_props</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">writeable</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="n">NBGraph</span><span class="p">(</span>
+    <span class="k">if</span> <span class="n">node_props</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
+        <span class="n">graph_type</span> <span class="o">=</span> <span class="n">NBGraph32</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">graph_type</span> <span class="o">=</span> <span class="n">NBGraph</span>
+        <span class="n">node_props</span> <span class="o">=</span> <span class="n">node_props</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">graph_type</span><span class="p">(</span>
             <span class="n">csr</span><span class="o">.</span><span class="n">indptr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">csr</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">csr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">csr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-            <span class="n">node_props</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="n">node_props</span><span class="p">,</span>
             <span class="p">)</span>
 
 
@@ -1021,6 +1032,7 @@
 <span class="sd">        A thin Numba wrapper around the ``csr_matrix`` format, this provides</span>
 <span class="sd">        faster graph methods. For example, it is much faster to get a list of</span>
 <span class="sd">        neighbors, or test for the presence of a specific edge.</span>
+<span class="sd">        Float32 pixel values keep their dtype in this wrapper.</span>
 <span class="sd">    coordinates : array, shape (N, ndim)</span>
 <span class="sd">        skeleton_pixel_id i -&gt; coordinates[i]</span>
 <span class="sd">        The image coordinates of each pixel in the skeleton.</span>
