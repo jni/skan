@@ -65,7 +65,8 @@ gui = [
 testing = [
     'coverage',
     'hypothesis',
-    'napari[pyqt5]>=0.4.19rc1',
+    'napari[pyqt5]>=0.4.19; python_version < "3.13"',
+    'napari[pyqt6]>=0.8.0; python_version >= "3.13"',
     'pytest',
     'pytest-cov',
     'pytest-qt',
