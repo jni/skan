@@ -1,5 +1,4 @@
 from __future__ import annotations
-import sys
 
 from collections import defaultdict
 from itertools import product
@@ -7,6 +6,7 @@ from typing import Any
 
 import numpy as np
 import numpy.typing as npt
+import networkx as nx
 from numpy.testing import assert_equal, assert_almost_equal
 import pandas as pd
 import pytest
@@ -183,6 +183,32 @@ def test_mst_junctions():
 
     np.testing.assert_equal(G, h.todense())
     np.testing.assert_equal(G, hprime.todense())
+
+
+@pytest.mark.parametrize('rotation', range(4))
+@pytest.mark.parametrize('spacing', [1, (2, 3)])
+def test_junction_cleanup_preserves_small_loops(rotation, spacing):
+    # Crop of the image in gh-225. The second hole is surrounded entirely
+    # by junction pixels, so a spanning tree of that component cuts it.
+    image = np.array([
+            [0, 1, 0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 0, 0, 0],
+            [0, 1, 1, 0, 0, 0, 0],
+            [0, 1, 0, 1, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0],
+            ],
+                     dtype=bool)
+    skeleton = csr.Skeleton(np.rot90(image, rotation), spacing=spacing)
+    graph = nx.from_scipy_sparse_array(skeleton.graph)
+    assert nx.number_connected_components(graph) == 1
+    assert len(nx.cycle_basis(graph)) == 2
+    # Cleanup must not remove any image pixels, and a second cleanup must
+    # retain the loops as well.
+    assert graph.number_of_nodes() == image.sum()
+    assert (csr._mst_junctions(skeleton.graph) != skeleton.graph).nnz == 0
 
 
 def test_transpose_image():
@@ -473,13 +499,9 @@ def test_pathgraph_skeleton_equiv(np_skeleton, spacing, dtype):
                 pytest.param(
                         skeleton_linear1,
                         None,
-                        24,
-                        24,
+                        22,
+                        23,
                         id='skeleton_linear1 (no summary)',
-                        marks=pytest.mark.xfail(
-                                sys.version_info[:2] == (3, 8),
-                                reason='Incorrect edege discovery (#225)'
-                                )
                         ),
                 pytest.param(
                         skeleton_linear2,
