@@ -990,22 +990,19 @@ def _path_distance(graph, path):
 
 
 def _mst_junctions(csmat):
-    """Replace clustered pixels with degree > 2 by their minimum spanning tree.
+    """Remove redundant triangle cycles among pixels with degree > 2.
 
-    This function performs the operation in place.
+    Retain a minimum spanning tree and the additional edges needed for
+    loops independent of the triangle cycles.
 
     Parameters
     ----------
-    csmat : NBGraph
+    csmat : scipy.sparse.csr_matrix
         The input graph.
-    pixel_indices : array of int
-        The raveled index in the image of every pixel represented in csmat.
-    spacing : float, or array-like of float, shape `len(shape)`, optional
-        The spacing between pixels in the source image along each dimension.
 
     Returns
     -------
-    final_graph : NBGraph
+    final_graph : scipy.sparse.csr_matrix
         The output csmat.
     """
     # make copy
@@ -1028,6 +1025,48 @@ def _mst_junctions(csmat):
     csr_graph.eliminate_zeros()
     mst = csgraph.minimum_spanning_tree(csr_graph)
     non_tree_edges = csr_graph - (mst + mst.T)
+    # A junction component can itself surround a hole. Only remove edges
+    # accounting for triangle cycles, rather than every non-tree edge.
+    chords = sparse.triu(non_tree_edges, k=1).tocoo()
+    chord_ids = {(u, v): i
+                 for i, (u, v) in enumerate(zip(chords.row, chords.col))}
+    indices, indptr = csr_graph.indices, csr_graph.indptr
+    neighbors = {
+            u: set(indices[indptr[u]:indptr[u + 1]])
+            for u in np.flatnonzero(np.diff(csr_graph.indptr))
+            }
+    triangle_basis = {}
+    for u, adjacent in neighbors.items():
+        for v in adjacent:
+            if v <= u:
+                continue
+            for w in adjacent & neighbors[v]:
+                if w <= v:
+                    continue
+                # Non-tree edges form coordinates for the cycle space.
+                # Reduce triangle boundaries over GF(2). Pivot edges can be
+                # deleted without cutting a loop independent of triangles.
+                row = {
+                        chord_ids[edge]
+                        for edge in ((u, v), (u, w), (v, w))
+                        if edge in chord_ids
+                        }
+                while row:
+                    pivot = max(row)
+                    if pivot in triangle_basis:
+                        row.symmetric_difference_update(triangle_basis[pivot])
+                    else:
+                        triangle_basis[pivot] = row
+                        break
+    redundant = np.array(list(triangle_basis), dtype=int)
+    removed = sparse.csr_matrix(
+            (
+                    chords.data[redundant],
+                    (chords.row[redundant], chords.col[redundant])
+                    ),
+            shape=csmat.shape,
+            )
+    non_tree_edges = removed + removed.T
     final_graph = csmat - non_tree_edges
     return final_graph
 

@@ -29,7 +29,7 @@ Prior to skan version 0.10, skan's approach to this problem was to collapse all 
 
 This gives good results when making measurements on the branches and examining the topology of the network, but has the disadvantage that it breaks the link between skeleton graph nodes and the underlying pixels. For example, if we use the node coordinates to paint data on an image, we will not fill in all the pixel positions and we will end up with a disconnected skeleton.
 
-In skan 0.10, we added a new strategy for dealing with the clusters: replace each cluster with its minimum spanning tree (MST). See [#133](https://github.com/jni/skan/issues/133).
+In skan 0.10, we added a new strategy for dealing with the clusters: replace each cluster with its minimum spanning tree (MST). See [#133](https://github.com/jni/skan/issues/133). A cluster can itself surround a hole in the image, so we now retain the additional edges needed to preserve those loops. Cleanup removes redundant triangle cycles among junction pixels while keeping loops independent of those triangles. See [#225](https://github.com/jni/skan/issues/225).
 
 All three approaches are summarized in the figure below:
 
